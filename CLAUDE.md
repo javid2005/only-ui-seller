@@ -1,5 +1,16 @@
 # Vitrina — Claude Reference
 
+## Knowledge References
+→ `dev-knowledge/` repo — دانش مشترک بین پروژه‌ها (RTL، tokens، known bugs، چک‌لیست)
+
+| موضوع | فایل |
+|-------|------|
+| RTL concepts | `dev-knowledge/universal/rtl-concepts.md` |
+| Chakra v3 bugs | `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md` |
+| Chakra v3 tokens | `dev-knowledge/design-systems/chakra-ui-v3/tokens.md` |
+| RTL در Chakra | `dev-knowledge/design-systems/chakra-ui-v3/rtl.md` |
+| Figma→Code workflow | `dev-knowledge/universal/figma-to-code.md` |
+
 ## Stack
 - React 19 + Vite + TypeScript
 - Chakra UI v3
