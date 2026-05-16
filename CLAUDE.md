@@ -38,6 +38,14 @@
 - Sidebar: `w="256px"` expanded, `w="16"` collapsed
 - RTL column flex: `align="flex-start"` = RIGHT side, `align="flex-end"` = LEFT side (counterintuitive!)
 
+### Compact / Mobile mode
+- Compact mode (`isCompact=true`) = 512px view — behaves like mobile
+- In compact: sidebar hidden (`display="none"`), hamburger visible
+- Hamburger is grouped with logo; hamburger FIRST in DOM → appears RIGHT of logo in RTL
+- Drawer: `placement="start"` = opens from RIGHT in RTL ✓, `maxW="256px"` (same as desktop sidebar)
+- Drawer header: logo (FIRST=right) + CloseButton (LAST=left) — no title
+- Always add `dir="rtl"` to `Drawer.Positioner`
+
 ---
 
 ## Token Reference
