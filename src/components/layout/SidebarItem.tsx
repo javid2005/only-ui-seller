@@ -172,8 +172,10 @@ export function SidebarItem({
       {/* Sub-items panel — animated with Collapsible */}
       <Collapsible.Root open={open}>
         <Collapsible.Content>
-          {/* RTL flex: first = rightmost */}
-          <Flex align="flex-start" w="full" mt="1">
+          {/* RTL flex: first = rightmost
+              ps="4" (16px in RTL = right padding) aligns SubLine bar
+              under parent icon center: px(8) + half-icon(8) = 16px ✓ */}
+          <Flex align="flex-start" w="full" mt="1" ps="4">
             {/* SubLines: FIRST → inline-start (RIGHT in RTL) ✓ tree connector */}
             <Flex direction="column" flexShrink={0}>
               {subItems.map((sub, i) => (
