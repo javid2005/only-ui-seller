@@ -1,5 +1,5 @@
 import { Box, Flex, IconButton } from '@chakra-ui/react'
-import { Bell, Menu, Minimize, Maximize } from 'lucide-react'
+import { Bell, Minimize, Maximize, Menu } from 'lucide-react'
 import logoSrc from '../../assets/logo.svg'
 import { UserMenu } from './UserMenu'
 
@@ -29,7 +29,7 @@ export function Navbar({
       top="0"
       zIndex="sticky"
     >
-      {/* RTL: first child = RIGHT (Logo), last child = LEFT (controls) */}
+      {/* RTL: first child = RIGHT, last child = LEFT */}
       <Flex
         align="center"
         justify="space-between"
@@ -40,18 +40,12 @@ export function Navbar({
         transition="max-width 0.2s ease"
       >
 
-        {/* Logo: FIRST → right side in RTL ✓ */}
-        <a href="/" style={{ textDecoration: 'none' }}>
-          <Box as="img" src={logoSrc} alt="ویترینا" h="8" />
-        </a>
-
-        {/* Controls: LAST → left side in RTL ✓
-            Visual order left→right: Avatar | Bell | Min/Max
-            DOM order   (first=rightmost in RTL): Min/Max | Bell | Avatar */}
-        <Flex align="center" gap="6">
-
-          {/* Mobile hamburger */}
-          <Box display={{ base: 'flex', md: 'none' }}>
+        {/* Logo group: FIRST → rightmost in RTL
+            Hamburger FIRST in group → rightmost (right of logo)
+            Logo SECOND in group → just left of hamburger */}
+        <Flex align="center" gap="3">
+          {/* Hamburger: FIRST → right of logo in RTL ✓ */}
+          <Box display={isCompact ? 'flex' : { base: 'flex', md: 'none' }}>
             <IconButton
               aria-label="منو"
               variant="ghost"
@@ -61,8 +55,17 @@ export function Navbar({
               <Menu size={18} />
             </IconButton>
           </Box>
+          {/* Logo: SECOND → just left of hamburger in RTL ✓ */}
+          <a href="/" style={{ textDecoration: 'none' }}>
+            <Box as="img" src={logoSrc} alt="ویترینا" h="8" />
+          </a>
+        </Flex>
 
-          {/* Min/Max: FIRST → rightmost in RTL ✓ */}
+        {/* Controls: LAST → leftmost in RTL ✓
+            DOM order (first=rightmost): Min/Max | Bell | Avatar */}
+        <Flex align="center" gap="6">
+
+          {/* Min/Max: FIRST → rightmost in controls ✓ */}
           <Box display={{ base: 'none', md: 'flex' }}>
             <IconButton
               aria-label={isCompact ? 'بازگشت به عرض کامل' : 'کوچک کردن صفحه'}
