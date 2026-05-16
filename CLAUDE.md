@@ -21,8 +21,9 @@
 - Tooltip = namespace: `Tooltip.Root` / `Tooltip.Trigger asChild` / `Tooltip.Content`
 - `Text` and `Flex` don't accept `href` prop → wrap with plain `<a>`
 - `useColorMode` → **DOES NOT EXIST** in Chakra v3. Use `useColorMode` from `@/contexts/ColorModeContext` instead
-- Color mode toggle → uses `<Theme appearance="light"|"dark">` wrapper in `ColorModeProvider`
-- Avatar.Root / complex components → do NOT forward refs for `asChild`. Wrap in `<Box as="button">` first
+- Dark mode: toggle `.dark` class on `document.documentElement` (NOT a wrapper div) — Portal content lives outside React tree and needs the class on `<html>` to get dark tokens
+- Color mode toggle → uses `<Theme appearance="light"|"dark">` wrapper in `ColorModeProvider`; persists to `localStorage` key `vitrina-color-mode`
+- Avatar.Root / complex components → do NOT forward refs for `asChild`. Wrap in `<Box as="button" type="button">` first
 
 ### RTL in Portal components (Menu, Drawer, Popover, Tooltip)
 - Portal content renders under `<body>` but DOES inherit `dir="rtl"` from `<html>` via CSS cascade
@@ -32,9 +33,10 @@
 - `bg="white"` → OK (Chakra palette token, not hardcoded). `bg="#ffffff"` → NOT OK
 
 ### Layout
-- Navbar: full-width (no `maxW` on outer container)
-- Body (sidebar + content): `maxW="1920px" mx="auto"`
+- Navbar: full-width (no `maxW` on outer container); controls DOM order (RTL): Min/Max | Bell | Avatar with `gap="6"` (24px)
+- Body (sidebar + content): `maxW="1920px" mx="auto"`, compact mode: `maxW="512px"`
 - Sidebar: `w="256px"` expanded, `w="16"` collapsed
+- RTL column flex: `align="flex-start"` = RIGHT side, `align="flex-end"` = LEFT side (counterintuitive!)
 
 ---
 
@@ -196,8 +198,11 @@ src/
     Layout.tsx       — outer shell, drawer mobile
     Navbar.tsx       — full-width sticky header
     Sidebar.tsx      — nav groups + store selector
-    SidebarItem.tsx  — collapsible items w/ sub-lines
+    SidebarItem.tsx  — collapsible items w/ sub-lines (Chakra Collapsible + ChevronDown)
     Header.tsx       — page title + breadcrumb + CTA slot
+    UserMenu.tsx     — avatar dropdown (Menu.Root, Box as="button" trigger, Portal+dir="rtl")
+  contexts/
+    ColorModeContext.tsx — custom dark mode (.dark on <html>, localStorage)
   pages/
     Dashboard.tsx
   theme/

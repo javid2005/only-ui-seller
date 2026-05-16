@@ -33,7 +33,7 @@ export function Navbar({
       <Flex
         align="center"
         justify="space-between"
-        maxW={isCompact ? '1440px' : '1920px'}
+        maxW={isCompact ? '512px' : '1920px'}
         mx="auto"
         px="4"
         h="16"
@@ -46,22 +46,9 @@ export function Navbar({
         </a>
 
         {/* Controls: LAST → left side in RTL ✓
-            RTL order (first=rightmost): ScreenSize | Divider | Bell | Avatar */}
+            Visual order left→right: Avatar | Bell | Min/Max
+            DOM order   (first=rightmost in RTL): Min/Max | Bell | Avatar */}
         <Flex align="center" gap="6">
-
-          {/* Screen size toggle: FIRST → rightmost ✓
-              isCompact=false → Minimize2 (click to go 1440)
-              isCompact=true  → Maximize2 (click to go 1920) */}
-          <Box display={{ base: 'none', md: 'flex' }}>
-            <IconButton
-              aria-label={isCompact ? 'بازگشت به عرض کامل' : 'کوچک کردن صفحه'}
-              variant="outline"
-              size="sm"
-              onClick={onToggleWidth}
-            >
-              {isCompact ? <Maximize size={16} /> : <Minimize size={16} />}
-            </IconButton>
-          </Box>
 
           {/* Mobile hamburger */}
           <Box display={{ base: 'flex', md: 'none' }}>
@@ -75,10 +62,19 @@ export function Navbar({
             </IconButton>
           </Box>
 
-          {/* Divider */}
-          <Box w="px" h="5" bg="border" />
+          {/* Min/Max: FIRST → rightmost in RTL ✓ */}
+          <Box display={{ base: 'none', md: 'flex' }}>
+            <IconButton
+              aria-label={isCompact ? 'بازگشت به عرض کامل' : 'کوچک کردن صفحه'}
+              variant="outline"
+              size="sm"
+              onClick={onToggleWidth}
+            >
+              {isCompact ? <Maximize size={16} /> : <Minimize size={16} />}
+            </IconButton>
+          </Box>
 
-          {/* Notifications */}
+          {/* Bell: SECOND ✓ */}
           <IconButton
             aria-label="اعلان‌ها"
             variant="subtle"
@@ -89,7 +85,7 @@ export function Navbar({
             <Bell size={16} />
           </IconButton>
 
-          {/* Avatar + dropdown menu: LAST → leftmost ✓ */}
+          {/* Avatar: LAST → leftmost in RTL ✓ */}
           <UserMenu userName={userName} userAvatar={userAvatar} />
 
         </Flex>

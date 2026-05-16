@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Box, Flex, Text, Tooltip as ChakraTooltip } from '@chakra-ui/react'
-import { Plus, Minus } from 'lucide-react'
+import { Box, Flex, Text, Tooltip as ChakraTooltip, Collapsible } from '@chakra-ui/react'
+import { ChevronDown } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { NavLink, Link } from 'react-router-dom'
 import type { SubNavItem } from '@/types/nav'
@@ -138,7 +138,13 @@ export function SidebarItem({
           display="flex"
           alignItems="center"
         >
-          {open ? <Minus size={12} /> : <Plus size={12} />}
+          <ChevronDown
+            size={12}
+            style={{
+              transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s ease',
+            }}
+          />
         </Box>
       )}
     </Flex>
@@ -163,25 +169,27 @@ export function SidebarItem({
         </NavLink>
       )}
 
-      {/* Sub-items panel */}
-      {hasSubItems && open && (
-        /* RTL flex: first = rightmost */
-        <Flex align="flex-start" w="full" mt="1">
-          {/* SubLines: FIRST → inline-start (RIGHT in RTL) ✓ tree connector */}
-          <Flex direction="column" flexShrink={0}>
-            {subItems.map((sub, i) => (
-              <SubLine key={sub.path} isLast={i === subItems.length - 1} />
-            ))}
-          </Flex>
+      {/* Sub-items panel — animated with Collapsible */}
+      <Collapsible.Root open={open}>
+        <Collapsible.Content>
+          {/* RTL flex: first = rightmost */}
+          <Flex align="flex-start" w="full" mt="1">
+            {/* SubLines: FIRST → inline-start (RIGHT in RTL) ✓ tree connector */}
+            <Flex direction="column" flexShrink={0}>
+              {subItems.map((sub, i) => (
+                <SubLine key={sub.path} isLast={i === subItems.length - 1} />
+              ))}
+            </Flex>
 
-          {/* SubMenu items: LAST → fills remaining space (LEFT in RTL) ✓ */}
-          <Flex direction="column" flex="1" minW="0">
-            {subItems.map((sub) => (
-              <SubItemRow key={sub.path} item={sub} />
-            ))}
+            {/* SubMenu items: LAST → fills remaining space (LEFT in RTL) ✓ */}
+            <Flex direction="column" flex="1" minW="0">
+              {subItems.map((sub) => (
+                <SubItemRow key={sub.path} item={sub} />
+              ))}
+            </Flex>
           </Flex>
-        </Flex>
-      )}
+        </Collapsible.Content>
+      </Collapsible.Root>
     </Box>
   )
 

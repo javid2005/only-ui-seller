@@ -19,11 +19,11 @@ export function Layout() {
         onToggleWidth={() => setIsCompact((c) => !c)}
       />
 
-      {/* Body: capped at 1920px or 1440px based on isCompact, centered */}
+      {/* Body: capped at 1920px or 512px based on isCompact, centered */}
       <Flex
         flex="1"
         overflow="hidden"
-        maxW={isCompact ? '1440px' : '1920px'}
+        maxW={isCompact ? '512px' : '1920px'}
         w="full"
         mx="auto"
         transition="max-width 0.2s ease"
