@@ -10,8 +10,8 @@ export function Layout() {
   const [isCompact, setIsCompact] = useState(false)
 
   return (
-    /* Outer: full-width, full-height */
-    <Flex direction="column" h="100dvh" overflow="hidden">
+    /* Outer: full-width, natural height — window scrolls (RTL scrollbar at browser left edge) */
+    <Flex direction="column" minH="100dvh">
 
       {/* Navbar: full-width — inner content capped */}
       <Navbar
@@ -23,20 +23,28 @@ export function Layout() {
       {/* Body: capped at 1920px or 512px, centered */}
       <Flex
         flex="1"
-        overflow="hidden"
         maxW={isCompact ? '512px' : '1920px'}
         w="full"
         mx="auto"
         transition="max-width 0.2s ease"
+        alignItems="flex-start"
       >
 
         {/* Sidebar: FIRST → rightmost in RTL ✓ — hidden in compact/mobile */}
-        <Box display={isCompact ? 'none' : { base: 'none', md: 'block' }} h="full" overflowY="auto">
+        {/* sticky so it stays visible while main content scrolls */}
+        <Box
+          display={isCompact ? 'none' : { base: 'none', md: 'block' }}
+          position="sticky"
+          top="16"
+          h="calc(100dvh - 64px)"
+          overflowY="auto"
+          flexShrink={0}
+        >
           <Sidebar />
         </Box>
 
-        {/* Main content: SECOND → left in RTL ✓ */}
-        <Box flex="1" overflowY="auto" p="4" minW="0">
+        {/* Main content: SECOND → left in RTL ✓ — window handles scroll */}
+        <Box flex="1" p="4" minW="0">
           <Outlet />
         </Box>
 
