@@ -1,3 +1,5 @@
+import storeCover from '@/assets/store/store-cover.jpg'
+import storeThumbnail from '@/assets/store/store-thumbnail.jpg'
 import { Box, Flex, Text, Badge, IconButton } from '@chakra-ui/react'
 import {
   Truck,
@@ -136,14 +138,12 @@ function StoreHeader() {
         position="relative"
         bg="bg.muted"
       >
-        {/* Placeholder gradient — replace with actual cover image from API */}
         <Box
+          as="img"
+          src={storeCover}
           w="full"
           h="full"
-          bgGradient="to-br"
-          gradientFrom="blue.200"
-          gradientTo="purple.400"
-          opacity={0.8}
+          style={{ objectFit: 'cover', objectPosition: 'center' }}
         />
       </Box>
 
@@ -165,8 +165,13 @@ function StoreHeader() {
           position="relative"
           zIndex={1}
         >
-          {/* Placeholder — replace with actual logo from API */}
-          <Box w="full" h="full" bg="bg.muted" rounded="sm" />
+          <Box
+            as="img"
+            src={storeThumbnail}
+            w="full"
+            h="full"
+            style={{ objectFit: 'cover', borderRadius: '4px' }}
+          />
         </Box>
 
         {/* Store info — SECOND = middle, grows to fill remaining space */}
