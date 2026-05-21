@@ -1,6 +1,10 @@
+import { useState } from 'react'
 import storeCover from '@/assets/store/store-cover.jpg'
 import storeThumbnail from '@/assets/store/store-thumbnail.jpg'
-import { Box, Flex, Text, Badge, IconButton } from '@chakra-ui/react'
+import {
+  Box, Flex, Text, Badge, IconButton,
+  Menu, Dialog, Button, Portal,
+} from '@chakra-ui/react'
 import {
   Truck,
   Store,
@@ -11,6 +15,7 @@ import {
   Globe,
   CreditCard,
   EllipsisVertical,
+  X,
 } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
 import { TitleBar } from '@/components/ui/TitleBar'
@@ -127,6 +132,14 @@ function CardList({ cards }: { cards: Section['cards'] }) {
 // ─── Store Profile Header ─────────────────────────────────────────────────────
 
 function StoreHeader() {
+  const [isOrderActive, setIsOrderActive] = useState(true)
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const handleConfirm = () => {
+    setIsOrderActive((prev) => !prev)
+    setDialogOpen(false)
+  }
+
   return (
     <Box w="full" flexShrink={0}>
       {/* Cover banner — 160px, overlaps 40px into the data row below */}
@@ -174,36 +187,129 @@ function StoreHeader() {
           />
         </Box>
 
-        {/* Store info — SECOND = middle, grows to fill remaining space */}
+        {/* Store info — SECOND = middle */}
         <Flex
           flex="1"
           direction="column"
           gap="1"
           alignItems="flex-start"
-          pt="14"  /* 56px — pushes text below the cover's bottom edge */
+          pt="14"
           minW="0"
         >
           <Text fontSize="xl" fontWeight="semibold" color="fg" lineHeight="1.5">
             فروشگاه مزباکس
           </Text>
-          <Badge colorPalette="green" variant="subtle" size="md">
-            سفارش گیری فعال
+          <Badge
+            colorPalette={isOrderActive ? 'green' : 'gray'}
+            variant="subtle"
+            size="md"
+          >
+            {isOrderActive ? 'سفارش گیری فعال' : 'سفارش گیری غیرفعال'}
           </Badge>
         </Flex>
 
-        {/* Ellipsis button — LAST in DOM = leftmost in RTL */}
+        {/* Ellipsis menu — LAST in DOM = leftmost in RTL */}
         <Box pt="14" flexShrink={0}>
-          <IconButton
-            variant="ghost"
-            size="md"
-            aria-label="گزینه‌های بیشتر"
-            color="fg.muted"
+          <Menu.Root
+            positioning={{
+              placement: 'bottom-start',
+              flip: true,
+              shift: true,
+            }}
           >
-            <EllipsisVertical size={20} />
-          </IconButton>
+            <Menu.Trigger asChild>
+              <IconButton
+                variant="ghost"
+                size="md"
+                aria-label="گزینه‌های بیشتر"
+                color="fg.muted"
+              >
+                <EllipsisVertical size={20} />
+              </IconButton>
+            </Menu.Trigger>
+            <Portal>
+              <Menu.Positioner dir="rtl">
+                <Menu.Content minW="200px">
+                  <Menu.Item
+                    value="toggle-orders"
+                    onClick={() => setDialogOpen(true)}
+                  >
+                    {isOrderActive
+                      ? 'غیرفعالسازی سفارش گیری'
+                      : 'فعالسازی سفارش گیری'}
+                  </Menu.Item>
+                </Menu.Content>
+              </Menu.Positioner>
+            </Portal>
+          </Menu.Root>
         </Box>
 
       </Flex>
+
+      {/* ── Confirmation Dialog ── */}
+      <Dialog.Root
+        open={dialogOpen}
+        onOpenChange={(details) => setDialogOpen(details.open)}
+      >
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner
+            dir="rtl"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Dialog.Content maxW="420px" w="full" mx="4">
+
+              {/* Close button — insetInlineEnd = physical LEFT in RTL */}
+              <Dialog.CloseTrigger
+                position="absolute"
+                top="2"
+                insetInlineEnd="2"
+                asChild
+              >
+                <IconButton variant="ghost" size="sm" aria-label="بستن">
+                  <X size={16} />
+                </IconButton>
+              </Dialog.CloseTrigger>
+
+              <Dialog.Header pt="6" pb="2" px="6">
+                <Dialog.Title fontSize="lg" fontWeight="semibold">
+                  {isOrderActive ? 'غیرفعالسازی' : 'فعالسازی'}
+                </Dialog.Title>
+              </Dialog.Header>
+
+              <Dialog.Body px="6" py="2">
+                <Text fontSize="sm" color="fg.muted">
+                  {isOrderActive
+                    ? 'آیا از غیرفعال کردن سفارش گیری فروشگاه خود مطمئن هستید ؟'
+                    : 'آیا از فعال کردن سفارش گیری فروشگاه خود مطمئن هستید ؟'}
+                </Text>
+              </Dialog.Body>
+
+              <Dialog.Footer pt="2" pb="4" px="6">
+                {/* DOM order: primary action FIRST = rightmost in RTL */}
+                <Button
+                  colorPalette={isOrderActive ? 'red' : 'green'}
+                  size="sm"
+                  onClick={handleConfirm}
+                >
+                  {isOrderActive ? 'غیرفعال کن' : 'فعال کن'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDialogOpen(false)}
+                >
+                  لغو
+                </Button>
+              </Dialog.Footer>
+
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+
     </Box>
   )
 }
@@ -223,7 +329,7 @@ export function Settings() {
         ]}
       />
 
-      {/* Content card — 1 Column Center layout */}
+      {/* Content card */}
       <Box
         bg="bg"
         borderWidth="1px"
