@@ -169,12 +169,12 @@ function StoreHeader() {
           h="120px"
           flexShrink={0}
           rounded="lg"
-          border="4px solid"
+          borderWidth="4px"
+          borderStyle="solid"
           borderColor="bg.panel"
           shadow="md"
           overflow="hidden"
           bg="bg.subtle"
-          p="2"
           position="relative"
           zIndex={1}
         >

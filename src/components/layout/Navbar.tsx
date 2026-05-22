@@ -69,8 +69,10 @@ export function Navbar({
           <Box display={{ base: 'none', md: 'flex' }}>
             <IconButton
               aria-label={isCompact ? 'بازگشت به عرض کامل' : 'کوچک کردن صفحه'}
-              variant="outline"
+              variant="subtle"
               size="sm"
+              bg="bg.muted"
+              _hover={{ bg: 'bg.emphasized' }}
               onClick={onToggleWidth}
             >
               {isCompact ? <Maximize size={16} /> : <Minimize size={16} />}
