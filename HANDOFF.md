@@ -1,6 +1,6 @@
 # Vitrina — Session Handoff
 > این فایل بعد از هر milestone آپدیت میشه
-> آخرین آپدیت: 2026-05-17
+> آخرین آپدیت: 2026-05-22
 
 ---
 
@@ -23,15 +23,21 @@ git diff HEAD~1 --name-only
 
 ## الان کجاییم
 
-**آخرین milestone:** Settings page کامل شد + Layout و RTL باگ‌ها fix شدن
+**آخرین milestone:** General-Info section کامل شد
+- route `/settings/store-info` → `GeneralInfo.tsx`
+- ۳ tab: عمومی / ارتباطی / آدرس‌ها
 
-**فایل‌های کلیدی که این session ساخته شدن:**
-- `src/components/settings/SettingCard.tsx`
-- `src/components/ui/TitleBar.tsx`
-- `src/pages/Settings.tsx`
-- تغییرات در `src/components/layout/Layout.tsx`
+**فایل‌های ساخته‌شده این session:**
+- `src/pages/settings/GeneralInfo.tsx` — صفحه اصلی با tabs
+- `src/components/settings/info/PhoneCard.tsx`
+- `src/components/settings/info/SocialCard.tsx`
+- `src/components/settings/info/AddressCard.tsx`
+- `src/components/settings/info/AddPhoneDialog.tsx`
+- `src/components/settings/info/AddSocialDialog.tsx`
+- `src/components/settings/info/AddAddressDialog.tsx`
+- `src/App.tsx` — route جدید اضافه شد
 
-**قدم بعدی:** ساخت sub-pages تنظیمات (لیست در بخش بعد)
+**قدم بعدی:** debug runtime (صفحه بالا نمیاد — احتمال Switch/Tabs API issue)
 
 ---
 
@@ -39,7 +45,7 @@ git diff HEAD~1 --name-only
 
 | Route | صفحه | وضعیت |
 |-------|------|--------|
-| `/settings/store-info` | اطلاعات فروشگاه | ⏳ |
+| `/settings/store-info` | اطلاعات فروشگاه | ⚠️ debug |
 | `/settings/shipping` | روش‌های ارسال | ⏳ |
 | `/settings/badges` | نمادها و مجوزها | ⏳ |
 | `/settings/themes` | پوسته‌ها | ⏳ |
@@ -54,19 +60,11 @@ git diff HEAD~1 --name-only
 - **bg="bg"** روی Navbar و content box، **bg="bg.panel"** روی کارت‌های هر صفحه
 - **TitleBar** با `divider` برای عنوان section‌ها در همه صفحات
 - ساختار هر صفحه settings: `<Box bg="bg.panel" borderWidth="1px" rounded="2xl">`
+- **Switch.Control** نه ~~Switch.Track~~ (Chakra v3 API)
 
-## باگ‌های کشف‌شده این session (ثبت‌شده در dev-knowledge)
+## باگ‌های کشف‌شده (ثبت‌شده در CLAUDE.md)
 
 - `textAlign="end"` در RTL = چپ‌چین (باید `"right"` باشه)
 - `alignItems="flex-end"` در column flex = سمت چپ در RTL
 - `bg="bg.subtle"` و `bg="bg"` در dark mode تقریباً یه رنگن
-
----
-
-## راهنمای آپدیت این فایل
-
-بعد از هر milestone (صفحه جدید، feature بزرگ، یا fix مهم):
-1. بخش «الان کجاییم» رو آپدیت کن
-2. جدول صفحات رو به‌روز کن (⏳ → ✅)
-3. تصمیم‌های معماری جدید رو اضافه کن
-4. این فایل رو commit کن همراه بقیه تغییرات
+- `Switch.Track` → **BROKEN**: وجود نداره. Fix: `Switch.Control`

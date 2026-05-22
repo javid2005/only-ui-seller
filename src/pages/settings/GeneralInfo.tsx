@@ -1,0 +1,408 @@
+import { useState } from 'react'
+import {
+  Box, Flex, Text, Button, Input,
+  Tabs, Grid, Field, FileUpload,
+} from '@chakra-ui/react'
+import { Plus, Phone, Share2, MapPin, Upload } from 'lucide-react'
+import { Header }          from '@/components/layout/Header'
+import { TitleBar }        from '@/components/ui/TitleBar'
+import { ButtonFooter }    from '@/components/ui/ButtonFooter'
+import { RichTextEditor }  from '@/components/ui/RichTextEditor'
+import { PhoneCard }       from '@/components/settings/info/PhoneCard'
+import { SocialCard }      from '@/components/settings/info/SocialCard'
+import { AddressCard }     from '@/components/settings/info/AddressCard'
+import { AddPhoneDialog }  from '@/components/settings/info/AddPhoneDialog'
+import { AddSocialDialog } from '@/components/settings/info/AddSocialDialog'
+import { AddAddressDialog } from '@/components/settings/info/AddAddressDialog'
+import type { PhoneCardProps }   from '@/components/settings/info/PhoneCard'
+import type { SocialCardProps }  from '@/components/settings/info/SocialCard'
+import type { AddressCardProps } from '@/components/settings/info/AddressCard'
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type Phone   = Omit<PhoneCardProps,   'onEdit' | 'onDelete'>
+type Social  = Omit<SocialCardProps,  'onEdit' | 'onDelete'>
+type Address = Omit<AddressCardProps, 'onEdit' | 'onDelete' | 'onToggleActive'>
+
+// ─── EmptyState ───────────────────────────────────────────────────────────────
+
+function EmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
+  return (
+    <Flex
+      direction="column"
+      align="center"
+      justify="center"
+      gap="3"
+      py="10"
+      px="4"
+      color="fg.subtle"
+    >
+      <Box
+        w="12"
+        h="12"
+        bg="bg.muted"
+        rounded="full"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        color="fg.muted"
+      >
+        {icon}
+      </Box>
+      <Text fontSize="sm" color="fg.muted" textAlign="center">
+        {text}
+      </Text>
+    </Flex>
+  )
+}
+
+// ─── Tab 1: اطلاعات هویتی ─────────────────────────────────────────────────────
+
+function IdentityTab() {
+  const [name,        setName]        = useState('')
+  const [displayName, setDisplayName] = useState('')
+  const [description, setDescription] = useState('')
+
+  return (
+    <Box display="flex" flexDirection="column" gap="5">
+
+      {/* فیلدهای اصلی */}
+      <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap="4">
+        <Field.Root>
+          <Field.Label fontSize="sm" color="fg">نام فروشگاه</Field.Label>
+          <Input
+            placeholder="نام فروشگاه را وارد کنید"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </Field.Root>
+        <Field.Root>
+          <Field.Label fontSize="sm" color="fg">نام نمایشی</Field.Label>
+          <Input
+            placeholder="نام نمایشی فروشگاه"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+          />
+        </Field.Root>
+      </Grid>
+
+      {/* توضیحات — rich text */}
+      <Field.Root>
+        <Field.Label fontSize="sm" color="fg">توضیحات فروشگاه</Field.Label>
+        <RichTextEditor
+          value={description}
+          onChange={setDescription}
+          placeholder="درباره فروشگاه خود بنویسید..."
+          minH="156px"
+        />
+        <Field.HelperText>تعداد کاراکتر مجاز: حداکثر ۱۵۰۰ کاراکتر</Field.HelperText>
+      </Field.Root>
+
+      {/* آپلود لوگو */}
+      <Field.Root>
+        <Field.Label fontSize="sm" color="fg">لوگوی فروشگاه</Field.Label>
+        <FileUpload.Root
+          accept={{ 'image/*': [] }}
+          maxFileSize={2 * 1024 * 1024}
+          w="full"
+        >
+          <FileUpload.HiddenInput />
+          <FileUpload.Dropzone w="full" minH="128px">
+            <Box
+              w="12"
+              h="12"
+              bg="bg.emphasized"
+              rounded="full"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              color="fg.muted"
+            >
+              <Upload size={24} />
+            </Box>
+            <Box textAlign="center">
+              <Text fontSize="sm" fontWeight="medium" color="fg">
+                فایل را اینجا رها کنید یا کلیک کنید
+              </Text>
+              <Text fontSize="xs" color="fg.muted" mt="1">
+                PNG، JPG یا SVG — حداکثر ۲ مگابایت
+              </Text>
+            </Box>
+          </FileUpload.Dropzone>
+        </FileUpload.Root>
+      </Field.Root>
+
+      <ButtonFooter
+        primary={{ label: 'ذخیره اطلاعات', onClick: () => {} }}
+        back={{ label: 'بازگشت به تنظیمات', onClick: () => {} }}
+      />
+
+    </Box>
+  )
+}
+
+// ─── Tab 2: راه های ارتباطی ──────────────────────────────────────────────────
+
+function ContactTab() {
+  // ─── Phone state ────────────────────────────────────
+  const [phones, setPhones]       = useState<Phone[]>([])
+  const [phoneOpen, setPhoneOpen] = useState(false)
+  const [editPhone, setEditPhone] = useState<Phone | undefined>()
+
+  function submitPhone(data: Omit<Phone, 'id'>) {
+    if (editPhone) {
+      setPhones((prev) => prev.map((p) => p.id === editPhone.id ? { ...data, id: p.id } : p))
+      setEditPhone(undefined)
+    } else {
+      setPhones((prev) => [...prev, { ...data, id: crypto.randomUUID() }])
+    }
+    setPhoneOpen(false)
+  }
+
+  // ─── Social state ────────────────────────────────────
+  const [socials, setSocials]       = useState<Social[]>([])
+  const [socialOpen, setSocialOpen] = useState(false)
+  const [editSocial, setEditSocial] = useState<Social | undefined>()
+
+  function submitSocial(data: Omit<Social, 'id'>) {
+    if (editSocial) {
+      setSocials((prev) => prev.map((s) => s.id === editSocial.id ? { ...data, id: s.id } : s))
+      setEditSocial(undefined)
+    } else {
+      setSocials((prev) => [...prev, { ...data, id: crypto.randomUUID() }])
+    }
+    setSocialOpen(false)
+  }
+
+  return (
+    <Box display="flex" flexDirection="column" gap="6">
+
+      {/* شماره‌های تماس */}
+      <Box>
+        <TitleBar
+          title="شماره‌های تماس"
+          size="md"
+          divider
+          cta={
+            <Button size="sm" variant="outline"
+              onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}
+            >
+              افزودن تلفن
+              <Plus size={16} />
+            </Button>
+          }
+        />
+        <Box pt="4">
+          {phones.length === 0 ? (
+            <EmptyState icon={<Phone size={24} />} text="هنوز شماره تماسی اضافه نشده" />
+          ) : (
+            <Flex direction="column" gap="2">
+              {phones.map((p) => (
+                <PhoneCard
+                  key={p.id}
+                  {...p}
+                  onEdit={(id) => {
+                    const found = phones.find((x) => x.id === id)
+                    if (found) { setEditPhone(found); setPhoneOpen(true) }
+                  }}
+                  onDelete={(id) => setPhones((prev) => prev.filter((x) => x.id !== id))}
+                />
+              ))}
+            </Flex>
+          )}
+        </Box>
+      </Box>
+
+      {/* شبکه‌های اجتماعی */}
+      <Box>
+        <TitleBar
+          title="شبکه‌های اجتماعی"
+          size="md"
+          divider
+          cta={
+            <Button size="sm" variant="outline"
+              onClick={() => { setEditSocial(undefined); setSocialOpen(true) }}
+            >
+              افزودن شبکه
+              <Plus size={16} />
+            </Button>
+          }
+        />
+        <Box pt="4">
+          {socials.length === 0 ? (
+            <EmptyState icon={<Share2 size={24} />} text="هنوز شبکه اجتماعی‌ای اضافه نشده" />
+          ) : (
+            <Flex direction="column" gap="2">
+              {socials.map((s) => (
+                <SocialCard
+                  key={s.id}
+                  {...s}
+                  onEdit={(id) => {
+                    const found = socials.find((x) => x.id === id)
+                    if (found) { setEditSocial(found); setSocialOpen(true) }
+                  }}
+                  onDelete={(id) => setSocials((prev) => prev.filter((x) => x.id !== id))}
+                />
+              ))}
+            </Flex>
+          )}
+        </Box>
+      </Box>
+
+      <ButtonFooter
+        primary={{ label: 'ذخیره اطلاعات ارتباطی', onClick: () => {} }}
+        back={{ label: 'بازگشت به تنظیمات', onClick: () => {} }}
+      />
+
+      <AddPhoneDialog
+        open={phoneOpen}
+        onClose={() => { setPhoneOpen(false); setEditPhone(undefined) }}
+        onSubmit={submitPhone}
+        initial={editPhone ? { type: editPhone.type, number: editPhone.number, label: editPhone.label } : undefined}
+      />
+      <AddSocialDialog
+        open={socialOpen}
+        onClose={() => { setSocialOpen(false); setEditSocial(undefined) }}
+        onSubmit={submitSocial}
+        initial={editSocial ? { title: editSocial.title, platform: editSocial.platform, handle: editSocial.handle } : undefined}
+      />
+    </Box>
+  )
+}
+
+// ─── Tab 3: آدرس ها ──────────────────────────────────────────────────────────
+
+function AddressTab() {
+  const [addresses, setAddresses] = useState<Address[]>([])
+  const [addrOpen, setAddrOpen]   = useState(false)
+  const [editAddr, setEditAddr]   = useState<Address | undefined>()
+
+  function submitAddress(data: Omit<Address, 'id'>) {
+    if (editAddr) {
+      setAddresses((prev) => prev.map((a) => a.id === editAddr.id ? { ...data, id: a.id } : a))
+      setEditAddr(undefined)
+    } else {
+      setAddresses((prev) => [...prev, { ...data, id: crypto.randomUUID() }])
+    }
+    setAddrOpen(false)
+  }
+
+  return (
+    <Box display="flex" flexDirection="column" gap="6">
+
+      <TitleBar
+        title="آدرس‌ها"
+        size="md"
+        divider
+        cta={
+          <Button size="sm" variant="outline"
+            onClick={() => { setEditAddr(undefined); setAddrOpen(true) }}
+          >
+            افزودن آدرس
+            <Plus size={16} />
+          </Button>
+        }
+      />
+
+      <Box>
+        {addresses.length === 0 ? (
+          <EmptyState icon={<MapPin size={24} />} text="هنوز آدرسی اضافه نشده" />
+        ) : (
+          <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap="4">
+            {addresses.map((a) => (
+              <AddressCard
+                key={a.id}
+                {...a}
+                onToggleActive={(id, val) =>
+                  setAddresses((prev) => prev.map((x) => x.id === id ? { ...x, active: val } : x))
+                }
+                onEdit={(id) => {
+                  const found = addresses.find((x) => x.id === id)
+                  if (found) { setEditAddr(found); setAddrOpen(true) }
+                }}
+                onDelete={(id) => setAddresses((prev) => prev.filter((x) => x.id !== id))}
+              />
+            ))}
+          </Grid>
+        )}
+      </Box>
+
+      <ButtonFooter
+        primary={{ label: 'ذخیره آدرس‌ها', onClick: () => {} }}
+        back={{ label: 'بازگشت به تنظیمات', onClick: () => {} }}
+      />
+
+      <AddAddressDialog
+        open={addrOpen}
+        onClose={() => { setAddrOpen(false); setEditAddr(undefined) }}
+        onSubmit={submitAddress}
+        initial={editAddr ? {
+          title: editAddr.title, province: editAddr.province, city: editAddr.city,
+          postal: editAddr.postal, address: editAddr.address,
+          phone: editAddr.phone, active: editAddr.active,
+        } : undefined}
+      />
+    </Box>
+  )
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+
+/**
+ * GeneralInfo — صفحه اطلاعات فروشگاه
+ * Template: One Column Center — panel = fill، محتوا = max 960px centered
+ * Route: /settings/store-info
+ */
+export function GeneralInfo() {
+  return (
+    <Flex direction="column" gap="4" w="full">
+
+      <Header
+        title="اطلاعات فروشگاه"
+        breadcrumbs={[
+          { label: 'تنظیمات', href: '/settings' },
+          { label: 'اطلاعات فروشگاه' },
+        ]}
+      />
+
+      {/* Panel: fill — One Column Center template */}
+      <Box
+        bg="bg.panel"
+        borderWidth="1px"
+        borderColor="border"
+        rounded="2xl"
+        pt="6"
+        pb="10"
+        px="6"
+        w="full"
+        overflow="hidden"
+      >
+        {/* Inner container: max 960px centered */}
+        <Box maxW="960px" mx="auto" w="full">
+          <Tabs.Root defaultValue="identity" variant="enclosed" w="full">
+
+            <Tabs.List w="full">
+              <Tabs.Trigger value="identity">اطلاعات هویتی</Tabs.Trigger>
+              <Tabs.Trigger value="contact">راه های ارتباطی</Tabs.Trigger>
+              <Tabs.Trigger value="address">آدرس ها</Tabs.Trigger>
+            </Tabs.List>
+
+            <Tabs.Content value="identity">
+              <IdentityTab />
+            </Tabs.Content>
+
+            <Tabs.Content value="contact">
+              <ContactTab />
+            </Tabs.Content>
+
+            <Tabs.Content value="address">
+              <AddressTab />
+            </Tabs.Content>
+
+          </Tabs.Root>
+        </Box>
+      </Box>
+
+    </Flex>
+  )
+}

@@ -10,6 +10,7 @@
 | Chakra v3 tokens | `dev-knowledge/design-systems/chakra-ui-v3/tokens.md` |
 | RTL در Chakra | `dev-knowledge/design-systems/chakra-ui-v3/rtl.md` |
 | Figma→Code workflow | `dev-knowledge/universal/figma-to-code.md` |
+| Page Templates | `dev-knowledge/projects/vitrina/page-templates.md` |
 
 ## Stack
 - React 19 + Vite + TypeScript
