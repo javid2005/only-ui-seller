@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Dialog, Button, Portal, CloseButton, Field, Input,
-  SegmentGroup, Flex, Text,
+  SegmentGroup, Flex,
 } from '@chakra-ui/react'
 import type { PhoneCardProps } from './PhoneCard'
 
@@ -66,7 +66,7 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">
                 {isEdit ? 'ویرایش شماره تماس' : 'افزودن شماره تماس'}
               </Dialog.Title>
-              <Dialog.CloseTrigger asChild position="absolute" top="4" left="4">
+              <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" />
               </Dialog.CloseTrigger>
             </Dialog.Header>
@@ -93,10 +93,10 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
               </Field.Root>
 
               {/* شماره تلفن */}
-              <Field.Root>
+              <Field.Root required>
                 <Field.Label fontSize="sm" color="fg">
                   شماره تلفن
-                  <Text as="span" color="fg.error" ms="1">*</Text>
+                  <Field.RequiredIndicator />
                 </Field.Label>
                 <Input
                   placeholder="مثال: ۰۲۱۸۸۱۲۳۴۵۶"

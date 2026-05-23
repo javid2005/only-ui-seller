@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Box, Flex, Text, Button, Input,
-  Tabs, Grid, Field, FileUpload,
+  Tabs, Grid, Field, FileUpload, EmptyState,
 } from '@chakra-ui/react'
 import { Plus, Phone, Share2, MapPin, Upload } from 'lucide-react'
 import { Header }          from '@/components/layout/Header'
@@ -24,35 +24,16 @@ type Phone   = Omit<PhoneCardProps,   'onEdit' | 'onDelete'>
 type Social  = Omit<SocialCardProps,  'onEdit' | 'onDelete'>
 type Address = Omit<AddressCardProps, 'onEdit' | 'onDelete' | 'onToggleActive'>
 
-// ─── EmptyState ───────────────────────────────────────────────────────────────
+// ─── StoreEmptyState ──────────────────────────────────────────────────────────
 
-function EmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
+function StoreEmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <Flex
-      direction="column"
-      align="center"
-      justify="center"
-      gap="3"
-      py="10"
-      px="4"
-      color="fg.subtle"
-    >
-      <Box
-        w="12"
-        h="12"
-        bg="bg.muted"
-        rounded="full"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        color="fg.muted"
-      >
-        {icon}
-      </Box>
-      <Text fontSize="sm" color="fg.muted" textAlign="center">
-        {text}
-      </Text>
-    </Flex>
+    <EmptyState.Root>
+      <EmptyState.Content>
+        <EmptyState.Indicator>{icon}</EmptyState.Indicator>
+        <EmptyState.Title>{text}</EmptyState.Title>
+      </EmptyState.Content>
+    </EmptyState.Root>
   )
 }
 
@@ -64,22 +45,25 @@ function IdentityTab() {
   const [description, setDescription] = useState('')
 
   return (
-    <Box display="flex" flexDirection="column" gap="5">
+    <Box display="flex" flexDirection="column" gap="4">
 
       {/* فیلدهای اصلی */}
       <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap="4">
-        <Field.Root>
-          <Field.Label fontSize="sm" color="fg">نام فروشگاه</Field.Label>
+        <Field.Root required>
+          <Field.Label fontSize="sm" fontWeight="semibold">
+            نام فروشگاه به فارسی
+            <Field.RequiredIndicator />
+          </Field.Label>
           <Input
-            placeholder="نام فروشگاه را وارد کنید"
+            placeholder="عنوان روش ارسال را وارد نمایید"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </Field.Root>
         <Field.Root>
-          <Field.Label fontSize="sm" color="fg">نام نمایشی</Field.Label>
+          <Field.Label fontSize="sm" fontWeight="semibold">نام فروشگاه به انگلیسی</Field.Label>
           <Input
-            placeholder="نام نمایشی فروشگاه"
+            placeholder="عنوان روش ارسال را وارد نمایید"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
@@ -88,7 +72,7 @@ function IdentityTab() {
 
       {/* توضیحات — rich text */}
       <Field.Root>
-        <Field.Label fontSize="sm" color="fg">توضیحات فروشگاه</Field.Label>
+        <Field.Label fontSize="sm" fontWeight="semibold">توضیحات فروشگاه</Field.Label>
         <RichTextEditor
           value={description}
           onChange={setDescription}
@@ -100,7 +84,7 @@ function IdentityTab() {
 
       {/* آپلود لوگو */}
       <Field.Root>
-        <Field.Label fontSize="sm" color="fg">لوگوی فروشگاه</Field.Label>
+        <Field.Label fontSize="sm" fontWeight="semibold">لوگو فروشگاه</Field.Label>
         <FileUpload.Root
           accept={{ 'image/*': [] }}
           maxFileSize={2 * 1024 * 1024}
@@ -108,33 +92,25 @@ function IdentityTab() {
         >
           <FileUpload.HiddenInput />
           <FileUpload.Dropzone w="full" minH="128px">
-            <Box
-              w="12"
-              h="12"
-              bg="bg.emphasized"
-              rounded="full"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              color="fg.muted"
-            >
-              <Upload size={24} />
-            </Box>
-            <Box textAlign="center">
-              <Text fontSize="sm" fontWeight="medium" color="fg">
-                فایل را اینجا رها کنید یا کلیک کنید
-              </Text>
-              <Text fontSize="xs" color="fg.muted" mt="1">
-                PNG، JPG یا SVG — حداکثر ۲ مگابایت
-              </Text>
-            </Box>
+            <Upload size={20} />
+            <FileUpload.DropzoneContent>
+              <Box fontSize="sm" fontWeight="semibold" color="fg" textAlign="center">
+                برای بارگذاری، اینجا بکشید و رها کنید یا کلیک کنید
+              </Box>
+              <Box fontSize="sm" color="fg.muted" textAlign="center">
+                حجم فایل: حداکثر ۲ مگابایت
+                <br />
+                فرمت تصویر مجاز: png, jpg, jpeg, webp, heic
+              </Box>
+            </FileUpload.DropzoneContent>
           </FileUpload.Dropzone>
+          <FileUpload.List />
         </FileUpload.Root>
       </Field.Root>
 
       <ButtonFooter
-        primary={{ label: 'ذخیره اطلاعات', onClick: () => {} }}
-        back={{ label: 'بازگشت به تنظیمات', onClick: () => {} }}
+        primary={{ label: 'ذخیره', onClick: () => {} }}
+        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => {} }}
       />
 
     </Box>
@@ -194,7 +170,7 @@ function ContactTab() {
         />
         <Box pt="4">
           {phones.length === 0 ? (
-            <EmptyState icon={<Phone size={24} />} text="هنوز شماره تماسی اضافه نشده" />
+            <StoreEmptyState icon={<Phone size={24} />} text="هنوز شماره تماسی اضافه نشده" />
           ) : (
             <Flex direction="column" gap="2">
               {phones.map((p) => (
@@ -230,7 +206,7 @@ function ContactTab() {
         />
         <Box pt="4">
           {socials.length === 0 ? (
-            <EmptyState icon={<Share2 size={24} />} text="هنوز شبکه اجتماعی‌ای اضافه نشده" />
+            <StoreEmptyState icon={<Share2 size={24} />} text="هنوز شبکه اجتماعی‌ای اضافه نشده" />
           ) : (
             <Flex direction="column" gap="2">
               {socials.map((s) => (
@@ -250,8 +226,8 @@ function ContactTab() {
       </Box>
 
       <ButtonFooter
-        primary={{ label: 'ذخیره اطلاعات ارتباطی', onClick: () => {} }}
-        back={{ label: 'بازگشت به تنظیمات', onClick: () => {} }}
+        primary={{ label: 'ذخیره', onClick: () => {} }}
+        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => {} }}
       />
 
       <AddPhoneDialog
@@ -306,7 +282,7 @@ function AddressTab() {
 
       <Box>
         {addresses.length === 0 ? (
-          <EmptyState icon={<MapPin size={24} />} text="هنوز آدرسی اضافه نشده" />
+          <StoreEmptyState icon={<MapPin size={24} />} text="هنوز آدرسی اضافه نشده" />
         ) : (
           <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap="4">
             {addresses.map((a) => (
@@ -328,8 +304,8 @@ function AddressTab() {
       </Box>
 
       <ButtonFooter
-        primary={{ label: 'ذخیره آدرس‌ها', onClick: () => {} }}
-        back={{ label: 'بازگشت به تنظیمات', onClick: () => {} }}
+        primary={{ label: 'ذخیره', onClick: () => {} }}
+        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => {} }}
       />
 
       <AddAddressDialog
@@ -360,7 +336,8 @@ export function GeneralInfo() {
       <Header
         title="اطلاعات فروشگاه"
         breadcrumbs={[
-          { label: 'تنظیمات', href: '/settings' },
+          { label: 'داشبورد', href: '/' },
+          { label: 'تنظیمات فروشگاه', href: '/settings' },
           { label: 'اطلاعات فروشگاه' },
         ]}
       />
@@ -371,17 +348,17 @@ export function GeneralInfo() {
         borderWidth="1px"
         borderColor="border"
         rounded="2xl"
-        pt="6"
-        pb="10"
-        px="6"
+        pt={{ base: '4', md: '6' }}
+        pb={{ base: '4', md: '10' }}
+        px={{ base: '4', md: '6' }}
         w="full"
-        overflow="hidden"
+        overflow="clip"
       >
         {/* Inner container: max 960px centered */}
         <Box maxW="960px" mx="auto" w="full">
           <Tabs.Root defaultValue="identity" variant="enclosed" w="full">
 
-            <Tabs.List w="full">
+            <Tabs.List w="full" overflowX="auto" flexShrink="0">
               <Tabs.Trigger value="identity">اطلاعات هویتی</Tabs.Trigger>
               <Tabs.Trigger value="contact">راه های ارتباطی</Tabs.Trigger>
               <Tabs.Trigger value="address">آدرس ها</Tabs.Trigger>

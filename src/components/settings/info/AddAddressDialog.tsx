@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Dialog, Button, Portal, CloseButton, Field, Input, Textarea,
-  NativeSelect, Flex, Box, Text, Grid,
+  NativeSelect, Flex, Box, Grid,
 } from '@chakra-ui/react'
 import { MapPin } from 'lucide-react'
 import type { AddressCardProps } from './AddressCard'
@@ -145,7 +145,7 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial }: AddAddres
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">
                 {isEdit ? 'ویرایش آدرس' : 'افزودن آدرس'}
               </Dialog.Title>
-              <Dialog.CloseTrigger asChild position="absolute" top="4" left="4">
+              <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" />
               </Dialog.CloseTrigger>
             </Dialog.Header>
@@ -163,10 +163,10 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial }: AddAddres
               </Field.Root>
 
               {/* عنوان آدرس */}
-              <Field.Root>
+              <Field.Root required>
                 <Field.Label fontSize="sm" color="fg">
                   عنوان آدرس
-                  <Text as="span" color="fg.error" ms="1">*</Text>
+                  <Field.RequiredIndicator />
                 </Field.Label>
                 <Input
                   placeholder="مثال: دفتر مرکزی"
@@ -204,10 +204,10 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial }: AddAddres
               </Grid>
 
               {/* آدرس کامل */}
-              <Field.Root>
+              <Field.Root required>
                 <Field.Label fontSize="sm" color="fg">
                   آدرس کامل
-                  <Text as="span" color="fg.error" ms="1">*</Text>
+                  <Field.RequiredIndicator />
                 </Field.Label>
                 <Textarea
                   placeholder="خیابان، کوچه، پلاک..."

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Dialog, Button, Portal, CloseButton, Field, Input,
-  NativeSelect, Flex, Text,
+  NativeSelect, Flex,
 } from '@chakra-ui/react'
 import type { SocialCardProps, Platform } from './SocialCard'
 
@@ -71,7 +71,7 @@ export function AddSocialDialog({ open, onClose, onSubmit, initial }: AddSocialD
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">
                 {isEdit ? 'ویرایش شبکه اجتماعی' : 'افزودن شبکه اجتماعی'}
               </Dialog.Title>
-              <Dialog.CloseTrigger asChild position="absolute" top="4" left="4">
+              <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" />
               </Dialog.CloseTrigger>
             </Dialog.Header>
@@ -80,10 +80,10 @@ export function AddSocialDialog({ open, onClose, onSubmit, initial }: AddSocialD
             <Dialog.Body px="6" py="5" display="flex" flexDirection="column" gap="5">
 
               {/* نوع شبکه */}
-              <Field.Root>
+              <Field.Root required>
                 <Field.Label fontSize="sm" color="fg">
                   پلتفرم
-                  <Text as="span" color="fg.error" ms="1">*</Text>
+                  <Field.RequiredIndicator />
                 </Field.Label>
                 <NativeSelect.Root>
                   <NativeSelect.Field
@@ -112,10 +112,10 @@ export function AddSocialDialog({ open, onClose, onSubmit, initial }: AddSocialD
               </Field.Root>
 
               {/* آدرس / یوزرنیم */}
-              <Field.Root>
+              <Field.Root required>
                 <Field.Label fontSize="sm" color="fg">
                   آدرس / یوزرنیم
-                  <Text as="span" color="fg.error" ms="1">*</Text>
+                  <Field.RequiredIndicator />
                 </Field.Label>
                 <Input
                   placeholder="مثال: @mystore"
