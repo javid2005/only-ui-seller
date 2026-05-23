@@ -77,6 +77,13 @@ export function RichTextEditor({
       borderColor="border"
       rounded="md"
       overflow="hidden"
+      sx={{
+        '&:focus-within': {
+          borderColor: 'var(--chakra-colors-border) !important',
+          boxShadow: 'none !important',
+          outline: 'none !important',
+        },
+      }}
     >
       {/* ── Toolbar ─────────────────────────────────────── */}
       <Flex
@@ -145,7 +152,7 @@ export function RichTextEditor({
             boxShadow: 'none !important',
             border: 'none !important',
             minHeight: minH,
-            padding: '20px',
+            padding: '12px',
             fontSize: 'var(--chakra-fontSizes-sm)',
             color: 'var(--chakra-colors-fg)',
             lineHeight: '1.625',
