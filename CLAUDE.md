@@ -12,6 +12,36 @@
 | Figma→Code workflow | `dev-knowledge/universal/figma-to-code.md` |
 | Page Templates | `dev-knowledge/projects/vitrina/page-templates.md` |
 
+---
+
+## Figma → Code Protocol (اجباری)
+
+هر task که از Figma به کد تبدیل میشه — حتی «اصلاح کن» / «مقایسه کن» / «ریسپانسیو کن» — این gate رو رد نکن.
+
+**Component Resolution (به ترتیب، اجباری):**
+```
+1. Local first → src/components/ رو grep کن. موجوده؟ import کن (نساز).
+2. DS second   → از Chakra UI MCP بگیر. هیچ‌وقت کامپوننت DS رو از HTML/div خام rebuild نکن.
+3. Build last  → فقط اگه هیچ‌کدوم نبود، با primitives (Box/Flex/Text). صفر hardcode.
+```
+
+**MCP servers این پروژه:**
+- Chakra UI MCP — `mcp__chakra-ui__list_components` / `get_component_example` / `get_component_props` / `get_theme`
+- Figma MCP — `get_design_context` / `get_screenshot` / `get_variable_defs`
+
+**Definition of Done — آخر هر task point-by-point گزارش بده:**
+- [ ] Component Resolution رعایت شد (Local→DS MCP→Build) — کدوم مسیر؟
+- [ ] صفر hardcode (رنگ/spacing/font) — همه token
+- [ ] logical CSS props (`insetInlineEnd` نه `right`)
+- [ ] RTL DOM order (اولین child = rightmost)
+- [ ] responsive روی 480 / 1440 / 1920 چک شد
+- [ ] `pnpm type-check` سبز
+
+اگه چکی skip شد → با ⚠️ علامت بزن، نگو ✅.
+مرجع عمیق: `dev-knowledge/universal/figma-to-code.md` · pipeline قدم‌به‌قدم: skill `figma-implement-design`
+
+---
+
 ## Stack
 - React 19 + Vite + TypeScript
 - Chakra UI v3
