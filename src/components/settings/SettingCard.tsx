@@ -40,9 +40,7 @@ export function SettingCard({
     display: 'flex',
     alignItems: 'center',
     gap: '4',
-    flex: '1 0 0',
-    maxW: '472px',
-    minW: '390px',
+    w: 'full',
     overflow: 'hidden',
     p: '6',
     rounded: 'lg',
@@ -117,9 +115,6 @@ export function SettingCard({
           fontSize="sm"
           color={isDisabled ? 'fg.subtle' : 'fg.muted'}
           textAlign="right"
-          overflow="hidden"
-          textOverflow="ellipsis"
-          whiteSpace="nowrap"
           w="full"
         >
           {description}

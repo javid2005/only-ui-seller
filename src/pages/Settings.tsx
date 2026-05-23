@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { useCompactMode } from '@/contexts/CompactModeContext'
 import storeCover from '@/assets/store/store-cover.jpg'
 import storeThumbnail from '@/assets/store/store-thumbnail.jpg'
 import {
   Box, Flex, Text, Badge, IconButton,
-  Menu, Dialog, Button, Portal,
+  Menu, Dialog, Button, Portal, Grid,
 } from '@chakra-ui/react'
 import {
   Truck,
@@ -114,18 +115,17 @@ const SETTINGS_SECTIONS: Section[] = [
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function CardList({ cards }: { cards: Section['cards'] }) {
+  const isCompact = useCompactMode()
   return (
-    <Flex
-      flexWrap="wrap"
+    <Grid
+      templateColumns={isCompact ? '1fr' : { base: '1fr', lg: 'repeat(2, 1fr)' }}
       gap="4"
-      justifyContent="flex-end"
-      alignItems="flex-start"
       w="full"
     >
       {cards.map((card) => (
         <SettingCard key={card.title} {...card} />
       ))}
-    </Flex>
+    </Grid>
   )
 }
 

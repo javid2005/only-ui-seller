@@ -285,10 +285,29 @@ src/
     SidebarItem.tsx  — collapsible items w/ sub-lines (Chakra Collapsible + ChevronDown)
     Header.tsx       — page title + breadcrumb + CTA slot
     UserMenu.tsx     — avatar dropdown (Menu.Root, Box as="button" trigger, Portal+dir="rtl")
+  components/settings/
+    SettingCard.tsx  — navigation card (icon + title + description + chevron, RTL)
+    info/
+      AddressCard.tsx      — address display card (map placeholder, active toggle, 3-dot menu)
+      AddAddressDialog.tsx — add/edit address dialog (2-col desktop, map area)
+      PhoneCard.tsx        — phone number card (3-dot menu)
+      AddPhoneDialog.tsx   — add/edit phone dialog (SegmentGroup type selector)
+      SocialCard.tsx       — social network card (brand SVG icons, 3-dot menu)
+      AddSocialDialog.tsx  — add/edit social dialog
+  components/ui/
+    ButtonFooter.tsx  — footer با دکمه‌های ذخیره/لغو/بازگشت
+    RichTextEditor.tsx — Tiptap editor (Global emotion CSS برای ProseMirror styles)
+    TitleBar.tsx      — section header با title + optional CTA
   contexts/
-    ColorModeContext.tsx — custom dark mode (.dark on <html>, localStorage)
+    ColorModeContext.tsx  — custom dark mode (.dark on <html>, localStorage)
+    CompactModeContext.tsx — 512px simulation context (useCompactMode hook)
   pages/
     Dashboard.tsx
+    Settings.tsx          — settings landing page با SettingCard grid
+    settings/
+      GeneralInfo.tsx     — اطلاعات فروشگاه (3 tabs: identity / contact / address)
+  services/
+    api.ts
   theme/
     index.ts         — createSystem entry
     tokens.ts        — Vitrina custom tokens + full reference comment
