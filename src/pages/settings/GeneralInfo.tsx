@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
   Box, Flex, Text, Button, Input,
   Tabs, Grid, Field, FileUpload, EmptyState,
@@ -43,12 +44,13 @@ function IdentityTab() {
   const [name,        setName]        = useState('')
   const [displayName, setDisplayName] = useState('')
   const [description, setDescription] = useState('')
+  const isCompact = useCompactMode()
 
   return (
     <Box display="flex" flexDirection="column" gap="4">
 
       {/* فیلدهای اصلی */}
-      <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap="4">
+      <Grid templateColumns={isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }} gap="4">
         <Field.Root required>
           <Field.Label fontSize="sm" fontWeight="semibold">
             نام فروشگاه به فارسی
@@ -120,6 +122,8 @@ function IdentityTab() {
 // ─── Tab 2: راه های ارتباطی ──────────────────────────────────────────────────
 
 function ContactTab() {
+  const isCompact = useCompactMode()
+
   // ─── Phone state ────────────────────────────────────
   const [phones, setPhones]       = useState<Phone[]>([])
   const [phoneOpen, setPhoneOpen] = useState(false)
@@ -172,7 +176,7 @@ function ContactTab() {
           {phones.length === 0 ? (
             <StoreEmptyState icon={<Phone size={24} />} text="هنوز شماره تماسی اضافه نشده" />
           ) : (
-            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }} gap="4">
+            <Grid templateColumns={isCompact ? '1fr' : { base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }} gap="4">
               {phones.map((p) => (
                 <PhoneCard
                   key={p.id}
@@ -208,7 +212,7 @@ function ContactTab() {
           {socials.length === 0 ? (
             <StoreEmptyState icon={<Share2 size={24} />} text="هنوز شبکه اجتماعی‌ای اضافه نشده" />
           ) : (
-            <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap="4">
+            <Grid templateColumns={isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }} gap="4">
               {socials.map((s) => (
                 <SocialCard
                   key={s.id}
@@ -248,6 +252,7 @@ function ContactTab() {
 // ─── Tab 3: آدرس ها ──────────────────────────────────────────────────────────
 
 function AddressTab() {
+  const isCompact = useCompactMode()
   const [addresses, setAddresses] = useState<Address[]>([])
   const [addrOpen, setAddrOpen]   = useState(false)
   const [editAddr, setEditAddr]   = useState<Address | undefined>()
@@ -283,7 +288,7 @@ function AddressTab() {
         {addresses.length === 0 ? (
           <StoreEmptyState icon={<MapPin size={24} />} text="هنوز آدرسی اضافه نشده" />
         ) : (
-          <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap="4">
+          <Grid templateColumns={isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }} gap="4">
             {addresses.map((a) => (
               <AddressCard
                 key={a.id}
@@ -328,6 +333,8 @@ function AddressTab() {
  * Route: /settings/store-info
  */
 export function GeneralInfo() {
+  const isCompact = useCompactMode()
+
   return (
     <Flex direction="column" gap="4" w="full">
 
@@ -346,9 +353,9 @@ export function GeneralInfo() {
         borderWidth="1px"
         borderColor="border"
         rounded="2xl"
-        pt={{ base: '4', md: '6' }}
-        pb={{ base: '4', md: '10' }}
-        px={{ base: '4', md: '6' }}
+        pt={isCompact ? '4' : { base: '4', md: '6' }}
+        pb={isCompact ? '4' : { base: '4', md: '10' }}
+        px={isCompact ? '4' : { base: '4', md: '6' }}
         w="full"
         overflow="clip"
       >

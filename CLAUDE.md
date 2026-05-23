@@ -88,6 +88,34 @@
 - Drawer header: logo (FIRST=right) + CloseButton (LAST=left) — no title
 - Always add `dir="rtl"` to `Drawer.Positioner`
 
+### CompactMode در صفحات (اجباری برای هر page جدید)
+
+CSS media queries به **viewport** نگاه می‌کنن نه container — پس `maxW="512px"` به تنهایی کافی نیست.
+هر page که responsive grid یا padding داره باید از context استفاده کنه:
+
+```tsx
+import { useCompactMode } from '@/contexts/CompactModeContext'
+
+function MyPage() {
+  const isCompact = useCompactMode()
+
+  // Panel padding
+  pt={isCompact ? '4' : { base: '4', md: '6' }}
+  pb={isCompact ? '4' : { base: '4', md: '10' }}
+  px={isCompact ? '4' : { base: '4', md: '6' }}
+
+  // Grid columns
+  templateColumns={isCompact ? '1fr' : { base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }}
+}
+```
+
+**قوانین:**
+- `isCompact=true` → همه grids = `'1fr'` (single column)
+- `isCompact=true` → panel padding = `'4'` (16px) همه طرف
+- `Layout.tsx` provider رو wrap می‌کنه — نیازی به Provider اضافه در page نیست
+- هر sub-component داخل page (مثل Tab functions) هم باید `useCompactMode()` بگیره اگه grid داره
+- SegmentGroup.Indicator → همیشه `bg="white"` (کارا: `bg.default` broken)
+
 ---
 
 ## Token Reference

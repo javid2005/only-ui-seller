@@ -3,6 +3,7 @@ import { Box, Flex, Drawer, Portal, CloseButton, IconButton } from '@chakra-ui/r
 import { Outlet } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
+import { CompactModeProvider } from '@/contexts/CompactModeContext'
 import logoSrc from '../../assets/logo.svg'
 
 export function Layout() {
@@ -11,6 +12,7 @@ export function Layout() {
 
   return (
     /* Outer: full-width, natural height — window scrolls (RTL scrollbar at browser left edge) */
+    <CompactModeProvider value={isCompact}>
     <Flex direction="column" minH="100dvh">
 
       {/* Navbar: full-width — inner content capped */}
@@ -94,5 +96,6 @@ export function Layout() {
       </Drawer.Root>
 
     </Flex>
+    </CompactModeProvider>
   )
 }
