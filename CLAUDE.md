@@ -66,6 +66,7 @@
 - Dark mode: toggle `.dark` class on `document.documentElement` (NOT a wrapper div) — Portal content lives outside React tree and needs the class on `<html>` to get dark tokens
 - Color mode toggle → uses `<Theme appearance="light"|"dark">` wrapper in `ColorModeProvider`; persists to `localStorage` key `vitrina-color-mode`
 - Avatar.Root / complex components → do NOT forward refs for `asChild`. Wrap in `<Box as="button" type="button">` first
+- `sx` prop → **nested selectors NOT injected** (`'& .child': {...}`, `'&:focus-within': {...}` کار نمی‌کنن). برای nested CSS از `editorProps.attributes.style` (Tiptap)، `_focusWithin` prop (Chakra)، یا `Global` از `@emotion/react` استفاده کن
 
 ### RTL in Portal components (Menu, Drawer, Popover, Tooltip)
 - Portal content renders under `<body>` but DOES inherit `dir="rtl"` from `<html>` via CSS cascade
@@ -114,7 +115,7 @@ function MyPage() {
 - `isCompact=true` → panel padding = `'4'` (16px) همه طرف
 - `Layout.tsx` provider رو wrap می‌کنه — نیازی به Provider اضافه در page نیست
 - هر sub-component داخل page (مثل Tab functions) هم باید `useCompactMode()` بگیره اگه grid داره
-- SegmentGroup.Indicator → همیشه `bg="white"` (کارا: `bg.default` broken)
+- SegmentGroup.Indicator → `bg="bg.panel"` (white در light، gray.900 در dark) — `bg="white"` dark mode رو می‌شکنه، `bg.default` broken
 
 ---
 
@@ -192,6 +193,11 @@ Pattern: `{color}.{variant}` — available for:
 | `surface.subtle` | gray.50 | gray.900 |
 | `surface.muted` | gray.100 | gray.800 |
 | `surface.card` | white | gray.900 |
+
+### Vitrina Background Helpers (custom)
+| Token | Light | Dark |
+|-------|-------|------|
+| `bg.teal` | teal.50 | teal.950 |
 
 ---
 

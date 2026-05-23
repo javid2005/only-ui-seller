@@ -65,9 +65,9 @@ function MapArea({ minH }: { minH?: string }) {
         top="50%"
         left="50%"
         transform="translate(-50%, -50%)"
-        color="brand.solid"
+        color="red.solid"
       >
-        <MapPin size={32} fill="currentColor" />
+        <MapPin size={32} />
       </Box>
       {/*
         Map controls at physical-right of map.

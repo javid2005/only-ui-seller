@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
   Box, Flex, Text, Button, Input,
@@ -29,7 +30,7 @@ type Address = Omit<AddressCardProps, 'onEdit' | 'onDelete' | 'onToggleActive'>
 
 function StoreEmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <EmptyState.Root>
+    <EmptyState.Root size="sm">
       <EmptyState.Content>
         <EmptyState.Indicator>{icon}</EmptyState.Indicator>
         <EmptyState.Title>{text}</EmptyState.Title>
@@ -41,6 +42,7 @@ function StoreEmptyState({ icon, text }: { icon: React.ReactNode; text: string }
 // ─── Tab 1: اطلاعات هویتی ─────────────────────────────────────────────────────
 
 function IdentityTab() {
+  const navigate = useNavigate()
   const [name,        setName]        = useState('')
   const [displayName, setDisplayName] = useState('')
   const [description, setDescription] = useState('')
@@ -112,7 +114,7 @@ function IdentityTab() {
 
       <ButtonFooter
         primary={{ label: 'ذخیره', onClick: () => {} }}
-        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => {} }}
+        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => navigate('/settings') }}
       />
 
     </Box>
@@ -122,6 +124,7 @@ function IdentityTab() {
 // ─── Tab 2: راه های ارتباطی ──────────────────────────────────────────────────
 
 function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChange: (phones: Phone[]) => void }) {
+  const navigate = useNavigate()
   const isCompact = useCompactMode()
 
   // ─── Phone state ────────────────────────────────────
@@ -167,8 +170,8 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
             <Button size="sm" variant="outline" colorPalette="teal"
               onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}
             >
-              افزودن شماره
               <Plus size={16} />
+              افزودن شماره
             </Button>
           }
         />
@@ -203,8 +206,8 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
             <Button size="sm" variant="outline" colorPalette="teal"
               onClick={() => { setEditSocial(undefined); setSocialOpen(true) }}
             >
-              افزودن شبکه
               <Plus size={16} />
+              افزودن شبکه
             </Button>
           }
         />
@@ -230,7 +233,7 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
       </Box>
 
       <ButtonFooter
-        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => {} }}
+        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => navigate('/settings') }}
       />
 
       <AddPhoneDialog
@@ -252,6 +255,7 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
 // ─── Tab 3: آدرس ها ──────────────────────────────────────────────────────────
 
 function AddressTab({ phones }: { phones: Phone[] }) {
+  const navigate = useNavigate()
   const isCompact = useCompactMode()
   const [addresses, setAddresses] = useState<Address[]>([])
   const [addrOpen, setAddrOpen]   = useState(false)
@@ -278,8 +282,8 @@ function AddressTab({ phones }: { phones: Phone[] }) {
           <Button size="sm" variant="outline" colorPalette="teal"
             onClick={() => { setEditAddr(undefined); setAddrOpen(true) }}
           >
-            افزودن آدرس
             <Plus size={16} />
+            افزودن آدرس
           </Button>
         }
       />
@@ -288,7 +292,7 @@ function AddressTab({ phones }: { phones: Phone[] }) {
         {addresses.length === 0 ? (
           <StoreEmptyState icon={<MapPin size={24} />} text="هنوز آدرسی اضافه نشده" />
         ) : (
-          <Grid templateColumns={isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }} gap="4">
+          <Grid templateColumns={isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }} gap="4" alignItems="start">
             {addresses.map((a) => (
               <AddressCard
                 key={a.id}
@@ -308,7 +312,7 @@ function AddressTab({ phones }: { phones: Phone[] }) {
       </Box>
 
       <ButtonFooter
-        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => {} }}
+        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => navigate('/settings') }}
       />
 
       <AddAddressDialog
@@ -356,7 +360,7 @@ export function GeneralInfo() {
         borderColor="border"
         rounded="2xl"
         pt={isCompact ? '4' : { base: '4', md: '6' }}
-        pb={isCompact ? '4' : { base: '4', md: '10' }}
+        pb={isCompact ? '4' : { base: '4', md: '6' }}
         px={isCompact ? '4' : { base: '4', md: '6' }}
         w="full"
         overflow="clip"

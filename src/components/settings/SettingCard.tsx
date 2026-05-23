@@ -54,7 +54,7 @@ export function SettingCard({
     textDecoration: 'none',
     _hover: isDisabled
       ? {}
-      : { bg: 'teal.subtle', borderColor: 'brand.border' },
+      : { bg: 'bg.teal', borderColor: 'brand.border' },
   }
 
   const content = (

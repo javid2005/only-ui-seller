@@ -83,7 +83,7 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
                   onValueChange={(e) => setType(e.value as PhoneType)}
                   w="full"
                 >
-                  <SegmentGroup.Indicator bg="white" />
+                  <SegmentGroup.Indicator bg="bg.panel" />
                   {PHONE_TYPES.map((t) => (
                     <SegmentGroup.Item key={t.value} value={t.value} flex="1">
                       <SegmentGroup.ItemText fontSize="sm">{t.label}</SegmentGroup.ItemText>

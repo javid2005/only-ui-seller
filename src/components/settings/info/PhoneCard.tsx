@@ -37,7 +37,7 @@ export function PhoneCard({ id, number, label, type, onEdit, onDelete }: PhoneCa
       rounded="xl"
       w="full"
       overflow="hidden"
-      _hover={{ bg: 'teal.subtle', borderColor: 'teal.focusRing' }}
+      _hover={{ bg: 'bg.teal', borderColor: 'teal.focusRing' }}
     >
       {/* FIRST = rightmost in RTL — آیکن تلفن */}
       <Box

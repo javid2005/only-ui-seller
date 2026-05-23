@@ -143,6 +143,10 @@ export const vitrinaTokens = defineConfig({
           focusRing: { value: { _light: '{colors.teal.600}', _dark: '{colors.teal.400}' } },
           border: { value: { _light: '{colors.teal.300}', _dark: '{colors.teal.700}' } },
         },
+        // ── Background helpers ───────────────────────────────
+        bg: {
+          teal: { value: { _light: '{colors.teal.50}', _dark: '{colors.teal.950}' } },
+        },
         // ── Surface helpers ──────────────────────────────────
         surface: {
           subtle: { value: { _light: '{colors.gray.50}', _dark: '{colors.gray.900}' } },
