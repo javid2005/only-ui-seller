@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Dialog, Button, Portal, CloseButton, Field, Input,
-  NativeSelect, Flex,
+  Select, createListCollection, Flex,
 } from '@chakra-ui/react'
 import type { SocialCardProps, Platform } from './SocialCard'
 
@@ -18,13 +18,18 @@ interface AddSocialDialogProps {
 
 const PLATFORMS: { value: Platform; label: string }[] = [
   { value: 'telegram',  label: 'تلگرام'      },
+  { value: 'whatsapp',  label: 'واتساپ'      },
   { value: 'instagram', label: 'اینستاگرام'  },
-  { value: 'youtube',   label: 'یوتیوب'       },
-  { value: 'twitter',   label: 'توییتر / X'   },
-  { value: 'linkedin',  label: 'لینکدین'      },
-  { value: 'facebook',  label: 'فیسبوک'       },
-  { value: 'other',     label: 'سایر'         },
+  { value: 'twitter',   label: 'توییتر / X'  },
+  { value: 'facebook',  label: 'فیسبوک'      },
+  { value: 'linkedin',  label: 'لینکدین'     },
+  { value: 'tiktok',    label: 'تیک‌تاک'     },
+  { value: 'discord',   label: 'دیسکورد'     },
+  { value: 'youtube',   label: 'یوتیوب'      },
+  { value: 'other',     label: 'سایر'        },
 ]
+
+const platformCollection = createListCollection({ items: PLATFORMS })
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -85,17 +90,31 @@ export function AddSocialDialog({ open, onClose, onSubmit, initial }: AddSocialD
                   پلتفرم
                   <Field.RequiredIndicator />
                 </Field.Label>
-                <NativeSelect.Root>
-                  <NativeSelect.Field
-                    value={platform}
-                    onChange={(e) => setPlatform(e.target.value as Platform)}
-                  >
-                    {PLATFORMS.map((p) => (
-                      <option key={p.value} value={p.value}>{p.label}</option>
-                    ))}
-                  </NativeSelect.Field>
-                  <NativeSelect.Indicator />
-                </NativeSelect.Root>
+                <Select.Root
+                  collection={platformCollection}
+                  value={[platform]}
+                  onValueChange={(e) => setPlatform((e.value[0] ?? 'telegram') as Platform)}
+                >
+                  <Select.HiddenSelect />
+                  <Select.Control>
+                    <Select.Trigger>
+                      <Select.ValueText />
+                    </Select.Trigger>
+                    <Select.IndicatorGroup>
+                      <Select.Indicator />
+                    </Select.IndicatorGroup>
+                  </Select.Control>
+                  <Select.Positioner>
+                    <Select.Content>
+                      {platformCollection.items.map((item) => (
+                        <Select.Item key={item.value} item={item}>
+                          <Select.ItemText>{item.label}</Select.ItemText>
+                          <Select.ItemIndicator />
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select.Positioner>
+                </Select.Root>
               </Field.Root>
 
               {/* عنوان */}
@@ -135,16 +154,17 @@ export function AddSocialDialog({ open, onClose, onSubmit, initial }: AddSocialD
               px="6"
               py="4"
             >
+              {/* RTL: FIRST=rightmost=لغو, LAST=leftmost=ذخیره */}
               <Flex gap="3">
+                <Button variant="outline" onClick={handleClose}>
+                  لغو
+                </Button>
                 <Button
                   colorPalette="teal"
                   onClick={handleSubmit}
                   disabled={!handle.trim()}
                 >
-                  {isEdit ? 'ذخیره تغییرات' : 'افزودن'}
-                </Button>
-                <Button variant="ghost" onClick={handleClose}>
-                  لغو
+                  {isEdit ? 'ذخیره تغییرات' : 'ذخیره'}
                 </Button>
               </Flex>
             </Dialog.Footer>

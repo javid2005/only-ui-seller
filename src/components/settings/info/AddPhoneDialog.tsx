@@ -3,6 +3,7 @@ import {
   Dialog, Button, Portal, CloseButton, Field, Input,
   SegmentGroup, Flex,
 } from '@chakra-ui/react'
+import { useCompactMode } from '@/contexts/CompactModeContext'
 import type { PhoneCardProps } from './PhoneCard'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -27,6 +28,7 @@ const PHONE_TYPES: { value: PhoneType; label: string }[] = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDialogProps) {
+  const isCompact = useCompactMode()
   const [type, setType]     = useState<PhoneType>(initial?.type ?? 'landline')
   const [label, setLabel]   = useState(initial?.label ?? '')
   const [number, setNumber] = useState(initial?.number ?? '')
@@ -51,7 +53,7 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl">
-          <Dialog.Content maxW="512px" w="full" mx="4">
+          <Dialog.Content maxW={isCompact ? '480px' : '512px'} w="full" mx="4">
 
             {/* Header */}
             <Dialog.Header

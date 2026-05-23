@@ -121,11 +121,11 @@ function IdentityTab() {
 
 // ─── Tab 2: راه های ارتباطی ──────────────────────────────────────────────────
 
-function ContactTab() {
+function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChange: (phones: Phone[]) => void }) {
   const isCompact = useCompactMode()
 
   // ─── Phone state ────────────────────────────────────
-  const [phones, setPhones]       = useState<Phone[]>([])
+  const setPhones = onPhonesChange
   const [phoneOpen, setPhoneOpen] = useState(false)
   const [editPhone, setEditPhone] = useState<Phone | undefined>()
 
@@ -251,7 +251,7 @@ function ContactTab() {
 
 // ─── Tab 3: آدرس ها ──────────────────────────────────────────────────────────
 
-function AddressTab() {
+function AddressTab({ phones }: { phones: Phone[] }) {
   const isCompact = useCompactMode()
   const [addresses, setAddresses] = useState<Address[]>([])
   const [addrOpen, setAddrOpen]   = useState(false)
@@ -315,6 +315,7 @@ function AddressTab() {
         open={addrOpen}
         onClose={() => { setAddrOpen(false); setEditAddr(undefined) }}
         onSubmit={submitAddress}
+        phones={phones}
         initial={editAddr ? {
           title: editAddr.title, province: editAddr.province, city: editAddr.city,
           postal: editAddr.postal, address: editAddr.address,
@@ -334,6 +335,7 @@ function AddressTab() {
  */
 export function GeneralInfo() {
   const isCompact = useCompactMode()
+  const [phones, setPhones] = useState<Phone[]>([])
 
   return (
     <Flex direction="column" gap="4" w="full">
@@ -374,11 +376,11 @@ export function GeneralInfo() {
             </Tabs.Content>
 
             <Tabs.Content value="contact">
-              <ContactTab />
+              <ContactTab phones={phones} onPhonesChange={setPhones} />
             </Tabs.Content>
 
             <Tabs.Content value="address">
-              <AddressTab />
+              <AddressTab phones={phones} />
             </Tabs.Content>
 
           </Tabs.Root>
