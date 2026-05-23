@@ -7,7 +7,7 @@ import type { PhoneCardProps } from './PhoneCard'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type PhoneType = 'work' | 'mobile' | 'home'
+type PhoneType = 'landline' | 'mobile'
 
 interface AddPhoneDialogProps {
   open: boolean
@@ -20,30 +20,29 @@ interface AddPhoneDialogProps {
 // ─── Segment options ──────────────────────────────────────────────────────────
 
 const PHONE_TYPES: { value: PhoneType; label: string }[] = [
-  { value: 'work',   label: 'دفتر'    },
-  { value: 'mobile', label: 'موبایل'  },
-  { value: 'home',   label: 'خانه'    },
+  { value: 'landline', label: 'تلفن ثابت' },
+  { value: 'mobile',   label: 'موبایل'    },
 ]
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDialogProps) {
-  const [type, setType]     = useState<PhoneType>(initial?.type ?? 'work')
-  const [number, setNumber] = useState(initial?.number ?? '')
+  const [type, setType]     = useState<PhoneType>(initial?.type ?? 'landline')
   const [label, setLabel]   = useState(initial?.label ?? '')
+  const [number, setNumber] = useState(initial?.number ?? '')
 
   const isEdit = !!initial
 
   function handleSubmit() {
     if (!number.trim()) return
-    onSubmit({ type, number: number.trim(), label: label.trim() })
+    onSubmit({ type, label: label.trim(), number: number.trim() })
     onClose()
   }
 
   function handleClose() {
-    setType('work')
-    setNumber('')
+    setType('landline')
     setLabel('')
+    setNumber('')
     onClose()
   }
 
@@ -52,7 +51,7 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl">
-          <Dialog.Content maxW="432px" w="full" mx="4">
+          <Dialog.Content maxW="512px" w="full" mx="4">
 
             {/* Header */}
             <Dialog.Header
@@ -72,17 +71,17 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
             </Dialog.Header>
 
             {/* Body */}
-            <Dialog.Body px="6" py="5" display="flex" flexDirection="column" gap="5">
+            <Dialog.Body px="6" py="4" display="flex" flexDirection="column" gap="4">
 
-              {/* نوع شماره */}
+              {/* نوع */}
               <Field.Root>
-                <Field.Label fontSize="sm" color="fg.muted" mb="2">نوع شماره</Field.Label>
+                <Field.Label fontSize="sm" fontWeight="semibold" color="fg" mb="1.5">نوع</Field.Label>
                 <SegmentGroup.Root
                   value={type}
                   onValueChange={(e) => setType(e.value as PhoneType)}
                   w="full"
                 >
-                  <SegmentGroup.Indicator />
+                  <SegmentGroup.Indicator bg="white" />
                   {PHONE_TYPES.map((t) => (
                     <SegmentGroup.Item key={t.value} value={t.value} flex="1">
                       <SegmentGroup.ItemText fontSize="sm">{t.label}</SegmentGroup.ItemText>
@@ -92,10 +91,20 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
                 </SegmentGroup.Root>
               </Field.Root>
 
-              {/* شماره تلفن */}
+              {/* عنوان */}
+              <Field.Root>
+                <Field.Label fontSize="sm" fontWeight="semibold" color="fg">عنوان</Field.Label>
+                <Input
+                  placeholder="عنوان را وارد کنید"
+                  value={label}
+                  onChange={(e) => setLabel(e.target.value)}
+                />
+              </Field.Root>
+
+              {/* شماره */}
               <Field.Root required>
-                <Field.Label fontSize="sm" color="fg">
-                  شماره تلفن
+                <Field.Label fontSize="sm" fontWeight="semibold" color="fg">
+                  شماره
                   <Field.RequiredIndicator />
                 </Field.Label>
                 <Input
@@ -108,36 +117,25 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
                 />
               </Field.Root>
 
-              {/* برچسب */}
-              <Field.Root>
-                <Field.Label fontSize="sm" color="fg">برچسب / نام</Field.Label>
-                <Input
-                  placeholder="مثال: دفتر مرکزی"
-                  value={label}
-                  onChange={(e) => setLabel(e.target.value)}
-                />
-              </Field.Root>
-
             </Dialog.Body>
 
-            {/* Footer */}
+            {/* Footer — RTL: FIRST=rightmost=لغو, LAST=leftmost=ذخیره */}
             <Dialog.Footer
               borderTopWidth="1px"
               borderColor="border"
               px="6"
               py="4"
             >
-              {/* RTL: FIRST=rightmost — لغو | ذخیره */}
               <Flex gap="3">
+                <Button variant="outline" onClick={handleClose}>
+                  لغو
+                </Button>
                 <Button
                   colorPalette="teal"
                   onClick={handleSubmit}
                   disabled={!number.trim()}
                 >
-                  {isEdit ? 'ذخیره تغییرات' : 'افزودن'}
-                </Button>
-                <Button variant="ghost" onClick={handleClose}>
-                  لغو
+                  {isEdit ? 'ذخیره تغییرات' : 'ذخیره'}
                 </Button>
               </Flex>
             </Dialog.Footer>

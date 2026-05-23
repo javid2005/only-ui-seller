@@ -7,10 +7,10 @@ export interface PhoneCardProps {
   id: string
   /** شماره تلفن */
   number: string
-  /** برچسب / نام (مثل: دفتر مرکزی) */
+  /** عنوان / نام (مثل: دفتر مرکزی) */
   label: string
-  /** نوع: work | mobile | home */
-  type: 'work' | 'mobile' | 'home'
+  /** نوع: landline | mobile */
+  type: 'landline' | 'mobile'
   onEdit?: (id: string) => void
   onDelete?: (id: string) => void
 }
@@ -18,47 +18,43 @@ export interface PhoneCardProps {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const TYPE_LABEL: Record<string, string> = {
-  work: 'دفتر',
-  mobile: 'موبایل',
-  home: 'خانه',
+  landline: 'تلفن ثابت',
+  mobile:   'موبایل',
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-/**
- * PhoneCard — نمایش یک شماره تلفن در لیست
- *
- * RTL DOM order (first=rightmost):
- *   [phone icon box]  [number + label]  [⋮ menu]
- */
 export function PhoneCard({ id, number, label, type, onEdit, onDelete }: PhoneCardProps) {
   return (
     <Flex
+      data-group=""
       align="center"
       gap="4"
       p="4"
       bg="bg.subtle"
       borderWidth="1px"
       borderColor="border"
-      rounded="lg"
+      rounded="xl"
       w="full"
-      minH="72px"
+      overflow="hidden"
+      _hover={{ bg: 'teal.subtle', borderColor: 'teal.focusRing' }}
     >
       {/* FIRST = rightmost in RTL — آیکن تلفن */}
       <Box
         bg="bg.muted"
-        rounded="md"
+        rounded="lg"
         p="2"
         flexShrink={0}
         display="flex"
         alignItems="center"
         justifyContent="center"
         color="fg.muted"
+        _groupHover={{ bg: 'teal.muted', color: 'teal.fg' }}
       >
         <Phone size={24} />
       </Box>
 
-      {/* Content — flex-start = RIGHT side in RTL column */}
+      {/* Content — flex-start = RIGHT side in RTL */}
       <Flex direction="column" gap="1" flex="1" minW="0" align="flex-start">
         <Text fontSize="sm" fontWeight="semibold" color="fg" lineHeight="1.428" noOfLines={1}>
           {number}

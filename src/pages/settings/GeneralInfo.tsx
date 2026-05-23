@@ -55,7 +55,7 @@ function IdentityTab() {
             <Field.RequiredIndicator />
           </Field.Label>
           <Input
-            placeholder="عنوان روش ارسال را وارد نمایید"
+            placeholder="نام فروشگاه به فارسی را وارد کنید"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -63,7 +63,7 @@ function IdentityTab() {
         <Field.Root>
           <Field.Label fontSize="sm" fontWeight="semibold">نام فروشگاه به انگلیسی</Field.Label>
           <Input
-            placeholder="عنوان روش ارسال را وارد نمایید"
+            placeholder="Store name in English"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
@@ -151,19 +151,19 @@ function ContactTab() {
   }
 
   return (
-    <Box display="flex" flexDirection="column" gap="6">
+    <Box display="flex" flexDirection="column" gap="10">
 
       {/* شماره‌های تماس */}
       <Box>
         <TitleBar
-          title="شماره‌های تماس"
-          size="md"
+          title="شماره های تماس"
+          size="xl"
           divider
           cta={
-            <Button size="sm" variant="outline"
+            <Button size="sm" variant="outline" colorPalette="teal"
               onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}
             >
-              افزودن تلفن
+              افزودن شماره
               <Plus size={16} />
             </Button>
           }
@@ -172,7 +172,7 @@ function ContactTab() {
           {phones.length === 0 ? (
             <StoreEmptyState icon={<Phone size={24} />} text="هنوز شماره تماسی اضافه نشده" />
           ) : (
-            <Flex direction="column" gap="2">
+            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }} gap="4">
               {phones.map((p) => (
                 <PhoneCard
                   key={p.id}
@@ -184,7 +184,7 @@ function ContactTab() {
                   onDelete={(id) => setPhones((prev) => prev.filter((x) => x.id !== id))}
                 />
               ))}
-            </Flex>
+            </Grid>
           )}
         </Box>
       </Box>
@@ -192,11 +192,11 @@ function ContactTab() {
       {/* شبکه‌های اجتماعی */}
       <Box>
         <TitleBar
-          title="شبکه‌های اجتماعی"
-          size="md"
+          title="شبکه های اجتماعی"
+          size="xl"
           divider
           cta={
-            <Button size="sm" variant="outline"
+            <Button size="sm" variant="outline" colorPalette="teal"
               onClick={() => { setEditSocial(undefined); setSocialOpen(true) }}
             >
               افزودن شبکه
@@ -208,7 +208,7 @@ function ContactTab() {
           {socials.length === 0 ? (
             <StoreEmptyState icon={<Share2 size={24} />} text="هنوز شبکه اجتماعی‌ای اضافه نشده" />
           ) : (
-            <Flex direction="column" gap="2">
+            <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap="4">
               {socials.map((s) => (
                 <SocialCard
                   key={s.id}
@@ -220,13 +220,12 @@ function ContactTab() {
                   onDelete={(id) => setSocials((prev) => prev.filter((x) => x.id !== id))}
                 />
               ))}
-            </Flex>
+            </Grid>
           )}
         </Box>
       </Box>
 
       <ButtonFooter
-        primary={{ label: 'ذخیره', onClick: () => {} }}
         back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => {} }}
       />
 
@@ -267,11 +266,11 @@ function AddressTab() {
     <Box display="flex" flexDirection="column" gap="6">
 
       <TitleBar
-        title="آدرس‌ها"
-        size="md"
+        title="آدرس ها"
+        size="xl"
         divider
         cta={
-          <Button size="sm" variant="outline"
+          <Button size="sm" variant="outline" colorPalette="teal"
             onClick={() => { setEditAddr(undefined); setAddrOpen(true) }}
           >
             افزودن آدرس
@@ -304,7 +303,6 @@ function AddressTab() {
       </Box>
 
       <ButtonFooter
-        primary={{ label: 'ذخیره', onClick: () => {} }}
         back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => {} }}
       />
 
