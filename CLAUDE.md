@@ -33,6 +33,26 @@
 
 ---
 
+## Figma Access Gate (اجباری — بالاتر از همه)
+
+**اگه Figma tool خطا داد یا data برنگشت → STOP. هیچ کدی نزن.**
+
+```
+Figma tool fail شد؟
+  → اول مشکل دسترسی رو حل کن (tool دیگه امتحان کن، از کاربر بخواه node-id/link دوباره بده)
+  → هرگز با حدس/ذهن خودت ادامه نده
+  → هرگز محتوا (text، label، color، layout) از خودت نساز
+  → اگه بعد از تلاش باز هم نشد → به کاربر بگو و منتظر بمون
+
+مجاز نیست:
+  ✗ ادامه دادن بدون Figma data
+  ✗ حدس زدن TitleBar text / button label / component variant
+  ✗ ساختن layout از پیش‌فرض‌های ذهنی
+  ✗ گفتن «data نگرفتم ولی ادامه می‌دم»
+```
+
+---
+
 ## Figma → Code Protocol (اجباری)
 
 هر task که از Figma به کد تبدیل میشه — حتی «اصلاح کن» / «مقایسه کن» / «ریسپانسیو کن» — این gate رو رد نکن.
@@ -325,6 +345,9 @@ src/
       AddPhoneDialog.tsx   — add/edit phone dialog (SegmentGroup type selector)
       SocialCard.tsx       — social network card (brand SVG icons, 3-dot menu)
       AddSocialDialog.tsx  — add/edit social dialog
+    shipping/
+      ShippingCardCustom.tsx — custom shipping card (default/disabled states، toggle، 3-dot menu)
+      ShippingCardSystem.tsx — system shipping card (default/disabled/comingSoon states، toggle)
   components/ui/
     ButtonFooter.tsx  — footer با دکمه‌های ذخیره/لغو/بازگشت
     RichTextEditor.tsx — Tiptap editor (Global emotion CSS برای ProseMirror styles)
@@ -338,7 +361,8 @@ src/
     settings/
       GeneralInfo.tsx     — اطلاعات فروشگاه (3 tabs: identity / contact / address)
       Categories.tsx      — دسته‌بندی‌ها (Two Columns Right Center، accordion + search + InfoBox)
-      SalesSettings.tsx   — تنظیمات فروش (One Column Center، dollar/gold switch، phone grid)
+      SalesSettings.tsx      — تنظیمات فروش (One Column Center، dollar/gold switch، phone grid)
+      ShippingSettings.tsx   — روش‌های ارسال (Two Columns Right Center، ShippingCardCustom + ShippingCardSystem grids)
   services/
     api.ts
   theme/
