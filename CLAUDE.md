@@ -14,6 +14,25 @@
 
 ---
 
+## Root Cause Protocol (اجباری)
+
+وقتی inconsistency یا نقص پیدا شد — فقط instance جاری رو fix نکن:
+
+```
+1. ریشه کجاست؟
+   - doc ناقص/غلط  → fix the doc first
+   - implementation منحرف شده از doc  → fix implementation + verify doc
+2. source رو fix کن
+   - pattern پروژه‌ای  → CLAUDE.md همین پروژه
+   - pattern shared  → dev-knowledge/ (page-templates, tokens, known-bugs, ...)
+3. همه instance‌های affected رو fix کن (نه فقط فایل جاری)
+```
+
+> مثال: panel border در Categories نبود → ریشه = page-templates.md ناقص بود
+> → اول page-templates آپدیت → بعد همه صفحات fix
+
+---
+
 ## Figma → Code Protocol (اجباری)
 
 هر task که از Figma به کد تبدیل میشه — حتی «اصلاح کن» / «مقایسه کن» / «ریسپانسیو کن» — این gate رو رد نکن.
@@ -287,6 +306,8 @@ src/
     UserMenu.tsx     — avatar dropdown (Menu.Root, Box as="button" trigger, Portal+dir="rtl")
   components/settings/
     SettingCard.tsx  — navigation card (icon + title + description + chevron, RTL)
+    categories/
+      CategoryAccordion.tsx — accordion row (controlled/uncontrolled، Collapsible، 6 states، RTL)
     info/
       AddressCard.tsx      — address display card (map placeholder, active toggle, 3-dot menu)
       AddAddressDialog.tsx — add/edit address dialog (2-col desktop, map area)
@@ -306,6 +327,7 @@ src/
     Settings.tsx          — settings landing page با SettingCard grid
     settings/
       GeneralInfo.tsx     — اطلاعات فروشگاه (3 tabs: identity / contact / address)
+      Categories.tsx      — دسته‌بندی‌ها (Two Columns Right Center، accordion + search + InfoBox)
   services/
     api.ts
   theme/

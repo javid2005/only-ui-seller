@@ -1,6 +1,6 @@
 # Vitrina — Session Handoff
 > این فایل بعد از هر milestone آپدیت میشه
-> آخرین آپدیت: 2026-05-22
+> آخرین آپدیت: 2026-05-24
 
 ---
 
@@ -23,21 +23,21 @@ git diff HEAD~1 --name-only
 
 ## الان کجاییم
 
-**آخرین milestone:** General-Info section کامل شد
-- route `/settings/store-info` → `GeneralInfo.tsx`
-- ۳ tab: عمومی / ارتباطی / آدرس‌ها
+**آخرین milestone:** Categories section کامل شد
+- route `/settings/categories` → `Categories.tsx`
+- template: Two Columns Right Center (InfoBox sticky راست + accordion چپ)
+- responsive: < lg → InfoBox بالای Middle، ستون Start مخفی
 
 **فایل‌های ساخته‌شده این session:**
-- `src/pages/settings/GeneralInfo.tsx` — صفحه اصلی با tabs
-- `src/components/settings/info/PhoneCard.tsx`
-- `src/components/settings/info/SocialCard.tsx`
-- `src/components/settings/info/AddressCard.tsx`
-- `src/components/settings/info/AddPhoneDialog.tsx`
-- `src/components/settings/info/AddSocialDialog.tsx`
-- `src/components/settings/info/AddAddressDialog.tsx`
+- `src/pages/settings/Categories.tsx` — صفحه اصلی
+- `src/components/settings/categories/CategoryAccordion.tsx` — accordion با Chakra Collapsible
+- `src/assets/Icons/Category/` — ۱۸ آیکن SVG دسته‌بندی
 - `src/App.tsx` — route جدید اضافه شد
 
-**قدم بعدی:** debug runtime (صفحه بالا نمیاد — احتمال Switch/Tabs API issue)
+**فایل‌های اصلاح‌شده:**
+- `src/pages/Settings.tsx` — bg="bg" → bg="bg.panel" fix
+- `CLAUDE.md` — Root Cause Protocol + File Structure آپدیت
+- `dev-knowledge/projects/vitrina/page-templates.md` — v6: border اضافه + note اصلاح
 
 ---
 
@@ -49,7 +49,7 @@ git diff HEAD~1 --name-only
 | `/settings/shipping` | روش‌های ارسال | ⏳ |
 | `/settings/badges` | نمادها و مجوزها | ⏳ |
 | `/settings/themes` | پوسته‌ها | ⏳ |
-| `/settings/categories` | دسته‌بندی‌ها | ⏳ |
+| `/settings/categories` | دسته‌بندی‌ها | ✅ |
 | `/settings/sales` | تنظیمات فروش | ⏳ |
 
 ---
@@ -57,10 +57,12 @@ git diff HEAD~1 --name-only
 ## تصمیم‌های معماری (چیزایی که git نمیدونه)
 
 - **Window scroll** نه div scroll → scrollbar لبه چپ مرورگر در RTL
-- **bg="bg"** روی Navbar و content box، **bg="bg.panel"** روی کارت‌های هر صفحه
+- **bg="bg.panel"** روی همه panel wrapperهای صفحات settings (نه bg="bg")
+- **panel standard style:** `bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl"`
 - **TitleBar** با `divider` برای عنوان section‌ها در همه صفحات
-- ساختار هر صفحه settings: `<Box bg="bg.panel" borderWidth="1px" rounded="2xl">`
 - **Switch.Control** نه ~~Switch.Track~~ (Chakra v3 API)
+- **Collapsible.Root** برای accordion animation — نیاز به `style={{ width: '100%', minWidth: 0 }}` دارد
+- **Middle column flex item** → همیشه `minW="0"` بگیره وگرنه در RTL flex از container بیرون میزنه
 
 ## باگ‌های کشف‌شده (ثبت‌شده در CLAUDE.md)
 
@@ -68,3 +70,5 @@ git diff HEAD~1 --name-only
 - `alignItems="flex-end"` در column flex = سمت چپ در RTL
 - `bg="bg.subtle"` و `bg="bg"` در dark mode تقریباً یه رنگن
 - `Switch.Track` → **BROKEN**: وجود نداره. Fix: `Switch.Control`
+- `justify="flex-end"` در RTL = چپ‌چین. برای راست‌چین از `justify="flex-start"` استفاده کن
+- flex item بدون `minW="0"` در RTL row → overflow از container

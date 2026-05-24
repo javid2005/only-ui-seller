@@ -331,7 +331,7 @@ export function Settings() {
 
       {/* Content card */}
       <Box
-        bg="bg"
+        bg="bg.panel"
         borderWidth="1px"
         borderColor="border"
         rounded="2xl"
