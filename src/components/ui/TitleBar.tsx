@@ -30,7 +30,7 @@ export interface TitleBarProps {
 // ─── Size map ─────────────────────────────────────────────────────────────────
 
 const SIZE_MAP: Record<TitleBarSize, { titleSize: any; subtitleSize: any }> = {
-  xl: { titleSize: { base: 'lg', sm: 'xl' }, subtitleSize: { base: '2xs', sm: 'sm' } },
+  xl: { titleSize: { base: 'lg', sm: 'xl' }, subtitleSize: { base: 'xs', sm: 'sm' } },
   lg: { titleSize: { base: 'md', sm: 'lg' }, subtitleSize: 'xs' },
   md: { titleSize: { base: 'sm', sm: 'md' }, subtitleSize: 'xs' },
 }
@@ -43,6 +43,10 @@ const SIZE_MAP: Record<TitleBarSize, { titleSize: any; subtitleSize: any }> = {
  * RTL DOM order (first = rightmost):
  *   [back arrow?]  [icon?]  [title + badge + subtitle]  [cta?]
  *   rightmost ←─────────────────────────────────────────→ leftmost
+ *
+ * Wrapping rule: title and subtitle NEVER truncate — no whiteSpace="nowrap".
+ * On narrow screens (360px) long titles wrap to multiple lines. This is intentional.
+ * Truncation hides meaning; wrapping preserves it.
  */
 export function TitleBar({
   title,
@@ -98,9 +102,6 @@ export function TitleBar({
               fontWeight="semibold"
               color="fg"
               lineHeight="1.5"
-              whiteSpace="nowrap"
-              overflow="hidden"
-              textOverflow="ellipsis"
             >
               {title}
             </Text>
@@ -122,9 +123,6 @@ export function TitleBar({
               fontSize={subtitleSize}
               color="fg.muted"
               lineHeight="1.5"
-              whiteSpace="nowrap"
-              overflow="hidden"
-              textOverflow="ellipsis"
               w="full"
             >
               {subtitle}

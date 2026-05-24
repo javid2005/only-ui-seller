@@ -119,10 +119,10 @@ import { useCompactMode } from '@/contexts/CompactModeContext'
 function MyPage() {
   const isCompact = useCompactMode()
 
-  // Panel padding
-  pt={isCompact ? '4' : { base: '4', md: '6' }}
-  pb={isCompact ? '4' : { base: '4', md: '10' }}
-  px={isCompact ? '4' : { base: '4', md: '6' }}
+  // Panel padding — pb همیشه '6' (24px) در همه حالت‌ها
+  pt={isCompact ? '4' : { base: '4', sm: '6' }}
+  pb="6"
+  px={isCompact ? '4' : { base: '4', sm: '6' }}
 
   // Grid columns
   templateColumns={isCompact ? '1fr' : { base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }}
@@ -131,10 +131,15 @@ function MyPage() {
 
 **قوانین:**
 - `isCompact=true` → همه grids = `'1fr'` (single column)
-- `isCompact=true` → panel padding = `'4'` (16px) همه طرف
+- `isCompact=true` → panel pt/px = `'4'` (16px)، **pb همیشه `'6'` (24px)**
 - `Layout.tsx` provider رو wrap می‌کنه — نیازی به Provider اضافه در page نیست
 - هر sub-component داخل page (مثل Tab functions) هم باید `useCompactMode()` بگیره اگه grid داره
 - SegmentGroup.Indicator → `bg="bg.panel"` (white در light، gray.900 در dark) — `bg="white"` dark mode رو می‌شکنه، `bg.default` broken
+
+### TitleBar — wrapping rule
+- title و subtitle هیچ‌وقت truncate نمیشن (`whiteSpace="nowrap"` ممنوع)
+- روی صفحه‌های باریک (360px) عناوین بلند wrap میشن — این intentional است
+- truncation مفهوم رو پنهان می‌کنه؛ wrap حفظ می‌کنه
 
 ---
 
@@ -333,6 +338,7 @@ src/
     settings/
       GeneralInfo.tsx     — اطلاعات فروشگاه (3 tabs: identity / contact / address)
       Categories.tsx      — دسته‌بندی‌ها (Two Columns Right Center، accordion + search + InfoBox)
+      SalesSettings.tsx   — تنظیمات فروش (One Column Center، dollar/gold switch، phone grid)
   services/
     api.ts
   theme/

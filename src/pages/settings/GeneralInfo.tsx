@@ -360,7 +360,7 @@ export function GeneralInfo() {
         borderColor="border"
         rounded="2xl"
         pt={isCompact ? '4' : { base: '4', md: '6' }}
-        pb={isCompact ? '4' : { base: '4', md: '6' }}
+        pb="6"
         px={isCompact ? '4' : { base: '4', md: '6' }}
         w="full"
         overflow="clip"

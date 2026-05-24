@@ -317,6 +317,8 @@ function StoreHeader() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function Settings() {
+  const isCompact = useCompactMode()
+
   return (
     <Flex direction="column" gap="4" alignItems="flex-end" w="full">
 
@@ -335,16 +337,16 @@ export function Settings() {
         borderWidth="1px"
         borderColor="border"
         rounded="2xl"
-        pt={{ base: '4', sm: '6' }}
-        pb={{ base: '6', sm: '10' }}
-        px={{ base: '4', sm: '6' }}
+        pt={isCompact ? '4' : { base: '4', sm: '6' }}
+        pb="6"
+        px={isCompact ? '4' : { base: '4', sm: '6' }}
         w="full"
         overflow="hidden"
       >
         {/* Middle column: max 960px, centered */}
         <Flex
           direction="column"
-          gap={{ base: '8', sm: '16' }}
+          gap={isCompact ? '8' : { base: '8', sm: '16' }}
           maxW="960px"
           w="full"
           mx="auto"

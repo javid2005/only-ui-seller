@@ -23,21 +23,12 @@ git diff HEAD~1 --name-only
 
 ## الان کجاییم
 
-**آخرین milestone:** Categories section کامل شد
-- route `/settings/categories` → `Categories.tsx`
-- template: Two Columns Right Center (InfoBox sticky راست + accordion چپ)
-- responsive: < lg → InfoBox بالای Middle، ستون Start مخفی
+**آخرین milestone:** صفحه تنظیمات فروش (`/settings/sales`) پیاده‌سازی + polish
+- SalesSettings: switch قیمت دلاری/طلا، PhoneCard grid، EmptyState
+- همه صفحات: `pb="6"` (24px) ثابت، Settings از `isCompact` برای padding استفاده می‌کنه
+- TitleBar: nowrap حذف شد — عناوین بلند wrap میشن (360px)
 
-**فایل‌های ساخته‌شده این session:**
-- `src/pages/settings/Categories.tsx` — صفحه اصلی
-- `src/components/settings/categories/CategoryAccordion.tsx` — accordion با Chakra Collapsible
-- `src/assets/Icons/Category/` — ۱۸ آیکن SVG دسته‌بندی
-- `src/App.tsx` — route جدید اضافه شد
-
-**فایل‌های اصلاح‌شده:**
-- `src/pages/Settings.tsx` — bg="bg" → bg="bg.panel" fix
-- `CLAUDE.md` — Root Cause Protocol + File Structure آپدیت
-- `dev-knowledge/projects/vitrina/page-templates.md` — v6: border اضافه + note اصلاح
+**بعدی:** commit تغییرات → صفحه بعدی (`/settings/shipping`)
 
 ---
 
@@ -45,12 +36,12 @@ git diff HEAD~1 --name-only
 
 | Route | صفحه | وضعیت |
 |-------|------|--------|
-| `/settings/store-info` | اطلاعات فروشگاه | ⚠️ debug |
+| `/settings/store-info` | اطلاعات فروشگاه | ✅ |
+| `/settings/categories` | دسته‌بندی‌ها | ✅ |
+| `/settings/sales` | تنظیمات فروش | ✅ |
 | `/settings/shipping` | روش‌های ارسال | ⏳ |
 | `/settings/badges` | نمادها و مجوزها | ⏳ |
 | `/settings/themes` | پوسته‌ها | ⏳ |
-| `/settings/categories` | دسته‌بندی‌ها | ✅ |
-| `/settings/sales` | تنظیمات فروش | ⏳ |
 
 ---
 
@@ -63,6 +54,7 @@ git diff HEAD~1 --name-only
 - **Switch.Control** نه ~~Switch.Track~~ (Chakra v3 API)
 - **Collapsible.Root** برای accordion animation — نیاز به `style={{ width: '100%', minWidth: 0 }}` دارد
 - **Middle column flex item** → همیشه `minW="0"` بگیره وگرنه در RTL flex از container بیرون میزنه
+- **Responsive pattern:** `{ base: 'small', sm: 'large' }` — xs breakpoint فقط برای تمایز زیر ۳۶۰px
 
 ## باگ‌های کشف‌شده (ثبت‌شده در CLAUDE.md)
 

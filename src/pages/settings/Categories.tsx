@@ -241,7 +241,7 @@ export function Categories() {
       />
 
       {/* ─── Panel wrapper (Two Columns Right Center) ────────────────────── */}
-      <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" p={isCompact ? '4' : { base: '4', sm: '6' }} w="full">
+      <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" pt={isCompact ? '4' : { base: '4', sm: '6' }} pb="6" px={isCompact ? '4' : { base: '4', sm: '6' }} w="full">
         <Flex gap="10" align="flex-start">
 
           {/* FIRST = rightmost در RTL: sticky info panel — فقط lg+ و non-compact */}
