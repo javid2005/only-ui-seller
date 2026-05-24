@@ -42,7 +42,7 @@ export function SettingCard({
     gap: '4',
     w: 'full',
     overflow: 'hidden',
-    p: '6',
+    p: { base: '4', sm: '6' },
     rounded: 'lg',
     borderWidth: '1px',
     borderColor: isDisabled ? 'border.muted' : 'border',
@@ -93,14 +93,14 @@ export function SettingCard({
       <Flex
         flex="1"
         direction="column"
-        gap="4"
+        gap={{ base: '2', sm: '4' }}
         alignItems="flex-start"
         minW="0"
         position="relative"
         zIndex={1}
       >
         <Text
-          fontSize="lg"
+          fontSize={{ base: 'md', sm: 'lg' }}
           fontWeight="semibold"
           color={isDisabled ? 'fg.subtle' : 'fg'}
           textAlign="right"

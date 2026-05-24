@@ -83,7 +83,7 @@ export function Header({ title, breadcrumbs, badge, welcome, cta }: HeaderProps)
         {/* Title row: badge (optional) + title */}
         <Flex align="center" gap="4" flexShrink={0}>
           <Text
-            fontSize="2xl"
+            fontSize={{ base: 'xl', sm: '2xl' }}
             fontWeight="semibold"
             lineHeight="1.333"
             color="fg"

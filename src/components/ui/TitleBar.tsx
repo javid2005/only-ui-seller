@@ -29,10 +29,10 @@ export interface TitleBarProps {
 
 // ─── Size map ─────────────────────────────────────────────────────────────────
 
-const SIZE_MAP: Record<TitleBarSize, { titleSize: string; subtitleSize: string }> = {
-  xl: { titleSize: 'xl', subtitleSize: 'sm' },
-  lg: { titleSize: 'lg', subtitleSize: 'sm' },
-  md: { titleSize: 'md', subtitleSize: 'xs' },
+const SIZE_MAP: Record<TitleBarSize, { titleSize: any; subtitleSize: any }> = {
+  xl: { titleSize: { base: 'lg', sm: 'xl' }, subtitleSize: { base: '2xs', sm: 'sm' } },
+  lg: { titleSize: { base: 'md', sm: 'lg' }, subtitleSize: 'xs' },
+  md: { titleSize: { base: 'sm', sm: 'md' }, subtitleSize: 'xs' },
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────

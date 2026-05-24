@@ -281,9 +281,14 @@ skipLink(1600) | toast(1700) | tooltip(1800)
 
 ## Breakpoints
 ```
-sm(480px) | md(768px) | lg(992px) | xl(1280px) | 2xl(1536px)
+xs(360px) | sm(480px) | md(768px) | lg(992px) | xl(1280px) | 2xl(1536px)
 ```
-Vitrina targets: 480px (mobile), 1440px (desktop), 1920px (wide)
+Vitrina targets: 360px (small mobile), 480px (mobile), 1440px (desktop), 1920px (wide)
+
+### Responsive pattern برای 360px
+- `xs` breakpoint فقط برای تمایز < 360px از 360-479px استفاده می‌شه (نادر)
+- برای اکثر padding/font: `{ base: 'small', sm: 'large' }` — jump-up در 480px
+- `isCompact` path دست نمی‌خوره — مستقل از viewport breakpoints
 
 ## Palette Tokens (raw)
 ```

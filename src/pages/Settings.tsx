@@ -142,12 +142,12 @@ function StoreHeader() {
 
   return (
     <Box w="full" flexShrink={0}>
-      {/* Cover banner — 160px, overlaps 40px into the data row below */}
+      {/* Cover banner — 160px desktop / 120px mobile, overlaps into data row below */}
       <Box
-        h="160px"
+        h={{ base: '120px', sm: '160px' }}
         rounded="lg"
         overflow="hidden"
-        mb="-10"
+        mb={{ base: '-8', sm: '-10' }}
         position="relative"
         bg="bg.muted"
       >
@@ -161,15 +161,15 @@ function StoreHeader() {
       </Box>
 
       {/* Data row: thumbnail | store info | ellipsis */}
-      <Flex gap="6" alignItems="flex-start" px="6" w="full">
+      <Flex gap={{ base: '3', sm: '6' }} alignItems="flex-start" px={{ base: '3', sm: '6' }} w="full">
 
         {/* Thumbnail — FIRST in DOM = rightmost in RTL */}
         <Box
-          w="120px"
-          h="120px"
+          w={{ base: '80px', sm: '120px' }}
+          h={{ base: '80px', sm: '120px' }}
           flexShrink={0}
           rounded="lg"
-          borderWidth="4px"
+          borderWidth={{ base: '2px', sm: '4px' }}
           borderStyle="solid"
           borderColor="bg.panel"
           shadow="md"
@@ -193,10 +193,10 @@ function StoreHeader() {
           direction="column"
           gap="1"
           alignItems="flex-start"
-          pt="14"
+          pt={{ base: '10', sm: '14' }}
           minW="0"
         >
-          <Text fontSize="xl" fontWeight="semibold" color="fg" lineHeight="1.5">
+          <Text fontSize={{ base: 'lg', sm: 'xl' }} fontWeight="semibold" color="fg" lineHeight="1.5">
             فروشگاه مزباکس
           </Text>
           <Badge
@@ -209,7 +209,7 @@ function StoreHeader() {
         </Flex>
 
         {/* Ellipsis menu — LAST in DOM = leftmost in RTL */}
-        <Box pt="14" flexShrink={0}>
+        <Box pt={{ base: '10', sm: '14' }} flexShrink={0}>
           <Menu.Root
             positioning={{
               placement: 'bottom-start',
@@ -335,16 +335,16 @@ export function Settings() {
         borderWidth="1px"
         borderColor="border"
         rounded="2xl"
-        pt="6"
-        pb="10"
-        px="6"
+        pt={{ base: '4', sm: '6' }}
+        pb={{ base: '6', sm: '10' }}
+        px={{ base: '4', sm: '6' }}
         w="full"
         overflow="hidden"
       >
         {/* Middle column: max 960px, centered */}
         <Flex
           direction="column"
-          gap="16"
+          gap={{ base: '8', sm: '16' }}
           maxW="960px"
           w="full"
           mx="auto"
