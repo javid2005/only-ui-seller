@@ -83,7 +83,7 @@ Figma tool fail شد؟
 
 ## Stack
 - React 19 + Vite + TypeScript
-- Chakra UI v3
+- Chakra UI v3 + `@chakra-ui/charts` (BarSegment, BarList — wraps recharts)
 - RTL / Persian (Vazirmatn font)
 - pnpm
 
@@ -363,6 +363,7 @@ src/
       Categories.tsx      — دسته‌بندی‌ها (Two Columns Right Center، accordion + search + InfoBox)
       SalesSettings.tsx      — تنظیمات فروش (One Column Center، dollar/gold switch، phone grid)
       ShippingSettings.tsx   — روش‌های ارسال (Two Columns Right Center، ShippingCardCustom + ShippingCardSystem grids)
+      AddShippingMethod.tsx  — افزودن روش ارسال (One Column Center، Collapsible sections، WeightRangeChart با BarSegment)
   services/
     api.ts
   theme/

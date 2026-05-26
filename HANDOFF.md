@@ -1,11 +1,11 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-05-25
+> آخرین آپدیت: 2026-05-26
 
 ## الان
-صفحه `/settings/shipping` پیاده‌سازی شد — ShippingCardCustom + ShippingCardSystem با سه/چهار state (default/hover/disabled/comingSoon)، toggle تبدیل visual state می‌کنه، آیکون‌ها teal، CommingSoon-Tag SVG با offset خارج از card.
+صفحه `/settings/shipping/add` پیاده‌سازی شد — فرم افزودن روش ارسال با دو section Collapsible (درون‌شهری/بین‌شهری)، جدول بازه‌های وزنی dynamic، و WeightRangeChart با `BarSegment` از `@chakra-ui/charts`.
 
 ## بعدی
-ادامه صفحات shipping (Add dialog، calculator dialog) یا صفحه بعدی settings
+صفحات باقی‌مانده settings (badges، themes) یا calculator dialog برای shipping
 
 ## صفحات باقی‌مانده
 
@@ -14,16 +14,14 @@
 | `/settings/store-info` | اطلاعات فروشگاه | ✅ |
 | `/settings/categories` | دسته‌بندی‌ها | ✅ |
 | `/settings/sales` | تنظیمات فروش | ✅ |
-| `/settings/shipping` | روش‌های ارسال | ✅ (cards done، dialogs pending) |
+| `/settings/shipping` | روش‌های ارسال | ✅ |
+| `/settings/shipping/add` | افزودن روش ارسال | ✅ (API ذخیره pending) |
 | `/settings/badges` | نمادها و مجوزها | ⏳ |
 | `/settings/themes` | پوسته‌ها | ⏳ |
 
-## تصمیم‌های معماری (چیزایی که git نمیدونه)
+## تصمیم‌های معماری
 
-- **Window scroll** نه div scroll → scrollbar لبه چپ مرورگر در RTL
-- **bg="bg.panel"** روی همه panel wrapperهای صفحات settings
-- **panel standard style:** `bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl"`
-- **isVisuallyDisabled = disabled || !enabled** — toggle visual state بدون disable کردن switch
-- **CommingSoon-Tag SVG** با `insetInlineStart="-25px"` — 25px خارج از لبه راست card
-- **isDefault → switch disabled** — کارت پیش‌فرض قابل خاموش کردن نیست
+- **WeightRangeChart:** `BarSegment` از `@chakra-ui/charts` — segment width = weight range width (kg)، رنگ `.emphasized` per-palette
+- **BarSegmentData.name = r.id** (UUID) — جلوگیری از duplicate key وقتی چند بازه empty هستن
+- **NativeSelect exception:** تنها داخل InputGroup به عنوان endElement (unit selectors) — مستند در memory
 - → see CLAUDE.md for full architectural decisions

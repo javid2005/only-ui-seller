@@ -147,7 +147,7 @@ export function ShippingSettings() {
               subtitle="انتخاب روش های ارسال"
               divider
               cta={
-                <Button size="sm" colorPalette="teal" variant="outline">
+                <Button size="sm" colorPalette="teal" variant="outline" onClick={() => navigate('/settings/shipping/add')}>
                   افزودن روش ارسال
                   <Plus size={14} />
                 </Button>
