@@ -33,7 +33,7 @@ export function ShippingCardSystem({
       direction="column"
       gap="4"
       p="4"
-      bg={isVisuallyDisabled || comingSoon ? 'white' : 'bg.subtle'}
+      bg={isVisuallyDisabled || comingSoon ? 'bg.panel' : 'bg.subtle'}
       borderWidth="1px"
       borderColor={isVisuallyDisabled || comingSoon ? 'border.muted' : 'border'}
       rounded="lg"

@@ -8,6 +8,10 @@ import { TitleBar }    from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { ShippingCardCustom } from '@/components/settings/shipping/ShippingCardCustom'
 import { ShippingCardSystem }  from '@/components/settings/shipping/ShippingCardSystem'
+import {
+  ShippingCalculatorDialog,
+  type MethodForCalc,
+} from '@/components/settings/shipping/ShippingCalculatorDialog'
 import postLogo    from '@/assets/Icons/Shipping-Logo/Post.svg'
 import tipaxLogo   from '@/assets/Icons/Shipping-Logo/Tipax.svg'
 import alopeykLogo from '@/assets/Icons/Shipping-Logo/Alopeyk.svg'
@@ -58,9 +62,73 @@ const SYSTEM_CARDS = [
   { id: 's4', name: 'توپین',              city: 'شهر مبدا ...',  logoSrc: topinLogo,   comingSoon: true },
 ]
 
-// ─── Start panel (sticky info box) ───────────────────────────────────────────
+// ─── Mock calc data (matches Figma sample prices) ────────────────────────────
 
-function InfoBox() {
+const CALC_METHODS: MethodForCalc[] = [
+  {
+    id: '1',
+    name: 'ارسال با پیک موتوری',
+    intraCity: { enabled: true,  costType: 'fixed',  isFree: true,  amount: '0',      weightRanges: [] },
+    interCity: { enabled: true,  costType: 'fixed',  isFree: false, amount: '65000',  weightRanges: [] },
+  },
+  {
+    id: '2',
+    name: 'ارسال با وانت',
+    intraCity: { enabled: true, costType: 'fixed',  isFree: false, amount: '70000',  weightRanges: [] },
+    interCity: {
+      enabled: true, costType: 'weight', isFree: false, amount: '', weightRanges: [
+        { fromWeight: '0',  fromUnit: 'kg', toWeight: '5',   toUnit: 'kg', isFree: false, amount: '70000'  },
+        { fromWeight: '5',  fromUnit: 'kg', toWeight: '20',  toUnit: 'kg', isFree: false, amount: '120000' },
+        { fromWeight: '20', fromUnit: 'kg', toWeight: '50',  toUnit: 'kg', isFree: false, amount: '200000' },
+        { fromWeight: '50', fromUnit: 'kg', toWeight: '200', toUnit: 'kg', isFree: false, amount: '350000' },
+      ],
+    },
+  },
+  {
+    id: '3',
+    name: 'ارسال با کامیون',
+    intraCity: {
+      enabled: true, costType: 'weight', isFree: false, amount: '', weightRanges: [
+        { fromWeight: '0',   fromUnit: 'kg', toWeight: '10',  toUnit: 'kg', isFree: false, amount: '80000'  },
+        { fromWeight: '10',  fromUnit: 'kg', toWeight: '50',  toUnit: 'kg', isFree: false, amount: '148000' },
+        { fromWeight: '50',  fromUnit: 'kg', toWeight: '200', toUnit: 'kg', isFree: false, amount: '300000' },
+      ],
+    },
+    interCity: {
+      enabled: true, costType: 'weight', isFree: false, amount: '', weightRanges: [
+        { fromWeight: '0',   fromUnit: 'kg', toWeight: '10',  toUnit: 'kg', isFree: false, amount: '120000' },
+        { fromWeight: '10',  fromUnit: 'kg', toWeight: '50',  toUnit: 'kg', isFree: false, amount: '230000' },
+        { fromWeight: '50',  fromUnit: 'kg', toWeight: '200', toUnit: 'kg', isFree: false, amount: '450000' },
+      ],
+    },
+  },
+  {
+    id: 's1',
+    name: 'پست جمهوری اسلامی',
+    intraCity: { enabled: true, costType: 'fixed', isFree: false, amount: '55000',  weightRanges: [] },
+    interCity: { enabled: true, costType: 'fixed', isFree: false, amount: '85000',  weightRanges: [] },
+  },
+  {
+    id: 's2',
+    name: 'تیپاکس',
+    intraCity: { enabled: true, costType: 'fixed', isFree: false, amount: '170000', weightRanges: [] },
+    interCity: { enabled: true, costType: 'fixed', isFree: false, amount: '230000', weightRanges: [] },
+  },
+]
+
+// ─── InfoBox (sticky calculator panel) ───────────────────────────────────────
+
+interface InfoBoxProps {
+  onOpen:  () => void
+  /** true در sidebar (256px) — همیشه column، بدون responsive row */
+  sidebar?: boolean
+}
+
+function InfoBox({ onOpen, sidebar = false }: InfoBoxProps) {
+  const isCompact = useCompactMode()
+  // sidebar یا compact → همیشه column / inline → md+ به row تبدیل میشه
+  const forceColumn = sidebar || isCompact
+
   return (
     <Box
       bg="bg.subtle"
@@ -69,14 +137,33 @@ function InfoBox() {
       rounded="xl"
       p="4"
     >
-      <TitleBar title="محاسبه هزینه ارسال" />
-      <Text fontSize="sm" color="fg.muted" lineHeight="1.7" mt="3">
-        جهت محاسبه و مقایسه هزینه ارسال با روش های مختلف اینجا را کلیک کنید.
-      </Text>
-      <Button mt="4" size="sm" colorPalette="teal" w="full">
-        محاسبه هزینه ارسال
-        <Calculator size={14} />
-      </Button>
+      <Flex
+        direction={forceColumn ? 'column' : { base: 'column', md: 'row' }}
+        align={forceColumn ? 'stretch' : { base: 'stretch', md: 'center' }}
+        gap="4"
+      >
+        {/* FIRST = rightmost در RTL = title + description */}
+        <Flex direction="column" gap="2" flex="1" minW="0">
+          <TitleBar title="محاسبه هزینه ارسال" />
+          <Text fontSize="sm" color="fg.muted" lineHeight="1.7">
+            جهت محاسبه و مقایسه هزینه ارسال با روش های مختلف اینجا را کلیک کنید.
+          </Text>
+        </Flex>
+
+        {/* LAST = leftmost در RTL = دکمه */}
+        <Button
+          colorPalette="teal"
+          flexShrink={0}
+          w={forceColumn ? 'full' : { base: 'full', md: 'auto' }}
+          onClick={onOpen}
+        >
+          {/* RTL: icon FIRST = rightmost (leading/start icon) ✓ */}
+          <Box display="flex" alignItems="center" flexShrink={0}>
+            <Calculator size={16} />
+          </Box>
+          محاسبه هزینه ارسال
+        </Button>
+      </Flex>
     </Box>
   )
 }
@@ -88,6 +175,7 @@ export function ShippingSettings() {
   const isCompact   = useCompactMode()
   const [customCards, setCustomCards] = useState(CUSTOM_CARDS)
   const [systemCards, setSystemCards] = useState(SYSTEM_CARDS)
+  const [calcOpen, setCalcOpen] = useState(false)
 
   const toggleCustom = (id: string, enabled: boolean) =>
     setCustomCards(prev => prev.map(c => c.id === id ? { ...c, enabled } : c))
@@ -119,26 +207,26 @@ export function ShippingSettings() {
       >
         <Flex gap="10" align="flex-start">
 
-          {/* FIRST = rightmost در RTL: sticky info panel — فقط lg+ و non-compact */}
+          {/* FIRST = rightmost در RTL: sticky info panel — فقط xl+ و non-compact */}
           {!isCompact && (
             <Box
-              display={{ base: 'none', lg: 'block' }}
+              display={{ base: 'none', xl: 'block' }}
               w="256px"
               flexShrink={0}
               position="sticky"
               top="20"
               alignSelf="flex-start"
             >
-              <InfoBox />
+              <InfoBox onOpen={() => setCalcOpen(true)} sidebar />
             </Box>
           )}
 
           {/* SECOND: main content column — max 960px, no bg/padding */}
           <Flex direction="column" gap="6" maxW="960px" flex="1" minW="0">
 
-            {/* InfoBox روی mobile/compact — وقتی ستون Start مخفیه */}
-            <Box display={isCompact ? 'block' : { base: 'block', lg: 'none' }}>
-              <InfoBox />
+            {/* InfoBox روی < xl و compact — وقتی ستون Start مخفیه */}
+            <Box display={isCompact ? 'block' : { base: 'block', xl: 'none' }}>
+              <InfoBox onOpen={() => setCalcOpen(true)} />
             </Box>
 
             {/* Section 1: روش‌های سفارشی */}
@@ -148,15 +236,16 @@ export function ShippingSettings() {
               divider
               cta={
                 <Button size="sm" colorPalette="teal" variant="outline" onClick={() => navigate('/settings/shipping/add')}>
-                  افزودن روش ارسال
+                  {/* RTL: icon FIRST = rightmost (leading/start icon) ✓ */}
                   <Plus size={14} />
+                  افزودن روش ارسال
                 </Button>
               }
             />
 
             <Grid
               templateColumns={
-                isCompact ? '1fr' : { base: '1fr', md: 'repeat(2, 1fr)' }
+                isCompact ? '1fr' : { base: '1fr', lg: 'repeat(2, 1fr)' }
               }
               gap="4"
             >
@@ -180,7 +269,7 @@ export function ShippingSettings() {
 
             <Grid
               templateColumns={
-                isCompact ? '1fr' : { base: '1fr', md: 'repeat(2, 1fr)' }
+                isCompact ? '1fr' : { base: '1fr', lg: 'repeat(2, 1fr)' }
               }
               gap="4"
             >
@@ -201,6 +290,11 @@ export function ShippingSettings() {
 
         </Flex>
       </Box>
+      <ShippingCalculatorDialog
+        open={calcOpen}
+        onClose={() => setCalcOpen(false)}
+        methods={CALC_METHODS}
+      />
     </Flex>
   )
 }

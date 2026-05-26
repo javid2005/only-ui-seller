@@ -346,8 +346,9 @@ src/
       SocialCard.tsx       — social network card (brand SVG icons, 3-dot menu)
       AddSocialDialog.tsx  — add/edit social dialog
     shipping/
-      ShippingCardCustom.tsx — custom shipping card (default/disabled states، toggle، 3-dot menu)
-      ShippingCardSystem.tsx — system shipping card (default/disabled/comingSoon states، toggle)
+      ShippingCardCustom.tsx        — custom shipping card (default/disabled states، toggle، 3-dot menu)
+      ShippingCardSystem.tsx        — system shipping card (default/disabled/comingSoon states، toggle)
+      ShippingCalculatorDialog.tsx  — modal محاسبه هزینه ارسال (weight input → calc per method، responsive 3-col/2-col grid)
   components/ui/
     ButtonFooter.tsx  — footer با دکمه‌های ذخیره/لغو/بازگشت
     RichTextEditor.tsx — Tiptap editor (Global emotion CSS برای ProseMirror styles)

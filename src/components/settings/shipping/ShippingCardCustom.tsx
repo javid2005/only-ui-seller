@@ -62,7 +62,7 @@ export function ShippingCardCustom({
       direction="column"
       gap="4"
       p="4"
-      bg={isVisuallyDisabled ? 'white' : 'bg.subtle'}
+      bg={isVisuallyDisabled ? 'bg.panel' : 'bg.subtle'}
       borderWidth="1px"
       borderColor={isVisuallyDisabled ? 'border.muted' : 'border'}
       rounded="lg"

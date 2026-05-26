@@ -146,6 +146,7 @@ interface PriceCardProps {
 }
 
 function PriceCard({ isFree, amount, onFreeChange, onAmountChange }: PriceCardProps) {
+  const isCompact = useCompactMode()
   return (
     <Box
       bg="bg.subtle"
@@ -154,9 +155,13 @@ function PriceCard({ isFree, amount, onFreeChange, onAmountChange }: PriceCardPr
       rounded="lg"
       p="4"
     >
-      <Flex gap="4" align="end">
-        {/* FIRST = rightmost in RTL = مبلغ */}
-        <Field.Root flex="1">
+      <Flex
+        gap="4"
+        direction={isCompact ? 'row' : { base: 'column', sm: 'row' }}
+        align={isCompact ? 'end' : { base: 'stretch', sm: 'end' }}
+      >
+        {/* مبلغ — flex-1 in row, full-width in column */}
+        <Field.Root flex={isCompact ? '1' : { base: 'none', sm: '1' }}>
           <Field.Label fontSize="sm" fontWeight="semibold" color="fg">مبلغ</Field.Label>
           <InputGroup
             endElement={
@@ -175,8 +180,13 @@ function PriceCard({ isFree, amount, onFreeChange, onAmountChange }: PriceCardPr
           </InputGroup>
         </Field.Root>
 
-        {/* LAST = leftmost in RTL = ارسال رایگان */}
-        <Flex align="center" gap="2.5" pb="1" flexShrink={0}>
+        {/* ارسال رایگان */}
+        <Flex
+          align="center"
+          gap="2.5"
+          pb={isCompact ? '1' : { base: '0', sm: '1' }}
+          flexShrink={0}
+        >
           <Text fontSize="sm" color="fg" whiteSpace="nowrap">ارسال رایگان</Text>
           <Switch.Root
             colorPalette="teal"
@@ -265,14 +275,20 @@ interface WeightTableProps {
 }
 
 function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
+  const isCompact = useCompactMode()
   const colTemplate = '1fr 1fr 1fr minmax(140px,auto) 36px'
 
   return (
     <Flex direction="column" gap="2" w="full">
 
-      {/* Column headers */}
+      {/* Column headers — desktop only */}
       {ranges.length > 0 && (
-        <Grid templateColumns={colTemplate} gap="3" px="1">
+        <Grid
+          display={isCompact ? 'none' : { base: 'none', md: 'grid' }}
+          templateColumns={colTemplate}
+          gap="3"
+          px="1"
+        >
           <Text fontSize="sm" fontWeight="semibold" color="fg">از وزن</Text>
           <Text fontSize="sm" fontWeight="semibold" color="fg">تا وزن</Text>
           <Text fontSize="sm" fontWeight="semibold" color="fg">مبلغ</Text>
@@ -281,7 +297,6 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
         </Grid>
       )}
 
-      {/* Rows */}
       <Flex direction="column" gap="2">
         {ranges.map((row) => (
           <Box
@@ -290,10 +305,17 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
             borderWidth="1px"
             borderColor="border"
             rounded="lg"
-            px="3"
-            py="2.5"
           >
-            <Grid templateColumns={colTemplate} gap="3" align="center">
+
+            {/* Desktop: 5-column flat grid */}
+            <Grid
+              display={isCompact ? 'none' : { base: 'none', md: 'grid' }}
+              templateColumns={colTemplate}
+              gap="3"
+              align="center"
+              px="3"
+              py="2.5"
+            >
 
               {/* FIRST = rightmost = از وزن */}
               <InputGroup
@@ -383,6 +405,121 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
               </IconButton>
 
             </Grid>
+
+            {/* Mobile: stacked card layout */}
+            <Flex
+              display={isCompact ? 'flex' : { base: 'flex', md: 'none' }}
+              direction="column"
+              gap="3"
+              p="3"
+            >
+
+              {/* Weight inputs — 2 columns */}
+              <Grid templateColumns="1fr 1fr" gap="3">
+
+                {/* FIRST = rightmost = از وزن */}
+                <Field.Root>
+                  <Field.Label fontSize="xs" fontWeight="semibold" color="fg">از وزن</Field.Label>
+                  <InputGroup
+                    endElement={
+                      <UnitSelect
+                        value={row.fromUnit}
+                        onChange={(v) => onUpdate(row.id, { fromUnit: v as WeightUnit })}
+                        options={WEIGHT_UNITS}
+                      />
+                    }
+                  >
+                    <Input
+                      bg="bg.panel"
+                      size="sm"
+                      placeholder="۰"
+                      value={row.fromWeight}
+                      onChange={(e) => onUpdate(row.id, { fromWeight: e.target.value })}
+                      type="text"
+                      inputMode="decimal"
+                      pe="0"
+                    />
+                  </InputGroup>
+                </Field.Root>
+
+                {/* تا وزن */}
+                <Field.Root>
+                  <Field.Label fontSize="xs" fontWeight="semibold" color="fg">تا وزن</Field.Label>
+                  <InputGroup
+                    endElement={
+                      <UnitSelect
+                        value={row.toUnit}
+                        onChange={(v) => onUpdate(row.id, { toUnit: v as WeightUnit })}
+                        options={WEIGHT_UNITS}
+                      />
+                    }
+                  >
+                    <Input
+                      bg="bg.panel"
+                      size="sm"
+                      placeholder="۰"
+                      value={row.toWeight}
+                      onChange={(e) => onUpdate(row.id, { toWeight: e.target.value })}
+                      type="text"
+                      inputMode="decimal"
+                      pe="0"
+                    />
+                  </InputGroup>
+                </Field.Root>
+
+              </Grid>
+
+              {/* مبلغ — standalone Field.Root (isolated from Switch to prevent disabled propagation) */}
+              <Field.Root>
+                <Field.Label fontSize="xs" fontWeight="semibold" color="fg">مبلغ</Field.Label>
+                <InputGroup
+                  w="full"
+                  endElement={
+                    <Text fontSize="xs" color="fg.muted" px="1" flexShrink={0}>تومان</Text>
+                  }
+                >
+                  <Input
+                    bg="bg.panel"
+                    size="sm"
+                    placeholder="هزینه"
+                    value={row.isFree ? '' : row.amount}
+                    disabled={row.isFree}
+                    onChange={(e) => onUpdate(row.id, { amount: e.target.value })}
+                    type="text"
+                    inputMode="numeric"
+                  />
+                </InputGroup>
+              </Field.Root>
+
+              {/* ارسال رایگان + delete — outside Field.Root, fills width */}
+              <Flex align="center" gap="2" w="full" justifyContent="space-between">
+                {/* FIRST = rightmost in RTL = ارسال رایگان */}
+                <Flex align="center" gap="2">
+                  <Text fontSize="sm" color="fg" whiteSpace="nowrap">ارسال رایگان</Text>
+                  <Switch.Root
+                    colorPalette="teal"
+                    size="sm"
+                    checked={row.isFree}
+                    onCheckedChange={(e) => onUpdate(row.id, { isFree: e.checked })}
+                  >
+                    <Switch.HiddenInput />
+                    <Switch.Control><Switch.Thumb /></Switch.Control>
+                  </Switch.Root>
+                </Flex>
+                {/* LAST = leftmost = delete */}
+                <IconButton
+                  variant="ghost"
+                  colorPalette="red"
+                  size="sm"
+                  aria-label="حذف بازه وزنی"
+                  onClick={() => onDelete(row.id)}
+                >
+                  <Trash2 size={16} />
+                </IconButton>
+              </Flex>
+
+            </Flex>
+
           </Box>
         ))}
       </Flex>
@@ -412,6 +549,7 @@ interface SectionContentProps {
 }
 
 function SectionContent({ data, onChange }: SectionContentProps) {
+  const isCompact = useCompactMode()
 
   function updateRange(id: string, patch: Partial<WeightRange>) {
     onChange({
@@ -443,28 +581,41 @@ function SectionContent({ data, onChange }: SectionContentProps) {
       borderTopWidth="1px"
       borderColor="border"
     >
-      {/* Controls row */}
-      <Grid templateColumns="repeat(3, 1fr)" gap="4">
+      {/* Controls: desktop=3-col | mobile=2-col (row1) + هزینه ارسال full-width (row2) */}
+      <Grid
+        templateColumns={
+          isCompact
+            ? 'repeat(2, 1fr)'
+            : { base: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }
+        }
+        gap="4"
+      >
 
-        {/* FIRST = rightmost = هزینه ارسال */}
-        <Field.Root>
-          <Field.Label fontSize="sm" fontWeight="semibold" color="fg">هزینه ارسال</Field.Label>
-          <SegmentGroup.Root
-            value={data.costType}
-            onValueChange={(e) => onChange({ costType: e.value as CostType })}
-            w="full"
-          >
-            <SegmentGroup.Indicator bg="bg.panel" />
-            {costTypeItems.map((item) => (
-              <SegmentGroup.Item key={item.value} value={item.value} flex="1">
-                <SegmentGroup.ItemText fontSize="sm">{item.label}</SegmentGroup.ItemText>
-                <SegmentGroup.ItemHiddenInput />
-              </SegmentGroup.Item>
-            ))}
-          </SegmentGroup.Root>
-        </Field.Root>
+        {/* FIRST in DOM = rightmost in desktop 3-col */}
+        {/* < sm: row 3 (1-col stack), sm: full-width row 2, md+: auto 3-col */}
+        <Box
+          gridColumn={isCompact ? '1 / -1' : { base: 'auto', sm: '1 / -1', md: 'auto' }}
+          gridRow={isCompact ? '2' : { base: '3', sm: '2', md: 'auto' }}
+        >
+          <Field.Root w="full">
+            <Field.Label fontSize="sm" fontWeight="semibold" color="fg">هزینه ارسال</Field.Label>
+            <SegmentGroup.Root
+              value={data.costType}
+              onValueChange={(e) => onChange({ costType: e.value as CostType })}
+              w="full"
+            >
+              <SegmentGroup.Indicator bg="bg.panel" />
+              {costTypeItems.map((item) => (
+                <SegmentGroup.Item key={item.value} value={item.value} flex="1">
+                  <SegmentGroup.ItemText fontSize="sm">{item.label}</SegmentGroup.ItemText>
+                  <SegmentGroup.ItemHiddenInput />
+                </SegmentGroup.Item>
+              ))}
+            </SegmentGroup.Root>
+          </Field.Root>
+        </Box>
 
-        {/* نوع ارسال */}
+        {/* نوع ارسال — row 1 right in mobile */}
         <Field.Root>
           <Field.Label fontSize="sm" fontWeight="semibold" color="fg">نوع ارسال</Field.Label>
           <SegmentGroup.Root
@@ -482,7 +633,7 @@ function SectionContent({ data, onChange }: SectionContentProps) {
           </SegmentGroup.Root>
         </Field.Root>
 
-        {/* LAST = leftmost = زمان مورد نیاز */}
+        {/* LAST = leftmost = زمان مورد نیاز — row 1 left in mobile */}
         <Field.Root>
           <Field.Label fontSize="sm" fontWeight="semibold" color="fg">زمان مورد نیاز تا ارسال</Field.Label>
           <InputGroup
@@ -613,12 +764,12 @@ export function AddShippingMethod() {
     <Flex direction="column" gap="4" w="full">
 
       <Header
-        title="روش‌های ارسال"
+        title="افزودن ارسال شخصی"
         breadcrumbs={[
           { label: 'داشبورد',          href: '/'                  },
           { label: 'تنظیمات فروشگاه', href: '/settings'           },
           { label: 'روش‌های ارسال',    href: '/settings/shipping'  },
-          { label: 'افزودن روش ارسال' },
+          { label: 'افزودن ارسال شخصی' },
         ]}
       />
 
@@ -636,7 +787,7 @@ export function AddShippingMethod() {
         <Flex direction="column" gap="6" maxW="960px" w="full" mx="auto">
 
           <TitleBar
-            title="افزودن ارسال شخصی"
+            title="جزئیات ارسال"
             size="xl"
             subtitle="در این قسمت می‌توانید روش‌های ارسال را مطابق سلیقه خود ایجاد نمایید."
             divider
@@ -654,7 +805,7 @@ export function AddShippingMethod() {
               />
             </Field.Root>
 
-            <Grid templateColumns={isCompact ? '1fr' : '1fr 1fr'} gap="4">
+            <Grid templateColumns={isCompact ? '1fr' : { base: '1fr', sm: '1fr 1fr' }} gap="4">
 
               {/* FIRST = rightmost = استان مبدا */}
               <Field.Root>

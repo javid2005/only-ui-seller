@@ -41,7 +41,7 @@ export function Header({ title, breadcrumbs, badge, welcome, cta }: HeaderProps)
 
         {/* Breadcrumb */}
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <Flex align="center" gap="1" flexShrink={0}>
+          <Flex align="center" gap="1" overflowX="auto" overflowY="hidden" flexShrink={0}>
             {breadcrumbs.map((crumb, i) => (
               <Fragment key={i}>
                 {crumb.href ? (
