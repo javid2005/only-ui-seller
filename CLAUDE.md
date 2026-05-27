@@ -112,6 +112,7 @@ Figma tool fail شد؟
 - Add `dir="rtl"` to `Menu.Positioner` / `Drawer.Positioner` etc. as an explicit safeguard
 - **DOM order still controls flex direction** — cannot be fixed globally with CSS
 - Always put elements in correct RTL DOM order: icon/avatar FIRST (rightmost), text SECOND, action LAST (leftmost)
+- **Switch + label RTL rule:** Switch FIRST in DOM (rightmost = right side) → label text LAST (leftmost = left side). Never text-then-switch.
 - `bg="white"` → OK (Chakra palette token, not hardcoded). `bg="#ffffff"` → NOT OK
 
 ### Layout
@@ -349,6 +350,10 @@ src/
       ShippingCardCustom.tsx        — custom shipping card (default/disabled states، toggle، 3-dot menu)
       ShippingCardSystem.tsx        — system shipping card (default/disabled/comingSoon states، toggle)
       ShippingCalculatorDialog.tsx  — modal محاسبه هزینه ارسال (weight input → calc per method، responsive 3-col/2-col grid)
+    themes/
+      ThemeCard.tsx   — کارت پوسته (SVG thumbnail، active/inactive state، badge)
+      SliderItem.tsx  — آیتم اسلایدر (image upload، title input، reorder، delete)
+      BannerCard.tsx  — کارت بنر (image upload، link input، delete)
   components/ui/
     ButtonFooter.tsx  — footer با دکمه‌های ذخیره/لغو/بازگشت
     RichTextEditor.tsx — Tiptap editor (Global emotion CSS برای ProseMirror styles)
@@ -365,6 +370,8 @@ src/
       SalesSettings.tsx      — تنظیمات فروش (One Column Center، dollar/gold switch، phone grid)
       ShippingSettings.tsx   — روش‌های ارسال (Two Columns Right Center، ShippingCardCustom + ShippingCardSystem grids)
       AddShippingMethod.tsx  — افزودن روش ارسال (One Column Center، Collapsible sections، WeightRangeChart با BarSegment)
+      ThemeSettings.tsx      — پوسته‌ها (Two Columns Right Center، ThemeCard grid، SVG thumbnail)
+      ThemeCustomize.tsx     — سفارشی‌سازی پوسته (One Column Center، SliderItem + BannerCard)
   services/
     api.ts
   theme/

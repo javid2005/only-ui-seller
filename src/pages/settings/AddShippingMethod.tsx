@@ -180,14 +180,13 @@ function PriceCard({ isFree, amount, onFreeChange, onAmountChange }: PriceCardPr
           </InputGroup>
         </Field.Root>
 
-        {/* ارسال رایگان */}
+        {/* ارسال رایگان — RTL: Switch FIRST=right, Text LAST=left */}
         <Flex
           align="center"
           gap="2.5"
           pb={isCompact ? '1' : { base: '0', sm: '1' }}
           flexShrink={0}
         >
-          <Text fontSize="sm" color="fg" whiteSpace="nowrap">ارسال رایگان</Text>
           <Switch.Root
             colorPalette="teal"
             checked={isFree}
@@ -196,6 +195,7 @@ function PriceCard({ isFree, amount, onFreeChange, onAmountChange }: PriceCardPr
             <Switch.HiddenInput />
             <Switch.Control><Switch.Thumb /></Switch.Control>
           </Switch.Root>
+          <Text fontSize="sm" color="fg" whiteSpace="nowrap">ارسال رایگان</Text>
         </Flex>
       </Flex>
     </Box>
@@ -214,8 +214,6 @@ function toKgValue(val: string, unit: WeightUnit): number {
 const toPersian = (s: string) => s.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[+d])
 
 function WeightRangeChart({ ranges }: { ranges: WeightRange[] }) {
-  const hasValidData = ranges.some(r => Number(r.toWeight) > 0)
-
   let paidIdx = 0
   const segments: BarSegmentData[] = ranges.map((r) => {
     const from = toKgValue(r.fromWeight, r.fromUnit)
@@ -230,7 +228,7 @@ function WeightRangeChart({ ranges }: { ranges: WeightRange[] }) {
 
   const chart = useChart<BarSegmentData>({ data: segments })
 
-  if (!hasValidData || ranges.length === 0) return null
+  if (ranges.length === 0) return null
 
   return (
     <Box bg="bg.subtle" borderWidth="1px" borderColor="border" rounded="lg" p="4" mt="4">
@@ -379,9 +377,8 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
                 />
               </InputGroup>
 
-              {/* ارسال رایگان */}
+              {/* ارسال رایگان — RTL: Switch FIRST=right, Text LAST=left */}
               <Flex align="center" gap="2">
-                <Text fontSize="sm" color="fg" whiteSpace="nowrap">ارسال رایگان</Text>
                 <Switch.Root
                   colorPalette="teal"
                   size="sm"
@@ -391,6 +388,7 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
                   <Switch.HiddenInput />
                   <Switch.Control><Switch.Thumb /></Switch.Control>
                 </Switch.Root>
+                <Text fontSize="sm" color="fg" whiteSpace="nowrap">ارسال رایگان</Text>
               </Flex>
 
               {/* LAST = leftmost = delete */}
@@ -493,9 +491,8 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
 
               {/* ارسال رایگان + delete — outside Field.Root, fills width */}
               <Flex align="center" gap="2" w="full" justifyContent="space-between">
-                {/* FIRST = rightmost in RTL = ارسال رایگان */}
+                {/* FIRST = rightmost in RTL = ارسال رایگان — Switch FIRST=right, Text LAST=left */}
                 <Flex align="center" gap="2">
-                  <Text fontSize="sm" color="fg" whiteSpace="nowrap">ارسال رایگان</Text>
                   <Switch.Root
                     colorPalette="teal"
                     size="sm"
@@ -505,6 +502,7 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
                     <Switch.HiddenInput />
                     <Switch.Control><Switch.Thumb /></Switch.Control>
                   </Switch.Root>
+                  <Text fontSize="sm" color="fg" whiteSpace="nowrap">ارسال رایگان</Text>
                 </Flex>
                 {/* LAST = leftmost = delete */}
                 <IconButton
@@ -702,6 +700,7 @@ function ShippingSection({ title, data, onChange }: ShippingSectionProps) {
         bg={data.enabled ? 'bg.emphasized' : 'bg.subtle'}
       >
         {/* FIRST = rightmost = switch + title */}
+        {/* RTL: Switch FIRST=right, Text LAST=left */}
         <Box
           as="button"
           type="button"
@@ -711,7 +710,6 @@ function ShippingSection({ title, data, onChange }: ShippingSectionProps) {
           cursor="pointer"
           onClick={() => onChange({ enabled: !data.enabled })}
         >
-          <Text fontSize="md" fontWeight="semibold" color="fg">{title}</Text>
           <Switch.Root
             colorPalette="teal"
             checked={data.enabled}
@@ -721,6 +719,7 @@ function ShippingSection({ title, data, onChange }: ShippingSectionProps) {
             <Switch.HiddenInput />
             <Switch.Control><Switch.Thumb /></Switch.Control>
           </Switch.Root>
+          <Text fontSize="md" fontWeight="semibold" color="fg">{title}</Text>
         </Box>
 
         {/* LAST = leftmost = badge */}

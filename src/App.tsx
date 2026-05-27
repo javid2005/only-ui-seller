@@ -7,6 +7,8 @@ import { Categories }     from '@/pages/settings/Categories'
 import { SalesSettings }    from '@/pages/settings/SalesSettings'
 import { ShippingSettings }    from '@/pages/settings/ShippingSettings'
 import { AddShippingMethod }  from '@/pages/settings/AddShippingMethod'
+import { ThemeSettings }      from '@/pages/settings/ThemeSettings'
+import { ThemeCustomize }    from '@/pages/settings/ThemeCustomize'
 
 export default function App() {
   return (
@@ -20,6 +22,8 @@ export default function App() {
           <Route path="settings/sales"     element={<SalesSettings />} />
           <Route path="settings/shipping"     element={<ShippingSettings />} />
           <Route path="settings/shipping/add" element={<AddShippingMethod />} />
+          <Route path="settings/themes"           element={<ThemeSettings />} />
+          <Route path="settings/themes/customize" element={<ThemeCustomize />} />
         </Route>
       </Routes>
     </BrowserRouter>
