@@ -343,6 +343,10 @@ export function Categories() {
 
             {/* ButtonFooter */}
             <ButtonFooter
+              primary={{
+                label: 'ذخیره',
+                onClick: () => { /* TODO: save categories */ },
+              }}
               back={{
                 label: 'بازگشت به تنظیمات فروشگاه',
                 onClick: () => navigate('/settings'),
