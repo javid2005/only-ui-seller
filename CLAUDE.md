@@ -95,6 +95,79 @@ Figma tool fail شد؟
 - RTL flex: **first DOM child = rightmost visually**
 - Use logical CSS props: `insetInlineEnd` not `right`, `borderInlineEndWidth` not `borderRightWidth`, `borderEndStartRadius` not `borderBottomRightRadius`
 
+### RTL DOM Order — الگوهای اجباری
+
+**قانون کلی:** در RTL، اولین child در DOM = راست‌ترین المان بصری.
+
+#### Button + icon (start icon = سمت راست در RTL)
+```tsx
+// ✅ CORRECT — icon FIRST = rightmost (start position)
+<Button>
+  <Plus size={16} />   {/* FIRST → راست ✓ */}
+  افزودن
+</Button>
+
+// ❌ WRONG — icon on LEFT (end position, only for intentional end icons)
+<Button>
+  افزودن
+  <Plus size={16} />   {/* LAST → چپ ✗ */}
+</Button>
+```
+
+#### Switch + label (standalone toggle)
+```tsx
+// ✅ CORRECT — Switch FIRST = rightmost
+<Flex align="center" gap="2.5">
+  <Switch.Root ...>
+    <Switch.HiddenInput />
+    <Switch.Control><Switch.Thumb /></Switch.Control>
+  </Switch.Root>
+  <Text>ارسال رایگان</Text>   {/* LAST → چپ ✓ */}
+</Flex>
+
+// ❌ WRONG — text before switch
+<Flex align="center" gap="2.5">
+  <Text>ارسال رایگان</Text>   {/* FIRST → راست ✗ */}
+  <Switch.Root ...>...</Switch.Root>
+</Flex>
+```
+
+#### Switch.Label inside Switch.Root
+```tsx
+// ✅ CORRECT — Control FIRST = rightmost
+<Switch.Root>
+  <Switch.HiddenInput />
+  <Switch.Control><Switch.Thumb /></Switch.Control>   {/* FIRST → راست ✓ */}
+  <Switch.Label>فعال</Switch.Label>                   {/* SECOND → چپ ✓ */}
+</Switch.Root>
+
+// ❌ WRONG — label before control
+<Switch.Root>
+  <Switch.Label>فعال</Switch.Label>                   {/* FIRST → راست ✗ */}
+  <Switch.Control>...</Switch.Control>
+</Switch.Root>
+```
+> **Note:** theme/index.ts adds `order: -1` to `[data-scope="switch"][data-part="control"]` as CSS fallback — اما DOM order صحیح باز هم اجباری است.
+
+#### Form row (full-width settings row)
+```tsx
+// ✅ Switch on RIGHT (start), label on LEFT (end)
+<Flex align="center" gap="2.5" w="full">
+  <Switch.Root flexShrink={0}>...</Switch.Root>   {/* FIRST → راست ✓ */}
+  <Text flex="1">عنوان تنظیم</Text>               {/* LAST → چپ ✓ */}
+</Flex>
+```
+
+#### Icon/Avatar in any row component
+```tsx
+// ✅ Icon FIRST = rightmost (start/leading icon)
+<Flex align="center" gap="3">
+  <Icon />       {/* FIRST → راست ✓ */}
+  <Text>محتوا</Text>
+  <ActionButton />  {/* LAST → چپ ✓ */}
+</Flex>
+```
+
 ### Chakra v3 Known Issues
 - `lineHeight="8"` → **BROKEN** — resolves to unitless CSS `line-height: 8` = 8× font-size (e.g. 8×24px = 192px!). Use ratio strings instead: `lineHeight="1.333"` for 32px at 2xl, `lineHeight="1.14"` for 32px at 3xl. Never use numeric lineHeight tokens.
 - `bg="bg.default"` → **BROKEN** (CSS var resolves to transparent). Use `bg="white"` or `bg="bg"` instead
@@ -110,7 +183,7 @@ Figma tool fail شد؟
 ### RTL in Portal components (Menu, Drawer, Popover, Tooltip)
 - Portal content renders under `<body>` but DOES inherit `dir="rtl"` from `<html>` via CSS cascade
 - Add `dir="rtl"` to `Menu.Positioner` / `Drawer.Positioner` etc. as an explicit safeguard
-- **DOM order still controls flex direction** — cannot be fixed globally with CSS
+- **DOM order still controls flex direction** — only partially fixable via CSS (Switch has order:-1 in theme)
 - Always put elements in correct RTL DOM order: icon/avatar FIRST (rightmost), text SECOND, action LAST (leftmost)
 - **Switch + label RTL rule:** Switch FIRST in DOM (rightmost = right side) → label text LAST (leftmost = left side). Never text-then-switch.
 - `bg="white"` → OK (Chakra palette token, not hardcoded). `bg="#ffffff"` → NOT OK

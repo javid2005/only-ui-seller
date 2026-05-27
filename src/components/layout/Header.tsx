@@ -132,9 +132,9 @@ export function HeaderCTA({ label, icon, onClick }: HeaderCTAProps) {
       _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }}
       onClick={onClick}
     >
-      {/* RTL: label FIRST = rightmost, icon LAST = leftmost ✓ */}
-      {label}
+      {/* RTL: icon FIRST = rightmost (start/leading), label SECOND = leftmost */}
       {icon && <Box display="flex" alignItems="center" flexShrink={0}>{icon}</Box>}
+      {label}
     </Button>
   )
 }

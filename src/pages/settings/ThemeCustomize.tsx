@@ -4,9 +4,10 @@ import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
   Box, Flex, Grid, Text, Badge,
   Icon, Field, FileUpload, Input, IconButton,
+  ColorPicker, parseColor, Portal,
 } from '@chakra-ui/react'
 import {
-  Plus, Trash2, Upload,
+  Plus, Trash2, Upload, Check,
   Image as ImageIcon, PanelTop, Palette, Type, LayoutDashboard,
 } from 'lucide-react'
 import { Header }       from '@/components/layout/Header'
@@ -48,6 +49,19 @@ const TABS = [
   { id: 'typography', label: 'تایپوگرافی', Icon: Type,            disabled: true  },
   { id: 'layout',     label: 'چیدمان',    Icon: LayoutDashboard, disabled: true  },
 ]
+
+// ─── Color palette (preset colors) ───────────────────────────────────────────
+// Row-major order: 5 rows (lightest→darkest) × 10 columns (right-to-left in RTL)
+// Col order (RTL): gray | orange | yellow | green | teal | blue | cyan | purple | pink | red
+const PALETTE_ROWS: string[][] = [
+  ['#a1a1aa','#fb923c','#facc15','#4ade80','#2dd4bf','#60a5fa','#22d3ee','#c084fc','#f472b6','#f87171'],
+  ['#71717a','#f97316','#eab308','#22c55e','#14b8a6','#3b82f6','#06b6d4','#a855f7','#ec4899','#ef4444'],
+  ['#52525b','#ea580c','#ca8a04','#16a34a','#0d9488','#2563eb','#0891b2','#9333ea','#db2777','#dc2626'],
+  ['#3f3f46','#92310a','#845209','#116932','#0c5d56','#173da6','#0c5c72','#641ba3','#a41752','#991919'],
+  ['#27272a','#6c2710','#713f12','#124a28','#114240','#1a3478','#134152','#4a1772','#6d0e34','#511111'],
+]
+
+const DEFAULT_BRAND_COLOR = '#0d9488' // teal.600 — Vitrina brand
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
@@ -115,6 +129,14 @@ export function ThemeCustomize() {
 
   const handleLinkChange = (value: string) =>
     setSlides(prev => prev.map(s => s.id === selectedId ? { ...s, link: value } : s))
+
+  // ── Brand color (ColorPicker) ─────────────────────────────────────────────────
+
+  const [pickerColor, setPickerColor] = useState(() => parseColor(DEFAULT_BRAND_COLOR))
+  // Derived hex string — lowercase, matches PALETTE_ROWS values for preset selection
+  const brandColor = pickerColor.toString('hex').toLowerCase()
+
+  const handlePresetSelect = (hex: string) => setPickerColor(parseColor(hex))
 
   // ── Banner management ──────────────────────────────────────────────────────────
 
@@ -548,6 +570,132 @@ export function ThemeCustomize() {
                 />
               ))}
             </Grid>
+
+            </>)}
+
+            {/* ═══════════════════════════════════════════════════════════════════
+                TAB: colors
+            ═══════════════════════════════════════════════════════════════════ */}
+            {activeTab === 'colors' && (<>
+
+            {/* ── Section 1: Preset palette ─────────────────────────────────── */}
+            <TitleBar
+              title="رنگ های پیش‌فرض"
+              subtitle="انتخاب رنگ اصلی برای پوسته ازبین رنگ های پیش فرض"
+              size="xl"
+              divider
+            />
+
+            {/* Scroll wrapper — on small screens grid scrolls horizontally at fixed minW */}
+            <Box overflowX="auto" w="full">
+            <Grid templateColumns="repeat(10, 1fr)" minW="640px" w="full">
+              {PALETTE_ROWS.flatMap((row) =>
+                row.map((hex) => {
+                  const isSelected = brandColor === hex
+                  return (
+                    <Box
+                      key={hex}
+                      as="button"
+                      type="button"
+                      onClick={() => handlePresetSelect(hex)}
+                      p="1"
+                      rounded="xl"
+                      bg={isSelected ? 'teal.subtle' : 'transparent'}
+                      borderWidth="1px"
+                      borderColor={isSelected ? 'teal.focusRing' : 'transparent'}
+                      cursor="pointer"
+                      display="flex"
+                      flexDirection="column"
+                      gap="1"
+                      alignItems="stretch"
+                      _hover={!isSelected ? { bg: 'bg.subtle' } : {}}
+                      transition="background 0.1s"
+                    >
+                      {/* Color area */}
+                      <Box position="relative">
+                        <Box
+                          aspectRatio="140/88"
+                          bg={hex}
+                          rounded="lg"
+                          w="full"
+                        />
+                        {isSelected && (
+                          <Box
+                            position="absolute"
+                            inset="0"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <Check size={16} color="white" />
+                          </Box>
+                        )}
+                      </Box>
+                      {/* Hex label */}
+                      <Text
+                        fontSize="2xs"
+                        textAlign="center"
+                        color={isSelected ? 'fg' : 'fg.muted'}
+                        fontWeight={isSelected ? 'medium' : 'normal'}
+                        lineHeight="1.4"
+                      >
+                        {hex}
+                      </Text>
+                    </Box>
+                  )
+                })
+              )}
+            </Grid>
+            </Box>
+
+            {/* ── Section 2: Custom color picker ───────────────────────────── */}
+            <TitleBar
+              title="انتخاب کد رنگ"
+              subtitle="کد رنگ مورد نظر خود را وارد کنید"
+              size="xl"
+              divider
+            />
+
+            {/* ColorPickerControl — max 310px, right-aligned in RTL (start = right) */}
+            <Box maxW={isCompact ? 'full' : '310px'}>
+              <ColorPicker.Root
+                value={pickerColor}
+                onValueChange={(e) => setPickerColor(e.value)}
+              >
+                <ColorPicker.HiddenInput />
+                <Field.Root>
+                  <Field.Label fontWeight="semibold" fontSize="sm" color="fg">
+                    رنگ
+                  </Field.Label>
+                  {/* Row: Input FIRST = rightmost in RTL ✓ | Trigger SECOND = leftmost ✓ */}
+                  <Flex align="center" gap="2" w="full">
+                    <ColorPicker.Input flex="1" dir="ltr" textAlign="right" />
+                    <ColorPicker.Trigger
+                      boxSize="10"
+                      p="0"
+                      borderWidth="1px"
+                      borderColor="border"
+                      rounded="md"
+                      overflow="hidden"
+                      flexShrink={0}
+                    >
+                      <ColorPicker.ValueSwatch w="full" h="full" rounded="none" />
+                    </ColorPicker.Trigger>
+                  </Flex>
+                </Field.Root>
+                <Portal>
+                  <ColorPicker.Positioner dir="rtl">
+                    <ColorPicker.Content>
+                      <ColorPicker.Area />
+                      <Flex gap="2" align="center">
+                        <ColorPicker.EyeDropper size="xs" variant="outline" />
+                        <ColorPicker.Sliders />
+                      </Flex>
+                    </ColorPicker.Content>
+                  </ColorPicker.Positioner>
+                </Portal>
+              </ColorPicker.Root>
+            </Box>
 
             </>)}
 

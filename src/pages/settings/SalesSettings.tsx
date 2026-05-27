@@ -25,11 +25,8 @@ interface SwitchRowProps {
 
 function SwitchRow({ label, checked, disabled, onCheckedChange }: SwitchRowProps) {
   return (
-    // RTL: Text FIRST = rightmost, Switch LAST = leftmost ✓
+    // RTL: Switch FIRST = rightmost (start/right), Text LAST = leftmost (end/left)
     <Flex align="center" gap="2.5" w="full">
-      <Text fontSize="sm" color="fg" flex="1" minW="0" textAlign="right">
-        {label}
-      </Text>
       <Switch.Root
         colorPalette="teal"
         checked={checked}
@@ -42,6 +39,9 @@ function SwitchRow({ label, checked, disabled, onCheckedChange }: SwitchRowProps
           <Switch.Thumb />
         </Switch.Control>
       </Switch.Root>
+      <Text fontSize="sm" color="fg" flex="1" minW="0">
+        {label}
+      </Text>
     </Flex>
   )
 }
