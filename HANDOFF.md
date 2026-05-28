@@ -1,11 +1,11 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-05-27
+> آخرین آپدیت: 2026-05-28
 
 ## الان
-ShippingCalculatorDialog کامل شد + RTL switch order در AddShippingMethod fix شد (Switch FIRST=right, Text LAST=left در PriceCard، WeightTable، ShippingSection) + WeightRangeChart حالا بلافاصله بعد از اولین بازه نمایش میده. فایل‌های Themes (ThemeSettings + ThemeCustomize) uncommitted وجود دارن.
+Badges.tsx (نمادها و مجوزها) کامل شد — سه section با orange/blue alert، responsive mobile (column layout، image 64px → 102px، ثبت button full-width زیر input در <sm). ThemeCustomize colors tab هم از session قبل uncommitted مانده.
 
 ## بعدی
-Commit تغییرات shipping + themes.
+Commit همه تغییرات (CLAUDE.md، App.tsx، Badges.tsx).
 
 ## صفحات باقی‌مانده
 
@@ -15,11 +15,9 @@ Commit تغییرات shipping + themes.
 | `/settings/categories` | دسته‌بندی‌ها | ✅ |
 | `/settings/sales` | تنظیمات فروش | ✅ |
 | `/settings/shipping` | روش‌های ارسال | ✅ |
-| `/settings/shipping/add` | افزودن روش ارسال | ✅ (API ذخیره pending) |
-| `/settings/themes` | پوسته‌ها | ⏳ (فایل‌ها موجود، uncommitted) |
-| `/settings/badges` | نمادها و مجوزها | ⏳ |
+| `/settings/shipping/add` | افزودن روش ارسال | ✅ |
+| `/settings/themes` | پوسته‌ها | ✅ |
+| `/settings/themes/customize` | سفارشی‌سازی پوسته | ✅ |
+| `/settings/badges` | نمادها و مجوزها | ✅ |
 
-## تصمیم‌های معماری
-- **Switch RTL rule:** Switch FIRST در DOM = راست، Text LAST = چپ — در همه‌جا اجباری
-- **WeightRangeChart:** نمایش از اولین بازه (ranges.length > 0) بدون نیاز به toWeight پر شده
-- → see CLAUDE.md for full architectural decisions
+→ see CLAUDE.md for architectural decisions

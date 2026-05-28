@@ -9,6 +9,7 @@ import { ShippingSettings }    from '@/pages/settings/ShippingSettings'
 import { AddShippingMethod }  from '@/pages/settings/AddShippingMethod'
 import { ThemeSettings }      from '@/pages/settings/ThemeSettings'
 import { ThemeCustomize }    from '@/pages/settings/ThemeCustomize'
+import { Badges }            from '@/pages/settings/Badges'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="settings/shipping/add" element={<AddShippingMethod />} />
           <Route path="settings/themes"           element={<ThemeSettings />} />
           <Route path="settings/themes/customize" element={<ThemeCustomize />} />
+          <Route path="settings/badges"           element={<Badges />} />
         </Route>
       </Routes>
     </BrowserRouter>

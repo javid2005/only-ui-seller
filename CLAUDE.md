@@ -445,6 +445,7 @@ src/
       AddShippingMethod.tsx  — افزودن روش ارسال (One Column Center، Collapsible sections، WeightRangeChart با BarSegment)
       ThemeSettings.tsx      — پوسته‌ها (Two Columns Right Center، ThemeCard grid، SVG thumbnail)
       ThemeCustomize.tsx     — سفارشی‌سازی پوسته (One Column Center، SliderItem + BannerCard)
+      Badges.tsx             — نمادها و مجوزها (One Column Center، 3 badge sections، enamad + ecunion + samandehi)
   services/
     api.ts
   theme/
