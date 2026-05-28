@@ -39,7 +39,7 @@ export function ShippingCardSystem({
       rounded="lg"
       w="full"
       position="relative"
-      _hover={isVisuallyDisabled || comingSoon ? undefined : { bg: 'bg.teal', borderColor: 'teal.focusRing' }}
+      _hover={isVisuallyDisabled || comingSoon ? undefined : { bg: 'brand.bg', borderColor: 'brand.focusRing' }}
     >
       {/* Top — RTL: content FIRST=right, logo LAST=left */}
       <Flex align="start" gap="4" opacity={comingSoon || isVisuallyDisabled ? 0.4 : 1}>
@@ -50,7 +50,7 @@ export function ShippingCardSystem({
           </Text>
           {/* City — RTL: icon FIRST=right, text SECOND=left */}
           <Flex align="center" gap="2">
-            <Box color="teal.solid" flexShrink={0}>
+            <Box color="brand.solid" flexShrink={0}>
               <MapPin size={16} />
             </Box>
             <Text fontSize="sm" color="fg.muted" lineHeight="1.428">
@@ -92,7 +92,7 @@ export function ShippingCardSystem({
         /* Switch row — RTL: switch FIRST=right, text SECOND=left */
         <Flex align="center" gap="2.5">
           <Switch.Root
-            colorPalette="teal"
+            colorPalette="brand"
             size="sm"
             checked={enabled}
             disabled={disabled}

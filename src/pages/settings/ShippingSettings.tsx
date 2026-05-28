@@ -152,7 +152,7 @@ function InfoBox({ onOpen, sidebar = false }: InfoBoxProps) {
 
         {/* LAST = leftmost در RTL = دکمه */}
         <Button
-          colorPalette="teal"
+          colorPalette="brand"
           flexShrink={0}
           w={forceColumn ? 'full' : { base: 'full', md: 'auto' }}
           onClick={onOpen}
@@ -235,7 +235,7 @@ export function ShippingSettings() {
               subtitle="انتخاب روش های ارسال"
               divider
               cta={
-                <Button size="sm" colorPalette="teal" variant="outline" onClick={() => navigate('/settings/shipping/add')}>
+                <Button size="sm" colorPalette="brand" variant="outline" onClick={() => navigate('/settings/shipping/add')}>
                   {/* RTL: icon FIRST = rightmost (leading/start icon) ✓ */}
                   <Plus size={14} />
                   افزودن روش ارسال

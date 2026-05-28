@@ -49,14 +49,16 @@ import { defineConfig } from '@chakra-ui/react'
  *
  *   Example: teal.solid → #0D9488 (light) | #2DD4BF (dark)
  *
- * ── VITRINA BRAND TOKENS (custom — teal-based) ──────────────
- *   brand.solid        → teal.600 / teal.400  (primary action)
- *   brand.contrast     → white / teal.950     (text on brand)
+ * ── VITRINA BRAND TOKENS (custom — teal-based, mirrors teal.* pattern) ──
+ *   brand.solid        → teal.600 / teal.600  (primary action — same both modes)
+ *   brand.contrast     → white / white        (text on brand solid)
  *   brand.fg           → teal.700 / teal.300  (brand text)
- *   brand.muted        → teal.100 / teal.900  (light brand bg)
- *   brand.subtle       → teal.50  / teal.950  (very light brand)
- *   brand.emphasized   → teal.200 / teal.800  (medium brand)
- *   brand.focusRing    → teal.600 / teal.400
+ *   brand.subtle       → teal.100 / teal.900  (light tint bg)
+ *   brand.muted        → teal.200 / teal.800  (medium-light tint bg)
+ *   brand.emphasized   → teal.300 / teal.700  (medium tint bg)
+ *   brand.focusRing    → teal.500 / teal.500  (focus ring)
+ *   brand.border       → teal.500 / teal.400  (brand border)
+ *   brand.bg           → teal.50  / teal.950  (extra-light hover bg)
  *
  * ── VITRINA SURFACE TOKENS (custom) ─────────────────────────
  *   surface.subtle     → gray.50  / gray.900
@@ -134,18 +136,15 @@ export const vitrinaTokens = defineConfig({
       colors: {
         // ── Brand (teal-based primary) ──────────────────────
         brand: {
-          solid: { value: { _light: '{colors.teal.600}', _dark: '{colors.teal.400}' } },
-          contrast: { value: { _light: '{colors.white}', _dark: '{colors.teal.950}' } },
+          solid: { value: { _light: '{colors.teal.600}', _dark: '{colors.teal.600}' } },
+          contrast: { value: { _light: '{colors.white}', _dark: '{colors.white}' } },
           fg: { value: { _light: '{colors.teal.700}', _dark: '{colors.teal.300}' } },
-          muted: { value: { _light: '{colors.teal.100}', _dark: '{colors.teal.900}' } },
-          subtle: { value: { _light: '{colors.teal.50}', _dark: '{colors.teal.950}' } },
-          emphasized: { value: { _light: '{colors.teal.200}', _dark: '{colors.teal.800}' } },
-          focusRing: { value: { _light: '{colors.teal.600}', _dark: '{colors.teal.400}' } },
-          border: { value: { _light: '{colors.teal.300}', _dark: '{colors.teal.700}' } },
-        },
-        // ── Background helpers ───────────────────────────────
-        bg: {
-          teal: { value: { _light: '{colors.teal.50}', _dark: '{colors.teal.950}' } },
+          subtle: { value: { _light: '{colors.teal.100}', _dark: '{colors.teal.900}' } },
+          muted: { value: { _light: '{colors.teal.200}', _dark: '{colors.teal.800}' } },
+          emphasized: { value: { _light: '{colors.teal.300}', _dark: '{colors.teal.700}' } },
+          focusRing: { value: { _light: '{colors.teal.500}', _dark: '{colors.teal.500}' } },
+          border: { value: { _light: '{colors.teal.500}', _dark: '{colors.teal.400}' } },
+          bg: { value: { _light: '{colors.teal.50}', _dark: '{colors.teal.950}' } },
         },
         // ── Surface helpers ──────────────────────────────────
         surface: {

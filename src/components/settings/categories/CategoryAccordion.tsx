@@ -43,7 +43,7 @@ function SubCategoryItem({ label }: { label: string }) {
       flex="1 0 0"
     >
       {/* FIRST = rightmost در RTL: آیکن تیک */}
-      <Box color="teal.500" display="flex" alignItems="center" flexShrink={0}>
+      <Box color="brand.solid" display="flex" alignItems="center" flexShrink={0}>
         <CheckCircle2 size={16} />
       </Box>
       <Text fontSize="xs" fontWeight="medium" color="fg" lineHeight="1.333" noOfLines={1} flex="1">
@@ -148,7 +148,7 @@ export function CategoryAccordion({
           {showMakeDefault && (
             <Button
               size="2xs"
-              colorPalette="teal"
+              colorPalette="brand"
               variant="outline"
               flexShrink={0}
               onClick={() => onSetDefault?.(category.id)}
@@ -160,7 +160,7 @@ export function CategoryAccordion({
           {showAdd && (
             <Button
               size="2xs"
-              colorPalette="teal"
+              colorPalette="brand"
               variant="solid"
               flexShrink={0}
               onClick={() => onAdd(category.id)}

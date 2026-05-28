@@ -363,7 +363,7 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial, phones = []
                   لغو
                 </Button>
                 <Button
-                  colorPalette="teal"
+                  colorPalette="brand"
                   onClick={handleSubmit}
                   disabled={!isValid}
                 >

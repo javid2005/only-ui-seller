@@ -35,8 +35,8 @@ const BADGES: BadgeConfig[] = [
     inputPlaceholder: 'کد نماد را از enamad.ir دریافت و اینجا وارد کنید',
     requiresDomain: true,
     submitDisabled: true,
-    globeBg: 'teal.subtle',
-    globeColor: 'teal.fg',
+    globeBg: 'brand.subtle',
+    globeColor: 'brand.fg',
   },
   {
     id: 'ecunion',
@@ -118,7 +118,7 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
             rel="noopener noreferrer"
             align="center"
             gap="2"
-            color="teal.fg"
+            color="brand.fg"
             fontSize="sm"
             fontWeight="semibold"
             _hover={{ opacity: 0.8 }}

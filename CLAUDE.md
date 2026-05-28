@@ -296,14 +296,15 @@ Pattern: `{color}.{variant}` — available for:
 ### Vitrina Brand Tokens (custom — `src/theme/tokens.ts`)
 | Token | Light | Dark |
 |-------|-------|------|
-| `brand.solid` | teal.600 (#0D9488) | teal.400 |
-| `brand.contrast` | white | teal.950 |
+| `brand.solid` | teal.600 (#0D9488) | teal.600 (#0D9488) |
+| `brand.contrast` | white | white |
 | `brand.fg` | teal.700 | teal.300 |
-| `brand.muted` | teal.100 | teal.900 |
-| `brand.subtle` | teal.50 | teal.950 |
-| `brand.emphasized` | teal.200 | teal.800 |
-| `brand.focusRing` | teal.600 | teal.400 |
-| `brand.border` | teal.300 | teal.700 |
+| `brand.subtle` | teal.100 | teal.900 |
+| `brand.muted` | teal.200 | teal.800 |
+| `brand.emphasized` | teal.300 | teal.700 |
+| `brand.focusRing` | teal.500 | teal.500 |
+| `brand.border` | teal.500 | teal.400 |
+| `brand.bg` | teal.50 | teal.950 |
 
 ### Vitrina Surface Tokens (custom)
 | Token | Light | Dark |
@@ -311,11 +312,6 @@ Pattern: `{color}.{variant}` — available for:
 | `surface.subtle` | gray.50 | gray.900 |
 | `surface.muted` | gray.100 | gray.800 |
 | `surface.card` | white | gray.900 |
-
-### Vitrina Background Helpers (custom)
-| Token | Light | Dark |
-|-------|-------|------|
-| `bg.teal` | teal.50 | teal.950 |
 
 ---
 

@@ -28,7 +28,7 @@ function SwitchRow({ label, checked, disabled, onCheckedChange }: SwitchRowProps
     // RTL: Switch FIRST = rightmost (start/right), Text LAST = leftmost (end/left)
     <Flex align="center" gap="2.5" w="full">
       <Switch.Root
-        colorPalette="teal"
+        colorPalette="brand"
         checked={checked}
         disabled={disabled}
         onCheckedChange={(e) => onCheckedChange?.(e.checked)}
@@ -126,7 +126,7 @@ export function SalesSettings() {
                 <Button
                   size="sm"
                   variant="outline"
-                  colorPalette="teal"
+                  colorPalette="brand"
                   onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}
                 >
                   {/* Plus FIRST = rightmost in RTL ✓ */}

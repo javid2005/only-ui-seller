@@ -38,8 +38,8 @@ const SETTINGS_SECTIONS: Section[] = [
         title: 'اطلاعات فروشگاه',
         description: 'ویرایش اطلاعات عمومی، راه های ارتباطی و آدرس فروشگاه',
         icon: <Store size={24} />,
-        iconBg: 'teal.subtle',
-        iconColor: 'teal.fg',
+        iconBg: 'brand.subtle',
+        iconColor: 'brand.fg',
         to: '/settings/store-info',
       },
       {

@@ -248,7 +248,7 @@ export function ThemeSettings() {
 
                   {/* Customize — LAST = leftmost (always visible) */}
                   <Button
-                    colorPalette="teal"
+                    colorPalette="brand"
                     variant="solid"
                     size="md"
                     w={{ base: 'full', md: 'auto' }}

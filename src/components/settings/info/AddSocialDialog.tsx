@@ -160,7 +160,7 @@ export function AddSocialDialog({ open, onClose, onSubmit, initial }: AddSocialD
                   لغو
                 </Button>
                 <Button
-                  colorPalette="teal"
+                  colorPalette="brand"
                   onClick={handleSubmit}
                   disabled={!handle.trim()}
                 >

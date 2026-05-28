@@ -72,7 +72,7 @@ export function ThemeCard({
   }
 
   // ── Normal variant ───────────────────────────────────────────────────────────
-  // Hover: border teal.focusRing + content bg.teal
+  // Hover: border brand.focusRing + content brand.bg
   // Selection: ONLY via button click (not card click)
   const showHover = isHovered && !isSelected
 
@@ -80,7 +80,7 @@ export function ThemeCard({
     <Box
       w="full"
       borderWidth={isSelected ? '2px' : '1px'}
-      borderColor={isSelected ? 'brand.solid' : showHover ? 'teal.focusRing' : 'border'}
+      borderColor={isSelected ? 'brand.solid' : showHover ? 'brand.focusRing' : 'border'}
       rounded="lg"
       overflow="hidden"
       position="relative"
@@ -123,12 +123,12 @@ export function ThemeCard({
         )}
       </Box>
 
-      {/* Content area — default: bg, hover: bg.teal (via JS state) */}
+      {/* Content area — default: bg, hover: brand.bg (via JS state) */}
       <Flex
         direction="column"
         gap="4"
         p="4"
-        bg={showHover ? 'bg.teal' : 'bg'}
+        bg={showHover ? 'brand.bg' : 'bg'}
         position="relative"
         transition="background 0.15s"
       >
@@ -138,7 +138,7 @@ export function ThemeCard({
 
         {isSelected ? (
           // Selected state — non-interactive button (visual only)
-          <Button colorPalette="teal" variant="solid" w="full" size="md" pointerEvents="none">
+          <Button colorPalette="brand" variant="solid" w="full" size="md" pointerEvents="none">
             {/* RTL DOM: Check FIRST = rightmost (start side) ✓ */}
             <Check size={20} />
             انتخاب شده
@@ -146,7 +146,7 @@ export function ThemeCard({
         ) : (
           // Selection ONLY via button — NOT card click
           <Button
-            colorPalette="teal"
+            colorPalette="brand"
             variant="outline"
             w="full"
             size="md"

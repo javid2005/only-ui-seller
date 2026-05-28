@@ -69,7 +69,7 @@ export function ShippingCardCustom({
       w="full"
       overflow="hidden"
       position="relative"
-      _hover={isVisuallyDisabled ? undefined : { bg: 'bg.teal', borderColor: 'teal.focusRing' }}
+      _hover={isVisuallyDisabled ? undefined : { bg: 'brand.bg', borderColor: 'brand.focusRing' }}
     >
       {/* Header */}
       <Flex direction="column" gap="1" opacity={isVisuallyDisabled ? 0.4 : 1}>
@@ -89,7 +89,7 @@ export function ShippingCardCustom({
 
         {/* City row — RTL: icon FIRST=right, text SECOND=left */}
         <Flex align="center" gap="2">
-          <Box color="teal.solid" flexShrink={0}>
+          <Box color="brand.solid" flexShrink={0}>
             <MapPin size={16} />
           </Box>
           <Text fontSize="sm" color="fg.muted" lineHeight="1.428">
@@ -105,7 +105,7 @@ export function ShippingCardCustom({
             <Flex key={i} align="center" gap="4" w="full">
               {/* label + icon — RTL: icon FIRST=rightmost, text SECOND */}
               <Flex align="center" gap="2" flexShrink={0}>
-                <Box color="teal.solid">
+                <Box color="brand.solid">
                   {route.icon === 'bike' ? <Bike size={16} /> : <Truck size={16} />}
                 </Box>
                 <Text fontSize="sm" fontWeight="semibold" color="fg" lineHeight="1.428" minW="20">
@@ -144,7 +144,7 @@ export function ShippingCardCustom({
         {/* SwitchBase — FIRST = rightmost: Switch(right) ← text(left) */}
         <Flex align="center" gap="2.5" flexShrink={0}>
           <Switch.Root
-            colorPalette="teal"
+            colorPalette="brand"
             size="sm"
             checked={enabled}
             disabled={disabled || isDefault}

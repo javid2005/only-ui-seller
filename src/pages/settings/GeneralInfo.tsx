@@ -167,7 +167,7 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
           size="xl"
           divider
           cta={
-            <Button size="sm" variant="outline" colorPalette="teal"
+            <Button size="sm" variant="outline" colorPalette="brand"
               onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}
             >
               <Plus size={16} />
@@ -203,7 +203,7 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
           size="xl"
           divider
           cta={
-            <Button size="sm" variant="outline" colorPalette="teal"
+            <Button size="sm" variant="outline" colorPalette="brand"
               onClick={() => { setEditSocial(undefined); setSocialOpen(true) }}
             >
               <Plus size={16} />
@@ -279,7 +279,7 @@ function AddressTab({ phones }: { phones: Phone[] }) {
         size="xl"
         divider
         cta={
-          <Button size="sm" variant="outline" colorPalette="teal"
+          <Button size="sm" variant="outline" colorPalette="brand"
             onClick={() => { setEditAddr(undefined); setAddrOpen(true) }}
           >
             <Plus size={16} />

@@ -44,7 +44,7 @@ export function AddressCard({
       overflow="hidden"
       w="full"
       className="group"
-      _hover={isDisabled ? undefined : { borderColor: 'teal.focusRing' }}
+      _hover={isDisabled ? undefined : { borderColor: 'brand.focusRing' }}
       cursor="default"
     >
       {/* ── Map placeholder ───────────────────────────────────────── */}
@@ -71,7 +71,7 @@ export function AddressCard({
         gap="2"
         p="4"
         bg="bg.subtle"
-        _groupHover={isDisabled ? undefined : { bg: 'bg.teal' }}
+        _groupHover={isDisabled ? undefined : { bg: 'brand.bg' }}
         align="flex-start"
       >
         {/* Title — faded when disabled */}
@@ -94,7 +94,7 @@ export function AddressCard({
           <Flex gap="4" w="full">
             {/* FIRST = rightmost in RTL — province/city */}
             <Flex align="center" gap="2" flex="1" minW="0">
-              <Box color="teal.solid" flexShrink={0} display="flex" alignItems="center">
+              <Box color="brand.solid" flexShrink={0} display="flex" alignItems="center">
                 <Map size={16} />
               </Box>
               <Text fontSize="sm" color="fg.muted" noOfLines={1} flex="1" textAlign="right">
@@ -103,7 +103,7 @@ export function AddressCard({
             </Flex>
             {/* SECOND = leftmost in RTL — postal */}
             <Flex align="center" gap="2" flex="1" minW="0">
-              <Box color="teal.solid" flexShrink={0} display="flex" alignItems="center">
+              <Box color="brand.solid" flexShrink={0} display="flex" alignItems="center">
                 <Mailbox size={16} />
               </Box>
               <Text fontSize="sm" color="fg.muted" noOfLines={1} flex="1" textAlign="right">
@@ -114,7 +114,7 @@ export function AddressCard({
 
           {/* Row 2: Full address */}
           <Flex align="center" gap="2" w="full">
-            <Box color="teal.solid" flexShrink={0} display="flex" alignItems="center">
+            <Box color="brand.solid" flexShrink={0} display="flex" alignItems="center">
               <MapPin size={16} />
             </Box>
             <Text
@@ -132,7 +132,7 @@ export function AddressCard({
 
           {/* Row 3: Phone — always visible */}
           <Flex align="center" gap="2" w="full">
-            <Box color="teal.solid" flexShrink={0} display="flex" alignItems="center">
+            <Box color="brand.solid" flexShrink={0} display="flex" alignItems="center">
               <PhoneIcon size={16} />
             </Box>
             <Text
@@ -157,7 +157,7 @@ export function AddressCard({
           <Switch.Root
             checked={active}
             onCheckedChange={(e) => onToggleActive?.(id, e.checked)}
-            colorPalette="teal"
+            colorPalette="brand"
             dir="rtl"
           >
             <Switch.HiddenInput />

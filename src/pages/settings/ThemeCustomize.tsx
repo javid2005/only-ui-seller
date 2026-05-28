@@ -600,9 +600,9 @@ export function ThemeCustomize() {
                       onClick={() => handlePresetSelect(hex)}
                       p="1"
                       rounded="xl"
-                      bg={isSelected ? 'teal.subtle' : 'transparent'}
+                      bg={isSelected ? 'brand.subtle' : 'transparent'}
                       borderWidth="1px"
-                      borderColor={isSelected ? 'teal.focusRing' : 'transparent'}
+                      borderColor={isSelected ? 'brand.focusRing' : 'transparent'}
                       cursor="pointer"
                       display="flex"
                       flexDirection="column"

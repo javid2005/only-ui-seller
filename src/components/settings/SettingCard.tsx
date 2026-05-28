@@ -10,9 +10,9 @@ export interface SettingCardProps {
   description: string
   /** Icon element — 24×24 recommended (e.g. lucide icon) */
   icon: ReactNode
-  /** Chakra semantic token for icon container bg, e.g. 'teal.subtle' */
+  /** Chakra semantic token for icon container bg, e.g. 'brand.subtle' */
   iconBg: string
-  /** Chakra semantic token for icon color, e.g. 'teal.fg' */
+  /** Chakra semantic token for icon color, e.g. 'brand.fg' */
   iconColor: string
   /** React-router path for navigation */
   to?: string
@@ -52,7 +52,7 @@ export function SettingCard({
     textDecoration: 'none',
     _hover: isDisabled
       ? {}
-      : { bg: 'bg.teal', borderColor: 'brand.border' },
+      : { bg: 'brand.bg', borderColor: 'brand.border' },
   }
 
   const content = (

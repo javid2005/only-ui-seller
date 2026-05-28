@@ -188,7 +188,7 @@ function PriceCard({ isFree, amount, onFreeChange, onAmountChange }: PriceCardPr
           flexShrink={0}
         >
           <Switch.Root
-            colorPalette="teal"
+            colorPalette="brand"
             checked={isFree}
             onCheckedChange={(e) => onFreeChange(e.checked)}
           >
@@ -380,7 +380,7 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
               {/* ارسال رایگان — RTL: Switch FIRST=right, Text LAST=left */}
               <Flex align="center" gap="2">
                 <Switch.Root
-                  colorPalette="teal"
+                  colorPalette="brand"
                   size="sm"
                   checked={row.isFree}
                   onCheckedChange={(e) => onUpdate(row.id, { isFree: e.checked })}
@@ -494,7 +494,7 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
                 {/* FIRST = rightmost in RTL = ارسال رایگان — Switch FIRST=right, Text LAST=left */}
                 <Flex align="center" gap="2">
                   <Switch.Root
-                    colorPalette="teal"
+                    colorPalette="brand"
                     size="sm"
                     checked={row.isFree}
                     onCheckedChange={(e) => onUpdate(row.id, { isFree: e.checked })}
@@ -525,7 +525,7 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
       <Box>
         <Button
           variant="outline"
-          colorPalette="teal"
+          colorPalette="brand"
           size="sm"
           onClick={onAdd}
         >
@@ -711,7 +711,7 @@ function ShippingSection({ title, data, onChange }: ShippingSectionProps) {
           onClick={() => onChange({ enabled: !data.enabled })}
         >
           <Switch.Root
-            colorPalette="teal"
+            colorPalette="brand"
             checked={data.enabled}
             onCheckedChange={(e) => onChange({ enabled: e.checked })}
             pointerEvents="none"

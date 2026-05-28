@@ -2,10 +2,14 @@
 > آخرین آپدیت: 2026-05-28
 
 ## الان
-Badges.tsx (نمادها و مجوزها) کامل شد — سه section با orange/blue alert، responsive mobile (column layout، image 64px → 102px، ثبت button full-width زیر input در <sm). ThemeCustomize colors tab هم از session قبل uncommitted مانده.
+Brand token normalization کامل شد — Option A (mirrors teal.* standard pattern):
+- `tokens.ts`: brand.* values normalized، brand.bg اضافه، bg.teal حذف
+- همه `teal.*` brand usages در src → `brand.*` (25 فایل)
+- همه `colorPalette="teal"` → `colorPalette="brand"` (14 فایل)
+- CLAUDE.md + dev-knowledge sync شد
 
 ## بعدی
-Commit همه تغییرات (CLAUDE.md، App.tsx، Badges.tsx).
+نامشخص — کاربر تعیین نکرد.
 
 ## صفحات باقی‌مانده
 

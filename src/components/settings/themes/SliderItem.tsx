@@ -22,7 +22,7 @@ export interface SliderItemProps {
 /**
  * SliderItem — draggable slide list item for the theme customize page.
  *
- * States: default (no bg) | hover (bg.muted) | selected (teal.muted + teal.fg)
+ * States: default (no bg) | hover (bg.muted) | selected (brand.muted + brand.fg)
  *
  * RTL DOM (first = rightmost):
  *   Text (FIRST = right) | GripVertical (SECOND = left)
@@ -52,7 +52,7 @@ export function SliderItem({
         rounded="sm"
         flexShrink={0}
         cursor="pointer"
-        bg={selected ? 'teal.muted' : showHover ? 'bg.muted' : 'transparent'}
+        bg={selected ? 'brand.muted' : showHover ? 'bg.muted' : 'transparent'}
         transition="background 0.1s"
         onClick={onSelect}
         draggable={draggable}
@@ -66,7 +66,7 @@ export function SliderItem({
         {/* GripVertical — FIRST = rightmost in RTL ✓ */}
         <Box
           flexShrink={0}
-          color={selected ? 'teal.fg' : 'fg.subtle'}
+          color={selected ? 'brand.fg' : 'fg.subtle'}
           cursor="grab"
           display="flex"
           alignItems="center"
@@ -76,7 +76,7 @@ export function SliderItem({
         {/* Text — SECOND = leftmost ✓ */}
         <Text
           fontSize="sm"
-          color={selected ? 'teal.fg' : 'fg'}
+          color={selected ? 'brand.fg' : 'fg'}
           whiteSpace="nowrap"
           lineHeight="1.5"
         >
@@ -96,7 +96,7 @@ export function SliderItem({
       overflow="hidden"
       w="full"
       cursor="pointer"
-      bg={selected ? 'teal.muted' : showHover ? 'bg.muted' : 'transparent'}
+      bg={selected ? 'brand.muted' : showHover ? 'bg.muted' : 'transparent'}
       transition="background 0.1s"
       onClick={onSelect}
       draggable={draggable}
@@ -110,7 +110,7 @@ export function SliderItem({
       {/* GripVertical — FIRST = rightmost in RTL ✓ */}
       <Box
         flexShrink={0}
-        color={selected ? 'teal.fg' : 'fg.subtle'}
+        color={selected ? 'brand.fg' : 'fg.subtle'}
         cursor="grab"
         display="flex"
         alignItems="center"
@@ -122,7 +122,7 @@ export function SliderItem({
       <Text
         flex="1"
         fontSize="sm"
-        color={selected ? 'teal.fg' : 'fg'}
+        color={selected ? 'brand.fg' : 'fg'}
         textAlign="right"
         minW="0"
         lineHeight="1.5"

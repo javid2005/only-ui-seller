@@ -80,7 +80,7 @@ export function SocialCard({ id, title, platform, handle, onEdit, onDelete }: So
       rounded="xl"
       w="full"
       overflow="hidden"
-      _hover={{ bg: 'bg.teal', borderColor: 'teal.focusRing' }}
+      _hover={{ bg: 'brand.bg', borderColor: 'brand.focusRing' }}
     >
       {/* FIRST = rightmost in RTL — آیکن پلتفرم */}
       {cfg.svgSrc ? (
@@ -99,7 +99,7 @@ export function SocialCard({ id, title, platform, handle, onEdit, onDelete }: So
           color={cfg.lucideColor}
           w="10"
           h="10"
-          _groupHover={{ bg: 'teal.muted', color: 'teal.fg' }}
+          _groupHover={{ bg: 'brand.muted', color: 'brand.fg' }}
         >
           {LucideIcon && <LucideIcon size={20} />}
         </Box>

@@ -96,7 +96,7 @@ export function ButtonFooter({ primary, secondary, tertiary, back }: ButtonFoote
         )}
         {primary && (
           <Button
-            colorPalette="teal"
+            colorPalette="brand"
             onClick={primary.onClick}
             loading={primary.loading}
             disabled={primary.disabled}

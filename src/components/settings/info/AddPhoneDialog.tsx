@@ -133,7 +133,7 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
                   لغو
                 </Button>
                 <Button
-                  colorPalette="teal"
+                  colorPalette="brand"
                   onClick={handleSubmit}
                   disabled={!number.trim()}
                 >
