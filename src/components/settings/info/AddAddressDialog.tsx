@@ -78,30 +78,30 @@ function MapArea({ minH }: { minH?: string }) {
           <IconButton
             size="xs"
             variant="solid"
-            bg="gray.900"
+            bg="map.controlBg"
             color="white"
             aria-label="موقعیت من"
-            _hover={{ bg: 'gray.700' }}
+            _hover={{ bg: 'map.controlBgHover' }}
           >
             <Locate size={14} />
           </IconButton>
           <IconButton
             size="xs"
             variant="solid"
-            bg="gray.900"
+            bg="map.controlBg"
             color="white"
             aria-label="بزرگ‌نمایی"
-            _hover={{ bg: 'gray.700' }}
+            _hover={{ bg: 'map.controlBgHover' }}
           >
             <Plus size={14} />
           </IconButton>
           <IconButton
             size="xs"
             variant="solid"
-            bg="gray.900"
+            bg="map.controlBg"
             color="white"
             aria-label="کوچک‌نمایی"
-            _hover={{ bg: 'gray.700' }}
+            _hover={{ bg: 'map.controlBgHover' }}
           >
             <Minus size={14} />
           </IconButton>

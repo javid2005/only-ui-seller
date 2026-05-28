@@ -8,29 +8,29 @@ import { defineConfig } from '@chakra-ui/react'
  * ── SEMANTIC TOKENS (context-aware, auto light/dark) ────────
  *
  * BACKGROUND
- *   bg               → page background (white / gray.950)
- *   bg.subtle        → slightly off-white (gray.50 / gray.900)
- *   bg.muted         → muted surface (gray.100 / gray.800)
- *   bg.emphasized    → stronger surface (gray.200 / gray.700)
- *   bg.inverted      → inverted bg (gray.800 / gray.200)
- *   bg.panel         → card / panel bg (white / gray.900)
+ *   bg               → page background (white / black)
+ *   bg.subtle        → slightly off-white (gray.50 / gray.950)
+ *   bg.muted         → muted surface (gray.100 / gray.900)
+ *   bg.emphasized    → stronger surface (gray.200 / gray.800)
+ *   bg.inverted      → inverted bg (black / white)
+ *   bg.panel         → card / panel bg (white / gray.950)
  *   bg.error         → error state bg
  *   bg.warning       → warning state bg
  *   bg.success       → success state bg
  *   bg.info          → info state bg
  *
  * FOREGROUND (text / icons)
- *   fg               → primary text (gray.800 / gray.100)
+ *   fg               → primary text (black / gray.50)
  *   fg.muted         → secondary text (gray.600 / gray.400)
- *   fg.subtle        → tertiary text (gray.500 / gray.500)
- *   fg.inverted      → text on dark bg
+ *   fg.subtle        → tertiary text (gray.400 / gray.500)
+ *   fg.inverted      → text on dark bg (gray.50 / black)
  *   fg.error / fg.warning / fg.success / fg.info
  *
  * BORDER
- *   border           → default border (gray.200 / gray.700)
- *   border.muted     → faint border
- *   border.subtle    → subtle border
- *   border.emphasized → stronger border (gray.300 / gray.600)
+ *   border           → default border (gray.200 / gray.800)
+ *   border.muted     → faint border (gray.100 / gray.900)
+ *   border.subtle    → subtle border (gray.50 / gray.950)
+ *   border.emphasized → stronger border (gray.300 / gray.700)
  *   border.inverted  → inverted border
  *   border.error / border.warning / border.success / border.info
  *
@@ -60,10 +60,9 @@ import { defineConfig } from '@chakra-ui/react'
  *   brand.border       → teal.500 / teal.400  (brand border)
  *   brand.bg           → teal.50  / teal.950  (extra-light hover bg)
  *
- * ── VITRINA SURFACE TOKENS (custom) ─────────────────────────
- *   surface.subtle     → gray.50  / gray.900
- *   surface.muted      → gray.100 / gray.800
- *   surface.card       → white / gray.900
+ * ── VITRINA MAP TOKENS (custom — always-dark for map overlay controls) ──
+ *   map.controlBg      → gray.900 / gray.900  (map button bg, dark in both modes)
+ *   map.controlBgHover → gray.700 / gray.700  (map button hover)
  *
  * ── PALETTE TOKENS (raw colors) ─────────────────────────────
  *   transparent | current | black | white
@@ -146,11 +145,10 @@ export const vitrinaTokens = defineConfig({
           border: { value: { _light: '{colors.teal.500}', _dark: '{colors.teal.400}' } },
           bg: { value: { _light: '{colors.teal.50}', _dark: '{colors.teal.950}' } },
         },
-        // ── Surface helpers ──────────────────────────────────
-        surface: {
-          subtle: { value: { _light: '{colors.gray.50}', _dark: '{colors.gray.900}' } },
-          muted: { value: { _light: '{colors.gray.100}', _dark: '{colors.gray.800}' } },
-          card: { value: { _light: '{colors.white}', _dark: '{colors.gray.900}' } },
+        // ── Map overlay controls (always dark regardless of color mode) ──
+        map: {
+          controlBg: { value: { _light: '{colors.gray.900}', _dark: '{colors.gray.900}' } },
+          controlBgHover: { value: { _light: '{colors.gray.700}', _dark: '{colors.gray.700}' } },
         },
       },
     },
