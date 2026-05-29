@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCompactMode } from '@/contexts/CompactModeContext'
-import { Box, Flex, Switch, Grid, Text, Button, EmptyState } from '@chakra-ui/react'
+import { Box, Flex, Switch, Grid, Text, Button, IconButton, EmptyState } from '@chakra-ui/react'
 import { Plus, Phone } from 'lucide-react'
 import { Header }         from '@/components/layout/Header'
 import { TitleBar }       from '@/components/ui/TitleBar'
@@ -123,16 +123,10 @@ export function SalesSettings() {
               divider
               subtitle="جهت فروش تلفنی یکی از شماره های تماس فروشگاه را انتخاب نمایید و یا شماره جدید اضافه کنید."
               cta={
-                <Button
-                  size="sm"
-                  variant="outline"
-                  colorPalette="brand"
-                  onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}
-                >
-                  {/* Plus FIRST = rightmost in RTL ✓ */}
-                  <Plus size={16} />
-                  افزودن شماره
-                </Button>
+                <>
+                  <IconButton display={{ base: 'flex', sm: 'none' }} size="sm" variant="outline" colorPalette="brand" aria-label="افزودن شماره" onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}><Plus size={16} /></IconButton>
+                  <Button display={{ base: 'none', sm: 'flex' }} size="sm" variant="outline" colorPalette="brand" onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}><Plus size={16} />افزودن شماره</Button>
+                </>
               }
             />
 
@@ -168,7 +162,7 @@ export function SalesSettings() {
           </Flex>
 
           <ButtonFooter
-            back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => navigate('/settings') }}
+            back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
           />
 
         </Flex>

@@ -703,7 +703,7 @@ export function ThemeCustomize() {
             <ButtonFooter
               primary={{ label: 'ذخیره تغییرات', onClick: () => {} }}
               back={{
-                label: 'بازگشت به پوسته‌ها',
+                label: 'بازگشت',
                 onClick: () => navigate('/settings/themes'),
               }}
             />

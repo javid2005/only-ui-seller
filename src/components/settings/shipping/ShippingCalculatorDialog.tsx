@@ -81,7 +81,7 @@ function formatPrice(price: string): string {
 
 // ─── PriceItem (Shipping-Price Item) ─────────────────────────────────────────
 
-function PriceItem({ result }: { result: CalcResult }) {
+function PriceItem({ result, stacked = false }: { result: CalcResult; stacked?: boolean }) {
   const priceText =
     result.type === 'free'         ? '۰ تومان'       :
     result.type === 'disabled'     ? 'غیر فعال'      :
@@ -89,6 +89,25 @@ function PriceItem({ result }: { result: CalcResult }) {
     formatPrice(result.price)
 
   const isSubdued = result.type === 'disabled' || result.type === 'out_of_range'
+
+  if (stacked) {
+    return (
+      <Flex
+        bg="bg.subtle"
+        rounded="md"
+        p="2"
+        direction="column"
+        align="flex-start"
+        gap="1"
+        minH="9"
+      >
+        {result.type === 'free'   && <Badge colorPalette="green"  variant="subtle" size="sm">رایگان</Badge>}
+        {result.type === 'fixed'  && <Badge colorPalette="purple" variant="subtle" size="sm">ثابت</Badge>}
+        {result.type === 'weight' && <Badge colorPalette="blue"   variant="subtle" size="sm">براساس وزن</Badge>}
+        <Text fontSize="sm" color={isSubdued ? 'fg.muted' : 'fg'}>{priceText}</Text>
+      </Flex>
+    )
+  }
 
   return (
     <Flex
@@ -101,11 +120,9 @@ function PriceItem({ result }: { result: CalcResult }) {
       minH="9"
       gap="2"
     >
-      {/* FIRST = rightmost in RTL = badge (leading position) ✓ */}
       {result.type === 'free'   && <Badge colorPalette="green"  variant="subtle" size="sm" flexShrink={0}>رایگان</Badge>}
       {result.type === 'fixed'  && <Badge colorPalette="purple" variant="subtle" size="sm" flexShrink={0}>ثابت</Badge>}
       {result.type === 'weight' && <Badge colorPalette="blue"   variant="subtle" size="sm" flexShrink={0}>براساس وزن</Badge>}
-      {/* LAST = leftmost in RTL = price amount ✓ */}
       <Text fontSize="sm" color={isSubdued ? 'fg.muted' : 'fg'}>
         {priceText}
       </Text>
@@ -259,24 +276,25 @@ export function ShippingCalculatorDialog({
                     ))}
                   </Grid>
 
-                  {/* ── Mobile (< sm or compact): 2-col per method ── */}
+                  {/* ── Mobile (< sm or compact): 2-col per method with inline labels ── */}
                   <Flex
                     display={isCompact ? 'flex' : { base: 'flex', sm: 'none' }}
                     direction="column"
                     gap="3"
                   >
-                    {/* RTL 2-col headers: درون شهری (right) | بین شهری (left) */}
-                    <Grid templateColumns="1fr 1fr" gap="2">
-                      <Text fontSize="sm" fontWeight="semibold" color="fg">درون شهری</Text>
-                      <Text fontSize="sm" fontWeight="semibold" color="fg">بین شهری</Text>
-                    </Grid>
-
                     {methods.map((m, i) => (
                       <Box key={m.id}>
                         <Text fontSize="xs" color="fg.muted" mb="1.5">{m.name}</Text>
+                        {/* RTL: درون شهری (right col) | بین شهری (left col) */}
                         <Grid templateColumns="1fr 1fr" gap="2">
-                          <PriceItem result={results[i][0]} />
-                          <PriceItem result={results[i][1]} />
+                          <Flex direction="column" gap="1">
+                            <Text fontSize="xs" fontWeight="semibold" color="fg">درون شهری</Text>
+                            <PriceItem result={results[i][0]} stacked />
+                          </Flex>
+                          <Flex direction="column" gap="1">
+                            <Text fontSize="xs" fontWeight="semibold" color="fg">بین شهری</Text>
+                            <PriceItem result={results[i][1]} stacked />
+                          </Flex>
                         </Grid>
                       </Box>
                     ))}

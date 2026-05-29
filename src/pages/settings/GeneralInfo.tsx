@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Box, Flex, Text, Button, Input,
+  Box, Flex, Text, Button, IconButton, Input,
   Tabs, Grid, Field, FileUpload, EmptyState,
 } from '@chakra-ui/react'
 import { Plus, Phone, Share2, MapPin, Upload } from 'lucide-react'
@@ -114,7 +114,7 @@ function IdentityTab() {
 
       <ButtonFooter
         primary={{ label: 'ذخیره', onClick: () => {} }}
-        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => navigate('/settings') }}
+        back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
       />
 
     </Box>
@@ -167,12 +167,10 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
           size="xl"
           divider
           cta={
-            <Button size="sm" variant="outline" colorPalette="brand"
-              onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}
-            >
-              <Plus size={16} />
-              افزودن شماره
-            </Button>
+            <>
+              <IconButton display={{ base: 'flex', sm: 'none' }} size="sm" variant="outline" colorPalette="brand" aria-label="افزودن شماره" onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}><Plus size={16} /></IconButton>
+              <Button display={{ base: 'none', sm: 'flex' }} size="sm" variant="outline" colorPalette="brand" onClick={() => { setEditPhone(undefined); setPhoneOpen(true) }}><Plus size={16} />افزودن شماره</Button>
+            </>
           }
         />
         <Box pt="4">
@@ -203,12 +201,10 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
           size="xl"
           divider
           cta={
-            <Button size="sm" variant="outline" colorPalette="brand"
-              onClick={() => { setEditSocial(undefined); setSocialOpen(true) }}
-            >
-              <Plus size={16} />
-              افزودن شبکه
-            </Button>
+            <>
+              <IconButton display={{ base: 'flex', sm: 'none' }} size="sm" variant="outline" colorPalette="brand" aria-label="افزودن شبکه" onClick={() => { setEditSocial(undefined); setSocialOpen(true) }}><Plus size={16} /></IconButton>
+              <Button display={{ base: 'none', sm: 'flex' }} size="sm" variant="outline" colorPalette="brand" onClick={() => { setEditSocial(undefined); setSocialOpen(true) }}><Plus size={16} />افزودن شبکه</Button>
+            </>
           }
         />
         <Box pt="4">
@@ -233,7 +229,7 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
       </Box>
 
       <ButtonFooter
-        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => navigate('/settings') }}
+        back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
       />
 
       <AddPhoneDialog
@@ -279,12 +275,10 @@ function AddressTab({ phones }: { phones: Phone[] }) {
         size="xl"
         divider
         cta={
-          <Button size="sm" variant="outline" colorPalette="brand"
-            onClick={() => { setEditAddr(undefined); setAddrOpen(true) }}
-          >
-            <Plus size={16} />
-            افزودن آدرس
-          </Button>
+          <>
+            <IconButton display={{ base: 'flex', sm: 'none' }} size="sm" variant="outline" colorPalette="brand" aria-label="افزودن آدرس" onClick={() => { setEditAddr(undefined); setAddrOpen(true) }}><Plus size={16} /></IconButton>
+            <Button display={{ base: 'none', sm: 'flex' }} size="sm" variant="outline" colorPalette="brand" onClick={() => { setEditAddr(undefined); setAddrOpen(true) }}><Plus size={16} />افزودن آدرس</Button>
+          </>
         }
       />
 
@@ -312,7 +306,7 @@ function AddressTab({ phones }: { phones: Phone[] }) {
       </Box>
 
       <ButtonFooter
-        back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => navigate('/settings') }}
+        back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
       />
 
       <AddAddressDialog
@@ -370,9 +364,9 @@ export function GeneralInfo() {
           <Tabs.Root defaultValue="identity" variant="enclosed" w="full">
 
             <Tabs.List w="full" overflowX="auto" flexShrink="0">
-              <Tabs.Trigger value="identity">اطلاعات هویتی</Tabs.Trigger>
-              <Tabs.Trigger value="contact">راه های ارتباطی</Tabs.Trigger>
-              <Tabs.Trigger value="address">آدرس ها</Tabs.Trigger>
+              <Tabs.Trigger value="identity" whiteSpace="nowrap">اطلاعات هویتی</Tabs.Trigger>
+              <Tabs.Trigger value="contact" whiteSpace="nowrap">راه های ارتباطی</Tabs.Trigger>
+              <Tabs.Trigger value="address" whiteSpace="nowrap">آدرس ها</Tabs.Trigger>
             </Tabs.List>
 
             <Tabs.Content value="identity">

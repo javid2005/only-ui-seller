@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Box, Flex, IconButton, Input, InputGroup, Text } from '@chakra-ui/react'
-import { CirclePlus, ChevronsDownUp, ChevronsUpDown, Search } from 'lucide-react'
+import { ChevronDown, ChevronsDownUp, ChevronsUpDown, Search } from 'lucide-react'
 import { Header }           from '@/components/layout/Header'
 import { ButtonFooter }     from '@/components/ui/ButtonFooter'
 import { CategoryAccordion } from '@/components/settings/categories/CategoryAccordion'
@@ -161,7 +161,7 @@ function InfoBox() {
       <Text fontSize="xs" color="fg" lineHeight="1.6" textAlign="right">
         برای مشاهده زیردسته‌ها روی علامت{' '}
         <Box as="span" display="inline-flex" verticalAlign="middle" color="fg" mx="0.5">
-          <CirclePlus size={14} />
+          <ChevronDown size={14} />
         </Box>
         {' '}کلیک کنید.
       </Text>
@@ -348,7 +348,7 @@ export function Categories() {
                 onClick: () => { /* TODO: save categories */ },
               }}
               back={{
-                label: 'بازگشت به تنظیمات فروشگاه',
+                label: 'بازگشت',
                 onClick: () => navigate('/settings'),
               }}
             />

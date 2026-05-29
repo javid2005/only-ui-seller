@@ -77,8 +77,14 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
 
       {/* ── Section header ────────────────────────────────────────────── */}
       <Box w="full" pb="3">
-        {/* RTL: title group FIRST = rightmost | link LAST = leftmost */}
-        <Flex align="center" gap="4" w="full" pb="3">
+        {/* RTL: title group FIRST = rightmost | link LAST = leftmost (below on < sm) */}
+        <Flex
+          direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}
+          align={isCompact ? 'flex-start' : { base: 'flex-start', sm: 'center' }}
+          gap="3"
+          w="full"
+          pb="3"
+        >
 
           {/* Title group — rightmost */}
           <Flex align="center" gap="4" flex="1" minW="0">
@@ -124,6 +130,8 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
             _hover={{ opacity: 0.8 }}
             textDecoration="none"
             flexShrink={0}
+            alignSelf="flex-start"
+            ms={isCompact ? '11' : { base: '11', sm: '0' }}
           >
             {/* RTL: text FIRST = rightmost, icon LAST = leftmost */}
             <Text>{config.siteDomain}</Text>

@@ -102,7 +102,13 @@ export function ShippingCardCustom({
       {routes.length > 0 && (
         <Flex direction="column" gap="2" opacity={isVisuallyDisabled ? 0.4 : 1}>
           {routes.map((route, i) => (
-            <Flex key={i} align="center" gap="4" w="full">
+            <Flex
+              key={i}
+              direction={{ base: 'column', sm: 'row' }}
+              align={{ base: 'flex-start', sm: 'center' }}
+              gap={{ base: '1', sm: '4' }}
+              w="full"
+            >
               {/* label + icon — RTL: icon FIRST=rightmost, text SECOND */}
               <Flex align="center" gap="2" flexShrink={0}>
                 <Box color="brand.solid">
@@ -114,7 +120,7 @@ export function ShippingCardCustom({
               </Flex>
 
               {/* data — RTL: LAST=leftmost */}
-              <Flex align="center" gap="2" flex="1" minW="0">
+              <Flex align="center" gap="2" flex="1" minW="0" flexWrap="wrap">
                 <Badge
                   bg={METHOD_COLOR[route.method].bg}
                   color={METHOD_COLOR[route.method].color}

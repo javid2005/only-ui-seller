@@ -768,7 +768,6 @@ export function AddShippingMethod() {
           { label: 'داشبورد',          href: '/'                  },
           { label: 'تنظیمات فروشگاه', href: '/settings'           },
           { label: 'روش‌های ارسال',    href: '/settings/shipping'  },
-          { label: 'افزودن ارسال شخصی' },
         ]}
       />
 

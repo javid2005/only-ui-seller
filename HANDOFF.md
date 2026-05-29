@@ -1,12 +1,18 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-05-28
+> آخرین آپدیت: 2026-05-29
 
 ## الان
-Brand token normalization کامل شد — Option A (mirrors teal.* standard pattern):
-- `tokens.ts`: brand.* values normalized، brand.bg اضافه، bg.teal حذف
-- همه `teal.*` brand usages در src → `brand.*` (25 فایل)
-- همه `colorPalette="teal"` → `colorPalette="brand"` (14 فایل)
-- CLAUDE.md + dev-knowledge sync شد
+Mobile responsive fixes برای تمام صفحات settings — media < sm:
+- AddAddressDialog: layout column (thumbnail+info row) + responsive direction/order/w
+- ShippingCalculatorDialog: stacked badge+price + labels زیر heading هر method
+- ShippingCardCustom: route rows → column در < sm (درون/بین شهری wrap نمیشن)
+- Badges: section header → link زیر عنوان + alignSelf fix
+- ThemeSettings: selected theme card → [thumb|info] row + buttons below در < sm
+- CategoryAccordion: ChevronDown/Up + isMobile state → Plus/Star icon buttons همیشه visible در < sm + 2-col subcategory grid
+- GeneralInfo/SalesSettings/ShippingSettings: افزودن buttons → IconButton در < sm
+- AddShippingMethod: breadcrumb کوتاه (حذف آخرین item)
+- ButtonFooter back labels: «بازگشت به ...» → «بازگشت»
+- GeneralInfo tabs: whiteSpace="nowrap" روی Tabs.Trigger
 
 ## بعدی
 نامشخص — کاربر تعیین نکرد.

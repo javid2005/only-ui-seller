@@ -230,6 +230,37 @@ function MyPage() {
 - هر sub-component داخل page (مثل Tab functions) هم باید `useCompactMode()` بگیره اگه grid داره
 - SegmentGroup.Indicator → `bg="bg.panel"` (white در light، gray.950 در dark) — `bg="white"` dark mode رو می‌شکنه، `bg.default` broken
 
+**⚠️ isCompact = toggle، نه real viewport detection:**
+`isCompact` فقط برای شبیه‌سازی 512px در desktop هست. روی موبایل واقعی همیشه `false` است.
+برای layout props (direction، columns، order) وقتی non-compact value هست، **باید responsive object باشه** تا موبایل واقعی هم پوشش داشته باشه:
+
+```tsx
+// ❌ BROKEN on real mobile — isCompact=false → direction='row' at 360px
+direction={isCompact ? 'column' : 'row'}
+
+// ✅ CORRECT — real mobile gets 'column' via base, compact mode gets 'column' direct
+direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
+```
+
+قانون: `isCompact ? X : Y` — اگه Y یه string ساده‌ست و layout-affecting (direction، templateColumns، order، display)، باید `{ base: mobile-val, breakpoint: desktop-val }` بشه.
+
+### viewport-based mobile detection (برای behavior، نه layout)
+
+وقتی behavior (نه فقط layout) باید در موبایل واقعی تغییر کنه — مثل نمایش دکمه بدون hover — از `isMobile` state استفاده کن:
+
+```tsx
+const [isMobile, setIsMobile] = useState(false)
+useEffect(() => {
+  const check = () => setIsMobile(window.innerWidth < 480)
+  check()
+  window.addEventListener('resize', check)
+  return () => window.removeEventListener('resize', check)
+}, [])
+```
+
+`isCompact` برای این کار مناسب نیست — روی موبایل واقعی همیشه `false` است.
+مثال کاربرد: CategoryAccordion — دکمه‌های افزودن/پیش‌فرض در hover-dependent states.
+
 ### TitleBar — wrapping rule
 - title و subtitle هیچ‌وقت truncate نمیشن (`whiteSpace="nowrap"` ممنوع)
 - روی صفحه‌های باریک (360px) عناوین بلند wrap میشن — این intentional است

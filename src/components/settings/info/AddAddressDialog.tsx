@@ -200,7 +200,7 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial, phones = []
             {/* Body */}
             <Dialog.Body px="6" py="4">
               <Flex
-                direction={isCompact ? 'column' : 'row'}
+                direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
                 gap="4"
                 align="stretch"
               >
@@ -215,7 +215,7 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial, phones = []
                   gap="4"
                   flex="1"
                   minW="0"
-                  order={isCompact ? 1 : 0}
+                  order={isCompact ? 1 : { base: 1, lg: 0 }}
                 >
                   {/* عنوان */}
                   <Field.Root required>
@@ -339,10 +339,10 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial, phones = []
                 <Flex
                   direction="column"
                   gap="1.5"
-                  w={isCompact ? 'full' : '320px'}
+                  w={isCompact ? 'full' : { base: 'full', lg: '320px' }}
                   flexShrink={0}
-                  alignSelf={isCompact ? 'auto' : 'stretch'}
-                  order={isCompact ? 0 : 1}
+                  alignSelf={isCompact ? 'auto' : { base: 'auto', lg: 'stretch' }}
+                  order={isCompact ? 0 : { base: 0, lg: 1 }}
                 >
                   <Text fontSize="sm" fontWeight="semibold" color="fg">انتخاب آدرس روی نقشه</Text>
                   <MapArea minH={isCompact ? '200px' : '300px'} />

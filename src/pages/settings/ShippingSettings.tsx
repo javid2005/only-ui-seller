@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCompactMode } from '@/contexts/CompactModeContext'
-import { Box, Flex, Grid, Text, Button } from '@chakra-ui/react'
+import { Box, Flex, Grid, Text, Button, IconButton } from '@chakra-ui/react'
 import { Plus, Calculator } from 'lucide-react'
 import { Header }      from '@/components/layout/Header'
 import { TitleBar }    from '@/components/ui/TitleBar'
@@ -235,11 +235,10 @@ export function ShippingSettings() {
               subtitle="انتخاب روش های ارسال"
               divider
               cta={
-                <Button size="sm" colorPalette="brand" variant="outline" onClick={() => navigate('/settings/shipping/add')}>
-                  {/* RTL: icon FIRST = rightmost (leading/start icon) ✓ */}
-                  <Plus size={14} />
-                  افزودن روش ارسال
-                </Button>
+                <>
+                  <IconButton display={{ base: 'flex', sm: 'none' }} size="sm" variant="outline" colorPalette="brand" aria-label="افزودن روش ارسال" onClick={() => navigate('/settings/shipping/add')}><Plus size={14} /></IconButton>
+                  <Button display={{ base: 'none', sm: 'flex' }} size="sm" colorPalette="brand" variant="outline" onClick={() => navigate('/settings/shipping/add')}><Plus size={14} />افزودن روش ارسال</Button>
+                </>
               }
             />
 
@@ -284,7 +283,7 @@ export function ShippingSettings() {
 
             <ButtonFooter
               primary={{ label: 'ذخیره', onClick: () => navigate('/settings') }}
-              back={{ label: 'بازگشت به تنظیمات فروشگاه', onClick: () => navigate('/settings') }}
+              back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
             />
           </Flex>
 

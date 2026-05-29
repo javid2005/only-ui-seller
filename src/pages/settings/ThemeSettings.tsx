@@ -151,11 +151,11 @@ export function ThemeSettings() {
               divider
             />
 
-            {/* Current theme — responsive: column on base/sm, row on md+ */}
+            {/* Current theme — < sm: [thumb|info] row + buttons below; sm-md: column; md+: row */}
             <Flex
               direction={{ base: 'column', md: 'row' }}
               align={{ base: 'stretch', md: 'center' }}
-              gap={{ base: '4', md: '2' }}
+              gap={{ base: '3', md: '2' }}
               p="4"
               bg="bg.subtle"
               borderWidth="1px"
@@ -163,102 +163,108 @@ export function ThemeSettings() {
               rounded="lg"
               overflow="hidden"
             >
-              {/* Thumbnail — FIRST in DOM = rightmost in RTL row / topmost in column ✓ */}
-              <Box
-                w={{ base: 'full', md: '171px' }}
-                h={{ base: 'auto', md: '24' }}
-                aspectRatio={{ base: '310 / 174', md: 'auto' }}
-                bg="bg.emphasized"
-                rounded={{ base: 'md', md: 'sm' }}
-                overflow="hidden"
-                flexShrink={0}
-                position="relative"
-              >
-                <img
-                  src={selectedTheme.thumbnail}
-                  alt={selectedTheme.name}
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
-                />
-              </Box>
-
-              {/* Content — SECOND */}
+              {/* ── Thumbnail + Info wrapper ──────────────────────────────────
+                  < sm: row (small thumb beside info)
+                  sm–md: column (full thumb above info)
+                  md+: row (171px thumb beside info+buttons)               */}
               <Flex
-                flex="1"
-                direction={{ base: 'column', md: 'row' }}
-                align={{ base: 'stretch', md: 'center' }}
-                justify={{ base: 'flex-start', md: 'space-between' }}
-                px={{ base: '0', md: '4' }}
-                gap="4"
+                direction={{ base: 'row', sm: 'column', md: 'row' }}
+                align={{ base: 'flex-start', sm: 'stretch', md: 'center' }}
+                gap={{ base: '3', sm: '4', md: '2' }}
+                flex={{ md: '1' }}
                 minW="0"
               >
-                {/* Theme info — FIRST in inner Flex = rightmost in RTL row ✓
-                    align="flex-start" on column Flex = physical RIGHT in RTL */}
-                <Flex direction="column" gap="2" flex="1" minW="0" align="flex-start">
-                  <Text fontSize="md" fontWeight="semibold" color="fg">
-                    {selectedTheme.name}
-                  </Text>
-                  {isDefaultSelected ? (
-                    <Badge
-                      bg="gray.solid"
-                      color="gray.contrast"
-                      rounded="sm"
-                      px="2"
-                      fontSize="sm"
-                      fontWeight="normal"
-                      lineHeight="1.5"
-                    >
-                      قالب پیش‌فرض
-                    </Badge>
-                  ) : (
-                    <Badge
-                      colorPalette="purple"
-                      variant="subtle"
-                      rounded="sm"
-                      px="2"
-                      fontSize="sm"
-                      fontWeight="normal"
-                    >
-                      انتخاب شده
-                    </Badge>
-                  )}
-                </Flex>
-
-                {/* CTAs — LAST in inner Flex = leftmost in RTL row ✓ */}
-                <Flex
-                  gap="2"
+                {/* Thumbnail */}
+                <Box
+                  w={{ base: '88px', sm: 'full', md: '171px' }}
+                  h={{ base: '64px', sm: 'auto', md: '24' }}
+                  aspectRatio={{ base: 'auto', sm: '310 / 174', md: 'auto' }}
+                  bg="bg.emphasized"
+                  rounded={{ base: 'md', md: 'sm' }}
+                  overflow="hidden"
                   flexShrink={0}
-                  align="center"
-                  direction={{ base: 'column', md: 'row' }}
-                  w={{ base: 'full', md: 'auto' }}
+                  position="relative"
                 >
-                  {/* Reset — FIRST = rightmost in RTL row (only when non-default) */}
-                  {!isDefaultSelected && (
-                    <Button
-                      colorPalette="gray"
-                      variant="ghost"
-                      size="md"
-                      w={{ base: 'full', md: 'auto' }}
-                      onClick={() => setSelectedId(DEFAULT_THEME_ID)}
-                    >
-                      {/* RTL DOM: icon FIRST = rightmost ✓ */}
-                      <RotateCcw size={16} />
-                      پوسته پیش‌فرض
-                    </Button>
-                  )}
+                  <img
+                    src={selectedTheme.thumbnail}
+                    alt={selectedTheme.name}
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
+                  />
+                </Box>
 
-                  {/* Customize — LAST = leftmost (always visible) */}
-                  <Button
-                    colorPalette="brand"
-                    variant="solid"
-                    size="md"
-                    w={{ base: 'full', md: 'auto' }}
-                    onClick={() => navigate('/settings/themes/customize', {
-                      state: { thumbnail: selectedTheme.thumbnail, name: selectedTheme.name },
-                    })}
-                  >
-                    شخصی‌سازی پوسته
-                  </Button>
+                {/* Info + md+ buttons */}
+                <Flex
+                  flex="1"
+                  direction={{ base: 'column', md: 'row' }}
+                  align={{ base: 'flex-start', md: 'center' }}
+                  justify={{ md: 'space-between' }}
+                  px={{ md: '4' }}
+                  gap={{ base: '2', md: '4' }}
+                  minW="0"
+                >
+                  {/* Theme info */}
+                  <Flex direction="column" gap="2" flex={{ md: '1' }} minW="0" align="flex-start">
+                    <Text fontSize="md" fontWeight="semibold" color="fg">
+                      {selectedTheme.name}
+                    </Text>
+                    {isDefaultSelected ? (
+                      <Badge bg="gray.solid" color="gray.contrast" rounded="sm" px="2" fontSize="sm" fontWeight="normal" lineHeight="1.5">
+                        قالب پیش‌فرض
+                      </Badge>
+                    ) : (
+                      <Badge colorPalette="purple" variant="subtle" rounded="sm" px="2" fontSize="sm" fontWeight="normal">
+                        انتخاب شده
+                      </Badge>
+                    )}
+                  </Flex>
+
+                  {/* CTAs — md+ only (inline in the row) */}
+                  <Flex display={{ base: 'none', md: 'flex' }} gap="2" flexShrink={0} align="center">
+                    {!isDefaultSelected && (
+                      <Button colorPalette="gray" variant="ghost" size="md" onClick={() => setSelectedId(DEFAULT_THEME_ID)}>
+                        <RotateCcw size={16} />
+                        پوسته پیش‌فرض
+                      </Button>
+                    )}
+                    <Button
+                      colorPalette="brand"
+                      variant="solid"
+                      size="md"
+                      onClick={() => navigate('/settings/themes/customize', {
+                        state: { thumbnail: selectedTheme.thumbnail, name: selectedTheme.name },
+                      })}
+                    >
+                      شخصی‌سازی پوسته
+                    </Button>
+                  </Flex>
                 </Flex>
+              </Flex>
+
+              {/* ── CTAs — base/sm only (stacked below thumb+info row) ───────── */}
+              <Flex display={{ base: 'flex', md: 'none' }} direction="column" gap="2" w="full">
+                <Button
+                  colorPalette="brand"
+                  variant="solid"
+                  size="md"
+                  w="full"
+                  onClick={() => navigate('/settings/themes/customize', {
+                    state: { thumbnail: selectedTheme.thumbnail, name: selectedTheme.name },
+                  })}
+                >
+                  شخصی‌سازی پوسته
+                </Button>
+                {!isDefaultSelected && (
+                  <Button
+                    colorPalette="gray"
+                    variant="ghost"
+                    size="md"
+                    w="full"
+                    onClick={() => setSelectedId(DEFAULT_THEME_ID)}
+                  >
+                    <RotateCcw size={16} />
+                    پوسته پیش‌فرض
+                  </Button>
+                )}
               </Flex>
             </Flex>
           </Flex>

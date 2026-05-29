@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { Box, Button, Collapsible, Flex, IconButton, Separator, Text, Badge } from '@chakra-ui/react'
-import { CheckCircle2, CircleMinus, CirclePlus, Trash2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Box, Button, Collapsible, Flex, Grid, IconButton, Separator, Text, Badge } from '@chakra-ui/react'
+import { CheckCircle2, ChevronDown, ChevronUp, Plus, Star, Trash2 } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -33,20 +33,19 @@ export interface CategoryAccordionProps {
 function SubCategoryItem({ label }: { label: string }) {
   return (
     <Flex
-      align="center"
+      align="flex-start"
       gap="2"
       bg="bg.muted"
       px="2"
       py="2"
-      minW="150px"
-      maxW="186px"
-      flex="1 0 0"
+      minW="0"
+      w="full"
     >
       {/* FIRST = rightmost در RTL: آیکن تیک */}
-      <Box color="brand.solid" display="flex" alignItems="center" flexShrink={0}>
+      <Box color="brand.solid" display="flex" alignItems="center" flexShrink={0} pt="0.5">
         <CheckCircle2 size={16} />
       </Box>
-      <Text fontSize="xs" fontWeight="medium" color="fg" lineHeight="1.333" noOfLines={1} flex="1">
+      <Text fontSize="xs" fontWeight="medium" color="fg" lineHeight="1.333" flex="1">
         {label}
       </Text>
     </Flex>
@@ -67,6 +66,14 @@ export function CategoryAccordion({
 }: CategoryAccordionProps) {
   const [isOpenInternal, setIsOpenInternal] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 480)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   // اگه isOpenControlled داده شده → controlled mode، وگرنه self-managed
   const isOpen = isOpenControlled !== undefined ? isOpenControlled : isOpenInternal
@@ -76,10 +83,9 @@ export function CategoryAccordion({
     onOpenChange?.(open)
   }
 
-  // «افزودن» — hover یا open، فقط اگه انتخاب نشده
-  const showAdd = (isHovered || isOpen) && !isSelected
-  // «انتخاب پیش‌فرض» — فقط hover، فقط اگه selected و پیش‌فرض نیست و open نیست
-  const showMakeDefault = isHovered && !isOpen && isSelected && !isDefault
+  // mobile (< 480px): همیشه نمایش | desktop: وابسته به hover/open
+  const showAdd = (isMobile || isHovered || isOpen) && !isSelected
+  const showMakeDefault = (isMobile || isHovered) && isSelected && !isDefault
 
   return (
     <Collapsible.Root
@@ -146,27 +152,58 @@ export function CategoryAccordion({
 
           {/* THIRD: دکمه‌های شرطی (mutually exclusive) */}
           {showMakeDefault && (
-            <Button
-              size="2xs"
-              colorPalette="brand"
-              variant="outline"
-              flexShrink={0}
-              onClick={() => onSetDefault?.(category.id)}
-            >
-              انتخاب پیش‌فرض
-            </Button>
+            isMobile ? (
+              /* mobile (< 480px) — icon button ghost */
+              <IconButton
+                size="xs"
+                variant="ghost"
+                flexShrink={0}
+                aria-label="انتخاب پیش‌فرض"
+                color="brand.solid"
+                _hover={{ bg: 'brand.bg' }}
+                onClick={() => onSetDefault?.(category.id)}
+              >
+                <Star size={14} />
+              </IconButton>
+            ) : (
+              /* desktop — text button */
+              <Button
+                size="2xs"
+                colorPalette="brand"
+                variant="outline"
+                flexShrink={0}
+                onClick={() => onSetDefault?.(category.id)}
+              >
+                انتخاب پیش‌فرض
+              </Button>
+            )
           )}
 
           {showAdd && (
-            <Button
-              size="2xs"
-              colorPalette="brand"
-              variant="solid"
-              flexShrink={0}
-              onClick={() => onAdd(category.id)}
-            >
-              افزودن
-            </Button>
+            isMobile ? (
+              /* mobile (< 480px) — icon button */
+              <IconButton
+                size="xs"
+                colorPalette="brand"
+                variant="solid"
+                flexShrink={0}
+                aria-label="افزودن دسته‌بندی"
+                onClick={() => onAdd(category.id)}
+              >
+                <Plus size={14} />
+              </IconButton>
+            ) : (
+              /* desktop — text button */
+              <Button
+                size="2xs"
+                colorPalette="brand"
+                variant="solid"
+                flexShrink={0}
+                onClick={() => onAdd(category.id)}
+              >
+                افزودن
+              </Button>
+            )
           )}
 
           {/* Trash — وقتی selected */}
@@ -187,7 +224,7 @@ export function CategoryAccordion({
             </IconButton>
           )}
 
-          {/* LAST = leftmost در RTL: باز/بسته */}
+          {/* LAST = leftmost در RTL: باز/بسته — ChevronDown/Up */}
           <Collapsible.Trigger asChild>
             <Box
               as="button"
@@ -201,7 +238,7 @@ export function CategoryAccordion({
               cursor="pointer"
               transition="color 0.15s ease"
             >
-              {isOpen ? <CircleMinus size={20} /> : <CirclePlus size={20} />}
+              {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </Box>
           </Collapsible.Trigger>
         </Flex>
@@ -223,11 +260,15 @@ export function CategoryAccordion({
               </Text>
 
               {(category.subcategories ?? []).length > 0 ? (
-                <Flex wrap="wrap" gap="2" justify="flex-start" w="full">
+                <Grid
+                  templateColumns={{ base: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)' }}
+                  gap="2"
+                  w="full"
+                >
                   {(category.subcategories ?? []).map((sub) => (
                     <SubCategoryItem key={sub} label={sub} />
                   ))}
-                </Flex>
+                </Grid>
               ) : (
                 <Text
                   fontSize="xs"
