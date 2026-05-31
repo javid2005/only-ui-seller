@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Box, Flex, Grid, Text, Badge,
+  Box, Flex, Grid, Text, Badge, Tabs,
   Icon, Field, FileUpload, Input, IconButton,
   ColorPicker, parseColor, Portal,
 } from '@chakra-ui/react'
@@ -196,42 +196,38 @@ export function ThemeCustomize() {
     </Box>
   )
 
-  // Vertical tab list
+  // Vertical tab list — Chakra Tabs subtle
   const VerticalTabList = (
-    <Flex direction="column" gap="1">
-      {TABS.map(({ id, label, Icon: TabIcon, disabled }) => {
-        const isActive = activeTab === id
-        return (
-          <Flex
+    <Tabs.Root
+      value={activeTab}
+      onValueChange={(d) => setActiveTab(d.value)}
+      variant="subtle"
+      w="full"
+    >
+      <Tabs.List flexDirection="column" w="full" gap="0.5">
+        {TABS.map(({ id, label, Icon: TabIcon, disabled }) => (
+          <Tabs.Trigger
             key={id}
-            align="center"
+            value={id}
+            disabled={disabled}
+            w="full"
+            justifyContent="flex-start"
             gap="2.5"
             px="4"
-            py="2"
             h="10"
             rounded="sm"
-            overflow="hidden"
-            w="full"
-            cursor={disabled ? 'not-allowed' : 'pointer'}
-            opacity={disabled ? 0.5 : 1}
-            bg={isActive ? 'bg.muted' : 'transparent'}
-            color={isActive ? 'gray.fg' : 'fg.muted'}
-            _hover={disabled || isActive ? {} : { bg: 'bg.subtle' }}
-            transition="background 0.1s"
-            onClick={disabled ? undefined : () => setActiveTab(id)}
+            fontSize="sm"
+            fontWeight="normal"
           >
-            {/* Icon — FIRST = rightmost in RTL ✓ */}
+            {/* Icon FIRST = rightmost in RTL ✓ */}
             <Box flexShrink={0} display="flex" alignItems="center">
               <TabIcon size={16} />
             </Box>
-            {/* Label — SECOND = leftmost ✓ */}
-            <Text flex="1" fontSize="sm" fontWeight="normal" textAlign="right">
-              {label}
-            </Text>
-          </Flex>
-        )
-      })}
-    </Flex>
+            {label}
+          </Tabs.Trigger>
+        ))}
+      </Tabs.List>
+    </Tabs.Root>
   )
 
   // ─── Render ───────────────────────────────────────────────────────────────────
@@ -327,39 +323,29 @@ export function ThemeCustomize() {
                   </Flex>
                 </Box>
 
-                {/* Horizontal tab strip — text-only, scrollable */}
-                <Box bg="bg.muted" p="1" rounded="sm" overflowX="auto" overflowY="clip" w="full">
-                  <Flex align="center">
-                    {TABS.map(({ id, label, disabled }) => {
-                      const isActive = activeTab === id
-                      return (
-                        <Box
-                          key={id}
-                          px="4"
-                          py="2"
-                          h="10"
-                          rounded="sm"
-                          flexShrink={0}
-                          cursor={disabled ? 'not-allowed' : 'pointer'}
-                          opacity={disabled ? 0.5 : 1}
-                          bg={isActive ? 'bg' : 'transparent'}
-                          boxShadow={isActive ? 'xs' : 'none'}
-                          transition="background 0.1s"
-                          onClick={disabled ? undefined : () => setActiveTab(id)}
-                        >
-                          <Text
-                            fontSize="sm"
-                            fontWeight="normal"
-                            color={isActive ? 'gray.fg' : 'fg.muted'}
-                            whiteSpace="nowrap"
-                          >
-                            {label}
-                          </Text>
-                        </Box>
-                      )
-                    })}
-                  </Flex>
-                </Box>
+                {/* Horizontal tab strip — Chakra Tabs subtle, scrollable */}
+                <Tabs.Root
+                  value={activeTab}
+                  onValueChange={(d) => setActiveTab(d.value)}
+                  variant="subtle"
+                  w="full"
+                >
+                  <Tabs.List overflowX="auto" overflowY="clip">
+                    {TABS.map(({ id, label, disabled }) => (
+                      <Tabs.Trigger
+                        key={id}
+                        value={id}
+                        disabled={disabled}
+                        flexShrink={0}
+                        whiteSpace="nowrap"
+                        fontSize="sm"
+                        fontWeight="normal"
+                      >
+                        {label}
+                      </Tabs.Trigger>
+                    ))}
+                  </Tabs.List>
+                </Tabs.Root>
 
               </Flex>
             </Box>

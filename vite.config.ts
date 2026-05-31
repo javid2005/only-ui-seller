@@ -5,6 +5,6 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
-    allowedHosts: ['.ngrok-free.dev'] // 👈 این بخش را دقیقاً اینجا اضافه کنید
-  }
+    allowedHosts: ['.ngrok-free.dev']
+  },
 })

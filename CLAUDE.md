@@ -168,6 +168,23 @@ Figma tool fail شد؟
 </Flex>
 ```
 
+#### Tabs.Trigger vertical orientation (RTL text alignment)
+```tsx
+// ✅ CORRECT — justifyContent="flex-start" در RTL = text راست ✓
+<Tabs.Root variant="subtle" orientation="vertical">
+  <Tabs.List w="full">
+    <Tabs.Trigger value="x" w="full" justifyContent="flex-start">
+      متن تب
+    </Tabs.Trigger>
+  </Tabs.List>
+</Tabs.Root>
+
+// ❌ WRONG — justifyContent="flex-end" در RTL = text چپ ✗
+<Tabs.Trigger w="full" justifyContent="flex-end">متن تب</Tabs.Trigger>
+```
+> **قانون:** در RTL، `justifyContent="flex-start"` = راست، `justifyContent="flex-end"` = چپ.
+> برای vertical tab nav با text راست‌چین: همیشه `justifyContent="flex-start"` (یا default).
+
 ### Chakra v3 Known Issues
 - `lineHeight="8"` → **BROKEN** — resolves to unitless CSS `line-height: 8` = 8× font-size (e.g. 8×24px = 192px!). Use ratio strings instead: `lineHeight="1.333"` for 32px at 2xl, `lineHeight="1.14"` for 32px at 3xl. Never use numeric lineHeight tokens.
 - `bg="bg.default"` → **BROKEN** (CSS var resolves to transparent). Use `bg="white"` or `bg="bg"` instead

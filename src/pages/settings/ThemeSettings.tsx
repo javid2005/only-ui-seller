@@ -164,21 +164,20 @@ export function ThemeSettings() {
               overflow="hidden"
             >
               {/* ── Thumbnail + Info wrapper ──────────────────────────────────
-                  < sm: row (small thumb beside info)
-                  sm–md: column (full thumb above info)
+                  < md: row (small thumb beside info), buttons below
                   md+: row (171px thumb beside info+buttons)               */}
               <Flex
-                direction={{ base: 'row', sm: 'column', md: 'row' }}
-                align={{ base: 'flex-start', sm: 'stretch', md: 'center' }}
-                gap={{ base: '3', sm: '4', md: '2' }}
+                direction="row"
+                align={{ base: 'flex-start', md: 'center' }}
+                gap={{ base: '3', md: '2' }}
                 flex={{ md: '1' }}
                 minW="0"
               >
                 {/* Thumbnail */}
                 <Box
-                  w={{ base: '88px', sm: 'full', md: '171px' }}
-                  h={{ base: '64px', sm: 'auto', md: '24' }}
-                  aspectRatio={{ base: 'auto', sm: '310 / 174', md: 'auto' }}
+                  w={{ base: '88px', md: '171px' }}
+                  h={{ base: '64px', md: '24' }}
+                  aspectRatio="auto"
                   bg="bg.emphasized"
                   rounded={{ base: 'md', md: 'sm' }}
                   overflow="hidden"

@@ -1,26 +1,29 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-05-29
+> آخرین آپدیت: 2026-05-31
 
 ## الان
-Mobile responsive fixes برای تمام صفحات settings — media < sm:
-- AddAddressDialog: layout column (thumbnail+info row) + responsive direction/order/w
-- ShippingCalculatorDialog: stacked badge+price + labels زیر heading هر method
-- ShippingCardCustom: route rows → column در < sm (درون/بین شهری wrap نمیشن)
-- Badges: section header → link زیر عنوان + alignSelf fix
-- ThemeSettings: selected theme card → [thumb|info] row + buttons below در < sm
-- CategoryAccordion: ChevronDown/Up + isMobile state → Plus/Star icon buttons همیشه visible در < sm + 2-col subcategory grid
-- GeneralInfo/SalesSettings/ShippingSettings: افزودن buttons → IconButton در < sm
-- AddShippingMethod: breadcrumb کوتاه (حذف آخرین item)
-- ButtonFooter back labels: «بازگشت به ...» → «بازگشت»
-- GeneralInfo tabs: whiteSpace="nowrap" روی Tabs.Trigger
+این session — صفحه حساب کاربری پیاده‌سازی شد:
+- **`src/pages/account/UserInfo.tsx`** (جدید) — صفحه کامل با:
+  - Two Columns Right Center layout
+  - Vertical tabs (Chakra `Tabs.Root orientation="vertical" variant="subtle"`) در `>= lg`
+  - Horizontal tabs (Chakra `Tabs.Root variant="subtle"`) در `< lg`
+  - BadgeInput custom (input FIRST=راست، badge LAST=چپ) برای موبایل/ایمیل
+  - Chakra native `DatePicker` با `locale="fa-IR-u-ca-persian"` (تقویم جلالی)
+  - OTP Dialog برای موبایل (countdown 120s) و ایمیل (resend همیشه)
+  - responsive: موبایل+ایمیل کنار هم در `>= xl`، زیر هم در `< xl`
+  - دکمه ارسال کد تایید زیر input در `< sm`
+- **`src/App.tsx`** — route `/account/user-info` اضافه شد
+- **`src/components/layout/UserMenu.tsx`** — "حساب کاربری" به `/account/user-info` navigate می‌کنه
+- **`CLAUDE.md`** — pattern جدید: `Tabs.Trigger orientation="vertical"` → `justifyContent="flex-start"` در RTL
 
 ## بعدی
 نامشخص — کاربر تعیین نکرد.
 
-## صفحات باقی‌مانده
+## صفحات
 
 | Route | صفحه | وضعیت |
 |-------|------|--------|
+| `/account/user-info` | حساب کاربری | ✅ |
 | `/settings/store-info` | اطلاعات فروشگاه | ✅ |
 | `/settings/categories` | دسته‌بندی‌ها | ✅ |
 | `/settings/sales` | تنظیمات فروش | ✅ |
