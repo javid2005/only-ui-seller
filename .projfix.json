@@ -1,0 +1,19 @@
+{
+  "direction": "rtl",
+  "locale": "fa-IR",
+  "calendar": "jalali",
+  "ds": "chakra-v3",
+  "icon_lib": "lucide",
+  "ignore": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "public"
+  ],
+  "ignore_custom_components": [],
+  "ignore_icon_direction_files": [
+    "components/ui/TitleBar.tsx",
+    "components/ui/ButtonFooter.tsx"
+  ]
+}
