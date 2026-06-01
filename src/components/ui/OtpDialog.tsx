@@ -39,11 +39,13 @@ export interface OtpDialogProps {
   title: string
   /** توضیح زیر عنوان — مثلاً «کد تایید برای شماره ۰۹۱۲۳... ارسال شد» */
   description: string
+  /** label دکمه تایید — پیش‌فرض «تایید» */
+  confirmLabel?: string
   onClose: () => void
   onConfirm: () => void
 }
 
-export function OtpDialog({ open, title, description, onClose, onConfirm }: OtpDialogProps) {
+export function OtpDialog({ open, title, description, confirmLabel = 'تایید', onClose, onConfirm }: OtpDialogProps) {
   const isCompact = useCompactMode()
   const [pinValue, setPinValue] = useState<string[]>(['', '', '', '', ''])
   const [canResend, setCanResend] = useState(false)
@@ -104,11 +106,11 @@ export function OtpDialog({ open, title, description, onClose, onConfirm }: OtpD
               </Flex>
             </Dialog.Body>
 
-            {/* Footer — RTL: انصراف FIRST=rightmost, تایید LAST=leftmost */}
+            {/* Footer — RTL: تایید FIRST=rightmost, انصراف LAST=leftmost */}
             <Dialog.Footer pt="2" pb="4" px="6">
               <Flex gap="3">
+                <Button colorPalette="brand" onClick={onConfirm}>{confirmLabel}</Button>
                 <Button variant="outline" onClick={onClose}>انصراف</Button>
-                <Button colorPalette="brand" onClick={onConfirm}>تایید</Button>
               </Flex>
             </Dialog.Footer>
 

@@ -8,6 +8,7 @@ import { PasswordInput } from '@/components/ui/password-input'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { OtpDialog } from '@/components/ui/OtpDialog'
+import { TwoFactorSection } from './TwoFactorSection'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -64,11 +65,13 @@ function PasswordField({ label, placeholder, value, onChange, helperText }: Pass
 // ─── SecuritySection ──────────────────────────────────────────────────────────
 
 interface SecuritySectionProps {
-  /** شماره موبایل تأییدشده — برای متن OTP dialog */
+  /** شماره موبایل تأییدشده */
   mobile: string
+  /** ایمیل تأییدشده — برای badge کارت ایمیل در 2FA */
+  email?: string
 }
 
-export function SecuritySection({ mobile }: SecuritySectionProps) {
+export function SecuritySection({ mobile, email }: SecuritySectionProps) {
   const isCompact = useCompactMode()
 
   // ── Tab ──────────────────────────────────────────────────────────────────
@@ -209,11 +212,9 @@ export function SecuritySection({ mobile }: SecuritySectionProps) {
         </>
       )}
 
-      {/* ══ 2FA tab placeholder ══ */}
+      {/* ══ 2FA tab ══ */}
       {secTab === '2fa' && (
-        <Box py="8" textAlign="center" color="fg.muted" fontSize="sm">
-          بخش تایید دو مرحله‌ای در حال توسعه است
-        </Box>
+        <TwoFactorSection mobile={mobile} email={email} />
       )}
 
       {/* ══ Login history tab placeholder ══ */}

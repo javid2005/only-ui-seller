@@ -412,7 +412,7 @@ export function UserInfo() {
             )}
 
             {activeTab === 'security' && (
-              <SecuritySection mobile={verifiedMobile} />
+              <SecuritySection mobile={verifiedMobile} email={verifiedEmail} />
             )}
 
             {activeTab === 'auth' && (

@@ -11,6 +11,7 @@
 | RTL در Chakra | `dev-knowledge/design-systems/chakra-ui-v3/rtl.md` |
 | Figma→Code workflow | `dev-knowledge/universal/figma-to-code.md` |
 | Page Templates | `dev-knowledge/projects/vitrina/page-templates.md` |
+| Chakra v3 components | `dev-knowledge/design-systems/chakra-ui-v3/components.md` |
 
 ---
 
@@ -66,15 +67,28 @@ Figma tool fail شد؟
 
 **DS second — نحوه صحیح استفاده (اجباری):**
 ```
-step 1: mcp__chakra-ui__list_components → component در لیست هست؟
+step 1: dev-knowledge/design-systems/chakra-ui-v3/components.md رو چک کن (بدون tool call)
+         → اسم component اونجاست؟ بله → step 2. نه → step 3 (Build last)
 step 2: mcp__chakra-ui__get_component_example → snippet بگیر
 step 3: snippet رو عیناً src/components/ui/[name].tsx کپی کن
 step 4: فقط Vitrina-specific adaptation اضافه کن (RTL، icon، token)
 
+❌ ممنوع: بدون چک کردن components.md شروع به ساختن کردن
 ❌ ممنوع: snippet گرفتن ولی دور انداختن و از scratch نوشتن
 ❌ ممنوع: «RTL نیاز به تغییر داره» → rewrite کل component
 ✅ مجاز: snippet + اضافه کردن startElement/endElement برای RTL icons
 ✅ مجاز: snippet + swap کردن startElement/endElement برای RTL direction
+```
+
+**Component descriptions = implementation checklist (اجباری):**
+```
+get_design_context output بخش "Component descriptions" داشت؟
+  → آن لیست = تمام DS componentهای استفاده‌شده در آن node
+  → قبل از نوشتن هر sub-element، اسمش رو در آن لیست چک کن
+  → هر component لیست‌شده باید از DS import بشه — rebuild ممنوع
+
+مثال: Figma گفت Badge استفاده شده → <Badge> از Chakra، نه <Text bg="purple.50">
+مثال: Figma گفت Alert استفاده شده → <Alert.Root>، نه <Flex bg="blue.50">
 ```
 
 **MCP servers این پروژه:**
