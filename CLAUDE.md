@@ -64,6 +64,19 @@ Figma tool fail شد؟
 3. Build last  → فقط اگه هیچ‌کدوم نبود، با primitives (Box/Flex/Text). صفر hardcode.
 ```
 
+**DS second — نحوه صحیح استفاده (اجباری):**
+```
+step 1: mcp__chakra-ui__list_components → component در لیست هست؟
+step 2: mcp__chakra-ui__get_component_example → snippet بگیر
+step 3: snippet رو عیناً src/components/ui/[name].tsx کپی کن
+step 4: فقط Vitrina-specific adaptation اضافه کن (RTL، icon، token)
+
+❌ ممنوع: snippet گرفتن ولی دور انداختن و از scratch نوشتن
+❌ ممنوع: «RTL نیاز به تغییر داره» → rewrite کل component
+✅ مجاز: snippet + اضافه کردن startElement/endElement برای RTL icons
+✅ مجاز: snippet + swap کردن startElement/endElement برای RTL direction
+```
+
 **MCP servers این پروژه:**
 - Chakra UI MCP — `mcp__chakra-ui__list_components` / `get_component_example` / `get_component_props` / `get_theme`
 - Figma MCP — `get_design_context` / `get_screenshot` / `get_variable_defs`

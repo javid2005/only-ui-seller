@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Box, Flex, Grid, Text, Button, Input, chakra,
-  Badge, Avatar, Dialog, PinInput, Field, Portal,
-  CloseButton, DatePicker, Tabs,
+  Box, Flex, Grid, Button, Input, chakra,
+  Badge, Avatar, Field, Portal,
+  DatePicker, Tabs,
 } from '@chakra-ui/react'
-import { RotateCcw, Check, Calendar } from 'lucide-react'
+import { Check, Calendar } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
+import { OtpDialog } from '@/components/ui/OtpDialog'
+import { SecuritySection } from './SecuritySection'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -132,131 +134,6 @@ function PersianDateInput() {
   )
 }
 
-// ─── Countdown Badge ──────────────────────────────────────────────────────────
-
-function CountdownBadge({ startSeconds, onExpire }: { startSeconds: number; onExpire: () => void }) {
-  const [remaining, setRemaining] = useState(startSeconds)
-
-  useEffect(() => { setRemaining(startSeconds) }, [startSeconds])
-
-  useEffect(() => {
-    if (remaining <= 0) { onExpire(); return }
-    const t = setTimeout(() => setRemaining((r) => r - 1), 1000)
-    return () => clearTimeout(t)
-  }, [remaining, onExpire])
-
-  return (
-    <Badge colorPalette="gray" variant="subtle" px="2" py="0.5" fontSize="sm">
-      {remaining} ثانیه
-    </Badge>
-  )
-}
-
-// ─── OTP Dialog ──────────────────────────────────────────────────────────────
-
-interface OtpDialogProps {
-  open: boolean
-  target: OtpTarget
-  mobile: string
-  email: string
-  onClose: () => void
-  onConfirm: (target: OtpTarget) => void
-}
-
-function OtpDialog({ open, target, mobile, email, onClose, onConfirm }: OtpDialogProps) {
-  const isCompact = useCompactMode()
-  const [pinValue, setPinValue] = useState<string[]>(['', '', '', '', ''])
-  const [canResend, setCanResend] = useState(false)
-  const [countdownKey, setCountdownKey] = useState(0)
-
-  useEffect(() => {
-    if (open) {
-      setPinValue(['', '', '', '', ''])
-      setCanResend(target === 'email')
-      setCountdownKey((k) => k + 1)
-    }
-  }, [open, target])
-
-  const isMobile = target === 'mobile'
-  const title = isMobile ? 'تایید شماره موبایل' : 'تایید ایمیل'
-  const contact = isMobile ? mobile : email
-  const desc = isMobile
-    ? `کد تایید برای شماره ${contact} از طریق پیامک ارسال شد`
-    : `کد تایید به ایمیل ${contact} از طریق پیامک ارسال شد`
-
-  function handleResend() {
-    setPinValue(['', '', '', '', ''])
-    if (isMobile) { setCanResend(false); setCountdownKey((k) => k + 1) }
-  }
-
-  return (
-    <Dialog.Root open={open} onOpenChange={({ open: o }) => !o && onClose()} placement="center">
-      <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner dir="rtl">
-          <Dialog.Content maxW={isCompact ? '480px' : 'sm'} w="full" mx="4">
-            <Dialog.Header pt="6" pb="4" px="6">
-              <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">{title}</Dialog.Title>
-            </Dialog.Header>
-
-            <Dialog.Body pt="2" pb="4" px="6" display="flex" flexDirection="column" gap="6" alignItems="center">
-              <Text fontSize="sm" color="fg.muted" textAlign="center" w="full">{desc}</Text>
-
-              {/* dir="ltr" on both Root and Control — Dialog.Positioner dir="rtl" cascades down */}
-              <PinInput.Root value={pinValue} onValueChange={(e) => setPinValue(e.value)} otp dir="ltr">
-                <PinInput.HiddenInput />
-                <PinInput.Control dir="ltr" gap="2">
-                  <PinInput.Input index={0} />
-                  <PinInput.Input index={1} />
-                  <PinInput.Input index={2} />
-                  <PinInput.Input index={3} />
-                  <PinInput.Input index={4} />
-                </PinInput.Control>
-              </PinInput.Root>
-
-              <Flex justify="center" align="center" gap="2" w="full" minH="9">
-                {isMobile ? (
-                  canResend ? (
-                    <Button variant="ghost" colorPalette="brand" size="sm" onClick={handleResend}>
-                      <RotateCcw size={14} />
-                      ارسال دوباره کد
-                    </Button>
-                  ) : (
-                    <>
-                      {/* RTL DOM order: text FIRST=rightmost، badge LAST=leftmost */}
-                      {/* خوانده میشه راست‌به‌چپ: "ارسال دوباره کد بعد از [badge]" ✅ */}
-                      <Text fontSize="sm" color="fg.muted">ارسال دوباره کد بعد از</Text>
-                      <CountdownBadge key={countdownKey} startSeconds={120} onExpire={() => setCanResend(true)} />
-                    </>
-                  )
-                ) : (
-                  <Button variant="ghost" colorPalette="brand" size="sm" onClick={handleResend}>
-                    <RotateCcw size={14} />
-                    ارسال کد تایید
-                  </Button>
-                )}
-              </Flex>
-            </Dialog.Body>
-
-            {/* Footer — RTL: انصراف FIRST=rightmost, تایید LAST=leftmost */}
-            <Dialog.Footer pt="2" pb="4" px="6">
-              <Flex gap="3">
-                <Button variant="outline" onClick={onClose}>انصراف</Button>
-                <Button colorPalette="brand" onClick={() => onConfirm(target)}>تایید</Button>
-              </Flex>
-            </Dialog.Footer>
-
-            {/* CloseTrigger: آخرین child، absolute top-left در RTL (insetEnd=left) */}
-            <Dialog.CloseTrigger asChild position="absolute" top="3" insetEnd="3">
-              <CloseButton size="sm" />
-            </Dialog.CloseTrigger>
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Portal>
-    </Dialog.Root>
-  )
-}
-
 // ─── Tabs config ──────────────────────────────────────────────────────────────
 
 const TABS: { value: Tab; label: string }[] = [
@@ -311,7 +188,7 @@ export function UserInfo() {
         ]}
       />
 
-      <Box bg="white" borderWidth="1px" borderColor="border" borderRadius="2xl" p="6" overflow="hidden">
+      <Box bg="bg.panel" borderWidth="1px" borderColor="border" borderRadius="2xl" p="6" overflow="hidden">
         <Flex
           gap="10"
           align="flex-start"
@@ -377,7 +254,8 @@ export function UserInfo() {
           {/* ══ Main form ══ */}
           <Box
             flex="1"
-            maxW={isCompact ? 'full' : '960px'}
+            w="full"
+            maxW={isCompact ? 'full' : { base: 'full', lg: '960px' }}
             display="flex"
             flexDirection="column"
             gap="6"
@@ -534,9 +412,7 @@ export function UserInfo() {
             )}
 
             {activeTab === 'security' && (
-              <Box py="8" textAlign="center" color="fg.muted" fontSize="sm">
-                بخش امنیت در حال توسعه است
-              </Box>
+              <SecuritySection mobile={verifiedMobile} />
             )}
 
             {activeTab === 'auth' && (
@@ -550,11 +426,14 @@ export function UserInfo() {
 
       <OtpDialog
         open={otpTarget !== null}
-        target={otpTarget}
-        mobile={mobile}
-        email={email}
+        title={otpTarget === 'mobile' ? 'تایید شماره موبایل' : 'تایید ایمیل'}
+        description={
+          otpTarget === 'mobile'
+            ? `کد تایید برای شماره ${mobile} از طریق پیامک ارسال شد`
+            : `کد تایید به ایمیل ${email} از طریق پیامک ارسال شد`
+        }
         onClose={() => setOtpTarget(null)}
-        onConfirm={handleOtpConfirm}
+        onConfirm={() => handleOtpConfirm(otpTarget)}
       />
 
     </Box>
