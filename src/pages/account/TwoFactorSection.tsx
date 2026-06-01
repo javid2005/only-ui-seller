@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Alert, Box, Button, Dialog, Field, Flex, Input,
-  PinInput, Portal, CloseButton, Text,
+  Alert, Badge, Box, Button, Dialog, Field, Flex, Input,
+  PinInput, Portal, CloseButton, QrCode, Text,
 } from '@chakra-ui/react'
 import { Copy, KeyRound, Mail, Smartphone } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
@@ -60,7 +60,7 @@ function TwoFactorCard({
         bg={isActive ? 'teal.100' : 'bg.muted'}
         align="center"
         justify="center"
-        color={isActive ? 'brand.solid' : 'fg.subtle'}
+        color="brand.solid"
       >
         {icon}
       </Flex>
@@ -73,19 +73,9 @@ function TwoFactorCard({
             {title}
           </Text>
           {badge && (
-            <Text
-              fontSize="xs"
-              fontWeight="normal"
-              color="purple.fg"
-              bg="purple.subtle"
-              px="1.5"
-              py="0.5"
-              borderRadius="sm"
-              flexShrink={0}
-              whiteSpace="nowrap"
-            >
+            <Badge colorPalette="purple" variant="subtle" size="xs" flexShrink={0}>
               {badge}
-            </Text>
+            </Badge>
           )}
         </Flex>
         <Text fontSize="xs" color="fg.muted">{description}</Text>
@@ -170,13 +160,13 @@ function EmailInputDialog({ open, onClose, onContinue }: EmailInputDialogProps) 
               </Field.Root>
             </Dialog.Body>
 
-            {/* Footer — primary FIRST = rightmost in RTL */}
+            {/* Footer — انصراف FIRST=راست، ادامه LAST=چپ (consistent با ButtonFooter) */}
             <Dialog.Footer pt="2" pb="4" px="6">
               <Flex gap="3">
+                <Button variant="outline" onClick={onClose}>انصراف</Button>
                 <Button colorPalette="brand" onClick={handleContinue} disabled={!emailVal.trim()}>
                   ادامه
                 </Button>
-                <Button variant="outline" onClick={onClose}>انصراف</Button>
               </Flex>
             </Dialog.Footer>
 
@@ -225,21 +215,16 @@ function AuthQrDialog({ open, onClose, onConfirm }: AuthQrDialogProps) {
                 ۱. QR Code زیر را از طریق برنامه Google Authenticator اسکن کنید و یا آدرس زیر را در برنامه Google Authenticator وارد کنید.
               </Text>
 
-              {/* QR Code placeholder (در production از سرور می‌آید) */}
-              <Box
-                w="40"
-                h="40"
-                bg="bg.muted"
-                borderWidth="1px"
-                borderColor="border"
-                borderRadius="sm"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
+              {/* QR Code — در production value از سرور می‌آید */}
+              <QrCode.Root
+                value={`otpauth://totp/Vitrina?secret=${MOCK_SECRET}&issuer=Vitrina`}
+                size="xl"
                 flexShrink={0}
               >
-                <Text fontSize="xs" color="fg.subtle" textAlign="center" px="2">QR Code</Text>
-              </Box>
+                <QrCode.Frame>
+                  <QrCode.Pattern />
+                </QrCode.Frame>
+              </QrCode.Root>
 
               {/* Secret key — text FIRST (right in RTL), copy LAST (left) */}
               <Flex
@@ -256,6 +241,20 @@ function AuthQrDialog({ open, onClose, onConfirm }: AuthQrDialogProps) {
                 w="full"
                 overflow="hidden"
               >
+                {/* Copy icon FIRST = rightmost in RTL */}
+                <Box
+                  as="button"
+                  type="button"
+                  color="brand.solid"
+                  display="flex"
+                  flexShrink={0}
+                  onClick={() => navigator.clipboard.writeText(MOCK_SECRET)}
+                  _hover={{ color: 'brand.fg' }}
+                  cursor="pointer"
+                >
+                  <Copy size={16} />
+                </Box>
+                {/* Secret key text LAST = leftmost in RTL */}
                 <Text
                   fontSize="sm"
                   fontWeight="semibold"
@@ -268,18 +267,6 @@ function AuthQrDialog({ open, onClose, onConfirm }: AuthQrDialogProps) {
                 >
                   {MOCK_SECRET}
                 </Text>
-                <Box
-                  as="button"
-                  type="button"
-                  color="fg.muted"
-                  display="flex"
-                  flexShrink={0}
-                  onClick={() => navigator.clipboard.writeText(MOCK_SECRET)}
-                  _hover={{ color: 'fg' }}
-                  cursor="pointer"
-                >
-                  <Copy size={16} />
-                </Box>
               </Flex>
 
               <Text fontSize="sm" color="fg.muted" textAlign="center" w="full" dir="rtl">
@@ -299,11 +286,11 @@ function AuthQrDialog({ open, onClose, onConfirm }: AuthQrDialogProps) {
               </PinInput.Root>
             </Dialog.Body>
 
-            {/* Footer — primary FIRST = rightmost in RTL */}
+            {/* Footer — انصراف FIRST=راست، تایید LAST=چپ (consistent با ButtonFooter) */}
             <Dialog.Footer pt="2" pb="4" px="6">
               <Flex gap="3">
-                <Button colorPalette="brand" onClick={onConfirm}>تایید و فعال کردن</Button>
                 <Button variant="outline" onClick={onClose}>انصراف</Button>
+                <Button colorPalette="brand" onClick={onConfirm}>تایید و فعال کردن</Button>
               </Flex>
             </Dialog.Footer>
 

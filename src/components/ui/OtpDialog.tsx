@@ -106,11 +106,11 @@ export function OtpDialog({ open, title, description, confirmLabel = 'تایید
               </Flex>
             </Dialog.Body>
 
-            {/* Footer — RTL: تایید FIRST=rightmost, انصراف LAST=leftmost */}
+            {/* Footer — RTL: انصراف FIRST=راست، تایید LAST=چپ (consistent با ButtonFooter) */}
             <Dialog.Footer pt="2" pb="4" px="6">
               <Flex gap="3">
-                <Button colorPalette="brand" onClick={onConfirm}>{confirmLabel}</Button>
                 <Button variant="outline" onClick={onClose}>انصراف</Button>
+                <Button colorPalette="brand" onClick={onConfirm}>{confirmLabel}</Button>
               </Flex>
             </Dialog.Footer>
 

@@ -5,10 +5,10 @@
 
 | موضوع | فایل |
 |-------|------|
-| RTL concepts | `dev-knowledge/universal/rtl-concepts.md` |
+| RTL concepts | `dev-knowledge/universal/language.md` |
 | Chakra v3 bugs | `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md` |
 | Chakra v3 tokens | `dev-knowledge/design-systems/chakra-ui-v3/tokens.md` |
-| RTL در Chakra | `dev-knowledge/design-systems/chakra-ui-v3/rtl.md` |
+| RTL در Chakra | `dev-knowledge/design-systems/chakra-ui-v3/chakra-ui-v3.md` |
 | Figma→Code workflow | `dev-knowledge/universal/figma-to-code.md` |
 | Page Templates | `dev-knowledge/projects/vitrina/page-templates.md` |
 | Chakra v3 components | `dev-knowledge/design-systems/chakra-ui-v3/components.md` |
@@ -78,6 +78,14 @@ step 4: فقط Vitrina-specific adaptation اضافه کن (RTL، icon، token)
 ❌ ممنوع: «RTL نیاز به تغییر داره» → rewrite کل component
 ✅ مجاز: snippet + اضافه کردن startElement/endElement برای RTL icons
 ✅ مجاز: snippet + swap کردن startElement/endElement برای RTL direction
+```
+
+**⚠️ Figma DOM order ≠ RTL DOM order:**
+```
+Figma canvas = LTR. brand button FIRST در Figma DOM → چپ در canvas.
+در RTL app: FIRST = راست. پس brand FIRST در کد = راست → ✗ (خلاف ButtonFooter convention).
+قانون پروژه (از ButtonFooter): primary LAST در DOM = leftmost در RTL (سمت چپ).
+Dialog footer order: انصراف FIRST (راست) · brand LAST (چپ).
 ```
 
 **Component descriptions = implementation checklist (اجباری):**
