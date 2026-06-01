@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Avatar, Badge, Menu, Portal } from '@chakra-ui/react'
+import { Box, Flex, Text, Avatar, Badge, Menu, Portal, chakra } from '@chakra-ui/react'
 import { User, Headset, HelpCircle, SunMoon, Power } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useColorMode } from '@/contexts/ColorModeContext'
@@ -27,14 +27,14 @@ export function UserMenu({
     >
       {/* Wrap Avatar in plain button — Avatar.Root doesn't forward refs for asChild */}
       <Menu.Trigger asChild>
-        <Box as="button" type="button" borderRadius="full" cursor="pointer" display="flex" outline="none">
+        <chakra.button type="button" borderRadius="full" cursor="pointer" display="flex" outline="none" bg="transparent" border="none" p="0">
           <Avatar.Root size="sm" pointerEvents="none">
             {userAvatar
               ? <Avatar.Image src={userAvatar} alt={userName} />
               : <Avatar.Fallback>{userName.charAt(0)}</Avatar.Fallback>
             }
           </Avatar.Root>
-        </Box>
+        </chakra.button>
       </Menu.Trigger>
 
       <Portal>
@@ -97,11 +97,11 @@ export function UserMenu({
 
             {/* ── تم سایت — plain row, click doesn't close menu ─
                 RTL: icon FIRST = rightmost ✓, text middle, switch LAST = leftmost ✓ */}
-            <Flex
-              as="button"
+            <chakra.button
               type="button"
               w="full"
-              align="center"
+              display="flex"
+              alignItems="center"
               gap="2"
               px="2"
               py="1.5"
@@ -110,6 +110,9 @@ export function UserMenu({
               cursor="pointer"
               onClick={toggleColorMode}
               transition="background 0.15s"
+              bg="transparent"
+              border="none"
+              textAlign="start"
             >
               {/* Icon: FIRST = rightmost in RTL ✓ */}
               <Box color="fg.muted" display="flex" alignItems="center" flexShrink={0}>
@@ -146,7 +149,7 @@ export function UserMenu({
                   transition="all 0.2s"
                 />
               </Box>
-            </Flex>
+            </chakra.button>
 
             <Menu.Separator />
 

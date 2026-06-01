@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Box, Flex, Text, Button, IconButton, Input,
+  Box, Flex, Button, IconButton, Input,
   Tabs, Grid, Field, FileUpload, EmptyState,
 } from '@chakra-ui/react'
 import { Plus, Phone, Share2, MapPin, Upload } from 'lucide-react'
@@ -128,16 +128,15 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
   const isCompact = useCompactMode()
 
   // ─── Phone state ────────────────────────────────────
-  const setPhones = onPhonesChange
   const [phoneOpen, setPhoneOpen] = useState(false)
   const [editPhone, setEditPhone] = useState<Phone | undefined>()
 
   function submitPhone(data: Omit<Phone, 'id'>) {
     if (editPhone) {
-      setPhones((prev) => prev.map((p) => p.id === editPhone.id ? { ...data, id: p.id } : p))
+      onPhonesChange(phones.map((p) => p.id === editPhone.id ? { ...data, id: p.id } : p))
       setEditPhone(undefined)
     } else {
-      setPhones((prev) => [...prev, { ...data, id: crypto.randomUUID() }])
+      onPhonesChange([...phones, { ...data, id: crypto.randomUUID() }])
     }
     setPhoneOpen(false)
   }
@@ -186,7 +185,7 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
                     const found = phones.find((x) => x.id === id)
                     if (found) { setEditPhone(found); setPhoneOpen(true) }
                   }}
-                  onDelete={(id) => setPhones((prev) => prev.filter((x) => x.id !== id))}
+                  onDelete={(id) => onPhonesChange(phones.filter((x) => x.id !== id))}
                 />
               ))}
             </Grid>

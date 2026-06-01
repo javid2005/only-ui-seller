@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Box, Button, Collapsible, Flex, Grid, IconButton, Separator, Text, Badge } from '@chakra-ui/react'
+import { Box, Button, Collapsible, Flex, Grid, IconButton, Separator, Text, Badge, chakra } from '@chakra-ui/react'
 import { CheckCircle2, ChevronDown, ChevronUp, Plus, Star, Trash2 } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -119,13 +119,10 @@ export function CategoryAccordion({
             alignItems="center"
             justifyContent="center"
           >
-            <Box
-              as="img"
+            <img
               src={category.iconSrc}
               alt={category.name}
-              w="full"
-              h="full"
-              objectFit="cover"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </Box>
 
@@ -226,8 +223,7 @@ export function CategoryAccordion({
 
           {/* LAST = leftmost در RTL: باز/بسته — ChevronDown/Up */}
           <Collapsible.Trigger asChild>
-            <Box
-              as="button"
+            <chakra.button
               type="button"
               display="flex"
               alignItems="center"
@@ -237,9 +233,12 @@ export function CategoryAccordion({
               _hover={{ color: 'fg' }}
               cursor="pointer"
               transition="color 0.15s ease"
+              bg="transparent"
+              border="none"
+              p="0"
             >
               {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </Box>
+            </chakra.button>
           </Collapsible.Trigger>
         </Flex>
 

@@ -27,7 +27,7 @@ import type { SettingCardProps } from '@/components/settings/SettingCard'
 
 type Section = {
   title: string
-  cards: Omit<SettingCardProps, 'icon'> & { icon: React.ReactNode }[]
+  cards: (Omit<SettingCardProps, 'icon'> & { icon: React.ReactNode })[]
 }
 
 const SETTINGS_SECTIONS: Section[] = [
@@ -151,12 +151,9 @@ function StoreHeader() {
         position="relative"
         bg="bg.muted"
       >
-        <Box
-          as="img"
+        <img
           src={storeCover}
-          w="full"
-          h="full"
-          style={{ objectFit: 'cover', objectPosition: 'center' }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
         />
       </Box>
 
@@ -178,12 +175,9 @@ function StoreHeader() {
           position="relative"
           zIndex={1}
         >
-          <Box
-            as="img"
+          <img
             src={storeThumbnail}
-            w="full"
-            h="full"
-            style={{ objectFit: 'cover', borderRadius: '4px' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
           />
         </Box>
 
@@ -214,7 +208,6 @@ function StoreHeader() {
             positioning={{
               placement: 'bottom-start',
               flip: true,
-              shift: true,
             }}
           >
             <Menu.Trigger asChild>

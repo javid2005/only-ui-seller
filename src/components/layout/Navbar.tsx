@@ -57,7 +57,7 @@ export function Navbar({
           </Box>
           {/* Logo: SECOND → just left of hamburger in RTL ✓ */}
           <a href="/" style={{ textDecoration: 'none' }}>
-            <Box as="img" src={logoSrc} alt="ویترینا" h="8" />
+            <img src={logoSrc} alt="ویترینا" style={{ height: '32px' }} />
           </a>
         </Flex>
 

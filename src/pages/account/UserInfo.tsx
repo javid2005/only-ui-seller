@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Box, Flex, Grid, Text, Button, Input,
+  Box, Flex, Grid, Text, Button, Input, chakra,
   Badge, Avatar, Dialog, PinInput, Field, Portal,
   CloseButton, DatePicker, Tabs,
 } from '@chakra-ui/react'
@@ -61,8 +61,7 @@ function BadgeInput({ label, placeholder, value, onChange, verified, helperText,
         colorPalette="gray"
       >
         {/* Input — FIRST = rightmost in RTL, text right-aligned ✓ */}
-        <Box
-          as="input"
+        <chakra.input
           flex="1"
           minW="0"
           border="none"
@@ -73,7 +72,7 @@ function BadgeInput({ label, placeholder, value, onChange, verified, helperText,
           _placeholder={{ color: 'fg.subtle' }}
           value={value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
-          textAlign="right"
+          textAlign="end"
           type={type ?? 'text'}
           placeholder={placeholder}
         />
@@ -196,20 +195,17 @@ function OtpDialog({ open, target, mobile, email, onClose, onConfirm }: OtpDialo
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl">
           <Dialog.Content maxW={isCompact ? '480px' : 'sm'} w="full" mx="4">
-            <Dialog.CloseTrigger asChild position="absolute" top="2" insetStart="2">
-              <CloseButton size="sm" />
-            </Dialog.CloseTrigger>
-
-            <Dialog.Header pt="6" pb="4" px="6" justifyContent="flex-end">
+            <Dialog.Header pt="6" pb="4" px="6">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">{title}</Dialog.Title>
             </Dialog.Header>
 
             <Dialog.Body pt="2" pb="4" px="6" display="flex" flexDirection="column" gap="6" alignItems="center">
               <Text fontSize="sm" color="fg.muted" textAlign="center" w="full">{desc}</Text>
 
+              {/* dir="ltr" on both Root and Control — Dialog.Positioner dir="rtl" cascades down */}
               <PinInput.Root value={pinValue} onValueChange={(e) => setPinValue(e.value)} otp dir="ltr">
                 <PinInput.HiddenInput />
-                <PinInput.Control gap="2">
+                <PinInput.Control dir="ltr" gap="2">
                   <PinInput.Input index={0} />
                   <PinInput.Input index={1} />
                   <PinInput.Input index={2} />
@@ -227,8 +223,10 @@ function OtpDialog({ open, target, mobile, email, onClose, onConfirm }: OtpDialo
                     </Button>
                   ) : (
                     <>
-                      <CountdownBadge key={countdownKey} startSeconds={120} onExpire={() => setCanResend(true)} />
+                      {/* RTL DOM order: text FIRST=rightmost، badge LAST=leftmost */}
+                      {/* خوانده میشه راست‌به‌چپ: "ارسال دوباره کد بعد از [badge]" ✅ */}
                       <Text fontSize="sm" color="fg.muted">ارسال دوباره کد بعد از</Text>
+                      <CountdownBadge key={countdownKey} startSeconds={120} onExpire={() => setCanResend(true)} />
                     </>
                   )
                 ) : (
@@ -247,6 +245,11 @@ function OtpDialog({ open, target, mobile, email, onClose, onConfirm }: OtpDialo
                 <Button colorPalette="brand" onClick={() => onConfirm(target)}>تایید</Button>
               </Flex>
             </Dialog.Footer>
+
+            {/* CloseTrigger: آخرین child، absolute top-left در RTL (insetEnd=left) */}
+            <Dialog.CloseTrigger asChild position="absolute" top="3" insetEnd="3">
+              <CloseButton size="sm" />
+            </Dialog.CloseTrigger>
           </Dialog.Content>
         </Dialog.Positioner>
       </Portal>
@@ -525,7 +528,7 @@ export function UserInfo() {
                 </Flex>
 
                 <ButtonFooter
-                  primary={{ label: 'ذخیره تغییرات', onClick: () => console.log('save') }}
+                  primary={{ label: 'ذخیره تغییرات', onClick: () => {} }}
                 />
               </>
             )}

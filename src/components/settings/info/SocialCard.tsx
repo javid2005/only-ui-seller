@@ -108,14 +108,14 @@ export function SocialCard({ id, title, platform, handle, onEdit, onDelete }: So
       {/* Content — flex-start = RIGHT side in RTL column */}
       <Flex direction="column" gap="1" flex="1" minW="0" align="flex-start">
         <Flex align="center" gap="2" w="full">
-          <Text fontSize="sm" fontWeight="semibold" color="fg" noOfLines={1} lineHeight="1.428">
+          <Text fontSize="sm" fontWeight="semibold" color="fg" lineClamp={1} lineHeight="1.428">
             {title}
           </Text>
           <Badge colorPalette="purple" variant="subtle" size="sm" flexShrink={0}>
             {cfg.label}
           </Badge>
         </Flex>
-        <Text fontSize="xs" color="fg.muted" noOfLines={1} lineHeight="1.333">
+        <Text fontSize="xs" color="fg.muted" lineClamp={1} lineHeight="1.333">
           {handle}
         </Text>
       </Flex>

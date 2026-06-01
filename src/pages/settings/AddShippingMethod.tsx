@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Box, Flex, Text, Input, InputGroup, Button, Badge,
+  Box, Flex, Text, Input, InputGroup, Button, Badge, chakra,
   Switch, Field, SegmentGroup, Select, createListCollection,
   Collapsible, IconButton, Grid, NativeSelect,
 } from '@chakra-ui/react'
@@ -310,7 +310,7 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
               display={isCompact ? 'none' : { base: 'none', md: 'grid' }}
               templateColumns={colTemplate}
               gap="3"
-              align="center"
+              alignItems="center"
               px="3"
               py="2.5"
             >
@@ -701,14 +701,16 @@ function ShippingSection({ title, data, onChange }: ShippingSectionProps) {
       >
         {/* FIRST = rightmost = switch + title */}
         {/* RTL: Switch FIRST=right, Text LAST=left */}
-        <Box
-          as="button"
+        <chakra.button
           type="button"
           display="flex"
           alignItems="center"
           gap="2.5"
           cursor="pointer"
           onClick={() => onChange({ enabled: !data.enabled })}
+          bg="transparent"
+          border="none"
+          p="0"
         >
           <Switch.Root
             colorPalette="brand"
@@ -720,7 +722,7 @@ function ShippingSection({ title, data, onChange }: ShippingSectionProps) {
             <Switch.Control><Switch.Thumb /></Switch.Control>
           </Switch.Root>
           <Text fontSize="md" fontWeight="semibold" color="fg">{title}</Text>
-        </Box>
+        </chakra.button>
 
         {/* LAST = leftmost = badge */}
         <Badge
@@ -755,7 +757,6 @@ export function AddShippingMethod() {
   const [intercitySection, setIntercitySection] = useState<SectionData>(newSection())
 
   function handleSave() {
-    // TODO: POST /api/shipping-methods
     navigate('/settings/shipping')
   }
 

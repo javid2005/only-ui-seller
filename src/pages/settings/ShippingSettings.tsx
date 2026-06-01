@@ -181,7 +181,7 @@ export function ShippingSettings() {
     setCustomCards(prev => prev.map(c => c.id === id ? { ...c, enabled } : c))
 
   const toggleSystem = (id: string, enabled: boolean) =>
-    setSystemCards(prev => prev.map(c => c.id === id ? { ...c, enabled } : c))
+    setSystemCards(prev => prev.map(c => c.id === id ? { ...c, enabled } : c) as typeof prev)
 
   return (
     <Flex direction="column" gap="4" w="full">
@@ -253,8 +253,8 @@ export function ShippingSettings() {
                   key={card.id}
                   {...card}
                   onToggle={(enabled) => toggleCustom(card.id, enabled)}
-                  onEdit={(id) => console.log('edit', id)}
-                  onDelete={(id) => console.log('delete', id)}
+                  onEdit={(_id) => {}}
+                  onDelete={(_id) => {}}
                 />
               ))}
             </Grid>

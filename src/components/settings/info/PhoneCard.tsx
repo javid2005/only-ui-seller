@@ -56,7 +56,7 @@ export function PhoneCard({ id, number, label, type, onEdit, onDelete }: PhoneCa
 
       {/* Content — flex-start = RIGHT side in RTL */}
       <Flex direction="column" gap="1" flex="1" minW="0" align="flex-start">
-        <Text fontSize="sm" fontWeight="semibold" color="fg" lineHeight="1.428" noOfLines={1}>
+        <Text fontSize="sm" fontWeight="semibold" color="fg" lineHeight="1.428" lineClamp={1}>
           {number}
         </Text>
         <Text fontSize="xs" color="fg.muted" lineHeight="1.333">

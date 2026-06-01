@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Box, Flex, Grid, Text, Badge, Tabs,
+  Box, Flex, Grid, Text, Badge, Tabs, chakra,
   Icon, Field, FileUpload, Input, IconButton,
   ColorPicker, parseColor, Portal,
 } from '@chakra-ui/react'
@@ -579,9 +579,8 @@ export function ThemeCustomize() {
                 row.map((hex) => {
                   const isSelected = brandColor === hex
                   return (
-                    <Box
+                    <chakra.button
                       key={hex}
-                      as="button"
                       type="button"
                       onClick={() => handlePresetSelect(hex)}
                       p="1"
@@ -596,6 +595,7 @@ export function ThemeCustomize() {
                       alignItems="stretch"
                       _hover={!isSelected ? { bg: 'bg.subtle' } : {}}
                       transition="background 0.1s"
+                      border="none"
                     >
                       {/* Color area */}
                       <Box position="relative">
@@ -627,7 +627,7 @@ export function ThemeCustomize() {
                       >
                         {hex}
                       </Text>
-                    </Box>
+                    </chakra.button>
                   )
                 })
               )}

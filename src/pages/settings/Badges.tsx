@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Box, Flex, Text, Field, Input, Button, Badge, Separator,
+  Box, Flex, Text, Field, Input, Button, Badge, Separator, chakra,
 } from '@chakra-ui/react'
 import { Globe, ExternalLink, ImageIcon, CircleAlert, Info } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
@@ -117,12 +117,12 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
           </Flex>
 
           {/* External link — leftmost */}
-          <Flex
-            as="a"
+          <chakra.a
             href={config.siteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            align="center"
+            display="flex"
+            alignItems="center"
             gap="2"
             color="brand.fg"
             fontSize="sm"
@@ -136,7 +136,7 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
             {/* RTL: text FIRST = rightmost, icon LAST = leftmost */}
             <Text>{config.siteDomain}</Text>
             <ExternalLink size={16} />
-          </Flex>
+          </chakra.a>
 
         </Flex>
         <Separator />
@@ -181,14 +181,13 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
             </Text>
             <Text fontSize="2xs" lineHeight="1.4" mt="1">
               برای فعالسازی اینماد، ابتدا باید دامنه اختصاصی فروشگاه ثبت شود.{' '}
-              <Box
-                as="a"
+              <chakra.a
                 href="/settings/store-info"
                 textDecoration="underline"
                 color="orange.fg"
               >
                 رفتن به ثبت دامنه
-              </Box>
+              </chakra.a>
             </Text>
           </Flex>
         </Flex>

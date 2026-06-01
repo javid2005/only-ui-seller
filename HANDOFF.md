@@ -1,23 +1,30 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-05-31
+> آخرین آپدیت: 2026-06-01
 
 ## الان
-این session — صفحه حساب کاربری پیاده‌سازی شد:
-- **`src/pages/account/UserInfo.tsx`** (جدید) — صفحه کامل با:
-  - Two Columns Right Center layout
-  - Vertical tabs (Chakra `Tabs.Root orientation="vertical" variant="subtle"`) در `>= lg`
-  - Horizontal tabs (Chakra `Tabs.Root variant="subtle"`) در `< lg`
-  - BadgeInput custom (input FIRST=راست، badge LAST=چپ) برای موبایل/ایمیل
-  - Chakra native `DatePicker` با `locale="fa-IR-u-ca-persian"` (تقویم جلالی)
-  - OTP Dialog برای موبایل (countdown 120s) و ایمیل (resend همیشه)
-  - responsive: موبایل+ایمیل کنار هم در `>= xl`، زیر هم در `< xl`
-  - دکمه ارسال کد تایید زیر input در `< sm`
-- **`src/App.tsx`** — route `/account/user-info` اضافه شد
-- **`src/components/layout/UserMenu.tsx`** — "حساب کاربری" به `/account/user-info` navigate می‌کنه
-- **`CLAUDE.md`** — pattern جدید: `Tabs.Trigger orientation="vertical"` → `justifyContent="flex-start"` در RTL
+این session — دو کار موازی:
+
+**۱. projfix** ساخته شد (`~/GitHub/Tools/dev-agents/packages/projfix`):
+- 8 check module: css-logical-props, icon-direction, persian-numerals, chakra-known-bugs, dom-order, debug-artifacts, token-replacer, build-git-check
+- token-map.chakra-v3.json template (110+ hex → token mapping)
+- اجرا: `projfix ./src` از root Vitrina
+
+**۲. Vitrina TypeScript/bugs** از projfix build-check کشف و fix شد:
+- `Box as="img"` → native `<img>` در Layout/Navbar/Settings/CategoryAccordion
+- `Box/Flex as="button/a"` → `chakra.button/chakra.a` در UserMenu/Badges/ThemeCustomize/AddShippingMethod
+- `noOfLines` → `lineClamp` در AddressCard/PhoneCard/SocialCard
+- `Box as="input"` → `chakra.input` در UserInfo
+- console.log‌ها حذف شدن (ShippingSettings/UserInfo)
+- OTP Dialog fix: CloseTrigger → `insetEnd` (چپ در RTL) + بدون justifyContent در Header + PinInput.Control dir="ltr"
 
 ## بعدی
-نامشخص — کاربر تعیین نکرد.
+- تست OTP dialog در browser (دستی — preview نتونست trigger کنه)
+- review-fix universal skill بساز
+- dev-init-wizard integration برای projfix
+- ds-component-usage module
+
+## uncommitted
+14 فایل Vitrina uncommitted — commit کن قبل از session جدید
 
 ## صفحات
 

@@ -97,7 +97,7 @@ export function AddressCard({
               <Box color="brand.solid" flexShrink={0} display="flex" alignItems="center">
                 <Map size={16} />
               </Box>
-              <Text fontSize="sm" color="fg.muted" noOfLines={1} flex="1" textAlign="right">
+              <Text fontSize="sm" color="fg.muted" lineClamp={1} flex="1" textAlign="end">
                 {province && city ? `${province}، ${city}` : province || city || '-'}
               </Text>
             </Flex>
@@ -106,7 +106,7 @@ export function AddressCard({
               <Box color="brand.solid" flexShrink={0} display="flex" alignItems="center">
                 <Mailbox size={16} />
               </Box>
-              <Text fontSize="sm" color="fg.muted" noOfLines={1} flex="1" textAlign="right">
+              <Text fontSize="sm" color="fg.muted" lineClamp={1} flex="1" textAlign="end">
                 {postal || '-'}
               </Text>
             </Flex>
@@ -123,8 +123,8 @@ export function AddressCard({
               lineHeight="1.428"
               flex="1"
               minW="0"
-              noOfLines={2}
-              textAlign="right"
+              lineClamp={2}
+              textAlign="end"
             >
               {address || '-'}
             </Text>
@@ -141,8 +141,8 @@ export function AddressCard({
               lineHeight="1.428"
               flex="1"
               minW="0"
-              noOfLines={1}
-              textAlign="right"
+              lineClamp={1}
+              textAlign="end"
             >
               {phone || '-'}
             </Text>

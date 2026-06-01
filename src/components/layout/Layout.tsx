@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Box, Flex, Drawer, Portal, CloseButton, IconButton } from '@chakra-ui/react'
+import { Box, Flex, Drawer, Portal, CloseButton } from '@chakra-ui/react'
 import { Outlet } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
@@ -76,7 +76,7 @@ export function Layout() {
                 {/* RTL: Logo FIRST → rightmost, Close LAST → leftmost */}
                 <Flex align="center" justify="space-between" w="full">
                   <a href="/" style={{ textDecoration: 'none' }}>
-                    <Box as="img" src={logoSrc} alt="ویترینا" h="8" />
+                    <img src={logoSrc} alt="ویترینا" style={{ height: '32px' }} />
                   </a>
                   <CloseButton
                     size="sm"
