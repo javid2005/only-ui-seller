@@ -1,11 +1,16 @@
 # Vitrina — Handoff
 > آخرین آپدیت: 2026-06-02
 
-## الان
-تب‌های «تاریخچه ورود» و «احراز هویت» در صفحه حساب کاربری پیاده‌سازی شدن.
+## وضعیت فعلی
 
-## بعدی
-commit کن — تغییرات session روی تب‌های جدید هنوز uncommitted
+همه صفحات تعریف‌شده پیاده‌سازی شدن. آخرین کار: تب‌های «تاریخچه ورود» و «احراز هویت» در صفحه حساب کاربری.
+
+## کارهای بعدی (pending)
+
+| کار | توضیح |
+|-----|-------|
+| Persian Numbers | ساخت `src/utils/numbers.ts` + migrate همه JSX display |
+| Persian Calendar | همه تاریخ‌ها `fa-IR-u-ca-persian` locale |
 
 ## صفحات
 
@@ -21,4 +26,4 @@ commit کن — تغییرات session روی تب‌های جدید هنوز un
 | `/settings/themes/customize` | سفارشی‌سازی پوسته | ✅ |
 | `/settings/badges` | نمادها و مجوزها | ✅ |
 
-→ see CLAUDE.md for architectural decisions
+→ قوانین معماری: CLAUDE.md
