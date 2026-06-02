@@ -9,6 +9,7 @@ import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { OtpDialog } from '@/components/ui/OtpDialog'
 import { TwoFactorSection } from './TwoFactorSection'
+import { LoginHistorySection } from './LoginHistorySection'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -217,11 +218,9 @@ export function SecuritySection({ mobile, email }: SecuritySectionProps) {
         <TwoFactorSection mobile={mobile} email={email} />
       )}
 
-      {/* ══ Login history tab placeholder ══ */}
+      {/* ══ Login history tab ══ */}
       {secTab === 'history' && (
-        <Box py="8" textAlign="center" color="fg.muted" fontSize="sm">
-          بخش تاریخچه ورود در حال توسعه است
-        </Box>
+        <LoginHistorySection />
       )}
 
       {/* ══ OTP Dialog ══ */}

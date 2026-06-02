@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Badge, Separator, IconButton } from '@chakra-ui/react'
+import { Box, Flex, Text, Separator, IconButton } from '@chakra-ui/react'
 import { ChevronRight } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -11,8 +11,8 @@ export interface TitleBarProps {
   title: string
   /** Optional subtitle beneath the title */
   subtitle?: string
-  /** Optional badge inline with the title */
-  badge?: string
+  /** Optional badge inline with the title — pass a full <Badge> for custom colorPalette */
+  badge?: ReactNode
   /** Optional CTA slot — renders on the left side in RTL */
   cta?: ReactNode
   /** Render a separator line below the title bar */
@@ -106,14 +106,7 @@ export function TitleBar({
               {title}
             </Text>
             {badge && (
-              <Badge
-                colorPalette="purple"
-                variant="subtle"
-                size="sm"
-                flexShrink={0}
-              >
-                {badge}
-              </Badge>
+              <Box flexShrink={0}>{badge}</Box>
             )}
           </Flex>
 

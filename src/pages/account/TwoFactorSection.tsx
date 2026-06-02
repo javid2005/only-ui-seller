@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Alert, Badge, Box, Button, Dialog, Field, Flex, Input,
-  PinInput, Portal, CloseButton, QrCode, Text,
+  Alert, Badge, Button, Dialog, Field, Flex, Input,
+  PinInput, Portal, CloseButton, QrCode, Text, chakra,
 } from '@chakra-ui/react'
 import { Copy, KeyRound, Mail, Smartphone } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
@@ -242,8 +242,7 @@ function AuthQrDialog({ open, onClose, onConfirm }: AuthQrDialogProps) {
                 overflow="hidden"
               >
                 {/* Copy icon FIRST = rightmost in RTL */}
-                <Box
-                  as="button"
+                <chakra.button
                   type="button"
                   color="brand.solid"
                   display="flex"
@@ -253,7 +252,7 @@ function AuthQrDialog({ open, onClose, onConfirm }: AuthQrDialogProps) {
                   cursor="pointer"
                 >
                   <Copy size={16} />
-                </Box>
+                </chakra.button>
                 {/* Secret key text LAST = leftmost in RTL */}
                 <Text
                   fontSize="sm"

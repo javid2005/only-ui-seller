@@ -11,6 +11,7 @@ import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { OtpDialog } from '@/components/ui/OtpDialog'
 import { SecuritySection } from './SecuritySection'
+import { IdentitySection } from './IdentitySection'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -416,9 +417,7 @@ export function UserInfo() {
             )}
 
             {activeTab === 'auth' && (
-              <Box py="8" textAlign="center" color="fg.muted" fontSize="sm">
-                بخش احراز هویت در حال توسعه است
-              </Box>
+              <IdentitySection />
             )}
           </Box>
         </Flex>

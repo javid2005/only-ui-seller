@@ -515,6 +515,12 @@ src/
   pages/
     Dashboard.tsx
     Settings.tsx          — settings landing page با SettingCard grid
+    account/
+      UserInfo.tsx            — حساب کاربری (3 tabs: user-info / security / auth)
+      SecuritySection.tsx     — تب امنیت (تغییر رمز + 2FA)
+      TwoFactorSection.tsx    — تایید دو مرحله‌ای (SMS / Email / Authenticator)
+      IdentitySection.tsx     — احراز هویت (3 states: empty / pending / approved، Steps + FileUpload)
+      LoginHistorySection.tsx — تاریخچه ورود (جدول 4 ستون RTL، horizontal scroll در موبایل)
     settings/
       GeneralInfo.tsx     — اطلاعات فروشگاه (3 tabs: identity / contact / address)
       Categories.tsx      — دسته‌بندی‌ها (Two Columns Right Center، accordion + search + InfoBox)
