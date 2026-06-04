@@ -31,7 +31,7 @@
       "Bash(git checkout *)",
       "Bash(git stash *)",
       "Bash(git -C *)",
-      "Bash(projfix *)",
+      "Bash(dev-engine *)",
       "mcp__chakra-ui__get_theme",
       "mcp__chakra-ui__get_component_props",
       "mcp__chakra-ui__get_component_example",

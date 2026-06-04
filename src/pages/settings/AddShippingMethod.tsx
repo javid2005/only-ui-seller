@@ -98,7 +98,7 @@ function newRange(fromWeight = '', fromUnit: WeightUnit = 'kg'): WeightRange {
 }
 
 // ─── UnitSelect — NativeSelect embedded in InputGroup endElement ──────────────
-// projfix-disable
+// dev-engine-disable
 // NativeSelect is correct here: inline addon inside InputGroup, not a standalone field.
 
 interface UnitSelectProps {
@@ -125,7 +125,7 @@ function UnitSelect({ value, onChange, options }: UnitSelectProps) {
     </NativeSelect.Root>
   )
 }
-// projfix-enable
+// dev-engine-enable
 
 const DELIVERY_UNITS: { value: string; label: string }[] = [
   { value: 'روز',  label: 'روز'  },
