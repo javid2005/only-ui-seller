@@ -1,5 +1,5 @@
 # Vitrina — Project Context
-> updated: 2026-06-02
+> updated: 2026-06-05 | tokens/breakpoints canonical → CLAUDE.md (اینجا فقط design-side context)
 
 ---
 
@@ -19,27 +19,10 @@
 
 ## Brand Tokens
 
-| کاربرد | Chakra Color | Hex (500) |
-|--------|-------------|-----------|
-| Primary | `teal` | `#0D9488` |
-| Primary Hover | `teal.600` | `#0F766E` |
-| Error | `red` | `#DC2626` |
-| Success | `green` | `#16A34A` |
-| Warning | `orange` | `#EA580C` |
+→ **canonical در `CLAUDE.md` پروژه** (بخش *Token Reference* — Brand + Map با Light/Dark کامل).
+اینجا duplicate نمی‌کنیم (قبلاً drift شده بود: focusRing/border). برای مقدار دقیق → CLAUDE.md.
 
-```ts
-// src/theme/tokens.ts
-brand: {
-  solid:     { value: { base: '{colors.teal.600}', _dark: '{colors.teal.400}' } },
-  fg:        { value: { base: '{colors.teal.700}', _dark: '{colors.teal.300}' } },
-  muted:     { value: { base: '{colors.teal.100}', _dark: '{colors.teal.900}' } },
-  subtle:    { value: { base: '{colors.teal.50}',  _dark: '{colors.teal.950}' } },
-  emphasized:{ value: { base: '{colors.teal.200}', _dark: '{colors.teal.800}' } },
-  contrast:  { value: { base: 'white',             _dark: '{colors.teal.950}' } },
-  focusRing: { value: { base: '{colors.teal.600}', _dark: '{colors.teal.400}' } },
-  border:    { value: { base: '{colors.teal.300}', _dark: '{colors.teal.700}' } },
-}
-```
+رنگ‌های پایه: Primary `teal` · Error `red` · Success `green` · Warning `orange`.
 
 ---
 
@@ -54,11 +37,8 @@ brand: {
 
 ## Breakpoints
 
-| نام | عرض |
-|-----|-----|
-| Mobile | 480px |
-| Desktop | 1440px |
-| Wide | 1920px |
+→ **canonical در `CLAUDE.md`** (بخش *Design Scale → Breakpoints* — شامل **360px** + Chakra scale + responsive pattern).
+زیر فقط **layout measurements** هر breakpoint (design-side، در CLAUDE.md نیست):
 
 ### Layout در هر breakpoint
 
@@ -109,7 +89,7 @@ brand: {
 
 ## نکات مهم پروژه
 
-1. سه breakpoint: 480 (mobile)، 1440 (desktop)، 1920 (wide)
+1. breakpoints → CLAUDE.md (canonical: 360/480/1440/1920)
 2. Navbar عرض کامل — Content از سمت راست 256px offset داره
 3. سیستم discount و currency جداگانه
 4. Dark/Light mode از طریق boolean variable
