@@ -10,7 +10,7 @@ import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { SectionHeader } from '@/components/products/categories/SectionHeader'
 import { CategoryMngAccordion } from '@/components/products/categories/CategoryMngAccordion'
-import { AddSubCategoryDialog } from '@/components/products/categories/AddSubCategoryDialog'
+import { SubCategoryDialog } from '@/components/products/categories/SubCategoryDialog'
 import { INITIAL_SECTIONS, type CategorySection, type SubCategory } from '@/components/products/categories/data'
 
 let _sid = 1000
@@ -23,7 +23,9 @@ export function ProductCategories() {
   const [sections, setSections] = useState<CategorySection[]>(INITIAL_SECTIONS)
   const [searchQuery, setSearchQuery] = useState('')
   const [openIds, setOpenIds] = useState<Set<string>>(new Set())
-  const [dialogCatId, setDialogCatId] = useState<string | null>(null)
+  const [dialog, setDialog] = useState<
+    { catId: string; mode: 'add' | 'edit'; subId?: string; initialName?: string } | null
+  >(null)
   const [activeSection, setActiveSection] = useState<string>(sections[0]?.id ?? '')
 
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
@@ -85,13 +87,16 @@ export function ProductCategories() {
       return next
     })
 
+  const editSub = (catId: string, subId: string, name: string) =>
+    updateCategory(catId, (subs) => subs.map((s) => (s.id === subId ? { ...s, name } : s)))
+
   function scrollToSection(id: string) {
     setActiveSection(id)
     sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const dialogCat = dialogCatId
-    ? sections.flatMap((s) => s.categories).find((c) => c.id === dialogCatId)
+  const dialogCat = dialog
+    ? sections.flatMap((s) => s.categories).find((c) => c.id === dialog.catId)
     : undefined
 
   // ─── Render ───────────────────────────────────────────────────────────────
@@ -215,8 +220,11 @@ export function ProductCategories() {
                           category={cat}
                           isOpen={openIds.has(cat.id)}
                           onToggle={() => toggle(cat.id)}
-                          onAddSub={() => setDialogCatId(cat.id)}
+                          onAddSub={() => setDialog({ catId: cat.id, mode: 'add' })}
                           onRemoveSub={(subId) => removeSub(cat.id, subId)}
+                          onEditSub={(subId, currentName) =>
+                            setDialog({ catId: cat.id, mode: 'edit', subId, initialName: currentName })
+                          }
                           onReorderSub={(from, to) => reorderSub(cat.id, from, to)}
                           isLast={idx === sec.categories.length - 1}
                         />
@@ -243,12 +251,18 @@ export function ProductCategories() {
         </Flex>
       </Box>
 
-      {/* ─── Add subcategory dialog ──────────────────────────────────────── */}
-      <AddSubCategoryDialog
-        open={dialogCatId !== null}
+      {/* ─── Add / Edit subcategory dialog ───────────────────────────────── */}
+      <SubCategoryDialog
+        open={dialog !== null}
+        mode={dialog?.mode}
         parentName={dialogCat?.name}
-        onClose={() => setDialogCatId(null)}
-        onSubmit={(name) => { if (dialogCatId) addSub(dialogCatId, name) }}
+        initialName={dialog?.initialName}
+        onClose={() => setDialog(null)}
+        onSubmit={(name) => {
+          if (!dialog) return
+          if (dialog.mode === 'add') addSub(dialog.catId, name)
+          else if (dialog.subId) editSub(dialog.catId, dialog.subId, name)
+        }}
       />
 
     </Flex>

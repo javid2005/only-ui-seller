@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
-import { Badge, Box, Button, Collapsible, Flex, IconButton, Separator, Text } from '@chakra-ui/react'
-import { CirclePlus, CircleMinus } from 'lucide-react'
+import { Badge, Box, Button, Collapsible, EmptyState, Flex, IconButton, Separator, Text, VStack } from '@chakra-ui/react'
+import { CirclePlus, CircleMinus, FolderPlus } from 'lucide-react'
 import type { ProductCategory } from './data'
 import { SubCategoryGrip } from './SubCategoryGrip'
 
@@ -11,6 +11,8 @@ export interface CategoryMngAccordionProps {
   /** باز کردن دیالوگ افزودن زیردسته برای این دسته */
   onAddSub: () => void
   onRemoveSub: (subId: string) => void
+  /** ویرایش زیردسته → باز کردن دیالوگ ویرایش */
+  onEditSub: (subId: string, currentName: string) => void
   /** جابه‌جایی زیردسته (drag reorder) */
   onReorderSub: (fromIdx: number, toIdx: number) => void
   /** آخرین ردیف؟ → border پایین حذف */
@@ -28,6 +30,7 @@ export function CategoryMngAccordion({
   onToggle,
   onAddSub,
   onRemoveSub,
+  onEditSub,
   onReorderSub,
   isLast = false,
 }: CategoryMngAccordionProps) {
@@ -114,6 +117,7 @@ export function CategoryMngAccordion({
                     key={s.id}
                     name={s.name}
                     onRemove={() => onRemoveSub(s.id)}
+                    onEdit={() => onEditSub(s.id, s.name)}
                     isDragging={dragIdx === idx}
                     onDragStart={() => {
                       dragFrom.current = idx
@@ -134,9 +138,19 @@ export function CategoryMngAccordion({
                 ))}
               </Flex>
             ) : (
-              <Text fontSize="xs" color="fg.subtle" textAlign="center" py="4">
-                هنوز زیردسته‌ای اضافه نشده.
-              </Text>
+              <EmptyState.Root size="sm">
+                <EmptyState.Content>
+                  <EmptyState.Indicator>
+                    <FolderPlus />
+                  </EmptyState.Indicator>
+                  <VStack textAlign="center" gap="1">
+                    <EmptyState.Title>هنوز زیردسته‌ای اضافه نشده</EmptyState.Title>
+                    <EmptyState.Description>
+                      با دکمه‌ی «افزودن زیردسته» اولین زیردسته را بسازید.
+                    </EmptyState.Description>
+                  </VStack>
+                </EmptyState.Content>
+              </EmptyState.Root>
             )}
           </Box>
         </Collapsible.Content>
