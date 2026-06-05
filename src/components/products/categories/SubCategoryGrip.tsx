@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Flex, IconButton, Text } from '@chakra-ui/react'
 import { GripVertical, Pencil, Trash2 } from 'lucide-react'
 
