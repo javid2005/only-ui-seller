@@ -10,6 +10,7 @@ import { AddShippingMethod }  from '@/pages/settings/AddShippingMethod'
 import { ThemeSettings }      from '@/pages/settings/ThemeSettings'
 import { ThemeCustomize }    from '@/pages/settings/ThemeCustomize'
 import { Badges }            from '@/pages/settings/Badges'
+import { ProductCategories } from '@/pages/products/Categories'
 import { UserInfo }          from '@/pages/account/UserInfo'
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="settings/themes"           element={<ThemeSettings />} />
           <Route path="settings/themes/customize" element={<ThemeCustomize />} />
           <Route path="settings/badges"           element={<Badges />} />
+          <Route path="products/categories"       element={<ProductCategories />} />
         </Route>
       </Routes>
     </BrowserRouter>

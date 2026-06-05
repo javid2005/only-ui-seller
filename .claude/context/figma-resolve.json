@@ -19,6 +19,10 @@
     "AddPhoneDialog": "@/components/settings/info/AddPhoneDialog#AddPhoneDialog",
     "AddAddressDialog": "@/components/settings/info/AddAddressDialog#AddAddressDialog",
     "CategoryAccordion": "@/components/settings/categories/CategoryAccordion#CategoryAccordion",
+    "SubCategoryGrip": "@/components/products/categories/SubCategoryGrip#SubCategoryGrip",
+    "SectionHeader": "@/components/products/categories/SectionHeader#SectionHeader",
+    "CategoryMngAccordion": "@/components/products/categories/CategoryMngAccordion#CategoryMngAccordion",
+    "AddSubCategoryDialog": "@/components/products/categories/AddSubCategoryDialog#AddSubCategoryDialog",
     "UserMenu": "@/components/layout/UserMenu#UserMenu",
     "SidebarItem": "@/components/layout/SidebarItem#SidebarItem",
     "Sidebar": "@/components/layout/Sidebar#Sidebar",
@@ -29,6 +33,6 @@
   },
   "tokens": {},
   "variables": {},
-  "_synced": "2026-06-04",
+  "_synced": "2026-06-05",
   "_source": "scan"
 }
