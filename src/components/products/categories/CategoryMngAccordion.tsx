@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { Badge, Box, Button, Collapsible, EmptyState, Flex, IconButton, Separator, Text, VStack } from '@chakra-ui/react'
-import { CirclePlus, CircleMinus, FolderPlus } from 'lucide-react'
+import { ChevronDown, ChevronUp, FolderPlus } from 'lucide-react'
 import type { ProductCategory } from './data'
 import { SubCategoryGrip } from './SubCategoryGrip'
 
@@ -97,7 +97,7 @@ export function CategoryMngAccordion({
             onToggle()
           }}
         >
-          {isOpen ? <CircleMinus size={20} /> : <CirclePlus size={20} />}
+          {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </IconButton>
       </Flex>
 
