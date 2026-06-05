@@ -67,7 +67,25 @@ Figma tool fail شد؟
 
 ---
 
-### Figma → Code Protocol (اجباری)
+### Scope Triage (اجباری — اول هر تغییر، قبل از Figma→Code)
+
+هر task → اول tier رو تعیین کن. tier تعیین می‌کنه چقدر pipeline لازمه:
+
+| Tier | چیه | کار | screenshot؟ |
+|------|-----|-----|------------|
+| **0 — trivial** | متن/label، rename، comment، config | فقط Edit | ❌ |
+| **1 — code/style** | prop، token swap، spacing، bugfix، refactor، ریسپانسیو روی component موجود — **بدون surface نو از Figma** | Edit + `pnpm type-check` | ❌ |
+| **2 — Figma→code نو** | frame/page/component نو از Figma، یا تغییری که باید pixel با Figma spec بخوره | کل Protocol پایین | ✅ |
+
+- **screenshot = opt-in.** default نزن. فقط **Tier 2** یا وقتی کاربر صریح گفت «compare / pixel / screenshot».
+- **MCP Figma fetch فقط Tier 2.** Tier 0/1 از local cache، صفر MCP call.
+- **شک بین دو tier؟ → پایین‌تر رو بگیر**، لازم شد escalate کن. سرعت اول.
+
+مرجع عمیق: `dev-knowledge/universal/scope-triage.md`
+
+---
+
+### Figma → Code Protocol (اجباری — فقط Tier 2)
 
 هر task که از Figma به کد تبدیل میشه — حتی «اصلاح کن» / «مقایسه کن» / «ریسپانسیو کن» — این gate رو رد نکن.
 
@@ -127,7 +145,7 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - [ ] logical CSS props (`insetInlineEnd` نه `right`)
 - [ ] RTL DOM order (اولین child = rightmost)
 - [ ] `pnpm type-check` سبز
-- [ ] Visual verification vs Figma (اجباری — قبل از گزارش done، بدون درخواست کاربر):
+- [ ] Visual verification vs Figma (**فقط Tier 2** — یا وقتی کاربر صریح screenshot/pixel خواست. Tier 0/1 رد کن):
   ```
   1. preview_start (اگه server نیست)
   2. preview_resize(1920) → preview_screenshot → compare با Figma desktop frame
