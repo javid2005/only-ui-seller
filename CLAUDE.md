@@ -168,6 +168,15 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 ## Critical Rules
 
+### Conventions — always-on (cross-project)
+
+این قوانین در **همه** taskها اجباری‌ان (نه فقط Figma→code):
+
+1. **Select فقط** — `NativeSelect` ممنوع. همه‌جا `Select` namespace + `createListCollection` (الگو: `Sidebar.tsx`). → عمیق: `dev-knowledge/design-systems/chakra-ui-v3/chakra-ui-v3.md §۱-الف`
+2. **Table alt-row** — قبل از ساخت هر جدول از کاربر بپرس: سطرهای متناوب رنگ پس‌زمینه متفاوت بخوان؟ چه رنگی؟ (پیش‌فرض `bg.subtle`). پیاده‌سازی با token: `<Table.Row bg={i % 2 ? 'bg.subtle' : undefined}>`.
+3. **Sidebar selected** — صفحه‌ی فعال باید item متناظرش در Sidebar را `active`/selected نشان دهد — هم parent (auto-open + highlight)، هم sub-item — به‌صورت route-aware (نه state دستی). → `dev-knowledge/universal/app-conventions.md`
+4. **Responsive assets** — برای حالت responsive/mobile اگر لینک یا تصویر مخصوص آن view به تو داده نشده، قبل از ساخت **ماژولار بپرس** (نه حدس). → `dev-knowledge/universal/app-conventions.md`
+
 ### RTL — پایه
 
 - `dir="rtl"` on `<html>` in `index.html`

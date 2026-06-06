@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Flex, Text, Tooltip as ChakraTooltip, Collapsible } from '@chakra-ui/react'
 import { ChevronDown } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import type { SubNavItem } from '@/types/nav'
 
 interface SidebarItemProps {
@@ -49,30 +49,34 @@ function SubLine({ isLast }: { isLast: boolean }) {
 
 function SubItemRow({ item }: { item: SubNavItem }) {
   return (
-    <Link to={item.path} style={{ display: 'block', width: '100%' }}>
-      <Flex
-        align="center"
-        px="2"
-        h="9"
-        borderRadius="sm"
-        _hover={{ bg: 'bg.muted' }}
-        cursor="pointer"
-        w="full"
-      >
-        <Text
-          fontSize="sm"
-          lineHeight="5"
-          color="fg"
-          textAlign="right"
+    <NavLink to={item.path} style={{ display: 'block', width: '100%' }}>
+      {({ isActive }) => (
+        <Flex
+          align="center"
+          px="2"
+          h="9"
+          borderRadius="sm"
+          bg={isActive ? 'brand.subtle' : 'transparent'}
+          _hover={{ bg: isActive ? 'brand.muted' : 'bg.muted' }}
+          cursor="pointer"
           w="full"
-          whiteSpace="nowrap"
-          overflow="hidden"
-          textOverflow="ellipsis"
         >
-          {item.label}
-        </Text>
-      </Flex>
-    </Link>
+          <Text
+            fontSize="sm"
+            lineHeight="5"
+            color={isActive ? 'brand.fg' : 'fg'}
+            fontWeight={isActive ? 'medium' : 'normal'}
+            textAlign="right"
+            w="full"
+            whiteSpace="nowrap"
+            overflow="hidden"
+            textOverflow="ellipsis"
+          >
+            {item.label}
+          </Text>
+        </Flex>
+      )}
+    </NavLink>
   )
 }
 
@@ -84,10 +88,18 @@ export function SidebarItem({
   collapsed = false,
   disabled = false,
 }: SidebarItemProps) {
-  const [open, setOpen] = useState(false)
+  const location = useLocation()
   const hasSubItems = subItems.length > 0
+  // route-aware: sub-route فعال → parent باید active + auto-open بشه
+  const isChildActive = hasSubItems && subItems.some((s) => location.pathname === s.path)
+  const [open, setOpen] = useState(isChildActive)
 
-  const itemRow = (isActive: boolean) => (
+  // ناوبری به یک sub-route → گروهش رو باز نگه دار
+  useEffect(() => {
+    if (isChildActive) setOpen(true)
+  }, [isChildActive])
+
+  const itemRow = (isActive: boolean, branchActive = false) => (
     /* RTL flex: first child = rightmost */
     <Flex
       as="span"
@@ -97,7 +109,7 @@ export function SidebarItem({
       px="2"
       h="36px"
       borderRadius="sm"
-      bg={isActive && !hasSubItems ? 'brand.subtle' : open ? 'bg.muted' : 'transparent'}
+      bg={isActive && !hasSubItems ? 'brand.subtle' : open || branchActive ? 'bg.muted' : 'transparent'}
       _hover={{ bg: isActive && !hasSubItems ? 'brand.muted' : 'bg.muted' }}
       cursor="pointer"
       w="full"
@@ -121,7 +133,7 @@ export function SidebarItem({
           flex="1"
           textAlign="right"
           lineHeight="5"
-          color={isActive && !hasSubItems ? 'brand.fg' : 'fg'}
+          color={(isActive && !hasSubItems) || branchActive ? 'brand.fg' : 'fg'}
           whiteSpace="nowrap"
           overflow="hidden"
           textOverflow="ellipsis"
@@ -161,7 +173,7 @@ export function SidebarItem({
           onClick={() => setOpen((o) => !o)}
           _focus={{ outline: 'none' }}
         >
-          {itemRow(false)}
+          {itemRow(false, isChildActive)}
         </Box>
       ) : (
         <NavLink to={path} style={{ display: 'block', width: '100%' }}>
