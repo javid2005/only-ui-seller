@@ -99,8 +99,9 @@ export function SelectionActionBar({
                 _hover={{ bg: `${a.palette}.muted` }}
                 onClick={a.onClick}
               >
-                {a.label}
+                {/* RTL: icon FIRST = راست */}
                 {a.key !== 'cancel' && <Icon size={16} />}
+                {a.label}
               </Button>
             )
           })}
