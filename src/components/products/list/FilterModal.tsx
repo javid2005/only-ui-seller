@@ -49,7 +49,7 @@ export function FilterModal({ open, onClose }: FilterModalProps) {
 
             <Dialog.Header pb="4" pt="6" px="6" position="relative">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">فیلترها</Dialog.Title>
-              <Dialog.CloseTrigger asChild position="absolute" top="4" insetStart="4">
+              <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" onClick={onClose} />
               </Dialog.CloseTrigger>
             </Dialog.Header>
