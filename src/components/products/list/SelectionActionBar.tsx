@@ -49,64 +49,68 @@ export function SelectionActionBar({
         <Text fontSize="sm" color="fg">محصول انتخاب شده</Text>
       </Flex>
 
-      {isCompact ? (
-        // ── mobile: همه عملیات در منوی ⋮ ──
-        <Menu.Root positioning={{ placement: 'bottom-end' }}>
-          <Menu.Trigger asChild>
-            <IconButton variant="outline" size="sm" aria-label="عملیات گروهی" flexShrink={0}>
-              <MoreVertical size={16} />
-            </IconButton>
-          </Menu.Trigger>
-          <Portal>
-            <Menu.Positioner dir="rtl">
-              <Menu.Content minW="180px" p="1">
-                {actions.map((a) => {
-                  const Icon = a.icon
-                  return (
-                    <Menu.Item
-                      key={a.key}
-                      value={a.key}
-                      onClick={a.onClick}
-                      _hover={{ bg: a.danger ? 'red.subtle' : 'bg.muted' }}
-                    >
-                      {/* RTL: icon FIRST = راست */}
-                      <Flex w="full" align="center" gap="2">
-                        <Flex color={a.danger ? 'fg.error' : 'fg.muted'} flexShrink={0}>
-                          <Icon size={16} />
-                        </Flex>
-                        <Text fontSize="sm" flex="1" textAlign="right" color={a.danger ? 'fg.error' : 'fg'}>
-                          {a.label}
-                        </Text>
+      {/* ── ellipsis menu: base → lg، یا وقتی isCompact ── */}
+      <Menu.Root positioning={{ placement: 'bottom-end' }}>
+        <Menu.Trigger asChild>
+          <IconButton
+            variant="outline" size="sm" aria-label="عملیات گروهی" flexShrink={0}
+            display={{ base: 'inline-flex', lg: isCompact ? 'inline-flex' : 'none' }}
+          >
+            <MoreVertical size={16} />
+          </IconButton>
+        </Menu.Trigger>
+        <Portal>
+          <Menu.Positioner dir="rtl">
+            <Menu.Content minW="180px" p="1">
+              {actions.map((a) => {
+                const Icon = a.icon
+                return (
+                  <Menu.Item
+                    key={a.key}
+                    value={a.key}
+                    onClick={a.onClick}
+                    _hover={{ bg: a.danger ? 'red.subtle' : 'bg.muted' }}
+                  >
+                    {/* RTL: icon FIRST = راست */}
+                    <Flex w="full" align="center" gap="2">
+                      <Flex color={a.danger ? 'fg.error' : 'fg.muted'} flexShrink={0}>
+                        <Icon size={16} />
                       </Flex>
-                    </Menu.Item>
-                  )
-                })}
-              </Menu.Content>
-            </Menu.Positioner>
-          </Portal>
-        </Menu.Root>
-      ) : (
-        // ── desktop: دکمه‌ها inline — چپ‌ترین ──
-        <Flex gap="2" align="center" flexWrap="wrap">
-          {actions.map((a) => {
-            const Icon = a.icon
-            return (
-              <Button
-                key={a.key}
-                size="sm"
-                bg={`${a.palette}.subtle`}
-                color={`${a.palette}.fg`}
-                _hover={{ bg: `${a.palette}.muted` }}
-                onClick={a.onClick}
-              >
-                {/* RTL: icon FIRST = راست */}
-                {a.key !== 'cancel' && <Icon size={16} />}
-                {a.label}
-              </Button>
-            )
-          })}
-        </Flex>
-      )}
+                      <Text fontSize="sm" flex="1" textAlign="right" color={a.danger ? 'fg.error' : 'fg'}>
+                        {a.label}
+                      </Text>
+                    </Flex>
+                  </Menu.Item>
+                )
+              })}
+            </Menu.Content>
+          </Menu.Positioner>
+        </Portal>
+      </Menu.Root>
+
+      {/* ── desktop inline buttons: lg+ وقتی !isCompact ── */}
+      <Flex
+        gap="2" align="center" flexWrap="wrap"
+        display={{ base: 'none', lg: isCompact ? 'none' : 'flex' }}
+      >
+        {actions.map((a) => {
+          const Icon = a.icon
+          return (
+            <Button
+              key={a.key}
+              size="sm"
+              bg={`${a.palette}.subtle`}
+              color={`${a.palette}.fg`}
+              _hover={{ bg: `${a.palette}.muted` }}
+              onClick={a.onClick}
+            >
+              {/* RTL: icon FIRST = راست */}
+              {a.key !== 'cancel' && <Icon size={16} />}
+              {a.label}
+            </Button>
+          )
+        })}
+      </Flex>
     </Flex>
   )
 }
