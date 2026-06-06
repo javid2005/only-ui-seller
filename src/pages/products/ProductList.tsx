@@ -13,6 +13,7 @@ import {
   type FilterOption,
 } from '@/components/products/list/data'
 import { ProductTable } from '@/components/products/list/ProductTable'
+import { ProductGrid } from '@/components/products/list/ProductGrid'
 import { SelectionActionBar } from '@/components/products/list/SelectionActionBar'
 import { FilterModal } from '@/components/products/list/FilterModal'
 
@@ -122,19 +123,9 @@ export function ProductList() {
     { label: 'قیمت دلاری', value: PRODUCTS.filter((p) => p.currency === '$').length, color: 'blue', badge: `${toPersianDigits('۱۶۱٬۲۰۰')} ت` },
   ]
 
-  const searchInput = (
-    <InputGroup startElement={<Search size={14} color="var(--chakra-colors-fg-subtle)" />} flex="1 0 200px" maxW={isCompact ? 'full' : '280px'}>
-      <Input
-        placeholder="جستجو در نام یا SKU ..."
-        size="sm"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-    </InputGroup>
-  )
-
-  const viewToggle = (
-    <SegmentGroup.Root value={view} onValueChange={(e) => setView(e.value)} size="sm" flexShrink={0}>
+  // viewToggle — در هر دو bar استفاده می‌شه (CSS display هر بار فقط یکی نشون می‌ده)
+  const makeViewToggle = () => (
+    <SegmentGroup.Root value={view} onValueChange={(e) => setView(e.value ?? 'list')} size="sm" flexShrink={0}>
       <SegmentGroup.Indicator bg="bg.panel" />
       <SegmentGroup.Item value="list">
         <SegmentGroup.ItemText><List size={15} /></SegmentGroup.ItemText>
@@ -145,6 +136,18 @@ export function ProductList() {
         <SegmentGroup.ItemHiddenInput />
       </SegmentGroup.Item>
     </SegmentGroup.Root>
+  )
+
+  // searchInput — inline در هر bar (flex/maxW متفاوته)
+  const makeSearch = (flex: string, maxW: string) => (
+    <InputGroup startElement={<Search size={14} color="var(--chakra-colors-fg-subtle)" />} flex={flex} maxW={maxW}>
+      <Input
+        placeholder="جستجو در نام یا SKU ..."
+        size="sm"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+    </InputGroup>
   )
 
   return (
@@ -164,61 +167,74 @@ export function ProductList() {
       </Flex>
 
       {/* ── Content Panel ── */}
-      <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" p={isCompact ? '4' : '6'}>
+      {/* padding: mobile همیشه 4، desktop از isCompact ── */}
+      <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" p={{ base: '4', md: isCompact ? '4' : '6' }}>
 
-        {/* ── Filter Bar ── */}
-        {isCompact ? (
-          // Mobile: search + filter-icon (→modal) + view toggle
-          <Flex gap="2" align="center" mb="5">
-            {searchInput}
-            <IconButton variant="outline" size="sm" aria-label="فیلترها" onClick={() => setFilterOpen(true)} flexShrink={0}>
-              <ListFilter size={16} />
-            </IconButton>
-            {viewToggle}
+        {/* ── Filter Bar ──
+            دو bar — CSS display یکی رو مخفی می‌کنه:
+            compact bar: base=flex، md=flex اگه isCompact، وگرنه none
+            desktop bar: base=none، md=flex اگه !isCompact، وگرنه none      ── */}
+
+        {/* compact bar: search + filter-icon (→modal) + view toggle */}
+        <Flex
+          display={{ base: 'flex', md: isCompact ? 'flex' : 'none' }}
+          gap="2" align="center" mb="5"
+        >
+          {makeSearch('1', 'full')}
+          <IconButton variant="outline" size="sm" aria-label="فیلترها" onClick={() => setFilterOpen(true)} flexShrink={0}>
+            <ListFilter size={16} />
+          </IconButton>
+          {makeViewToggle()}
+        </Flex>
+
+        {/* desktop bar: search + selects + switches + spacer + view toggle */}
+        <Flex
+          display={{ base: 'none', md: isCompact ? 'none' : 'flex' }}
+          gap="3" align="center" mb="5" overflowX="auto"
+        >
+          {makeSearch('1 0 200px', '280px')}
+          <FilterSelect collection={catCollection}      defaultValue="all"    minW="120px" maxW="160px" />
+          <FilterSelect collection={statusCollection}   defaultValue="all"    minW="120px" maxW="160px" />
+          <FilterSelect collection={currencyCollection} defaultValue="all"    minW="100px" maxW="140px" />
+          <FilterSelect collection={sortCollection}     defaultValue="newest" minW="130px" maxW="170px" />
+
+          <Flex align="center" gap="2" flexShrink={0}>
+            <Switch.Root size="sm" colorPalette="teal">
+              <Switch.HiddenInput />
+              <Switch.Control><Switch.Thumb /></Switch.Control>
+            </Switch.Root>
+            <Text fontSize="xs" whiteSpace="nowrap">تخفیف دارد</Text>
           </Flex>
-        ) : (
-          // Desktop: search + selects + switches + spacer + view toggle (RTL: search راست‌ترین)
-          <Flex gap="3" align="center" mb="5" overflowX="auto">
-            {searchInput}
-            <FilterSelect collection={catCollection}      defaultValue="all"    minW="120px" maxW="160px" />
-            <FilterSelect collection={statusCollection}   defaultValue="all"    minW="120px" maxW="160px" />
-            <FilterSelect collection={currencyCollection} defaultValue="all"    minW="100px" maxW="140px" />
-            <FilterSelect collection={sortCollection}     defaultValue="newest" minW="130px" maxW="170px" />
-
-            <Flex align="center" gap="2" flexShrink={0}>
-              <Switch.Root size="sm" colorPalette="teal">
-                <Switch.HiddenInput />
-                <Switch.Control><Switch.Thumb /></Switch.Control>
-              </Switch.Root>
-              <Text fontSize="xs" whiteSpace="nowrap">تخفیف دارد</Text>
-            </Flex>
-            <Flex align="center" gap="2" flexShrink={0}>
-              <Switch.Root size="sm" colorPalette="teal">
-                <Switch.HiddenInput />
-                <Switch.Control><Switch.Thumb /></Switch.Control>
-              </Switch.Root>
-              <Text fontSize="xs" whiteSpace="nowrap">موجودی نامحدود</Text>
-            </Flex>
-
-            <Spacer />
-            {viewToggle}
+          <Flex align="center" gap="2" flexShrink={0}>
+            <Switch.Root size="sm" colorPalette="teal">
+              <Switch.HiddenInput />
+              <Switch.Control><Switch.Thumb /></Switch.Control>
+            </Switch.Root>
+            <Text fontSize="xs" whiteSpace="nowrap">موجودی نامحدود</Text>
           </Flex>
-        )}
+
+          <Spacer />
+          {makeViewToggle()}
+        </Flex>
 
         {/* ── Selection Action Bar (#4) — وقتی ≥۱ انتخاب شد ── */}
         {selection.length > 0 && (
           <SelectionActionBar count={selection.length} isCompact={isCompact} onCancel={() => setSelection([])} />
         )}
 
-        {/* ── Table ── */}
-        <ProductTable
-          products={filtered}
-          selection={selection}
-          allSelected={allSelected}
-          indeterminate={indeterminate}
-          onToggleAll={toggleAll}
-          onToggleOne={toggleOne}
-        />
+        {/* ── List view (جدول) / Card view (grid) — با SegmentGroup سوییچ ── */}
+        {view === 'list' ? (
+          <ProductTable
+            products={filtered}
+            selection={selection}
+            allSelected={allSelected}
+            indeterminate={indeterminate}
+            onToggleAll={toggleAll}
+            onToggleOne={toggleOne}
+          />
+        ) : (
+          <ProductGrid products={filtered} selection={selection} onToggleOne={toggleOne} />
+        )}
 
         {/* ── Pagination ── */}
         <Flex align="center" justify="space-between" mt="5" flexWrap="wrap" gap="3">

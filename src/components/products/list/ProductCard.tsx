@@ -28,6 +28,8 @@ export function ProductCard({ product: p, isSelected, onToggle }: ProductCardPro
       bg={isSelected ? 'brand.bg' : 'bg.subtle'}
       _hover={{ bg: isSelected ? 'brand.subtle' : 'bg.muted' }}
       transition="border-color 0.15s, background 0.15s"
+      display="flex"
+      flexDirection="column"
     >
       {/* ── Image container — همیشه bg (سفید)، مستقل از state ── */}
       <Flex position="relative" h="140px" bg="bg" align="center" justify="center">
@@ -72,9 +74,9 @@ export function ProductCard({ product: p, isSelected, onToggle }: ProductCardPro
         />
       </Flex>
 
-      {/* ── Content — bg از outer Box ارث می‌بره ── */}
+      {/* ── Content — bg از outer Box ارث می‌بره · flex=1 تا footer به پایین بچسبه ── */}
       <Flex
-        direction="column" gap="2" p="4" align="stretch"
+        direction="column" gap="2" p="4" align="stretch" flex="1"
       >
         {/* title */}
         <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" lineClamp={1}>
@@ -90,7 +92,8 @@ export function ProductCard({ product: p, isSelected, onToggle }: ProductCardPro
           <Text fontSize="sm" color="fg.muted">{p.category}</Text>
         </Flex>
 
-        <Box h="2" />
+        {/* spacer — flex:1 تا footer به پایین بچسبه، حداقل ارتفاع 8px */}
+        <Box flex="1" minH="2" />
 
         {/* footer — price (start/راست، flex) + menu (end/چپ) */}
         <Flex align="flex-end" gap="1">

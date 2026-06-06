@@ -11,7 +11,7 @@ interface ProductGridProps {
 /** view کارت — grid ریسپانسیو (mobile ۱ ستون · tablet ۲ · desktop ۳). */
 export function ProductGrid({ products, selection, onToggleOne }: ProductGridProps) {
   return (
-    <SimpleGrid columns={{ base: 1, md: 4 }} gap="4">
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} gap="4">
       {products.map((p) => (
         <ProductCard
           key={p.id}

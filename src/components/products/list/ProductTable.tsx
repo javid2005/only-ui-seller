@@ -1,37 +1,7 @@
-import { Badge, Box, Checkbox, Flex, IconButton, Menu, Portal, Table, Text } from '@chakra-ui/react'
-import { MoreVertical } from 'lucide-react'
+import { Badge, Checkbox, Flex, Image, Table, Text } from '@chakra-ui/react'
 import { toPersianDigits } from '@/utils/numbers'
-import { ROW_ACTIONS, STATUS_COLOR, type Product } from './data'
-
-/** منوی عملیات هر ردیف — با کلیک روی دکمه more باز می‌شود (Chakra Menu، RTL). */
-function RowActionsMenu() {
-  return (
-    <Menu.Root positioning={{ placement: 'bottom-end' }}>
-      <Menu.Trigger asChild>
-        <IconButton variant="ghost" size="sm" aria-label="عملیات" color="fg.muted">
-          <MoreVertical size={16} />
-        </IconButton>
-      </Menu.Trigger>
-      <Portal>
-        <Menu.Positioner dir="rtl">
-          <Menu.Content minW="180px" p="1">
-            {ROW_ACTIONS.map((a) => (
-              <Menu.Item
-                key={a.value}
-                value={a.value}
-                _hover={{ bg: a.danger ? 'red.subtle' : 'bg.muted' }}
-              >
-                <Text fontSize="sm" w="full" textAlign="right" color={a.danger ? 'fg.error' : 'fg'}>
-                  {a.label}
-                </Text>
-              </Menu.Item>
-            ))}
-          </Menu.Content>
-        </Menu.Positioner>
-      </Portal>
-    </Menu.Root>
-  )
-}
+import { STATUS_COLOR, type Product } from './data'
+import { RowActionsMenu } from './RowActionsMenu'
 
 interface ProductTableProps {
   products: Product[]
@@ -107,8 +77,7 @@ export function ProductTable({
                 {/* محصول — عکس FIRST (راست) + نام/SKU */}
                 <Table.Cell>
                   <Flex align="center" gap="3">
-                    <Box
-                      as="img"
+                    <Image
                       src={p.image}
                       alt={p.name}
                       w="11" h="11"
