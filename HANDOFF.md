@@ -1,21 +1,19 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-06-02
+> آخرین آپدیت: 2026-06-08
 
-## وضعیت فعلی
+## الان
+صفحه لیست محصولات کامل شد: جدول + view کارت (toggle)، ProductCard سه حالته (Figma 1256-19331)،
+responsive filter bar (CSS breakpoints)، SelectionActionBar ellipsis < lg.
 
-همه صفحات تعریف‌شده پیاده‌سازی شدن. آخرین کار: تب‌های «تاریخچه ورود» و «احراز هویت» در صفحه حساب کاربری.
-
-## کارهای بعدی (pending)
-
-| کار | توضیح |
-|-----|-------|
-| Persian Numbers | ساخت `src/utils/numbers.ts` + migrate همه JSX display |
-| Persian Calendar | همه تاریخ‌ها `fa-IR-u-ca-persian` locale |
+## بعدی
+—
 
 ## صفحات
 
 | Route | صفحه | وضعیت |
 |-------|------|--------|
+| `/products/list` | لیست محصولات | ✅ |
+| `/products/categories` | دسته‌بندی محصولات | ✅ |
 | `/account/user-info` | حساب کاربری | ✅ |
 | `/settings/store-info` | اطلاعات فروشگاه | ✅ |
 | `/settings/categories` | دسته‌بندی‌ها | ✅ |
@@ -26,4 +24,4 @@
 | `/settings/themes/customize` | سفارشی‌سازی پوسته | ✅ |
 | `/settings/badges` | نمادها و مجوزها | ✅ |
 
-→ قوانین معماری: CLAUDE.md
+→ قوانین معماری + isCompact pattern: CLAUDE.md

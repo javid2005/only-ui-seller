@@ -20,6 +20,8 @@ pnpm dev
 
 | Route | صفحه |
 |-------|------|
+| `/products/list` | لیست محصولات (جدول + view کارت، فیلتر، pagination، انتخاب گروهی) |
+| `/products/categories` | دسته‌بندی محصولات |
 | `/account/user-info` | حساب کاربری (اطلاعات / امنیت / احراز هویت / تاریخچه ورود) |
 | `/settings/store-info` | اطلاعات فروشگاه |
 | `/settings/categories` | دسته‌بندی‌ها |
