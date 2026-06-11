@@ -12,6 +12,7 @@ import { ThemeCustomize }    from '@/pages/settings/ThemeCustomize'
 import { Badges }            from '@/pages/settings/Badges'
 import { ProductCategories } from '@/pages/products/Categories'
 import { ProductList }       from '@/pages/products/ProductList'
+import { Reviews }           from '@/pages/products/Reviews'
 import { UserInfo }          from '@/pages/account/UserInfo'
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="settings/badges"           element={<Badges />} />
           <Route path="products/list"              element={<ProductList />} />
           <Route path="products/categories"       element={<ProductCategories />} />
+          <Route path="products/reviews"          element={<Reviews />} />
         </Route>
       </Routes>
     </BrowserRouter>
