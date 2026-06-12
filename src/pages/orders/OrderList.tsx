@@ -177,11 +177,12 @@ export function OrderList() {
 
         {/* ── Pagination ── */}
         <Flex align="center" justify="space-between" mt="5" flexWrap="wrap" gap="3">
-          <ListPagination count={filtered.length} pageSize={PAGE_SIZE} page={page} onPageChange={setPage} />
-
+          {/* RTL: متن شمارش راست (اول DOM)، pagination چپ — مطابق Figma */}
           <Text fontSize="sm" color="fg.muted">
             نمایش {toPersianDigits(filtered.length)} سفارش از {toPersianDigits(ORDERS.length)} مورد
           </Text>
+
+          <ListPagination count={filtered.length} pageSize={PAGE_SIZE} page={page} onPageChange={setPage} />
         </Flex>
       </Box>
 

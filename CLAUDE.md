@@ -111,12 +111,26 @@ step 4: فقط Vitrina-specific adaptation اضافه کن (RTL، icon، token)
 ✅ مجاز: snippet + swap کردن startElement/endElement برای RTL direction
 ```
 
-**⚠️ Figma DOM order ≠ RTL DOM order:**
+**⚠️ Figma DOM order ≠ RTL DOM order — قانون مکانیکی، نه ذهنی:**
 ```
-Figma canvas = LTR. brand button FIRST در Figma DOM → چپ در canvas.
-در RTL app: FIRST = راست. پس brand FIRST در کد = راست → ✗ (خلاف ButtonFooter convention).
+Figma canvas = LTR. خروجی get_design_context فرزندها رو چپ→راست لیست می‌کنه.
+در RTL app: FIRST child = راست. کپی verbatim ترتیب Figma = layout آینه‌ای.
+
+❌ ممنوع: ترتیب فرزندهای خروجی Figma رو برای هیچ container افقی کپی نکن.
+✅ الگوریتم اجباری (هر ردیف افقی Box/Flex/Grid):
+   1. مختصات x فرزندها رو از get_metadata (یا screenshot) بگیر
+   2. sort بر اساس x نزولی → راست‌ترین = اولین child در JSX
+   3. خروجی کد Figma فقط مرجع style/token هست، نه ساختار ردیف‌های افقی
+
+استثنا: namespace components چاکرا (Table, Pagination, Steps, Select, Menu...)
+خودشون dir="rtl" ست می‌کنن — داخلشون رو reorder نکن. قانون فقط برای
+Box/Flex/Grid ساده‌ست. (همین استثنا بود که باعث گیج‌شدن و کپی verbatim می‌شد.)
+
 قانون پروژه (از ButtonFooter): primary LAST در DOM = leftmost در RTL (سمت چپ).
 Dialog footer order: انصراف FIRST (راست) · brand LAST (چپ).
+
+سابقه: 1404 — سه نقطه آینه‌ای ship شد (OrderDetails cards، ShippingAddressPanel
+buttons، pagination rows) — هر سه کپی verbatim ترتیب Figma بودن.
 ```
 
 **Component descriptions = implementation checklist (اجباری):**
@@ -143,7 +157,8 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - [ ] Component Resolution رعایت شد (Local→DS MCP→Build) — کدوم مسیر؟
 - [ ] صفر hardcode (رنگ/spacing/font) — همه token
 - [ ] logical CSS props (`insetInlineEnd` نه `right`)
-- [ ] RTL DOM order (اولین child = rightmost)
+- [ ] RTL DOM order — **با evidence، نه checkbox خالی:** برای هر container افقیِ ساخته‌شده
+  یک خط گزارش: `container → اولین DOM child → راست‌ترین المان در Figma` — تیک بدون این جدول = ⚠️
 - [ ] type-check سبز (`npx tsc -p tsconfig.app.json --noEmit` — اسکریپت `type-check` وجود نداره)
 - [ ] Visual verification vs Figma — **opt-in، هیچ‌وقت خودکار نه.**
   > **قانون اجباری (کاربر، ۱۴۰۴):** هرگز خودبه‌خود preview/screenshot نگیر. **همیشه اول بپرس:**

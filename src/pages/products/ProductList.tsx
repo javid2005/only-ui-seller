@@ -240,11 +240,12 @@ export function ProductList() {
 
         {/* ── Pagination ── */}
         <Flex align="center" justify="space-between" mt="5" flexWrap="wrap" gap="3">
-          <ListPagination count={filtered.length} pageSize={PAGE_SIZE} page={page} onPageChange={setPage} />
-
+          {/* RTL: متن شمارش راست (اول DOM)، pagination چپ — مطابق Figma */}
           <Text fontSize="sm" color="fg.muted">
             نمایش {toPersianDigits(filtered.length)} محصول از {toPersianDigits(PRODUCTS.length)} مورد
           </Text>
+
+          <ListPagination count={filtered.length} pageSize={PAGE_SIZE} page={page} onPageChange={setPage} />
         </Flex>
       </Box>
 

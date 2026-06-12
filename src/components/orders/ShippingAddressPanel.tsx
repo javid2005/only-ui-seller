@@ -46,13 +46,14 @@ export function ShippingAddressPanel() {
         size="md"
         cta={
           <Flex align="center" gap="2">
-            <Button size="sm" variant="outline" colorPalette="gray">
-              <Printer size={16} />
-              پرینت آدرس
-            </Button>
+            {/* RTL: ویرایش راست (اول DOM)، پرینت چپ — مطابق Figma */}
             <Button size="sm" variant="outline" colorPalette="brand">
               <Pencil size={16} />
               ویرایش
+            </Button>
+            <Button size="sm" variant="outline" colorPalette="gray">
+              <Printer size={16} />
+              پرینت آدرس
             </Button>
           </Flex>
         }

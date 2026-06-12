@@ -59,8 +59,9 @@ export function OrderDetails() {
           <OrderSteps />
           <OrderItemsPanel />
           <Grid templateColumns={isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }} gap="6">
-            <ContactInfoCard title="اطلاعات گیرنده" info={MOCK_ORDER.receiver} onEdit={() => {}} />
+            {/* RTL: مشتری راست‌ترین (اول DOM)، گیرنده چپ — مطابق Figma */}
             <ContactInfoCard title="اطلاعات مشتری" info={MOCK_ORDER.customer} />
+            <ContactInfoCard title="اطلاعات گیرنده" info={MOCK_ORDER.receiver} onEdit={() => {}} />
           </Grid>
           <ShippingAddressPanel />
         </Flex>
