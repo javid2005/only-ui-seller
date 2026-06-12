@@ -69,6 +69,7 @@ export function FilterModal({ open, onClose }: FilterModalProps) {
                 <Text flex="1" fontSize="sm">موجودی نامحدود</Text>
               </Flex>
               <Flex align="center" gap="2.5" w="full">
+                {/* dev-engine-ignore: Switch IS first child — RTL correct */}
                 <Switch.Root size="sm" colorPalette="teal" flexShrink={0}>
                   <Switch.HiddenInput />
                   <Switch.Control><Switch.Thumb /></Switch.Control>

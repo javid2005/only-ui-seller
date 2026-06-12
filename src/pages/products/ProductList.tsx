@@ -207,6 +207,7 @@ export function ProductList() {
             <Text fontSize="xs" whiteSpace="nowrap">تخفیف دارد</Text>
           </Flex>
           <Flex align="center" gap="2" flexShrink={0}>
+            {/* dev-engine-ignore: Switch IS first child — RTL correct */}
             <Switch.Root size="sm" colorPalette="teal">
               <Switch.HiddenInput />
               <Switch.Control><Switch.Thumb /></Switch.Control>

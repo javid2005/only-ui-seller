@@ -1,4 +1,4 @@
-import { Box, Steps } from '@chakra-ui/react'
+import { Box, Steps, useBreakpointValue } from '@chakra-ui/react'
 import { Check } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { ORDER_STEPS, ORDER_ACTIVE_STEP } from './orderData'
@@ -11,6 +11,9 @@ const STEP_NUMS = ['۱', '۲', '۳', '۴', '۵', '۶']
  */
 export function OrderSteps() {
   const isCompact = useCompactMode()
+  // orientation باید STRING باشه — Chakra Steps شیٔ responsive رو "[object Object]" می‌کنه و خط‌ها می‌شکنه
+  const bpOrientation = useBreakpointValue({ base: 'vertical', lg: 'horizontal' } as const) ?? 'horizontal'
+  const orientation = isCompact ? 'vertical' : bpOrientation
 
   return (
     <Box
@@ -27,7 +30,7 @@ export function OrderSteps() {
         count={ORDER_STEPS.length}
         colorPalette="teal"
         w="full"
-        orientation={isCompact ? 'vertical' : { base: 'vertical', md: 'horizontal' }}
+        orientation={orientation}
       >
         <Steps.List>
           {ORDER_STEPS.map((s, i) => (
