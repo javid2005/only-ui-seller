@@ -14,6 +14,8 @@ import { ProductCategories } from '@/pages/products/Categories'
 import { ProductList }       from '@/pages/products/ProductList'
 import { Reviews }           from '@/pages/products/Reviews'
 import { UserInfo }          from '@/pages/account/UserInfo'
+import { OrderList }         from '@/pages/orders/OrderList'
+import { OrderDetails }      from '@/pages/orders/OrderDetails'
 
 export default function App() {
   return (
@@ -34,6 +36,8 @@ export default function App() {
           <Route path="products/list"              element={<ProductList />} />
           <Route path="products/categories"       element={<ProductCategories />} />
           <Route path="products/reviews"          element={<Reviews />} />
+          <Route path="orders/list"               element={<OrderList />} />
+          <Route path="orders/:orderId"           element={<OrderDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>

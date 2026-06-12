@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import {
-  Badge, Box, ButtonGroup, Flex, IconButton, Input, InputGroup,
-  Pagination, SegmentGroup, Select, Spacer, Stat, Switch, Text,
+  Badge, Box, Flex, IconButton, Input, InputGroup,
+  SegmentGroup, Select, Spacer, Stat, Switch, Text,
   type ListCollection,
 } from '@chakra-ui/react'
 import { LayoutGrid, List, ListFilter, Plus, Search } from 'lucide-react'
@@ -16,6 +16,7 @@ import { ProductTable } from '@/components/products/list/ProductTable'
 import { ProductGrid } from '@/components/products/list/ProductGrid'
 import { SelectionActionBar } from '@/components/products/list/SelectionActionBar'
 import { FilterModal } from '@/components/products/list/FilterModal'
+import { ListPagination } from '@/components/ui/ListPagination'
 
 const PAGE_SIZE = 10
 
@@ -238,23 +239,7 @@ export function ProductList() {
 
         {/* ── Pagination ── */}
         <Flex align="center" justify="space-between" mt="5" flexWrap="wrap" gap="3">
-          <Pagination.Root count={filtered.length} pageSize={PAGE_SIZE} page={page} onPageChange={(e) => setPage(e.page)}>
-            <ButtonGroup variant="ghost" size="sm" gap="1">
-              <Pagination.PrevTrigger asChild>
-                <IconButton aria-label="صفحه قبل"><span style={{ fontSize: '12px' }}>›</span></IconButton>
-              </Pagination.PrevTrigger>
-              <Pagination.Items
-                render={(pg) => (
-                  <IconButton key={pg.value} variant={{ base: 'ghost', _selected: 'outline' }} aria-label={`صفحه ${pg.value}`}>
-                    {toPersianDigits(pg.value)}
-                  </IconButton>
-                )}
-              />
-              <Pagination.NextTrigger asChild>
-                <IconButton aria-label="صفحه بعد"><span style={{ fontSize: '12px' }}>‹</span></IconButton>
-              </Pagination.NextTrigger>
-            </ButtonGroup>
-          </Pagination.Root>
+          <ListPagination count={filtered.length} pageSize={PAGE_SIZE} page={page} onPageChange={setPage} />
 
           <Text fontSize="sm" color="fg.muted">
             نمایش {toPersianDigits(filtered.length)} محصول از {toPersianDigits(PRODUCTS.length)} مورد

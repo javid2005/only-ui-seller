@@ -1,9 +1,9 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-06-08
+> آخرین آپدیت: 2026-06-12
 
 ## الان
-صفحه لیست محصولات کامل شد: جدول + view کارت (toggle)، ProductCard سه حالته (Figma 1256-19331)،
-responsive filter bar (CSS breakpoints)، SelectionActionBar ellipsis < lg.
+صفحات سفارشات (orders) اضافه شد: OrderList (جدول + کارت + فیلتر) و OrderDetails (جزئیات + وضعیت + مراحل).
+ListPagination کامپوننت مشترک ساخته شد.
 
 ## بعدی
 —
@@ -23,5 +23,7 @@ responsive filter bar (CSS breakpoints)، SelectionActionBar ellipsis < lg.
 | `/settings/themes` | پوسته‌ها | ✅ |
 | `/settings/themes/customize` | سفارشی‌سازی پوسته | ✅ |
 | `/settings/badges` | نمادها و مجوزها | ✅ |
+| `/orders/list` | لیست سفارشات | ✅ |
+| `/orders/:orderId` | جزئیات سفارش | ✅ |
 
 → قوانین معماری + isCompact pattern: CLAUDE.md

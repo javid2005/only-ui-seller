@@ -144,14 +144,17 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - [ ] صفر hardcode (رنگ/spacing/font) — همه token
 - [ ] logical CSS props (`insetInlineEnd` نه `right`)
 - [ ] RTL DOM order (اولین child = rightmost)
-- [ ] `pnpm type-check` سبز
-- [ ] Visual verification vs Figma (**فقط Tier 2** — یا وقتی کاربر صریح screenshot/pixel خواست. Tier 0/1 رد کن):
-  ```
-  1. preview_start (اگه server نیست)
-  2. preview_resize(1920) → preview_screenshot → compare با Figma desktop frame
-  3. preview_resize(360)  → preview_screenshot → compare با Figma mobile frame
-  4. مغایرت‌ها list بشن → fix → re-screenshot تا match بشه
-  ```
+- [ ] type-check سبز (`npx tsc -p tsconfig.app.json --noEmit` — اسکریپت `type-check` وجود نداره)
+- [ ] Visual verification vs Figma — **opt-in، هیچ‌وقت خودکار نه.**
+  > **قانون اجباری (کاربر، ۱۴۰۴):** هرگز خودبه‌خود preview/screenshot نگیر. **همیشه اول بپرس:**
+  > «preview بگیرم و pixel-perfect با طرح چک کنم؟» — فقط اگه کاربر گفت «بله»، آن‌وقت:
+  > ```
+  > 1. preview_start (اگه server نیست)
+  > 2. preview_resize(1920) → screenshot → compare با Figma desktop frame
+  > 3. preview_resize(360)  → screenshot → compare با Figma mobile frame
+  > 4. مغایرت‌ها list → fix → re-screenshot تا match
+  > ```
+  > type-check سبز + RTL DOM order = کافی برای بستن task. verify بصری جداست و فقط با تأیید کاربر.
 
 مرجع عمیق: `dev-knowledge/universal/figma-to-code.md` · pipeline قدم‌به‌قدم: skill `figma-implement-design`
 
@@ -412,7 +415,7 @@ toLatinDigits(s: string): string             // برای input → API
 - locale: `fa-IR-u-ca-persian` (نه فقط `fa-IR`)
 - هر جا `Date` نمایش داده میشه باید این locale استفاده بشه
 
-> **وضعیت:** `src/utils/numbers.ts` هنوز ساخته نشده — TODO
+> **وضعیت:** `src/utils/numbers.ts` ساخته شده — `toPersianDigits` + `toLatinDigits` موجود.
 
 ---
 
@@ -630,7 +633,7 @@ src/
     index.ts   — createSystem entry
     tokens.ts  — Vitrina custom tokens + full reference comment
   utils/
-    numbers.ts — toPersianDigits + toLatinDigits (TODO: ساخته نشده)
+    numbers.ts — toPersianDigits + toLatinDigits
   types/
     nav.ts     — NavGroup, NavItem types
 ```
