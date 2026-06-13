@@ -4,7 +4,7 @@
 
 ## Stack
 
-- React 19 + Vite + TypeScript
+- React 19 + Next.js 16 (App Router) + TypeScript
 - Chakra UI v3 + `@chakra-ui/charts`
 - RTL / Vazirmatn font
 - pnpm
@@ -13,8 +13,16 @@
 
 ```bash
 pnpm install
-pnpm dev
+cp .env.example .env.local   # NEXT_PUBLIC_API_BASE_URL
+pnpm dev                     # Next dev (port 5174)
 ```
+
+```bash
+pnpm build   # production build (+ type-check)
+pnpm start   # serve production build
+```
+
+> **Routing:** file-based در `src/app/**/page.tsx` (هر page یه wrapper نازک که کامپوننت `src/views/*` رو render می‌کنه). جزئیات معماری Next در [CLAUDE.md](CLAUDE.md#nextjs--app-router-conventions-اجباری).
 
 ## صفحات پیاده‌سازی‌شده
 

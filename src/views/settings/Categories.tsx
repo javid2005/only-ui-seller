@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Box, Flex, IconButton, Input, InputGroup, Text } from '@chakra-ui/react'
 import { ChevronDown, ChevronsDownUp, ChevronsUpDown, Search } from 'lucide-react'
@@ -35,109 +35,109 @@ const ALL_CATEGORIES: CategoryData[] = [
   {
     id: '1',
     name: 'کالای دیجیتال و لوازم الکترونیکی',
-    iconSrc: applianceIcon,
+    iconSrc: applianceIcon.src,
     subcategories: ['موبایل', 'لپتاپ', 'تبلت', 'هدفون', 'دوربین', 'اسپیکر', 'ساعت هوشمند'],
   },
   {
     id: '2',
     name: 'مد و پوشاک',
-    iconSrc: fashionIcon,
+    iconSrc: fashionIcon.src,
     subcategories: ['پیراهن', 'شلوار', 'کت و شلوار', 'لباس زنانه', 'لباس مردانه'],
   },
   {
     id: '3',
     name: 'کیف و کفش',
-    iconSrc: shoeBagIcon,
+    iconSrc: shoeBagIcon.src,
     subcategories: ['کیف چرم', 'کفش ورزشی', 'کیف زنانه', 'صندل', 'نیم بوت'],
   },
   {
     id: '4',
     name: 'طلا و جواهرات',
-    iconSrc: jewelleryIcon,
+    iconSrc: jewelleryIcon.src,
     subcategories: ['انگشتر', 'گردنبند', 'دستبند', 'گوشواره', 'النگو'],
   },
   {
     id: '5',
     name: 'لوازم آرایشی، بهداشتی و مراقبتی',
-    iconSrc: cosmoticsIcon,
+    iconSrc: cosmoticsIcon.src,
     subcategories: ['کرم پوست', 'رژلب', 'ادکلن', 'شامپو', 'ضد آفتاب'],
   },
   {
     id: '6',
     name: 'خانه و آشپزخانه',
-    iconSrc: kitchenIcon,
+    iconSrc: kitchenIcon.src,
     subcategories: ['ظروف', 'وسایل پخت', 'دکوراسیون', 'لوازم تمیزکاری'],
   },
   {
     id: '7',
     name: 'مواد غذایی و خوراکی',
-    iconSrc: foodIcon,
+    iconSrc: foodIcon.src,
     subcategories: ['خشکبار', 'برنج', 'روغن', 'قهوه و چای', 'شیرینی'],
   },
   {
     id: '8',
     name: 'ورزش و تناسب اندام',
-    iconSrc: sportsIcon,
+    iconSrc: sportsIcon.src,
     subcategories: ['دمبل', 'کفش ورزشی', 'لباس ورزشی', 'تردمیل'],
   },
   {
     id: '9',
     name: 'ابزارآلات',
-    iconSrc: toolsIcon,
+    iconSrc: toolsIcon.src,
     subcategories: ['دریل', 'پیچ‌گوشتی', 'پیچ و مهره', 'چکش'],
   },
   {
     id: '10',
     name: 'محصولات فرهنگی، هنری و آموزشی',
-    iconSrc: educationIcon,
+    iconSrc: educationIcon.src,
     subcategories: ['کتاب', 'موسیقی', 'نقاشی', 'اسباب‌بازی فکری'],
   },
   {
     id: '11',
     name: 'کودک و نوزاد',
-    iconSrc: babyIcon,
+    iconSrc: babyIcon.src,
     subcategories: ['اسباب‌بازی', 'لباس نوزاد', 'کالسکه', 'شیشه شیر'],
   },
   {
     id: '12',
     name: 'حیوانات خانگی',
-    iconSrc: petsIcon,
+    iconSrc: petsIcon.src,
     subcategories: ['غذای سگ', 'غذای گربه', 'قفس', 'اسباب‌بازی حیوان'],
   },
   {
     id: '13',
     name: 'خدمات',
-    iconSrc: servicesIcon,
+    iconSrc: servicesIcon.src,
     subcategories: [],
   },
   {
     id: '14',
     name: 'هدایا و محصولات مناسبتی',
-    iconSrc: giftIcon,
+    iconSrc: giftIcon.src,
     subcategories: ['هدیه تولد', 'هدیه عروسی', 'بسته‌بندی هدیه'],
   },
   {
     id: '15',
     name: 'سفر',
-    iconSrc: travelIcon,
+    iconSrc: travelIcon.src,
     subcategories: ['چمدان', 'وسایل کمپ', 'اکسسوری سفر'],
   },
   {
     id: '16',
     name: 'کالای پزشکی',
-    iconSrc: medicineIcon,
+    iconSrc: medicineIcon.src,
     subcategories: ['تجهیزات پزشکی', 'مکمل‌ها', 'ویلچر و عصا'],
   },
   {
     id: '17',
     name: 'خودرو و موتورسیکلت',
-    iconSrc: carIcon,
+    iconSrc: carIcon.src,
     subcategories: ['قطعات یدکی', 'لوازم جانبی', 'روغن موتور'],
   },
   {
     id: '18',
     name: 'خرازی، پارچه و لوازم خیاطی',
-    iconSrc: fabricIcon,
+    iconSrc: fabricIcon.src,
     subcategories: ['پارچه', 'نخ', 'دکمه', 'ریسمان'],
   },
 ]
@@ -179,7 +179,7 @@ function InfoBox() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function Categories() {
-  const navigate   = useNavigate()
+  const router   = useRouter()
   const isCompact  = useCompactMode()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -349,7 +349,7 @@ export function Categories() {
               }}
               back={{
                 label: 'بازگشت',
-                onClick: () => navigate('/settings'),
+                onClick: () => router.push('/settings'),
               }}
             />
 

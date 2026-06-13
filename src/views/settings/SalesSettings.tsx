@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Box, Flex, Switch, Grid, Text, Button, IconButton, EmptyState } from '@chakra-ui/react'
 import { Plus, Phone } from 'lucide-react'
@@ -49,7 +49,7 @@ function SwitchRow({ label, checked, disabled, onCheckedChange }: SwitchRowProps
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function SalesSettings() {
-  const navigate   = useNavigate()
+  const router   = useRouter()
   const isCompact  = useCompactMode()
 
   const [dollarPrice, setDollarPrice] = useState(true)
@@ -162,7 +162,7 @@ export function SalesSettings() {
           </Flex>
 
           <ButtonFooter
-            back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
+            back={{ label: 'بازگشت', onClick: () => router.push('/settings') }}
           />
 
         </Flex>

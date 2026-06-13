@@ -44,14 +44,14 @@ type PlatformConfig = {
 }
 
 const PLATFORM_CONFIG: Record<Platform, PlatformConfig> = {
-  telegram:  { label: 'تلگرام',     svgSrc: telegramSvg  },
-  whatsapp:  { label: 'واتساپ',     svgSrc: whatsappSvg  },
-  instagram: { label: 'اینستاگرام', svgSrc: instagramSvg },
-  twitter:   { label: 'توییتر / X', svgSrc: twitterSvg   },
-  facebook:  { label: 'فیسبوک',     svgSrc: facebookSvg  },
-  linkedin:  { label: 'لینکدین',    svgSrc: linkedinSvg  },
-  tiktok:    { label: 'تیک‌تاک',    svgSrc: tiktokSvg    },
-  discord:   { label: 'دیسکورد',    svgSrc: discordSvg   },
+  telegram:  { label: 'تلگرام',     svgSrc: telegramSvg.src  },
+  whatsapp:  { label: 'واتساپ',     svgSrc: whatsappSvg.src  },
+  instagram: { label: 'اینستاگرام', svgSrc: instagramSvg.src },
+  twitter:   { label: 'توییتر / X', svgSrc: twitterSvg.src   },
+  facebook:  { label: 'فیسبوک',     svgSrc: facebookSvg.src  },
+  linkedin:  { label: 'لینکدین',    svgSrc: linkedinSvg.src  },
+  tiktok:    { label: 'تیک‌تاک',    svgSrc: tiktokSvg.src    },
+  discord:   { label: 'دیسکورد',    svgSrc: discordSvg.src   },
   youtube:   { label: 'یوتیوب',     LucideIcon: PlayCircle, lucideBg: 'red.subtle',  lucideColor: 'red.fg'  },
   other:     { label: 'سایر',       LucideIcon: Globe,      lucideBg: 'gray.subtle', lucideColor: 'gray.fg' },
 }

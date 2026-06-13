@@ -1,6 +1,6 @@
 import { Box, Flex, Text, Avatar, Badge, Menu, Portal, chakra } from '@chakra-ui/react'
 import { User, Headset, HelpCircle, SunMoon, Power } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { useColorMode } from '@/contexts/ColorModeContext'
 
 interface UserMenuProps {
@@ -14,7 +14,7 @@ export function UserMenu({
   userAvatar,
   userRole = 'احراز هویت نشده',
 }: UserMenuProps) {
-  const navigate = useNavigate()
+  const router = useRouter()
   const { colorMode, toggleColorMode } = useColorMode()
   const isDark = colorMode === 'dark'
 
@@ -22,7 +22,7 @@ export function UserMenu({
     <Menu.Root
       positioning={{ placement: 'bottom-end' }}
       onSelect={(details) => {
-        if (details.value === 'account') navigate('/account/user-info')
+        if (details.value === 'account') router.push('/account/user-info')
       }}
     >
       {/* Wrap Avatar in plain button — Avatar.Root doesn't forward refs for asChild */}

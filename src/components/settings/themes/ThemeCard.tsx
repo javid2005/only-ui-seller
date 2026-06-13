@@ -65,7 +65,7 @@ export function ThemeCard({
 
         {/* Coming Soon tag — bottom-right (RTL: insetInlineStart = physical right) */}
         <Box position="absolute" bottom="4" insetInlineStart="-9px" zIndex={1}>
-          <img src={comingSoonTag} width={117} height={40} alt="بزودی" />
+          <img src={comingSoonTag.src} width={117} height={40} alt="بزودی" />
         </Box>
       </Box>
     )

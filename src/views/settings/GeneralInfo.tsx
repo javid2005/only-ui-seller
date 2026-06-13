@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
   Box, Flex, Button, IconButton, Input,
@@ -42,7 +42,7 @@ function StoreEmptyState({ icon, text }: { icon: React.ReactNode; text: string }
 // ─── Tab 1: اطلاعات هویتی ─────────────────────────────────────────────────────
 
 function IdentityTab() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [name,        setName]        = useState('')
   const [displayName, setDisplayName] = useState('')
   const [description, setDescription] = useState('')
@@ -114,7 +114,7 @@ function IdentityTab() {
 
       <ButtonFooter
         primary={{ label: 'ذخیره', onClick: () => {} }}
-        back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
+        back={{ label: 'بازگشت', onClick: () => router.push('/settings') }}
       />
 
     </Box>
@@ -124,7 +124,7 @@ function IdentityTab() {
 // ─── Tab 2: راه های ارتباطی ──────────────────────────────────────────────────
 
 function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChange: (phones: Phone[]) => void }) {
-  const navigate = useNavigate()
+  const router = useRouter()
   const isCompact = useCompactMode()
 
   // ─── Phone state ────────────────────────────────────
@@ -228,7 +228,7 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
       </Box>
 
       <ButtonFooter
-        back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
+        back={{ label: 'بازگشت', onClick: () => router.push('/settings') }}
       />
 
       <AddPhoneDialog
@@ -250,7 +250,7 @@ function ContactTab({ phones, onPhonesChange }: { phones: Phone[]; onPhonesChang
 // ─── Tab 3: آدرس ها ──────────────────────────────────────────────────────────
 
 function AddressTab({ phones }: { phones: Phone[] }) {
-  const navigate = useNavigate()
+  const router = useRouter()
   const isCompact = useCompactMode()
   const [addresses, setAddresses] = useState<Address[]>([])
   const [addrOpen, setAddrOpen]   = useState(false)
@@ -305,7 +305,7 @@ function AddressTab({ phones }: { phones: Phone[] }) {
       </Box>
 
       <ButtonFooter
-        back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
+        back={{ label: 'بازگشت', onClick: () => router.push('/settings') }}
       />
 
       <AddAddressDialog

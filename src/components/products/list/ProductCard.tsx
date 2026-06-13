@@ -101,13 +101,13 @@ export function ProductCard({ product: p, isSelected, onToggle }: ProductCardPro
             {p.priceOriginal && (
               <Flex gap="2" align="center" justifyContent="flex-start" flexWrap="wrap">
                 {/* RTL: قیمت اصلی راست، badge تخفیف چپ */}
-                <Text fontSize="sm" color="fg.subtle" textDecoration="line-through">{p.priceOriginal}{tomanSuffix}</Text> // dev-engine-ignore
+                <Text fontSize="sm" color="fg.subtle" textDecoration="line-through">{p.priceOriginal}{tomanSuffix}</Text> {/* dev-engine-ignore */}
                 {p.discount && (
                   <Badge size="sm" colorPalette="orange" variant="solid">{p.discount} تخفیف</Badge> // dev-engine-ignore
                 )}
               </Flex>
             )}
-            <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="right" lineClamp={1}>{p.priceMain}{tomanSuffix}</Text> // dev-engine-ignore
+            <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="right" lineClamp={1}>{p.priceMain}{tomanSuffix}</Text> {/* dev-engine-ignore */}
           </Flex>
           <RowActionsMenu />
         </Flex>

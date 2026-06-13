@@ -1,5 +1,6 @@
 import { Box, Flex, IconButton } from '@chakra-ui/react'
 import { Bell, Minimize, Maximize, Menu } from 'lucide-react'
+import Link from 'next/link'
 import logoSrc from '../../assets/logo.svg'
 import { UserMenu } from './UserMenu'
 
@@ -56,9 +57,9 @@ export function Navbar({
             </IconButton>
           </Box>
           {/* Logo: SECOND → just left of hamburger in RTL ✓ */}
-          <a href="/" style={{ textDecoration: 'none' }}>
-            <img src={logoSrc} alt="ویترینا" style={{ height: '32px' }} />
-          </a>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <img src={logoSrc.src} alt="ویترینا" style={{ height: '32px' }} />
+          </Link>
         </Flex>
 
         {/* Controls: LAST → leftmost in RTL ✓

@@ -1,12 +1,22 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-06-12
+> آخرین آپدیت: 2026-06-13
 
 ## الان
-صفحات سفارشات (orders) اضافه شد: OrderList (جدول + کارت + فیلتر) و OrderDetails (جزئیات + وضعیت + مراحل).
-ListPagination کامپوننت مشترک ساخته شد.
+**مهاجرت Vite → Next.js 16 (App Router)** انجام شد — روی branch `migrate/nextjs` (هنوز merge نشده).
+- routing فایل‌محور: `src/app/**/page.tsx` (۱۶ wrapper نازک 'use client') → کامپوننت‌ها از `src/views/*` (پوشه `pages/` به `views/` rename شد تا با Pages Router تداخل نکنه)
+- providerها در `src/app/providers.tsx`، root layout + فونت + `dir="rtl"` در `src/app/layout.tsx`
+- react-router کاملاً حذف → `next/link` + `next/navigation`. انتقال state پوسته‌ها از router-state به query params
+- env: `import.meta.env` → `process.env.NEXT_PUBLIC_*` (`.env.local`)
+- **همه‌ی** importهای asset (`.svg` + `.png/.jpg`) در Next → `StaticImageData` object؛ هر `src={import}` باید `.src` بگیره (svg هم! Next نوعش رو `any` می‌ده پس build خطا نمی‌ده). همه fix شد (logo، social، shipping، category، product، store).
+- **Emotion SSR registry** در `providers.tsx` (`useServerInsertedHTML` + `CacheProvider`) — حل hydration mismatch / FOUC چاکرا. dep جدید: `@emotion/cache`.
+- حذف: `vite.config.ts`، `index.html`، `App.tsx`، `main.tsx`، `tsconfig.app/node.json`
+- **verify کامل:** `pnpm build` سبز (۱۷ route) · dev server ۵۱۷۴ صفر console/server error · **visual ۷ صفحه/تعامل** (داشبورد، products/list، settings، themes→customize، dark mode، sidebar active، موبایل+drawer) همه ✅ — RTL/فونت/تصاویر/dark/drawer سالم
 
-## بعدی
-—
+- merge branch `migrate/nextjs` → `master`
+- اختیاری: enable strict mode (`strictNullChecks` الان true از Next default)، مهاجرت فونت به `next/font/google`
+
+### fix شده حین verify
+- **کامنت‌های `// dev-engine-ignore` که به‌صورت متن render می‌شدن** (در `ProductCard`/`ProductTable`/`SelectionActionBar`): مواردِ داخل JSX children → `{/* dev-engine-ignore */}` (JSX comment، نمایش داده نمی‌شه)؛ مواردِ داخل `{cond && (...)}` همان `// dev-engine-ignore` ماندند (JS comment معتبر، نمایش داده نمی‌شه). نکته: `<X/> {/* */}` داخل یک expression تکی syntax error می‌دهد — فقط در JSX-children mجازست.
 
 ## صفحات
 
@@ -24,6 +34,6 @@ ListPagination کامپوننت مشترک ساخته شد.
 | `/settings/themes/customize` | سفارشی‌سازی پوسته | ✅ |
 | `/settings/badges` | نمادها و مجوزها | ✅ |
 | `/orders/list` | لیست سفارشات | ✅ |
-| `/orders/:orderId` | جزئیات سفارش | ✅ |
+| `/orders/[orderId]` | جزئیات سفارش | ✅ |
 
 → قوانین معماری + isCompact pattern: CLAUDE.md

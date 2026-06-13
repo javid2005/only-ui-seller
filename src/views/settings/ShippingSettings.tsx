@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Box, Flex, Grid, Text, Button, IconButton } from '@chakra-ui/react'
 import { Plus, Calculator } from 'lucide-react'
@@ -56,10 +56,10 @@ const CUSTOM_CARDS = [
 ]
 
 const SYSTEM_CARDS = [
-  { id: 's1', name: 'پست جمهوری اسلامی', city: 'مازندران، آمل', logoSrc: postLogo,    enabled: true },
-  { id: 's2', name: 'تیپاکس',             city: 'مازندران، آمل', logoSrc: tipaxLogo,   enabled: true },
-  { id: 's3', name: 'الوپیک',             city: 'شهر مبدا ...',  logoSrc: alopeykLogo, comingSoon: true },
-  { id: 's4', name: 'توپین',              city: 'شهر مبدا ...',  logoSrc: topinLogo,   comingSoon: true },
+  { id: 's1', name: 'پست جمهوری اسلامی', city: 'مازندران، آمل', logoSrc: postLogo.src,    enabled: true },
+  { id: 's2', name: 'تیپاکس',             city: 'مازندران، آمل', logoSrc: tipaxLogo.src,   enabled: true },
+  { id: 's3', name: 'الوپیک',             city: 'شهر مبدا ...',  logoSrc: alopeykLogo.src, comingSoon: true },
+  { id: 's4', name: 'توپین',              city: 'شهر مبدا ...',  logoSrc: topinLogo.src,   comingSoon: true },
 ]
 
 // ─── Mock calc data (matches Figma sample prices) ────────────────────────────
@@ -171,7 +171,7 @@ function InfoBox({ onOpen, sidebar = false }: InfoBoxProps) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function ShippingSettings() {
-  const navigate    = useNavigate()
+  const router    = useRouter()
   const isCompact   = useCompactMode()
   const [customCards, setCustomCards] = useState(CUSTOM_CARDS)
   const [systemCards, setSystemCards] = useState(SYSTEM_CARDS)
@@ -236,8 +236,8 @@ export function ShippingSettings() {
               divider
               cta={
                 <>
-                  <IconButton display={{ base: 'flex', sm: 'none' }} size="sm" variant="outline" colorPalette="brand" aria-label="افزودن روش ارسال" onClick={() => navigate('/settings/shipping/add')}><Plus size={14} /></IconButton>
-                  <Button display={{ base: 'none', sm: 'flex' }} size="sm" colorPalette="brand" variant="outline" onClick={() => navigate('/settings/shipping/add')}><Plus size={14} />افزودن روش ارسال</Button>
+                  <IconButton display={{ base: 'flex', sm: 'none' }} size="sm" variant="outline" colorPalette="brand" aria-label="افزودن روش ارسال" onClick={() => router.push('/settings/shipping/add')}><Plus size={14} /></IconButton>
+                  <Button display={{ base: 'none', sm: 'flex' }} size="sm" colorPalette="brand" variant="outline" onClick={() => router.push('/settings/shipping/add')}><Plus size={14} />افزودن روش ارسال</Button>
                 </>
               }
             />
@@ -282,8 +282,8 @@ export function ShippingSettings() {
             </Grid>
 
             <ButtonFooter
-              primary={{ label: 'ذخیره', onClick: () => navigate('/settings') }}
-              back={{ label: 'بازگشت', onClick: () => navigate('/settings') }}
+              primary={{ label: 'ذخیره', onClick: () => router.push('/settings') }}
+              back={{ label: 'بازگشت', onClick: () => router.push('/settings') }}
             />
           </Flex>
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
   Box, Flex, Grid, Text, Badge, Tabs, chakra,
@@ -80,14 +80,13 @@ const DEFAULT_BANNERS: Banner[] = [
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function ThemeCustomize() {
-  const navigate  = useNavigate()
-  const location  = useLocation()
-  const isCompact = useCompactMode()
+  const router       = useRouter()
+  const searchParams = useSearchParams()
+  const isCompact    = useCompactMode()
 
-  // Thumbnail + name passed from ThemeSettings via router state
-  const routeState = (location.state as { thumbnail?: string; name?: string }) ?? {}
-  const themeName      = routeState.name      ?? 'قالب فروشگاهی مدرن'
-  const themeThumbnail = routeState.thumbnail ?? null
+  // Thumbnail + name passed from ThemeSettings via query params
+  const themeName      = searchParams.get('name')      ?? 'قالب فروشگاهی مدرن'
+  const themeThumbnail = searchParams.get('thumbnail') || null
 
   // ── State ─────────────────────────────────────────────────────────────────────
   const [slides,     setSlides]     = useState<Slide[]>(DEFAULT_SLIDES)
@@ -690,7 +689,7 @@ export function ThemeCustomize() {
               primary={{ label: 'ذخیره تغییرات', onClick: () => {} }}
               back={{
                 label: 'بازگشت',
-                onClick: () => navigate('/settings/themes'),
+                onClick: () => router.push('/settings/themes'),
               }}
             />
 

@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { ChevronLeft } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 export type SettingCardState = 'default' | 'disabled'
 
@@ -14,7 +14,7 @@ export interface SettingCardProps {
   iconBg: string
   /** Chakra semantic token for icon color, e.g. 'brand.fg' */
   iconColor: string
-  /** React-router path for navigation */
+  /** Navigation path (next/link href) */
   to?: string
   state?: SettingCardState
 }
@@ -140,7 +140,7 @@ export function SettingCard({
   }
 
   return (
-    <Box as={Link} to={to} {...(cardProps as any)}>
+    <Box as={Link} href={to} {...(cardProps as any)}>
       {content}
     </Box>
   )

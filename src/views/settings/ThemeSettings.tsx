@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Box, Flex, Grid, Text, Button, Badge } from '@chakra-ui/react'
 import { RotateCcw } from 'lucide-react'
@@ -107,7 +107,7 @@ const THEMES: Theme[] = [
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function ThemeSettings() {
-  const navigate  = useNavigate()
+  const router = useRouter()
   const isCompact = useCompactMode()
 
   const [selectedId, setSelectedId] = useState<string>(DEFAULT_THEME_ID)
@@ -229,9 +229,10 @@ export function ThemeSettings() {
                       colorPalette="brand"
                       variant="solid"
                       size="md"
-                      onClick={() => navigate('/settings/themes/customize', {
-                        state: { thumbnail: selectedTheme.thumbnail, name: selectedTheme.name },
-                      })}
+                      onClick={() => {
+                        const params = new URLSearchParams({ name: selectedTheme.name, thumbnail: selectedTheme.thumbnail ?? '' })
+                        router.push(`/settings/themes/customize?${params.toString()}`)
+                      }}
                     >
                       شخصی‌سازی پوسته
                     </Button>
@@ -246,9 +247,10 @@ export function ThemeSettings() {
                   variant="solid"
                   size="md"
                   w="full"
-                  onClick={() => navigate('/settings/themes/customize', {
-                    state: { thumbnail: selectedTheme.thumbnail, name: selectedTheme.name },
-                  })}
+                  onClick={() => {
+                    const params = new URLSearchParams({ name: selectedTheme.name, thumbnail: selectedTheme.thumbnail ?? '' })
+                    router.push(`/settings/themes/customize?${params.toString()}`)
+                  }}
                 >
                   شخصی‌سازی پوسته
                 </Button>

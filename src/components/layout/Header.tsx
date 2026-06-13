@@ -1,7 +1,7 @@
 import { Fragment, type ReactNode } from 'react'
 import { Flex, Text, Box, Badge, Button } from '@chakra-ui/react'
 import { ChevronLeft } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 export interface BreadcrumbItem {
   label: string
@@ -45,7 +45,7 @@ export function Header({ title, breadcrumbs, badge, welcome, cta }: HeaderProps)
             {breadcrumbs.map((crumb, i) => (
               <Fragment key={i}>
                 {crumb.href ? (
-                  <Link to={crumb.href} style={{ textDecoration: 'none' }}>
+                  <Link href={crumb.href} style={{ textDecoration: 'none' }}>
                     <Text
                       fontSize="xs"
                       fontWeight="medium"

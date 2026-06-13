@@ -10,7 +10,7 @@
     {
       "name": "vitrina-preview",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["preview", "--port", "4173"],
+      "runtimeArgs": ["start", "--port", "4173"],
       "port": 4173
     }
   ]

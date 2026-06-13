@@ -152,7 +152,7 @@ function StoreHeader() {
         bg="bg.muted"
       >
         <img
-          src={storeCover}
+          src={storeCover.src}
           style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
         />
       </Box>
@@ -176,7 +176,7 @@ function StoreHeader() {
           zIndex={1}
         >
           <img
-            src={storeThumbnail}
+            src={storeThumbnail.src}
             style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
           />
         </Box>

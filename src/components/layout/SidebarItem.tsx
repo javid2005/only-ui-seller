@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Box, Flex, Text, Tooltip as ChakraTooltip, Collapsible } from '@chakra-ui/react'
 import { ChevronDown } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { NavLink, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type { SubNavItem } from '@/types/nav'
 
 interface SidebarItemProps {
@@ -48,35 +49,35 @@ function SubLine({ isLast }: { isLast: boolean }) {
 }
 
 function SubItemRow({ item }: { item: SubNavItem }) {
+  const pathname = usePathname()
+  const isActive = pathname === item.path
   return (
-    <NavLink to={item.path} style={{ display: 'block', width: '100%' }}>
-      {({ isActive }) => (
-        <Flex
-          align="center"
-          px="2"
-          h="9"
-          borderRadius="sm"
-          bg={isActive ? 'brand.subtle' : 'transparent'}
-          _hover={{ bg: isActive ? 'brand.muted' : 'bg.muted' }}
-          cursor="pointer"
+    <Link href={item.path} style={{ display: 'block', width: '100%' }}>
+      <Flex
+        align="center"
+        px="2"
+        h="9"
+        borderRadius="sm"
+        bg={isActive ? 'brand.subtle' : 'transparent'}
+        _hover={{ bg: isActive ? 'brand.muted' : 'bg.muted' }}
+        cursor="pointer"
+        w="full"
+      >
+        <Text
+          fontSize="sm"
+          lineHeight="5"
+          color={isActive ? 'brand.fg' : 'fg'}
+          fontWeight={isActive ? 'medium' : 'normal'}
+          textAlign="right"
           w="full"
+          whiteSpace="nowrap"
+          overflow="hidden"
+          textOverflow="ellipsis"
         >
-          <Text
-            fontSize="sm"
-            lineHeight="5"
-            color={isActive ? 'brand.fg' : 'fg'}
-            fontWeight={isActive ? 'medium' : 'normal'}
-            textAlign="right"
-            w="full"
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-          >
-            {item.label}
-          </Text>
-        </Flex>
-      )}
-    </NavLink>
+          {item.label}
+        </Text>
+      </Flex>
+    </Link>
   )
 }
 
@@ -88,10 +89,10 @@ export function SidebarItem({
   collapsed = false,
   disabled = false,
 }: SidebarItemProps) {
-  const location = useLocation()
+  const pathname = usePathname()
   const hasSubItems = subItems.length > 0
   // route-aware: sub-route فعال → parent باید active + auto-open بشه
-  const isChildActive = hasSubItems && subItems.some((s) => location.pathname === s.path)
+  const isChildActive = hasSubItems && subItems.some((s) => pathname === s.path)
   const [open, setOpen] = useState(isChildActive)
 
   // ناوبری به یک sub-route → گروهش رو باز نگه دار
@@ -176,9 +177,9 @@ export function SidebarItem({
           {itemRow(false, isChildActive)}
         </Box>
       ) : (
-        <NavLink to={path} style={{ display: 'block', width: '100%' }}>
-          {({ isActive }) => itemRow(isActive)}
-        </NavLink>
+        <Link href={path} style={{ display: 'block', width: '100%' }}>
+          {itemRow(pathname === path)}
+        </Link>
       )}
 
       {/* Sub-items panel — animated with Collapsible */}

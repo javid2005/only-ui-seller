@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import {
   Box, Button, Flex, IconButton, Input, InputGroup, Text,
 } from '@chakra-ui/react'
@@ -17,7 +17,7 @@ let _sid = 1000
 const newSub = (name: string): SubCategory => ({ id: `s${++_sid}`, name })
 
 export function ProductCategories() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const isCompact = useCompactMode()
 
   const [sections, setSections] = useState<CategorySection[]>(INITIAL_SECTIONS)
@@ -244,7 +244,7 @@ export function ProductCategories() {
             {/* ButtonFooter */}
             <ButtonFooter
               primary={{ label: 'ذخیره', onClick: () => { /* TODO: save */ } }}
-              back={{ label: 'بازگشت', onClick: () => navigate('/products') }}
+              back={{ label: 'بازگشت', onClick: () => router.push('/products') }}
             />
 
           </Flex>

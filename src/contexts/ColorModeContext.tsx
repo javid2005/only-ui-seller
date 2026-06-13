@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
 type ColorMode = 'light' | 'dark'
@@ -13,24 +15,28 @@ const ColorModeContext = createContext<ColorModeContextValue>({
 })
 
 export function ColorModeProvider({ children }: { children: ReactNode }) {
-  const [colorMode, setColorMode] = useState<ColorMode>(() => {
-    return (localStorage.getItem('vitrina-color-mode') as ColorMode) ?? 'light'
-  })
+  // Start 'light' so the server render and first client render match (no hydration mismatch).
+  // The persisted preference is read after mount.
+  const [colorMode, setColorMode] = useState<ColorMode>('light')
 
+  // Read persisted preference on mount — localStorage is client-only (undefined during SSR).
   useEffect(() => {
-    // Chakra v3 dark mode selector: `.dark &`
-    // Must be on <html> so Portal content (Menu, Drawer, etc.) also gets dark tokens
-    const root = document.documentElement
-    if (colorMode === 'dark') {
-      root.classList.add('dark')
-    } else {
-      root.classList.remove('dark')
-    }
-    localStorage.setItem('vitrina-color-mode', colorMode)
+    const stored = localStorage.getItem('vitrina-color-mode') as ColorMode | null
+    if (stored === 'dark' || stored === 'light') setColorMode(stored)
+  }, [])
+
+  // Reflect colorMode onto <html>. Chakra v3 dark mode selector is `.dark &`.
+  // Must be on <html> so Portal content (Menu, Drawer, etc.) also gets dark tokens.
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', colorMode === 'dark')
   }, [colorMode])
 
   const toggleColorMode = () =>
-    setColorMode((prev) => (prev === 'light' ? 'dark' : 'light'))
+    setColorMode((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light'
+      localStorage.setItem('vitrina-color-mode', next)
+      return next
+    })
 
   return (
     <ColorModeContext.Provider value={{ colorMode, toggleColorMode }}>

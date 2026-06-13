@@ -159,7 +159,7 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - [ ] logical CSS props (`insetInlineEnd` نه `right`)
 - [ ] RTL DOM order — **با evidence، نه checkbox خالی:** برای هر container افقیِ ساخته‌شده
   یک خط گزارش: `container → اولین DOM child → راست‌ترین المان در Figma` — تیک بدون این جدول = ⚠️
-- [ ] type-check سبز (`npx tsc -p tsconfig.app.json --noEmit` — اسکریپت `type-check` وجود نداره)
+- [ ] type-check سبز (`npx tsc --noEmit` یا `pnpm build` — اسکریپت `type-check` وجود نداره)
 - [ ] Visual verification vs Figma — **opt-in، هیچ‌وقت خودکار نه.**
   > **قانون اجباری (کاربر، ۱۴۰۴):** هرگز خودبه‌خود preview/screenshot نگیر. **همیشه اول بپرس:**
   > «preview بگیرم و pixel-perfect با طرح چک کنم؟» — فقط اگه کاربر گفت «بله»، آن‌وقت:
@@ -177,10 +177,23 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 ## Stack
 
-- React 19 + Vite + TypeScript
+- React 19 + **Next.js 16 (App Router)** + TypeScript
 - Chakra UI v3 + `@chakra-ui/charts` (BarSegment, BarList — wraps recharts)
 - RTL / Persian (Vazirmatn font)
 - pnpm
+- Dev: `pnpm dev` (Next dev, Turbopack — port 5174 via `.claude/launch.json`) · Build: `pnpm build` · Serve prod: `pnpm start`
+
+### Next.js — App Router conventions (اجباری)
+
+> پروژه از Vite SPA به Next 16 App Router مهاجرت کرد. این یه داشبورد client-rendered است؛ data fetching همچنان client-side (axios + TanStack Query). RSC/server-fetch استفاده نمی‌کنیم.
+
+- **Routing فایل‌محور:** هر route یه `src/app/**/page.tsx` است که فقط کامپوننت متناظر را از `src/views/*` import و render می‌کند (thin wrapper). dynamic route: `[orderId]` (نه `:orderId`).
+- **`'use client'` boundary:** wrapperهای `page.tsx` همگی `'use client'` دارند → کامپوننت‌های `src/views/*` و فرزندانشان خودکار client می‌شوند (نیازی به افزودن `'use client'` به هر فایل view نیست). Providerها (`src/app/providers.tsx`) و `Layout.tsx` هم `'use client'`.
+- **Providers:** `ChakraProvider → LocaleProvider(fa-IR) → ColorModeProvider → QueryClientProvider` در `src/app/providers.tsx`. root layout: `src/app/layout.tsx`.
+- **Navigation:** `next/link` (prop `href`، نه `to`) + `next/navigation` (`useRouter().push()`، `usePathname()`، `useSearchParams()`). react-router استفاده نمی‌شود. NavLink active = مقایسه‌ی دستی با `usePathname()`. انتقال state بین صفحات = query params (نه router state).
+- **Assets:** import کردن هر تصویر (`.svg` و `.png/.jpg`) → `StaticImageData` object (نه string). برای استفاده در `<img>`/`<Image>` باید `.src` بگیری: `src={logo.src}`. ⚠️ Next نوع `.svg` import رو `any` می‌ده پس type-check **خطا نمی‌ده** ولی runtime object است → یادت باشه `.src`. (الگو: `Navbar.tsx`، `data.ts`، `Categories.tsx`.)
+- **Env:** `process.env.NEXT_PUBLIC_*` (نه `import.meta.env`). نمونه: `NEXT_PUBLIC_API_BASE_URL` در `.env.local`.
+- **type-check:** `npx tsc --noEmit` یا `pnpm build` (Next موقع build هم type-check می‌کند). `tsconfig.app.json` حذف شده — فقط `tsconfig.json`.
 
 ---
 
@@ -197,8 +210,8 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 ### RTL — پایه
 
-- `dir="rtl"` on `<html>` in `index.html`
-- `LocaleProvider locale="fa-IR"` wraps app in `main.tsx`
+- `dir="rtl"` + `lang="fa"` on `<html>` in `src/app/layout.tsx`
+- `LocaleProvider locale="fa-IR"` wraps app in `src/app/providers.tsx`
 - RTL flex: **first DOM child = rightmost visually**
 - Use logical CSS props: `insetInlineEnd` not `right`, `borderInlineEndWidth` not `borderRightWidth`, `borderEndStartRadius` not `borderBottomRightRadius`
 - RTL column flex: `align="flex-start"` = RIGHT side, `align="flex-end"` = LEFT side (counterintuitive!)
@@ -309,7 +322,7 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - `bg="bg.default"` → **BROKEN** (CSS var resolves to transparent). Use `bg="white"` or `bg="bg"` instead
 - `bg="bg.subtle"` → works (`#fafafa`)
 - Tooltip = namespace: `Tooltip.Root` / `Tooltip.Trigger asChild` / `Tooltip.Content`
-- `Text` and `Flex` don't accept `href` prop → wrap with plain `<a>`
+- `Text` and `Flex` don't accept `href` prop → for internal navigation wrap with `next/link` (`<Link href=...>`), e.g. logo/breadcrumb. (`SettingCard` uses `<Box as={Link} href=...>`.)
 - `useColorMode` → **DOES NOT EXIST** in Chakra v3. Use `useColorMode` from `@/contexts/ColorModeContext` instead
 - Dark mode: toggle `.dark` class on `document.documentElement` (NOT a wrapper div) — Portal content lives outside React tree and needs the class on `<html>` to get dark tokens
 - Color mode toggle → uses `<Theme appearance="light"|"dark">` wrapper in `ColorModeProvider`; persists to `localStorage` key `vitrina-color-mode`
@@ -591,8 +604,14 @@ gray/red/orange/yellow/green/teal/blue/cyan/purple/pink → .50 .100 .200 .300 .
 
 ```
 src/
+  app/               — Next App Router (file-based routing)
+    layout.tsx       — root: <html lang="fa" dir="rtl"> + fonts + <Providers> + <Layout>
+    providers.tsx    — 'use client': Chakra + LocaleProvider(fa-IR) + ColorMode + QueryClient
+    page.tsx         — index → views/Dashboard
+    <route>/page.tsx — thin 'use client' wrappers → render the matching views/* component
+                       (settings/*, products/*, orders/list, orders/[orderId], account/user-info)
   components/layout/
-    Layout.tsx       — outer shell, drawer mobile
+    Layout.tsx       — outer shell, drawer mobile ('use client', accepts children)
     Navbar.tsx       — full-width sticky header
     Sidebar.tsx      — nav groups + store selector
     SidebarItem.tsx  — collapsible items w/ sub-lines (Chakra Collapsible + ChevronDown)
@@ -624,7 +643,7 @@ src/
   contexts/
     ColorModeContext.tsx   — custom dark mode (.dark on <html>, localStorage)
     CompactModeContext.tsx — 512px simulation context (useCompactMode hook)
-  pages/
+  views/             — page components (rendered by src/app/**/page.tsx wrappers; was `pages/` — renamed to avoid Next Pages-Router collision)
     Dashboard.tsx
     Settings.tsx          — settings landing page با SettingCard grid
     account/

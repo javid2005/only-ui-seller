@@ -1,12 +1,14 @@
-import { useState } from 'react'
+'use client'
+
+import { useState, type ReactNode } from 'react'
 import { Box, Flex, Drawer, Portal, CloseButton } from '@chakra-ui/react'
-import { Outlet } from 'react-router-dom'
+import Link from 'next/link'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
 import { CompactModeProvider } from '@/contexts/CompactModeContext'
 import logoSrc from '../../assets/logo.svg'
 
-export function Layout() {
+export function Layout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isCompact, setIsCompact] = useState(false)
 
@@ -47,7 +49,7 @@ export function Layout() {
 
         {/* Main content: SECOND → left in RTL ✓ — window handles scroll */}
         <Box flex="1" p="4" minW="0">
-          <Outlet />
+          {children}
         </Box>
 
       </Flex>
@@ -75,9 +77,9 @@ export function Layout() {
               >
                 {/* RTL: Logo FIRST → rightmost, Close LAST → leftmost */}
                 <Flex align="center" justify="space-between" w="full">
-                  <a href="/" style={{ textDecoration: 'none' }}>
-                    <img src={logoSrc} alt="ویترینا" style={{ height: '32px' }} />
-                  </a>
+                  <Link href="/" style={{ textDecoration: 'none' }}>
+                    <img src={logoSrc.src} alt="ویترینا" style={{ height: '32px' }} />
+                  </Link>
                   <CloseButton
                     size="sm"
                     onClick={() => setMobileOpen(false)}

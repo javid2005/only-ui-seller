@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
   Box, Flex, Text, Input, InputGroup, Button, Badge, chakra,
@@ -747,7 +747,7 @@ function ShippingSection({ title, data, onChange }: ShippingSectionProps) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function AddShippingMethod() {
-  const navigate  = useNavigate()
+  const router  = useRouter()
   const isCompact = useCompactMode()
 
   const [title,    setTitle]    = useState('')
@@ -758,7 +758,7 @@ export function AddShippingMethod() {
   const [intercitySection, setIntercitySection] = useState<SectionData>(newSection())
 
   function handleSave() {
-    navigate('/settings/shipping')
+    router.push('/settings/shipping')
   }
 
   return (
@@ -885,7 +885,7 @@ export function AddShippingMethod() {
           </Flex>
 
           <ButtonFooter
-            back={{ label: 'بازگشت به روش‌های ارسال', onClick: () => navigate('/settings/shipping') }}
+            back={{ label: 'بازگشت به روش‌های ارسال', onClick: () => router.push('/settings/shipping') }}
             primary={{ label: 'ذخیره', onClick: handleSave }}
           />
 

@@ -85,7 +85,7 @@ export function ShippingCardSystem({
       {comingSoon ? (
         <Box position="relative" h="10">
           <Box position="absolute" insetInlineStart="-25px" bottom="0">
-            <img src={comingSoonTag} width={117} height={40} alt="بزودی" />
+            <img src={comingSoonTag.src} width={117} height={40} alt="بزودی" />
           </Box>
         </Box>
       ) : (
