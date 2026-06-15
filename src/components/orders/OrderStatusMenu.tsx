@@ -40,9 +40,11 @@ export function OrderStatusMenu({ status, onAction }: OrderStatusMenuProps) {
       onSelect={(d) => onAction(d.value as OrderAction)}
     >
       <Menu.Trigger asChild>
-        {/* Single <button> visually split (label | chevron) */}
+        {/* Single <button> visually split (label | chevron).
+            < 360px: label مخفی، فقط آیکون مربعی (منو-مانند) — جای قبلی، بدون wrap */}
         <Flex
           as="button"
+          aria-label={label}
           align="stretch"
           h="9"
           rounded="md"
@@ -51,18 +53,21 @@ export function OrderStatusMenu({ status, onAction }: OrderStatusMenuProps) {
           overflow="hidden"
           cursor="pointer"
           bg="bg.panel"
+          flexShrink={0}
           _hover={{ bg: 'bg.subtle' }}
           _open={{ bg: 'bg.subtle' }}
         >
-          <Flex align="center" px="3.5">
+          {/* < sm: label مخفی → فقط آیکون مربعی (منو-مانند)، کنار title */}
+          <Flex align="center" px="3.5" display={{ base: 'none', sm: 'flex' }}>
             <Text fontSize="sm" fontWeight="semibold" color="fg">{label}</Text>
           </Flex>
           <Flex
             align="center"
             justify="center"
             px="2"
+            minW="9"
             color="fg.muted"
-            borderInlineStartWidth="1px"
+            borderInlineStartWidth={{ base: '0', sm: '1px' }}
             borderColor="border"
           >
             <ChevronDown size={16} />

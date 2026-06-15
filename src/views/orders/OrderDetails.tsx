@@ -8,6 +8,7 @@ import { OrderItemsPanel } from '@/components/orders/OrderItemsPanel'
 import { ContactInfoCard } from '@/components/orders/ContactInfoCard'
 import { ShippingAddressPanel } from '@/components/orders/ShippingAddressPanel'
 import { OrderSummaryCard } from '@/components/orders/OrderSummaryCard'
+import { OrderSummaryAccordion } from '@/components/orders/OrderSummaryAccordion'
 import { SellerNoteCard } from '@/components/orders/SellerNoteCard'
 import { ShipDialog, CancelOrderDialog } from '@/components/orders/OrderDialogs'
 import { MOCK_ORDER } from '@/components/orders/orderData'
@@ -64,13 +65,18 @@ export function OrderDetails() {
             <ContactInfoCard title="اطلاعات گیرنده" info={MOCK_ORDER.receiver} onEdit={() => {}} />
           </Grid>
           <ShippingAddressPanel />
+          {/* یادداشت فروشنده — در mobile/compact داخل flow (ستون End فقط xl) */}
+          <Box display={isCompact ? 'block' : { base: 'block', xl: 'none' }}>
+            <SellerNoteCard />
+          </Box>
         </Flex>
 
-        {/* End — ستون چپ (sticky در دسکتاپ) */}
+        {/* End — ستون چپ، فقط دسکتاپ xl (در mobile/compact جاش accordion sticky) */}
         <Box
-          w={isCompact ? 'full' : { base: 'full', xl: '360px' }}
+          display={isCompact ? 'none' : { base: 'none', xl: 'block' }}
+          w="360px"
           flexShrink={0}
-          position={isCompact ? 'static' : { base: 'static', xl: 'sticky' }}
+          position="sticky"
           top="4"
         >
           <Flex direction="column" gap="6">
@@ -79,6 +85,16 @@ export function OrderDetails() {
           </Flex>
         </Box>
       </Flex>
+
+      {/* خلاصه سفارش — sticky پایین، فقط mobile/compact (sticky نسبت به container 512/full کار می‌کند) */}
+      <Box
+        display={isCompact ? 'block' : { base: 'block', xl: 'none' }}
+        position="sticky"
+        bottom="2"
+        zIndex="sticky"
+      >
+        <OrderSummaryAccordion />
+      </Box>
 
       <ShipDialog
         open={shipOpen}

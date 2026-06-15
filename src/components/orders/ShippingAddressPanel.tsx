@@ -5,13 +5,14 @@ import { useCompactMode } from '@/contexts/CompactModeContext'
 import { MOCK_ORDER } from './orderData'
 
 function InfoCard({ label, children, action }: { label: string; children: React.ReactNode; action?: React.ReactNode }) {
+  // minH ثابت روی header و value → همه ۴ باکس هم‌ارتفاع، مستقل از آیکون/Badge
   return (
-    <Box bg="bg.subtle" rounded="lg" p="3" minW="0">
-      <Flex align="center" justify="space-between" gap="2" mb="1.5">
+    <Box bg="bg.muted" rounded="lg" p="4" minW="0">
+      <Flex align="center" justify="space-between" gap="2" minH="6">
         <Text fontSize="xs" color="fg.muted">{label}</Text>
         {action}
       </Flex>
-      {children}
+      <Flex align="center" minH="6" mt="1">{children}</Flex>
     </Box>
   )
 }

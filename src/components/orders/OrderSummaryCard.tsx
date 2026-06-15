@@ -29,32 +29,33 @@ export function OrderSummaryCard() {
 
   return (
     <Box
-      bg="bg.panel"
+      bg="brand.bg"
       borderWidth="1px"
-      borderColor="border"
+      borderColor="brand.emphasized"
       rounded="2xl"
       overflow="clip"
       w="full"
     >
-      {/* Header — teal accent */}
-      <Box bg="teal.subtle" px="6" py="4" borderBottomWidth="1px" borderColor="border">
-        <Text fontSize="md" fontWeight="semibold" color="teal.fg" textAlign="right">
+      {/* عنوان — fg مشکی، کل کارت یکدست teal روشن (مطابق Figma) */}
+      <Box px="6" pt="5" pb="4">
+        <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="right">
           خلاصه سفارش
         </Text>
       </Box>
+      <Separator borderColor="brand.subtle" />
 
       {/* Rows */}
       <Flex direction="column" gap="3" px="6" py="5">
         <Row label="شماره سفارش" value={code} />
         <Row label="تعداد اقلام" value={itemsCount} />
 
-        <Separator />
+        <Separator borderColor="brand.subtle" />
 
         <Row label="جمع کل"    value={money(totals.sum)} />
         <Row label="تخفیف"     value={money(totals.discount)} valueColor="green.fg" />
         <Row label="مبلغ پرداختی" value={money(totals.payable)} strong />
 
-        <Separator />
+        <Separator borderColor="brand.subtle" />
 
         <Row label="مشتری"     value={customer.name} />
         <Row label="روش ارسال" value={shipMethod} />

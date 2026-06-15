@@ -28,7 +28,7 @@ export function Header({ title, breadcrumbs, badge, welcome, cta }: HeaderProps)
      *   FIRST child = Content (breadcrumb + title) → rightmost ✓
      *   LAST  child = CTA                          → leftmost  ✓
      */
-    <Flex align="flex-start" w="full" flexShrink={0}>
+    <Flex align="flex-start" gap="4" w="full" flexShrink={0}>
 
       {/* ── Content: FIRST → rightmost in RTL ✓ ──────────── */}
       <Flex

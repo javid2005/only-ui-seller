@@ -1,4 +1,4 @@
-import { Box, Steps, useBreakpointValue } from '@chakra-ui/react'
+import { Box, Steps } from '@chakra-ui/react'
 import { Check } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { ORDER_STEPS, ORDER_ACTIVE_STEP } from './orderData'
@@ -8,12 +8,10 @@ const STEP_NUMS = ['۱', '۲', '۳', '۴', '۵', '۶']
 /**
  * OrderSteps — وضعیت پیشرفت سفارش (Chakra Steps).
  * مرحله‌های کامل ✓، مرحله جاری/آینده شماره. colorPalette teal (brand).
+ * همیشه افقی — در عرض کم، List اسکرول افقی می‌خورد (نه shrink به vertical).
  */
 export function OrderSteps() {
   const isCompact = useCompactMode()
-  // orientation باید STRING باشه — Chakra Steps شیٔ responsive رو "[object Object]" می‌کنه و خط‌ها می‌شکنه
-  const bpOrientation = useBreakpointValue({ base: 'vertical', lg: 'horizontal' } as const) ?? 'horizontal'
-  const orientation = isCompact ? 'vertical' : bpOrientation
 
   return (
     <Box
@@ -30,11 +28,13 @@ export function OrderSteps() {
         count={ORDER_STEPS.length}
         colorPalette="teal"
         w="full"
-        orientation={orientation}
+        orientation="horizontal"
       >
-        <Steps.List>
+        {/* overflowX: وقتی steps جا نشدن، داخل همین نوار scroll افقی */}
+        <Steps.List overflowX="auto" overflowY="hidden" pb="1">
           {ORDER_STEPS.map((s, i) => (
-            <Steps.Item key={i} index={i} flex="1" title={s.title}>
+            // flexGrow=1 → desktop پخش؛ flexShrink=0 + عرض = اندازه متن (title nowrap)
+            <Steps.Item key={i} index={i} flexGrow={1} flexShrink={0} title={s.title}>
               <Steps.Indicator>
                 <Steps.Status
                   incomplete={<>{STEP_NUMS[i]}</>}
@@ -42,8 +42,8 @@ export function OrderSteps() {
                 />
               </Steps.Indicator>
               <Box>
-                <Steps.Title>{s.title}</Steps.Title>
-                <Steps.Description fontSize="xs">{s.description}</Steps.Description>
+                <Steps.Title whiteSpace="nowrap">{s.title}</Steps.Title>
+                <Steps.Description fontSize="xs" whiteSpace="nowrap">{s.description}</Steps.Description>
               </Box>
               <Steps.Separator />
             </Steps.Item>

@@ -1,7 +1,16 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-06-13
+> آخرین آپدیت: 2026-06-15
 
 ## الان
+**OrderDetails responsive + Figma-match** — صفحه سفارش با طرح هماهنگ و موبایل‌سازی شد:
+- خلاصه سفارش: رنگ کارت به `brand.bg` (کل کارت teal روشن + عنوان مشکی، نه header رنگی)
+- ۴ باکس روش ارسال: هم‌ارتفاع (`minH` ثابت)، `bg.muted`
+- `OrderSummaryAccordion` (جدید): موبایل/compact، sticky پایین، collapsed ۳-آماری / expanded کامل
+- OrderSteps: همیشه افقی، در overflow اسکرول افقی، title‌ها nowrap
+- Header (عمومی): `< sm` → CTA فقط آیکون کنار title (label مخفی، بدون wrap)
+- OrderItemsPanel: نام/مشخصات `truncate` تا روی قیمت سرریز نکنند
+
+### قبلی
 **مهاجرت Vite → Next.js 16 (App Router)** انجام شد — روی branch `migrate/nextjs` (هنوز merge نشده).
 - routing فایل‌محور: `src/app/**/page.tsx` (۱۶ wrapper نازک 'use client') → کامپوننت‌ها از `src/views/*` (پوشه `pages/` به `views/` rename شد تا با Pages Router تداخل نکنه)
 - providerها در `src/app/providers.tsx`، root layout + فونت + `dir="rtl"` در `src/app/layout.tsx`

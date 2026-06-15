@@ -9,21 +9,21 @@ function ItemRow({ index, name, attrs, qty, total, unit }: {
 }) {
   return (
     <Flex align="center" justify="space-between" gap="4" w="full">
-      {/* RTL راست: شماره + تصویر + مشخصات */}
+      {/* RTL راست: شماره + تصویر + مشخصات. minW=0 + truncate → روی قیمت سرریز نمی‌کند */}
       <Flex align="center" gap="3" minW="0">
         <Text fontSize="sm" color="fg.muted" flexShrink={0}>{ROW_NUMS[index]}</Text>
         <Box boxSize="14" rounded="lg" bg="bg.muted" flexShrink={0} />
         <Box minW="0">
-          <Text fontSize="sm" fontWeight="semibold" color="fg">{name}</Text>
-          <Text fontSize="xs" color="fg.muted">{attrs}</Text>
+          <Text fontSize="sm" fontWeight="semibold" color="fg" truncate>{name}</Text>
+          <Text fontSize="xs" color="fg.muted" truncate>{attrs}</Text>
           <Text fontSize="xs" color="fg.muted">{qty}</Text>
         </Box>
       </Flex>
 
       {/* RTL چپ: قیمت کل + فی واحد */}
       <Box textAlign="left" flexShrink={0}>
-        <Text fontSize="sm" fontWeight="semibold" color="fg">{`${total} ${CURRENCY}`}</Text>
-        <Text fontSize="xs" color="fg.muted">{`فی: ${unit} ${CURRENCY}`}</Text>
+        <Text fontSize="sm" fontWeight="semibold" color="fg" whiteSpace="nowrap">{`${total} ${CURRENCY}`}</Text>
+        <Text fontSize="xs" color="fg.muted" whiteSpace="nowrap">{`فی: ${unit} ${CURRENCY}`}</Text>
       </Box>
     </Flex>
   )
