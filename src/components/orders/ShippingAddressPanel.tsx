@@ -3,6 +3,7 @@ import { Pencil, Printer } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { MOCK_ORDER } from './orderData'
+import type { AddressData } from './OrderDialogs'
 
 function InfoCard({ label, children, action }: { label: string; children: React.ReactNode; action?: React.ReactNode }) {
   // minH ثابت روی header و value → همه ۴ باکس هم‌ارتفاع، مستقل از آیکون/Badge
@@ -26,12 +27,27 @@ function AddressRow({ label, value }: { label: string; value: string }) {
   )
 }
 
+interface ShippingAddressPanelProps {
+  /** ویرایش آدرس → EditAddressDialog */
+  onEdit?: () => void
+  /** ویرایش کد رهگیری → TrackingCodeDialog */
+  onEditTracking?: () => void
+  /** پرینت آدرس → انتخاب آدرس فرستنده (SelectSenderAddressDialog) */
+  onPrint?: () => void
+  /** override کد رهگیری (بعد از ثبت/ویرایش) */
+  tracking?: string
+  /** override آدرس (بعد از ویرایش) */
+  address?: AddressData
+}
+
 /**
  * ShippingAddressPanel — پنل «روش ارسال و آدرس».
  */
-export function ShippingAddressPanel() {
+export function ShippingAddressPanel({ onEdit, onEditTracking, onPrint, tracking, address }: ShippingAddressPanelProps) {
   const isCompact = useCompactMode()
   const { shipping } = MOCK_ORDER
+  const addr = address ?? shipping
+  const trackingValue = tracking || shipping.tracking
 
   return (
     <Box
@@ -48,11 +64,11 @@ export function ShippingAddressPanel() {
         cta={
           <Flex align="center" gap="2">
             {/* RTL: پرینت راست (اول DOM)، ویرایش چپ (آخر DOM) */}
-            <Button size="sm" variant="outline" colorPalette="gray">
+            <Button size="sm" variant="outline" colorPalette="gray" onClick={onPrint}>
               <Printer size={16} />
               پرینت آدرس
             </Button>
-            <Button size="sm" variant="outline" colorPalette="brand">
+            <Button size="sm" variant="outline" colorPalette="brand" onClick={onEdit}>
               <Pencil size={16} />
               ویرایش
             </Button>
@@ -78,21 +94,21 @@ export function ShippingAddressPanel() {
         <InfoCard
           label="کد رهگیری"
           action={
-            <IconButton size="xs" variant="ghost" color="fg.muted" aria-label="ویرایش کد رهگیری">
+            <IconButton size="xs" variant="ghost" color="fg.muted" aria-label="ویرایش کد رهگیری" onClick={onEditTracking}>
               <Pencil size={14} />
             </IconButton>
           }
         >
-          <Text fontSize="sm" fontWeight="medium" color="fg.muted">{shipping.tracking}</Text>
+          <Text fontSize="sm" fontWeight="medium" color="fg.muted">{trackingValue}</Text>
         </InfoCard>
       </Grid>
 
       {/* Address rows */}
       <Flex direction="column" gap="3" pt="5">
-        <AddressRow label="استان"   value={shipping.province} />
-        <AddressRow label="شهر"      value={shipping.city} />
-        <AddressRow label="کد پستی"  value={shipping.postal} />
-        <AddressRow label="آدرس"     value={shipping.address} />
+        <AddressRow label="استان"   value={addr.province} />
+        <AddressRow label="شهر"      value={addr.city} />
+        <AddressRow label="کد پستی"  value={addr.postal} />
+        <AddressRow label="آدرس"     value={addr.address} />
       </Flex>
     </Box>
   )

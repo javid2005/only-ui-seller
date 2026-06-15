@@ -10,9 +10,13 @@ import { ShippingAddressPanel } from '@/components/orders/ShippingAddressPanel'
 import { OrderSummaryCard } from '@/components/orders/OrderSummaryCard'
 import { OrderSummaryAccordion } from '@/components/orders/OrderSummaryAccordion'
 import { SellerNoteCard } from '@/components/orders/SellerNoteCard'
-import { ShipDialog, CancelOrderDialog } from '@/components/orders/OrderDialogs'
+import {
+  ShipDialog, CancelOrderDialog, TrackingCodeDialog,
+  EditReceiverDialog, EditAddressDialog, SelectSenderAddressDialog,
+} from '@/components/orders/OrderDialogs'
+import type { AddressData } from '@/components/orders/OrderDialogs'
 import { MOCK_ORDER } from '@/components/orders/orderData'
-import type { OrderStatus, OrderAction } from '@/components/orders/orderData'
+import type { OrderStatus, OrderAction, ContactInfo } from '@/components/orders/orderData'
 
 /**
  * OrderDetails — صفحه «سفارش» (Figma: Order / Details).
@@ -22,8 +26,24 @@ import type { OrderStatus, OrderAction } from '@/components/orders/orderData'
 export function OrderDetails() {
   const isCompact = useCompactMode()
   const [status, setStatus] = useState<OrderStatus>(MOCK_ORDER.status)
-  const [shipOpen, setShipOpen] = useState(false)
-  const [cancelOpen, setCancelOpen] = useState(false)
+
+  // editable order data (mock — در نبود API)
+  const [receiver, setReceiver] = useState<ContactInfo>(MOCK_ORDER.receiver)
+  const [tracking, setTracking] = useState(MOCK_ORDER.shipping.tracking)
+  const [address, setAddress]   = useState<AddressData>({
+    province: MOCK_ORDER.shipping.province,
+    city:     MOCK_ORDER.shipping.city,
+    postal:   MOCK_ORDER.shipping.postal,
+    address:  MOCK_ORDER.shipping.address,
+  })
+
+  // dialog open states
+  const [shipOpen, setShipOpen]           = useState(false)
+  const [cancelOpen, setCancelOpen]       = useState(false)
+  const [trackingOpen, setTrackingOpen]   = useState(false)
+  const [editReceiverOpen, setEditReceiverOpen] = useState(false)
+  const [editAddressOpen, setEditAddressOpen]   = useState(false)
+  const [senderOpen, setSenderOpen]       = useState(false)
 
   function handleAction(action: OrderAction) {
     switch (action) {
@@ -62,9 +82,15 @@ export function OrderDetails() {
           <Grid templateColumns={isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }} gap="6">
             {/* RTL: مشتری راست‌ترین (اول DOM)، گیرنده چپ — مطابق Figma */}
             <ContactInfoCard title="اطلاعات مشتری" info={MOCK_ORDER.customer} />
-            <ContactInfoCard title="اطلاعات گیرنده" info={MOCK_ORDER.receiver} onEdit={() => {}} />
+            <ContactInfoCard title="اطلاعات گیرنده" info={receiver} onEdit={() => setEditReceiverOpen(true)} />
           </Grid>
-          <ShippingAddressPanel />
+          <ShippingAddressPanel
+            tracking={tracking}
+            address={address}
+            onEdit={() => setEditAddressOpen(true)}
+            onEditTracking={() => setTrackingOpen(true)}
+            onPrint={() => setSenderOpen(true)}
+          />
           {/* یادداشت فروشنده — در mobile/compact داخل flow (ستون End فقط xl) */}
           <Box display={isCompact ? 'block' : { base: 'block', xl: 'none' }}>
             <SellerNoteCard />
@@ -99,12 +125,35 @@ export function OrderDetails() {
       <ShipDialog
         open={shipOpen}
         onClose={() => setShipOpen(false)}
-        onSubmit={() => setStatus('sent')}
+        onSubmit={(code) => { if (code) setTracking(code); setStatus('sent') }}
       />
       <CancelOrderDialog
         open={cancelOpen}
         onClose={() => setCancelOpen(false)}
         onConfirm={() => setStatus('canceled')}
+      />
+      <TrackingCodeDialog
+        open={trackingOpen}
+        onClose={() => setTrackingOpen(false)}
+        onSubmit={setTracking}
+        initial={tracking === MOCK_ORDER.shipping.tracking ? '' : tracking}
+      />
+      <EditReceiverDialog
+        open={editReceiverOpen}
+        onClose={() => setEditReceiverOpen(false)}
+        onSubmit={setReceiver}
+        initial={receiver}
+      />
+      <EditAddressDialog
+        open={editAddressOpen}
+        onClose={() => setEditAddressOpen(false)}
+        onSubmit={setAddress}
+        initial={address}
+      />
+      <SelectSenderAddressDialog
+        open={senderOpen}
+        onClose={() => setSenderOpen(false)}
+        onSubmit={() => {}}
       />
 
     </Flex>
