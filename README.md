@@ -28,9 +28,14 @@ pnpm start   # serve production build
 
 | Route | صفحه |
 |-------|------|
+| `/` | داشبورد |
 | `/products/list` | لیست محصولات (جدول + view کارت، فیلتر، pagination، انتخاب گروهی) |
 | `/products/categories` | دسته‌بندی محصولات |
+| `/products/reviews` | نظرات محصولات |
+| `/orders/list` | لیست سفارش‌ها |
+| `/orders/[orderId]` | جزئیات سفارش |
 | `/account/user-info` | حساب کاربری (اطلاعات / امنیت / احراز هویت / تاریخچه ورود) |
+| `/settings` | تنظیمات (صفحهٔ فرود) |
 | `/settings/store-info` | اطلاعات فروشگاه |
 | `/settings/categories` | دسته‌بندی‌ها |
 | `/settings/sales` | تنظیمات فروش |
