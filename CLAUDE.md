@@ -6,7 +6,6 @@
 3. [Stack](#stack)
 4. [Critical Rules](#critical-rules) — RTL · Chakra Bugs · Layout · Compact · Localization
 5. [Token Reference](#token-reference) — Semantic · Brand · Design Scale
-6. [File Structure](#file-structure)
 
 ---
 
@@ -596,78 +595,4 @@ Vitrina targets: **360px** (mobile) · **480px** (mobile+) · **1440px** (deskto
 transparent | current | black | white
 whiteAlpha.50–950 | blackAlpha.50–950
 gray/red/orange/yellow/green/teal/blue/cyan/purple/pink → .50 .100 .200 .300 .400 .500 .600 .700 .800 .900 .950
-```
-
----
-
-## File Structure
-
-```
-src/
-  app/               — Next App Router (file-based routing)
-    layout.tsx       — root: <html lang="fa" dir="rtl"> + fonts + <Providers> + <Layout>
-    providers.tsx    — 'use client': Chakra + LocaleProvider(fa-IR) + ColorMode + QueryClient
-    page.tsx         — index → views/Dashboard
-    <route>/page.tsx — thin 'use client' wrappers → render the matching views/* component
-                       (settings/*, products/*, orders/list, orders/[orderId], account/user-info)
-  components/layout/
-    Layout.tsx       — outer shell, drawer mobile ('use client', accepts children)
-    Navbar.tsx       — full-width sticky header
-    Sidebar.tsx      — nav groups + store selector
-    SidebarItem.tsx  — collapsible items w/ sub-lines (Chakra Collapsible + ChevronDown)
-    Header.tsx       — page title + breadcrumb + CTA slot
-    UserMenu.tsx     — avatar dropdown (Menu.Root, Box as="button" trigger, Portal+dir="rtl")
-  components/settings/
-    SettingCard.tsx  — navigation card (icon + title + description + chevron, RTL)
-    categories/
-      CategoryAccordion.tsx — accordion row (controlled/uncontrolled، Collapsible، 6 states، RTL)
-    info/
-      AddressCard.tsx      — address display card (map placeholder, active toggle, 3-dot menu)
-      AddAddressDialog.tsx — add/edit address dialog (2-col desktop, map area)
-      PhoneCard.tsx        — phone number card (3-dot menu)
-      AddPhoneDialog.tsx   — add/edit phone dialog (SegmentGroup type selector)
-      SocialCard.tsx       — social network card (brand SVG icons, 3-dot menu)
-      AddSocialDialog.tsx  — add/edit social dialog
-    shipping/
-      ShippingCardCustom.tsx        — custom shipping card (default/disabled states، toggle، 3-dot menu)
-      ShippingCardSystem.tsx        — system shipping card (default/disabled/comingSoon states، toggle)
-      ShippingCalculatorDialog.tsx  — modal محاسبه هزینه ارسال (weight input → calc per method، responsive 3-col/2-col grid)
-    themes/
-      ThemeCard.tsx   — کارت پوسته (SVG thumbnail، active/inactive state، badge)
-      SliderItem.tsx  — آیتم اسلایدر (image upload، title input، reorder، delete)
-      BannerCard.tsx  — کارت بنر (image upload، link input، delete)
-  components/ui/
-    ButtonFooter.tsx   — footer با دکمه‌های ذخیره/لغو/بازگشت
-    RichTextEditor.tsx — Tiptap editor (Global emotion CSS برای ProseMirror styles)
-    TitleBar.tsx       — section header با title + optional CTA
-  contexts/
-    ColorModeContext.tsx   — custom dark mode (.dark on <html>, localStorage)
-    CompactModeContext.tsx — 512px simulation context (useCompactMode hook)
-  views/             — page components (rendered by src/app/**/page.tsx wrappers; was `pages/` — renamed to avoid Next Pages-Router collision)
-    Dashboard.tsx
-    Settings.tsx          — settings landing page با SettingCard grid
-    account/
-      UserInfo.tsx            — حساب کاربری (3 tabs: user-info / security / auth)
-      SecuritySection.tsx     — تب امنیت (تغییر رمز + 2FA)
-      TwoFactorSection.tsx    — تایید دو مرحله‌ای (SMS / Email / Authenticator)
-      IdentitySection.tsx     — احراز هویت (3 states: empty / pending / approved، Steps + FileUpload)
-      LoginHistorySection.tsx — تاریخچه ورود (جدول 4 ستون RTL، horizontal scroll در موبایل)
-    settings/
-      GeneralInfo.tsx        — اطلاعات فروشگاه (3 tabs: identity / contact / address)
-      Categories.tsx         — دسته‌بندی‌ها (Two Columns Right Center، accordion + search + InfoBox)
-      SalesSettings.tsx      — تنظیمات فروش (One Column Center، dollar/gold switch، phone grid)
-      ShippingSettings.tsx   — روش‌های ارسال (Two Columns Right Center، ShippingCardCustom + ShippingCardSystem grids)
-      AddShippingMethod.tsx  — افزودن روش ارسال (One Column Center، Collapsible sections، WeightRangeChart با BarSegment)
-      ThemeSettings.tsx      — پوسته‌ها (Two Columns Right Center، ThemeCard grid، SVG thumbnail)
-      ThemeCustomize.tsx     — سفارشی‌سازی پوسته (One Column Center، SliderItem + BannerCard)
-      Badges.tsx             — نمادها و مجوزها (One Column Center، 3 badge sections، enamad + ecunion + samandehi)
-  services/
-    api.ts
-  theme/
-    index.ts   — createSystem entry
-    tokens.ts  — Vitrina custom tokens + full reference comment
-  utils/
-    numbers.ts — toPersianDigits + toLatinDigits
-  types/
-    nav.ts     — NavGroup, NavItem types
 ```

@@ -40,6 +40,22 @@ pnpm start   # serve production build
 | `/settings/themes/customize` | سفارشی‌سازی پوسته |
 | `/settings/badges` | نمادها و مجوزها |
 
+## ساختار
+
+```
+src/
+  app/        — Next App Router (routing فایل‌محور؛ هر page یه wrapper نازک → views/*)
+  components/ — layout/ · settings/ · ui/ (کامپوننت‌های قابل‌استفادهٔ مجدد)
+  contexts/   — ColorMode (dark mode) · CompactMode (شبیه‌سازی 512px)
+  views/      — کامپوننت صفحات (توسط app/**/page.tsx render می‌شن)
+  services/   — api.ts
+  theme/      — index.ts (createSystem) · tokens.ts (توکن‌های Vitrina)
+  utils/      — numbers.ts (toPersianDigits / toLatinDigits)
+  types/      — nav.ts
+```
+
+> درختِ تفصیلیِ فایل‌به‌فایل اینجا نگه‌داری نمی‌شه (سریع stale می‌شه) — ساختار واقعی رو از repo بخون.
+
 ## References
 
 - [CLAUDE.md](CLAUDE.md) — قوانین کدنویسی، RTL، tokens، protocols
