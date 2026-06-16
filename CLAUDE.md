@@ -143,6 +143,22 @@ get_design_context output بخش "Component descriptions" داشت؟
 مثال: Figma گفت Alert استفاده شده → <Alert.Root>، نه <Flex bg="blue.50">
 ```
 
+**Token mapping — semantic، نه palette خام (اجباری):**
+```
+get_variable_defs اسمِ semantic متغیر Figma رو می‌ده (مثل bg/teal، teal/muted)، نه فقط hex.
+→ همون اسم semantic رو به توکن semantic پروژه map کن — نه به palette خام با hex-match.
+
+❌ ممنوع: bg/teal (#f0fdfa) → teal.50   (palette خام — در dark mode adapt نمی‌کنه = باگ)
+✅ درست:  bg/teal → brand.bg · teal/muted → brand.muted   (light همون hex، dark خودکار)
+
+قانون: برای surfaceهای theme-able (bg/border/fg) هرگز palette خام (teal.50، gray.200…) نذار
+وقتی توکن semantic معادل وجود داره. hex در light یکیه ولی raw در dark می‌شکنه.
+⚠️ این رو gate hardcode نمی‌گیره (teal.50 یک token هست) و dev-engine هم پاسش می‌ده —
+   پس دستی چک کن: هر رنگِ کارت/پنل/سطح = توکن semantic، نه palette.
+
+سابقه: 1404 — Print-Label کارت گیرنده با teal.50/teal.200 (خام) ship شد → dark mode روشن موند.
+```
+
 **MCP servers این پروژه:**
 - Chakra UI MCP — `mcp__chakra-ui__list_components` / `get_component_example` / `get_component_props` / `get_theme`
 - Figma MCP — `get_design_context` / `get_screenshot` / `get_variable_defs`

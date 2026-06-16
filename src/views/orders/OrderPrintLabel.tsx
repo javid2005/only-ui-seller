@@ -101,8 +101,8 @@ function PartyCard({ title, party, highlight }: { title: string; party: Party; h
         p="4"
         rounded="xl"
         borderWidth="1px"
-        borderColor={highlight ? 'teal.200' : 'border'}
-        bg={highlight ? 'teal.50' : 'bg.subtle'}
+        borderColor={highlight ? 'brand.muted' : 'border'}
+        bg={highlight ? 'brand.bg' : 'bg.subtle'}
         overflow="hidden"
       >
         <Text fontSize="lg" fontWeight="semibold" color="fg" textAlign="right" dir="auto">
