@@ -1,4 +1,4 @@
-<!-- version: 6 | updated: 2026-05-24 | changelog: panel border اضافه شد (borderWidth+borderColor)، اصلاح قانون padding: فقط ستون‌ها no bg/padding، inner content میتونه padding داشته باشه -->
+<!-- version: 7 | updated: 2026-06-15 | changelog: «Grid System (مبنای قالب‌ها)» اضافه شد — قالب‌ها بر اساس span ستون از grid ۱۲ستونه (margin/gutter 16) تعریف می‌شن، نه px ثابت. قالب Print-Label (6 ستون مرکز = 808px) اضافه شد. -->
 
 # Page Templates — Vitrina Dashboard
 > همیشه همراه با `project-context.md` استفاده شود
@@ -12,6 +12,49 @@
 | عرض canvas (desktop base) | 1920px |
 | عرض Sidebar | 256px — ثابت |
 | جهت | RTL |
+
+---
+
+## Grid System — مبنای قالب‌ها (canonical)
+
+> **اصل:** قالب‌ها بر اساس **span ستون** از یک grid ۱۲ستونه روی Main تعریف می‌شن — **نه** عرض px ثابت.
+> px فقط مقدار محاسبه‌شده‌ی span در یه canvas مشخصه. در Figma این همون layout-guide ـه:
+> `Main → 12 columns · margin 16 · gutter 16 · type: Stretch`.
+
+**فرمول (هر canvas):**
+```
+content   = Main − 2×margin            (margin = 16)
+colWidth  = (content − 11×gutter) / 12  (gutter = 16)
+span(N)   = N×colWidth + (N−1)×gutter   ← عرض N ستون متوالی
+```
+
+**جدول مرجع — canvas 1920 (Main = 1664px):**
+```
+content = 1664 − 32 = 1632    |    colWidth = (1632 − 176)/12 = 121.33px
+```
+| span | px | کاربرد نمونه |
+|------|-----|-------------|
+| 3 ستون | **396** | ستون باریک کناری (End — خلاصه/یادداشت) |
+| 6 ستون | **808** | محتوای مرکز باریک (Print-Label) |
+| 9 ستون | **1220** | ستون اصلی پهن (Middle — Order Details) |
+| 9 + 3 | 1220 + 396 (+16) = 1632 | دوستونه (Order Details: راست پهن + چپ باریک) |
+
+**ترجمه به کد:**
+```tsx
+// span مرکز (مثل Print-Label = 6 ستون):
+<Flex direction="column" align="center" w="full">
+  <Box w="full" maxW="808px"> … </Box>   {/* fill زیر 808، cap بالای آن */}
+</Flex>
+
+// دو ستون نامتقارن (مثل Order Details = 9 + 3):
+<Flex gap="6" align="flex-start">       {/* gap ستون‌ها = gutter سیستم */}
+  <Box flex="1" minW="0">…</Box>         {/* Middle ~9 ستون — راست (اول DOM) */}
+  <Box w="396px" flexShrink={0}>…</Box>  {/* End 3 ستون — چپ (آخر DOM) */}
+</Flex>
+```
+- `maxW` = `span(N)` در بزرگ‌ترین canvas؛ زیر آن fill می‌شه (Stretch).
+- مرکز‌کردن: `mx="auto"` یا والد `align="center"`.
+- قالب‌های px-محورِ پایین (960/1584/…) سابقه‌ی قدیمی‌ترن؛ برای صفحات **نو** این grid مبناست.
 
 ---
 
@@ -243,6 +286,26 @@ Main (fill, max 1664px)
   {/* content: max 960px */}
 </Box>
 ```
+
+---
+
+### 7. One Column Center — Narrow (6-col / 808px)
+> **Figma:** Order / Print-Label — node 2180:32979
+
+```
+Main (fill, items-center)
+└── Container — span 6 ستون = max 808px، centered
+```
+
+| لایه | width |
+|------|-------|
+| Container | 6 ستون → maxW 808px (fill زیر آن) |
+
+**کاربرد:** صفحات سند/چاپ، محتوای فوکوس‌شده‌ی باریک (برچسب، رسید)
+
+> تنها تفاوت با «One Column Center» (960px): عرض = span 6 ستونِ grid (نه 960px دلخواه). محتوا مستقیم در Main مرکز می‌شه (panel سفید جدا لازم نیست).
+
+**کد Chakra:** → بخش «Grid System → ترجمه به کد» بالا.
 
 ---
 

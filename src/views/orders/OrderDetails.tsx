@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import { Flex, Grid, Box } from '@chakra-ui/react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header } from '@/components/layout/Header'
@@ -25,6 +26,8 @@ import type { OrderStatus, OrderAction, ContactInfo } from '@/components/orders/
  */
 export function OrderDetails() {
   const isCompact = useCompactMode()
+  const router = useRouter()
+  const params = useParams()
   const [status, setStatus] = useState<OrderStatus>(MOCK_ORDER.status)
 
   // editable order data (mock — در نبود API)
@@ -153,7 +156,11 @@ export function OrderDetails() {
       <SelectSenderAddressDialog
         open={senderOpen}
         onClose={() => setSenderOpen(false)}
-        onSubmit={() => {}}
+        onSubmit={() => {
+          setSenderOpen(false)
+          const orderId = (params?.orderId as string) ?? MOCK_ORDER.code
+          router.push(`/orders/${orderId}/print-label`)
+        }}
       />
 
     </Flex>
