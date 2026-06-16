@@ -195,9 +195,9 @@ export function OrderPrintLabel() {
               _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }}
               onClick={handlePrint}
             >
-              {/* RTL: متن اول (راست) + آیکن پرینتر آخر (چپ) — مطابق Figma */}
-              پرینت برچسب
+              {/* RTL: آیکن پرینتر اول (راست = leading) + متن — مطابق Figma (LTR reverse شد) */}
               <Printer size={16} />
+              پرینت برچسب
             </Button>
           }
         />

@@ -235,9 +235,14 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 **قانون کلی:** در RTL، اولین child در DOM = راست‌ترین المان بصری.
 
-#### Button + icon (start icon = سمت راست در RTL)
+#### Button + icon — **default: icon FIRST in DOM (leading)** — اجباری
+> **قانون (هر دو جهت، direction-agnostic):** آیکن دکمه پیش‌فرض **اول DOM** = سمت start.
+> RTL → راستِ متن · LTR → چپِ متن. یک DOM، `dir` خودش flip می‌کند — ترتیب را per-direction عوض نکن.
+> **استثنا (تنها دو حالت):** کاربر صریح بگوید trailing، یا آیکن **هر دو طرف** متن باشد.
+> dev-engine (`dom-order` → `button-icon-after-text`) این را خودکار flag می‌کند — Latin و فارسی، multi-line و arrow-fn.
+
 ```tsx
-// ✅ CORRECT — icon FIRST = rightmost (start position)
+// ✅ CORRECT — icon FIRST = leading (RTL: راست، LTR: چپ)
 <Button>
   <Plus size={16} />   {/* FIRST → راست ✓ */}
   افزودن
