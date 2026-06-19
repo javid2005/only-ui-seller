@@ -35,6 +35,7 @@ pnpm start   # serve production build
 | `/orders/list` | لیست سفارش‌ها |
 | `/orders/[orderId]` | جزئیات سفارش |
 | `/orders/[orderId]/print-label` | پرینت برچسب (قالب 6-ستون مرکز، چاپ‌محور) |
+| `/orders/[orderId]/print-invoice` | پرینت فاکتور (قالب 6-ستون مرکز، چاپ‌محور) |
 | `/account/user-info` | حساب کاربری (اطلاعات / امنیت / احراز هویت / تاریخچه ورود) |
 | `/settings` | تنظیمات (صفحهٔ فرود) |
 | `/settings/store-info` | اطلاعات فروشگاه |
