@@ -39,9 +39,11 @@ export function Header({ title, breadcrumbs, badge, welcome, cta }: HeaderProps)
         align="flex-start"  /* flex-start = RIGHT side in RTL ✓ */
       >
 
-        {/* Breadcrumb */}
+        {/* Breadcrumb — وقتی جا کم بیاید wrap می‌شود (نه overflow/scroll).
+            container-based: روی موبایل واقعی و حالت compact هر دو کار می‌کند.
+            هر crumb خودش whiteSpace=nowrap است؛ فقط بین crumbها می‌شکند. */}
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <Flex align="center" gap="1" overflowX="auto" overflowY="hidden" flexShrink={0}>
+          <Flex align="center" gap="1" flexWrap="wrap" w="full">
             {breadcrumbs.map((crumb, i) => (
               <Fragment key={i}>
                 {crumb.href ? (

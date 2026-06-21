@@ -429,6 +429,12 @@ useEffect(() => {
 - title و subtitle هیچ‌وقت truncate نمیشن (`whiteSpace="nowrap"` ممنوع)
 - روی صفحه‌های باریک (360px) عناوین بلند wrap میشن — این intentional است
 
+### Breadcrumb — wrap نه overflow (اجباری)
+
+- وقتی breadcrumb در فضای موجود جا نمی‌شود باید **wrap** شود به خط بعد — هرگز overflow/scroll افقی نکند.
+- پیاده‌سازی در `Header.tsx`: container breadcrumb = `flexWrap="wrap" w="full"` (نه `overflowX="auto"`، نه `flexShrink={0}`). هر crumb خودش `whiteSpace="nowrap"` است؛ شکست فقط بین crumbها.
+- container-based است → روی موبایل واقعی **و** حالت compact هر دو درست کار می‌کند (نیازی به breakpoint نیست).
+
 ---
 
 ### Localization — اعداد و تاریخ فارسی (اجباری)

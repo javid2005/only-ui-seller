@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { Flex, Grid, Box } from '@chakra-ui/react'
+import { Flex, Grid, Box, Button } from '@chakra-ui/react'
+import { ReceiptText } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header } from '@/components/layout/Header'
 import { OrderStatusMenu } from '@/components/orders/OrderStatusMenu'
@@ -28,6 +29,7 @@ export function OrderDetails() {
   const isCompact = useCompactMode()
   const router = useRouter()
   const params = useParams()
+  const orderId = (params?.orderId as string) ?? MOCK_ORDER.code
   const [status, setStatus] = useState<OrderStatus>(MOCK_ORDER.status)
 
   // editable order data (mock — در نبود API)
@@ -68,7 +70,36 @@ export function OrderDetails() {
           { label: 'لیست سفارشات', href: '/orders/list' },
           { label: `سفارش ${MOCK_ORDER.code}` },
         ]}
-        cta={<OrderStatusMenu status={status} onAction={handleAction} />}
+        cta={
+          /* RTL: «مشاهده فاکتور» اولِ DOM = راستِ وضعیت (سمت مرکز) · وضعیت آخر = چپ (سرِجای قبلی) */
+          <Flex align="flex-start" gap="2">
+            <Button
+              variant="outline"
+              size="sm"
+              h="9"
+              /* < sm یا compact → دکمه آیکنی مربعی · sm+ → دکمه با متن */
+              w={isCompact ? '9' : { base: '9', sm: 'auto' }}
+              minW={isCompact ? '9' : { base: '9', sm: 'auto' }}
+              px={isCompact ? '0' : { base: '0', sm: '3.5' }}
+              rounded="md"
+              fontWeight="semibold"
+              fontSize="sm"
+              color="gray.fg"
+              bg="bg.panel"
+              borderColor="border"
+              _hover={{ bg: 'bg.subtle' }}
+              onClick={() => router.push(`/orders/${orderId}/print-invoice`)}
+              aria-label="مشاهده فاکتور"
+            >
+              {/* RTL: آیکن FIRST (راست = leading) — هم‌خوان با دکمه‌های پرینت */}
+              <ReceiptText size={16} />
+              <Box as="span" display={isCompact ? 'none' : { base: 'none', sm: 'inline' }}>
+                مشاهده فاکتور
+              </Box>
+            </Button>
+            <OrderStatusMenu status={status} onAction={handleAction} />
+          </Flex>
+        }
       />
 
       {/* Content — RTL: Middle (اول = راست، پهن) | End (آخر = چپ، باریک) */}
