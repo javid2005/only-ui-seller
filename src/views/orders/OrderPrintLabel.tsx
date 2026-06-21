@@ -3,6 +3,7 @@ import { Box, Flex, Text, Button, Alert, Separator, Badge, Grid, QrCode } from '
 import { Global } from '@emotion/react'
 import { Phone, Map, MapPin, Mailbox, Printer, ArrowLeft, ScissorsLineDashed, Info } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
+import { PrintFooterCTA } from '@/components/orders/PrintFooterCTA'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { MOCK_ORDER } from '@/components/orders/orderData'
 import logoMarkSrc from '@/assets/logo-mark.svg'
@@ -68,14 +69,40 @@ function DataRow({ icon, iconColor, children }: { icon: ReactNode; iconColor: st
   )
 }
 
-/** یک خانه از نوار اطلاعات بالای کارت (label بالا، value پایین). */
+/**
+ * یک خانه از نوار اطلاعات بالای کارت.
+ * sm+ : ستونی (label بالا، value پایین).
+ * < sm (و compact): ردیفی — label راست (اول DOM)، value چپ (آخر DOM).
+ */
 function InfoCell({ label, value }: { label: string; value: string }) {
+  const isCompact = useCompactMode()
   return (
-    <Flex direction="column" gap="2" minW="0" px="4" py="4" bg="bg.muted">
-      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="right" truncate>
+    <Flex
+      className="lbl-cell"
+      direction={isCompact ? 'row' : { base: 'row', sm: 'column' }}
+      align={isCompact ? 'center' : { base: 'center', sm: 'stretch' }}
+      justify={isCompact ? 'space-between' : { base: 'space-between', sm: 'flex-start' }}
+      gap="2"
+      minW="0"
+      px="4"
+      py="4"
+      bg="bg.muted"
+    >
+      {/* RTL: label اول = راست */}
+      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="right" flexShrink={0} truncate>
         {label}
       </Text>
-      <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" truncate dir="auto">
+      {/* RTL: value آخر = چپ */}
+      <Text
+        className="lbl-cell-val"
+        fontSize="sm"
+        fontWeight="semibold"
+        color="fg"
+        minW="0"
+        textAlign={isCompact ? 'left' : { base: 'left', sm: 'right' }}
+        truncate
+        dir="auto"
+      >
         {value}
       </Text>
     </Flex>
@@ -168,7 +195,39 @@ export function OrderPrintLabel() {
               width: 100%; max-width: 808px;
               margin-inline: auto;
             }
-            @page { margin: 12mm; }
+
+            /* عرض چاپ A4 (~۷۱۸px) < breakpoint md → بدون این، ردیف‌ها collapse و دو صفحه می‌شوند.
+               اینجا layout را عیناً مثل دسکتاپ (افقی) force می‌کنیم تا کل برچسب در یک صفحه جا شود. */
+            .lbl-info   { grid-template-columns: repeat(4, 1fr) !important; }
+            /* خانه‌های نوار اطلاعات: مقدار زیر عنوان (ستونی) و کامل، بدون truncate.
+               (responsive چاکرا با @media screen تعریف شده و در print fallback به base=ردیفی می‌شود) */
+            .lbl-cell { flex-direction: column !important; align-items: stretch !important; justify-content: flex-start !important; }
+            .lbl-cell-val {
+              text-align: right !important;
+              white-space: normal !important;
+              overflow: visible !important;
+              text-overflow: clip !important;
+              overflow-wrap: anywhere !important;
+              word-break: break-word !important;
+            }
+            .lbl-parties { flex-direction: row !important; align-items: stretch !important; }
+            .lbl-footer  { flex-direction: row !important; align-items: center !important; }
+            .lbl-sep {
+              border-inline-start-width: 1px !important;
+              border-block-end-width: 0 !important;
+              width: auto !important;
+              height: auto !important;
+              align-self: stretch !important;
+            }
+            .lbl-arrow { transform: translate(-50%, -50%) !important; }
+
+            /* فشرده‌سازی فاصله‌ها برای جای‌گیری مطمئن در یک صفحه */
+            .lbl-body { gap: 20px !important; padding: 20px !important; }
+
+            /* نوار CTA (بازگشت/پرینت) جزو خروجی چاپ نیست */
+            .print-cta { display: none !important; }
+
+            @page { size: A4; margin: 10mm; }
           }
         `}
       />
@@ -188,16 +247,21 @@ export function OrderPrintLabel() {
               color="brand.contrast"
               size="sm"
               h="9"
-              px="3.5"
+              /* < sm (و compact): مربعِ icon-only · sm+: full با متن */
+              w={isCompact ? '9' : { base: '9', sm: 'auto' }}
+              px={isCompact ? '0' : { base: '0', sm: '3.5' }}
               rounded="md"
               fontWeight="semibold"
               fontSize="sm"
               _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }}
               onClick={handlePrint}
+              aria-label="پرینت برچسب"
             >
               {/* RTL: آیکن پرینتر اول (راست = leading) + متن — مطابق Figma (LTR reverse شد) */}
               <Printer size={16} />
-              پرینت برچسب
+              <Box as="span" display={isCompact ? 'none' : { base: 'none', sm: 'inline' }}>
+                پرینت برچسب
+              </Box>
             </Button>
           }
         />
@@ -244,10 +308,11 @@ export function OrderPrintLabel() {
             </Flex>
 
             {/* بدنه سفید */}
-            <Flex direction="column" gap="10" p="6">
+            <Flex className="lbl-body" direction="column" gap="10" p="6">
               {/* نوار اطلاعات ۴ خانه — RTL: روش ارسال راست‌ترین */}
               <Grid
-                templateColumns={isCompact ? 'repeat(2, 1fr)' : { base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
+                className="lbl-info"
+                templateColumns={isCompact ? '1fr' : { base: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
                 gap="1px"
                 w="full"
                 rounded="xl"
@@ -265,6 +330,7 @@ export function OrderPrintLabel() {
 
               {/* گیرنده / فرستنده — RTL: فرستنده راست، گیرنده چپ، فلش وسط */}
               <Flex
+                className="lbl-parties"
                 position="relative"
                 align={isCompact ? 'stretch' : { base: 'stretch', md: 'flex-start' }}
                 direction={isCompact ? 'column' : { base: 'column', md: 'row' }}
@@ -275,6 +341,7 @@ export function OrderPrintLabel() {
 
                 {/* جداکننده */}
                 <Separator
+                  className="lbl-sep"
                   orientation={isCompact ? 'horizontal' : { base: 'horizontal', md: 'vertical' }}
                   variant="dashed"
                   alignSelf="stretch"
@@ -284,6 +351,7 @@ export function OrderPrintLabel() {
 
                 {/* فلش وسط (فقط دسکتاپ) */}
                 <Flex
+                  className="lbl-arrow"
                   position="absolute"
                   left="50%"
                   top="50%"
@@ -303,6 +371,7 @@ export function OrderPrintLabel() {
 
               {/* ردیف پایین: QR / تعداد بسته / کد رهگیری پستی — RTL: کد رهگیری راست‌ترین */}
               <Flex
+                className="lbl-footer"
                 direction={isCompact ? 'column' : { base: 'column', md: 'row' }}
                 align={isCompact ? 'stretch' : { base: 'stretch', md: 'center' }}
                 gap="4"
@@ -371,6 +440,9 @@ export function OrderPrintLabel() {
               </Text>
             </Flex>
           </Box>
+
+          {/* نوار CTA (بازگشت / پرینت) — چاپ نمی‌شود */}
+          <PrintFooterCTA printLabel="پرینت برچسب" onPrint={handlePrint} />
 
           {/* خط برش */}
           <Flex align="center" gap="4" w="full">

@@ -4,6 +4,7 @@ import { Box, Flex, Text, Button, Alert, Separator, Badge, Grid } from '@chakra-
 import { Global } from '@emotion/react'
 import { Printer, Headset, Mail, MapPin, Mailbox, Phone, CreditCard, Info, ScissorsLineDashed } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
+import { PrintFooterCTA } from '@/components/orders/PrintFooterCTA'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { MOCK_ORDER } from '@/components/orders/orderData'
 import logoSrc from '@/assets/logo.svg'
@@ -209,6 +210,8 @@ export function OrderPrintInvoice() {
               width: 100%; max-width: 808px;
               margin-inline: auto;
             }
+            /* نوار CTA (بازگشت/پرینت) جزو خروجی چاپ نیست */
+            .print-cta { display: none !important; }
             @page { margin: 12mm; }
           }
         `}
@@ -469,6 +472,9 @@ export function OrderPrintInvoice() {
               </Flex>
             </Flex>
           </Box>
+
+          {/* نوار CTA (بازگشت / پرینت) — چاپ نمی‌شود */}
+          <PrintFooterCTA printLabel="پرینت فاکتور" onPrint={handlePrint} />
 
           {/* خط برش */}
           <Flex align="center" gap="4" w="full">
