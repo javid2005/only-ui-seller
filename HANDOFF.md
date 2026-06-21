@@ -1,23 +1,16 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-06-15
+> آخرین آپدیت: 2026-06-21
 
 ## الان
-**مودال‌های صفحه جزئیات سفارش** (commit `11f0164` · branch `nextjs`):
-- ۴ مودال نو در `OrderDialogs.tsx`: کد رهگیری، ویرایش گیرنده، ویرایش آدرس، انتخاب آدرس فرستنده
-- `SenderCard.tsx` نو — کاملاً با Chakra `radio-card` (states از brand token)
-- fix: footer آینه‌ای `ShipDialog`/`CancelOrderDialog` → انصراف راست / brand چپ (مطابق Figma)
-- fix: Select داخل `EditAddressDialog` با `Portal` (dropdown دیگه داخل body اسکرول‌دار clip نمی‌شه)
-- همه به trigger درست وصل (`ShippingAddressPanel` + `ContactInfoCard`) · type-check + `pnpm build` سبز
+**صفحه فاکتور + دکمه مشاهده فاکتور + breadcrumb wrap** (commit `161f1ea` · branch `nextjs`):
+- `OrderPrintInvoice`: باکس سرفصل مطابق Figma (لوگو ۲۰px، عنوان lg، متا stacked در دسکتاپ / ردیفی در < sm)؛ ستون «فی (قیمت واحد)» جای «جمع»؛ کارت موبایل (`ItemCard`) به‌جای جدول در < sm/compact؛ دکمه پرینت آیکنی در < sm؛ حذف خط زیر «هزینه ارسال»
+- `OrderDetails`: دکمه «مشاهده فاکتور» (آیکن `ReceiptText`، آیکن‌first/راست) کنار دکمه وضعیت → ناوبری به `/orders/[orderId]/print-invoice`؛ آیکنی در < sm
+- `Header`: breadcrumb حالا `flexWrap="wrap"` (نه overflow/scroll) — container-based، موبایل + compact
+- `CLAUDE.md`: قانون «Breadcrumb — wrap نه overflow» اضافه شد
 
 ## بعدی
-- **push ۶ commit unpushed** (branch `nextjs`)
-- معوق: merge `nextjs` → `master`
+- merge `nextjs` → `main` (هنوز معوق)
+- معوق قدیمی: Persian numbers utility + Persian calendar همه‌جا
 
 ## نکته
-- gotchaهای DS این session ثبت شد در `dev-knowledge/.../chakra-ui-v3/known-bugs.md`: RadioCard border روی `Item` (نه `ItemControl`) · Select داخل Dialog باید `Portal` شه
-- `persian-numerals` warning روی `OrderItemsPanel`/`OrderTable`/`OrderCard` = TODO قدیمی، false-positive (داده از قبل رشته‌ی فارسی)؛ `ORD-5621` انگلیسی **عمدیه** (شناسه، نه عدد نمایشی)
-
-## صفحات
-همه ✅ — `/products/*`، `/account/user-info`، `/settings/*`، `/orders/list`، `/orders/[orderId]` (+ مودال‌ها)
-
-→ قوانین معماری + isCompact pattern: CLAUDE.md
+- دکمه‌های آیکن‌first (راست/leading) convention پروژه است — حتی اگر Figma آیکن را trailing نشان دهد (مثل «مشاهده فاکتور» و دکمه‌های پرینت)
