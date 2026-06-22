@@ -1,19 +1,11 @@
 # Vitrina — Claude Reference
 
-## Table of Contents
-1. [Knowledge References](#knowledge-references)
-2. [Protocols](#protocols) — Figma Gate · Root Cause · Figma→Code · DoD
-3. [Stack](#stack)
-4. [Critical Rules](#critical-rules) — RTL · Chakra Bugs · Layout · Compact · Localization
-5. [Token Reference](#token-reference) — Semantic · Brand · Design Scale
-
----
-
 ## Knowledge References
 
-→ `dev-knowledge/` repo — دانش مشترک بین پروژه‌ها (RTL، tokens، known bugs، چک‌لیست)
+→ repo خارجیِ مشترک — **بیرون پروژه است، auto-load نمی‌شود؛ موقع نیاز با Read باز کن.**
+ریشه: `~/Documents/GitHub/Tools/dev-knowledge/` — مسیرهای جدول زیر نسبت به همین ریشه‌اند.
 
-| موضوع | فایل |
+| موضوع | فایل (نسبت به ریشهٔ بالا) |
 |-------|------|
 | RTL concepts | `dev-knowledge/universal/language.md` |
 | Chakra v3 bugs | `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md` |
@@ -233,97 +225,27 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 ### RTL DOM Order — الگوهای اجباری
 
-**قانون کلی:** در RTL، اولین child در DOM = راست‌ترین المان بصری.
-
-#### Button + icon — **default: icon FIRST in DOM (leading)** — اجباری
-> **قانون (هر دو جهت، direction-agnostic):** آیکن دکمه پیش‌فرض **اول DOM** = سمت start.
-> RTL → راستِ متن · LTR → چپِ متن. یک DOM، `dir` خودش flip می‌کند — ترتیب را per-direction عوض نکن.
-> **استثنا (تنها دو حالت):** کاربر صریح بگوید trailing، یا آیکن **هر دو طرف** متن باشد.
-> dev-engine (`dom-order` → `button-icon-after-text`) این را خودکار flag می‌کند — Latin و فارسی، multi-line و arrow-fn.
+**قانون کلی:** در RTL، اولین child در DOM = راست‌ترین المان بصری. یک DOM می‌نویسی؛ `dir` خودش flip می‌کند — ترتیب را per-direction عوض نکن.
 
 ```tsx
-// ✅ CORRECT — icon FIRST = leading (RTL: راست، LTR: چپ)
+// ✅ canonical — leading element FIRST in DOM = سمت start (RTL: راست · LTR: چپ)
 <Button>
-  <Plus size={16} />   {/* FIRST → راست ✓ */}
+  <Plus size={16} />   {/* FIRST → راست */}
   افزودن
 </Button>
-
-// ❌ WRONG — icon on LEFT (end position, only for intentional end icons)
-<Button>
-  افزودن
-  <Plus size={16} />   {/* LAST → چپ ✗ */}
-</Button>
 ```
 
-#### Switch + label (standalone toggle)
-```tsx
-// ✅ CORRECT — Switch FIRST = rightmost
-<Flex align="center" gap="2.5">
-  <Switch.Root ...>
-    <Switch.HiddenInput />
-    <Switch.Control><Switch.Thumb /></Switch.Control>
-  </Switch.Root>
-  <Text>ارسال رایگان</Text>   {/* LAST → چپ ✓ */}
-</Flex>
+| الگو | اولین child در DOM (= راست) | بعدی (= چپ) |
+|------|------|------|
+| Button + icon | **icon** (leading) | متن |
+| Switch standalone / Switch.Label | **Switch.Control** | label/متن |
+| Form row (full-width) | **Switch** (`flexShrink={0}`) | `<Text flex="1">` |
+| Icon/Avatar row | **icon/avatar** | متن … action (LAST = چپ) |
+| Tabs.Trigger عمودی | `justifyContent="flex-start"` → متن راست | (`flex-end` = چپ ✗) |
 
-// ❌ WRONG — text before switch
-<Flex align="center" gap="2.5">
-  <Text>ارسال رایگان</Text>   {/* FIRST → راست ✗ */}
-  <Switch.Root ...>...</Switch.Root>
-</Flex>
-```
-
-#### Switch.Label inside Switch.Root
-```tsx
-// ✅ CORRECT — Control FIRST = rightmost
-<Switch.Root>
-  <Switch.HiddenInput />
-  <Switch.Control><Switch.Thumb /></Switch.Control>   {/* FIRST → راست ✓ */}
-  <Switch.Label>فعال</Switch.Label>                   {/* SECOND → چپ ✓ */}
-</Switch.Root>
-
-// ❌ WRONG — label before control
-<Switch.Root>
-  <Switch.Label>فعال</Switch.Label>                   {/* FIRST → راست ✗ */}
-  <Switch.Control>...</Switch.Control>
-</Switch.Root>
-```
-> **Note:** theme/index.ts adds `order: -1` to `[data-scope="switch"][data-part="control"]` as CSS fallback — اما DOM order صحیح باز هم اجباری است.
-
-#### Form row (full-width settings row)
-```tsx
-// ✅ Switch on RIGHT (start), label on LEFT (end)
-<Flex align="center" gap="2.5" w="full">
-  <Switch.Root flexShrink={0}>...</Switch.Root>   {/* FIRST → راست ✓ */}
-  <Text flex="1">عنوان تنظیم</Text>               {/* LAST → چپ ✓ */}
-</Flex>
-```
-
-#### Icon/Avatar in any row component
-```tsx
-// ✅ Icon FIRST = rightmost (start/leading icon)
-<Flex align="center" gap="3">
-  <Icon />          {/* FIRST → راست ✓ */}
-  <Text>محتوا</Text>
-  <ActionButton />  {/* LAST → چپ ✓ */}
-</Flex>
-```
-
-#### Tabs.Trigger vertical orientation (RTL text alignment)
-```tsx
-// ✅ CORRECT — justifyContent="flex-start" در RTL = text راست ✓
-<Tabs.Root variant="subtle" orientation="vertical">
-  <Tabs.List w="full">
-    <Tabs.Trigger value="x" w="full" justifyContent="flex-start">
-      متن تب
-    </Tabs.Trigger>
-  </Tabs.List>
-</Tabs.Root>
-
-// ❌ WRONG — justifyContent="flex-end" در RTL = text چپ ✗
-<Tabs.Trigger w="full" justifyContent="flex-end">متن تب</Tabs.Trigger>
-```
-> **قانون:** در RTL، `justifyContent="flex-start"` = راست، `justifyContent="flex-end"` = چپ.
+- **استثنای icon trailing (تنها دو حالت):** کاربر صریح بگوید، یا آیکن هر دو طرف متن باشد.
+- dev-engine قانون `button-icon-after-text` را خودکار flag می‌کند (Latin/فارسی، multi-line، arrow-fn).
+- theme `order:-1` روی `[data-scope="switch"][data-part="control"]` = CSS fallback — اما DOM order صحیح باز هم اجباری.
 
 ### RTL in Portal components (Menu, Drawer, Popover, Tooltip)
 
@@ -475,59 +397,9 @@ toLatinDigits(s: string): string             // برای input → API
 
 ## Token Reference
 
-### Semantic Tokens — Background
-| Token | Light | Dark |
-|-------|-------|------|
-| `bg` | white | black |
-| `bg.subtle` | gray.50 | gray.950 |
-| `bg.muted` | gray.100 | gray.900 |
-| `bg.emphasized` | gray.200 | gray.800 |
-| `bg.inverted` | black | white |
-| `bg.panel` | white | gray.950 |
-| `bg.error` | red.50 | red.950 |
-| `bg.warning` | orange.50 | orange.950 |
-| `bg.success` | green.50 | green.950 |
-| `bg.info` | blue.50 | blue.950 |
-
-### Semantic Tokens — Foreground
-| Token | Light | Dark |
-|-------|-------|------|
-| `fg` | black | gray.50 |
-| `fg.muted` | gray.600 | gray.400 |
-| `fg.subtle` | gray.400 | gray.500 |
-| `fg.inverted` | gray.50 | black |
-| `fg.error` | red.500 | red.400 |
-| `fg.warning` | orange.600 | orange.300 |
-| `fg.success` | green.600 | green.300 |
-| `fg.info` | blue.600 | blue.300 |
-
-### Semantic Tokens — Border
-| Token | Light | Dark |
-|-------|-------|------|
-| `border` | gray.200 | gray.800 |
-| `border.muted` | gray.100 | gray.900 |
-| `border.subtle` | gray.50 | gray.950 |
-| `border.emphasized` | gray.300 | gray.700 |
-| `border.inverted` | gray.800 | gray.200 |
-| `border.error` | red.500 | red.400 |
-| `border.warning` | orange.500 | orange.400 |
-| `border.success` | green.500 | green.400 |
-| `border.info` | blue.500 | blue.400 |
-
-### Per-Color Semantic Tokens
-Pattern: `{color}.{variant}` — available for:
-`gray | red | orange | yellow | green | teal | blue | cyan | purple | pink`
-
-| Variant | Description |
-|---------|-------------|
-| `.contrast` | text on solid bg (usually white) |
-| `.fg` | colored text |
-| `.subtle` | very light tint bg |
-| `.muted` | light tint bg |
-| `.emphasized` | medium tint bg |
-| `.solid` | full-color action bg |
-| `.focusRing` | focus ring color |
-| `.border` | colored border |
+> **مقادیر کامل semantic (bg/fg/border) و per-color (`{color}.{variant}`: contrast/fg/subtle/muted/emphasized/solid/focusRing/border) = استاندارد Chakra v3.**
+> منبع داخل پروژه: `src/theme/tokens.ts` · مرجع مشترک: `dev-knowledge/.../tokens.md` · runtime: Chakra MCP `get_theme`.
+> فقط توکن‌های **Vitrina-specific** اینجا inline‌اند:
 
 ### Vitrina Brand Tokens (`src/theme/tokens.ts`)
 | Token | Light | Dark |
@@ -552,62 +424,10 @@ Pattern: `{color}.{variant}` — available for:
 
 ## Design Scale
 
-### Spacing
-```
-0.5→2px  | 1→4px   | 1.5→6px  | 2→8px   | 2.5→10px | 3→12px
-3.5→14px | 4→16px  | 5→20px   | 6→24px  | 7→28px   | 8→32px
-9→36px   | 10→40px | 11→44px  | 12→48px | 14→56px  | 16→64px
-20→80px  | 24→96px
-```
+> **همهٔ scaleها (spacing، radius، shadow، font-size/weight، line-height، layer-style، z-index، palette raw) = استاندارد Chakra v3** → `src/theme/tokens.ts` یا Chakra MCP `get_theme`.
+> ⚠️ تنها تله‌ای که باید یادت باشه (در Chakra Known Issues بالا هم هست): `lineHeight` numeric شکسته است — همیشه ratio string بده.
 
-### Border Radius
-```
-none | sm(2px) | md(4px) | lg(6px) | xl(8px) | 2xl(12px) | 3xl(16px) | full(9999px)
-```
-
-### Shadows
-```
-xs | sm | md | lg | xl | 2xl | inner | none
-```
-
-### Typography
-
-**Font Size:**
-```
-2xs(10) | xs(12) | sm(14) | md(16) | lg(18) | xl(20) | 2xl(24)
-3xl(30) | 4xl(36) | 5xl(48) | 6xl(60) | 7xl(72)
-```
-
-**Font Weight:**
-```
-thin(100) | light(300) | normal(400) | medium(500)
-semibold(600) | bold(700) | extrabold(800) | black(900)
-```
-
-**Line Height:**
-```
-none(1) | tight(1.25) | snug(1.375) | normal(1.5) | relaxed(1.625) | loose(2)
-Numeric: 3(12px) 4(16px) 5(20px) 6(24px) 7(28px) 8(32px) 9(36px) 10(40px)
-```
-
-**Text Styles:** `2xs | xs | sm | md | lg | xl | 2xl | 3xl | 4xl | 5xl | 6xl | 7xl | label | none`
-
-### Layer Styles
-```
-fill.muted | fill.subtle | fill.surface | fill.solid
-outline.subtle | outline.solid
-indicator.bottom | indicator.top | indicator.start | indicator.end
-disabled | none
-```
-
-### Z-Index
-```
-hide(-1) | base(0) | docked(10) | dropdown(1000) | sticky(1100)
-banner(1200) | overlay(1300) | modal(1400) | popover(1500)
-skipLink(1600) | toast(1700) | tooltip(1800)
-```
-
-### Breakpoints
+### Breakpoints — Vitrina targets (project-specific)
 ```
 xs(360px) | sm(480px) | md(768px) | lg(992px) | xl(1280px) | 2xl(1536px)
 ```
@@ -616,10 +436,3 @@ Vitrina targets: **360px** (mobile) · **480px** (mobile+) · **1440px** (deskto
 **Responsive pattern برای 360px:**
 - `xs` breakpoint فقط برای تمایز < 360px از 360-479px (نادر)
 - اکثر padding/font: `{ base: 'small', sm: 'large' }` — jump-up در 480px
-
-### Palette Tokens (raw)
-```
-transparent | current | black | white
-whiteAlpha.50–950 | blackAlpha.50–950
-gray/red/orange/yellow/green/teal/blue/cyan/purple/pink → .50 .100 .200 .300 .400 .500 .600 .700 .800 .900 .950
-```

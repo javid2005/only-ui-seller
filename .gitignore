@@ -33,3 +33,6 @@ next-env.d.ts
 *.sln
 *.sw?
 .DS_Store
+
+# CLAUDE.md backups (local only)
+CLAUDE.md.bak-*
