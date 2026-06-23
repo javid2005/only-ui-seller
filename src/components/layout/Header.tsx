@@ -118,9 +118,10 @@ interface HeaderCTAProps {
   label: string
   icon?: ReactNode
   onClick?: () => void
+  disabled?: boolean
 }
 
-export function HeaderCTA({ label, icon, onClick }: HeaderCTAProps) {
+export function HeaderCTA({ label, icon, onClick, disabled }: HeaderCTAProps) {
   return (
     <Button
       bg="brand.solid"
@@ -133,6 +134,7 @@ export function HeaderCTA({ label, icon, onClick }: HeaderCTAProps) {
       borderRadius="sm"
       _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }}
       onClick={onClick}
+      disabled={disabled}
     >
       {/* RTL: icon FIRST = rightmost (start/leading), label SECOND = leftmost */}
       {icon && <Box display="flex" alignItems="center" flexShrink={0}>{icon}</Box>}

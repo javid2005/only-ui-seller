@@ -214,6 +214,10 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 2. **Table alt-row** — قبل از ساخت هر جدول از کاربر بپرس: سطرهای متناوب رنگ پس‌زمینه متفاوت بخوان؟ چه رنگی؟ (پیش‌فرض `bg.subtle`). پیاده‌سازی با token: `<Table.Row bg={i % 2 ? 'bg.subtle' : undefined}>`.
 3. **Sidebar selected** — صفحه‌ی فعال باید item متناظرش در Sidebar را `active`/selected نشان دهد — هم parent (auto-open + highlight)، هم sub-item — به‌صورت route-aware (نه state دستی). → `dev-knowledge/universal/app-conventions.md`
 4. **Responsive assets** — برای حالت responsive/mobile اگر لینک یا تصویر مخصوص آن view به تو داده نشده، قبل از ساخت **ماژولار بپرس** (نه حدس). → `dev-knowledge/universal/app-conventions.md`
+5. **NumberField فقط** — هر input **عددی** (قیمت، مبلغ، وزن، تخفیف، موجودی، تعداد، روز/زمان، …) باید `<NumberField>` باشد (`src/components/ui/NumberField.tsx`) — نه `<Input inputMode="numeric">` خام و نه `<NumberInput.Root>` مستقیم. خودش جداکنندهٔ سه‌رقمیِ زنده + ارقام فارسی + فقط-رقم می‌دهد و مقدار **لاتینِ تمیز** برمی‌گرداند (برای API/محاسبه). با هر کیبورد (فارسی/عربی/لاتین) یکسان کار می‌کند — ورودی را داخل خودش به لاتین normalize می‌کند. (روی `<Input>` ساده ساخته شده، نه zag `NumberInput` — چون parserِ locale آن ورودیِ ترکیبیِ فارسی/لاتین را reject می‌کرد.)
+   - props: `value`/`onChange(v)` (string لاتین) · `allowDecimals` (وزن) · `showSteppers` (تعداد/موجودی) · `startElement`/`endElement` + `*ElementProps` (addon واحد مثل تومان/kg — داخلش `InputGroup` می‌زند) · `inputProps` (style روی خودِ input مثل `bg="bg.panel"`، چون `{...rest}` به `Root` می‌رود نه input).
+   - الگو: `InfoTab.tsx` (قیمت/تخفیف/وزن/موجودی)، `AddShippingMethod.tsx`، `ShippingCalculatorDialog.tsx`.
+   - **استثنا:** `<Input>` متنیِ غیرعددی (نام، SKU، عنوان، جستجو) و فیلدهای read-only/derived که فقط نمایش می‌دهند (مقدار را با `toPersianDigits` فارسی کن، اما خودِ کامپوننت `NumberField` لازم نیست).
 
 ### RTL — پایه
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Box, Flex, Text, Input, InputGroup, Button, Badge, chakra,
+  Box, Flex, Text, Input, Button, Badge, chakra,
   Switch, Field, SegmentGroup, Select, createListCollection,
   Collapsible, IconButton, Grid, NativeSelect,
 } from '@chakra-ui/react'
@@ -11,6 +11,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import { Header }       from '@/components/layout/Header'
 import { TitleBar }     from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
+import { NumberField }  from '@/components/ui/NumberField'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -164,21 +165,16 @@ function PriceCard({ isFree, amount, onFreeChange, onAmountChange }: PriceCardPr
         {/* مبلغ — flex-1 in row, full-width in column */}
         <Field.Root flex={isCompact ? '1' : { base: 'none', sm: '1' }}>
           <Field.Label fontSize="sm" fontWeight="semibold" color="fg">مبلغ</Field.Label>
-          <InputGroup
+          <NumberField
+            placeholder="هزینه"
+            value={isFree ? '' : amount}
+            disabled={isFree}
+            onChange={onAmountChange}
+            inputProps={{ bg: 'bg.panel' }}
             endElement={
               <Text fontSize="sm" color="fg.muted" px="2" flexShrink={0}>تومان</Text>
             }
-          >
-            <Input
-              bg="bg.panel"
-              placeholder="هزینه"
-              value={isFree ? '' : amount}
-              disabled={isFree}
-              onChange={(e) => onAmountChange(e.target.value)}
-              type="text"
-              inputMode="numeric"
-            />
-          </InputGroup>
+          />
         </Field.Root>
 
         {/* ارسال رایگان — RTL: Switch FIRST=right, Text LAST=left */}
@@ -317,7 +313,13 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
             >
 
               {/* FIRST = rightmost = از وزن */}
-              <InputGroup
+              <NumberField
+                size="sm"
+                allowDecimals
+                placeholder="۰"
+                value={row.fromWeight}
+                onChange={(v) => onUpdate(row.id, { fromWeight: v })}
+                inputProps={{ bg: 'bg.panel', pe: '0' }}
                 endElement={
                   <UnitSelect
                     value={row.fromUnit}
@@ -325,21 +327,16 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
                     options={WEIGHT_UNITS}
                   />
                 }
-              >
-                <Input
-                  bg="bg.panel"
-                  size="sm"
-                  placeholder="۰"
-                  value={row.fromWeight}
-                  onChange={(e) => onUpdate(row.id, { fromWeight: e.target.value })}
-                  type="text"
-                  inputMode="decimal"
-                  pe="0"
-                />
-              </InputGroup>
+              />
 
               {/* تا وزن */}
-              <InputGroup
+              <NumberField
+                size="sm"
+                allowDecimals
+                placeholder="۰"
+                value={row.toWeight}
+                onChange={(v) => onUpdate(row.id, { toWeight: v })}
+                inputProps={{ bg: 'bg.panel', pe: '0' }}
                 endElement={
                   <UnitSelect
                     value={row.toUnit}
@@ -347,36 +344,20 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
                     options={WEIGHT_UNITS}
                   />
                 }
-              >
-                <Input
-                  bg="bg.panel"
-                  size="sm"
-                  placeholder="۰"
-                  value={row.toWeight}
-                  onChange={(e) => onUpdate(row.id, { toWeight: e.target.value })}
-                  type="text"
-                  inputMode="decimal"
-                  pe="0"
-                />
-              </InputGroup>
+              />
 
               {/* مبلغ */}
-              <InputGroup
+              <NumberField
+                size="sm"
+                placeholder="هزینه"
+                value={row.isFree ? '' : row.amount}
+                disabled={row.isFree}
+                onChange={(v) => onUpdate(row.id, { amount: v })}
+                inputProps={{ bg: 'bg.panel' }}
                 endElement={
                   <Text fontSize="xs" color="fg.muted" px="2" flexShrink={0}>تومان</Text>
                 }
-              >
-                <Input
-                  bg="bg.panel"
-                  size="sm"
-                  placeholder="هزینه"
-                  value={row.isFree ? '' : row.amount}
-                  disabled={row.isFree}
-                  onChange={(e) => onUpdate(row.id, { amount: e.target.value })}
-                  type="text"
-                  inputMode="numeric"
-                />
-              </InputGroup>
+              />
 
               {/* ارسال رایگان — RTL: Switch FIRST=right, Text LAST=left */}
               <Flex align="center" gap="2">
@@ -419,7 +400,13 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
                 {/* FIRST = rightmost = از وزن */}
                 <Field.Root>
                   <Field.Label fontSize="xs" fontWeight="semibold" color="fg">از وزن</Field.Label>
-                  <InputGroup
+                  <NumberField
+                    size="sm"
+                    allowDecimals
+                    placeholder="۰"
+                    value={row.fromWeight}
+                    onChange={(v) => onUpdate(row.id, { fromWeight: v })}
+                    inputProps={{ bg: 'bg.panel', pe: '0' }}
                     endElement={
                       <UnitSelect
                         value={row.fromUnit}
@@ -427,24 +414,19 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
                         options={WEIGHT_UNITS}
                       />
                     }
-                  >
-                    <Input
-                      bg="bg.panel"
-                      size="sm"
-                      placeholder="۰"
-                      value={row.fromWeight}
-                      onChange={(e) => onUpdate(row.id, { fromWeight: e.target.value })}
-                      type="text"
-                      inputMode="decimal"
-                      pe="0"
-                    />
-                  </InputGroup>
+                  />
                 </Field.Root>
 
                 {/* تا وزن */}
                 <Field.Root>
                   <Field.Label fontSize="xs" fontWeight="semibold" color="fg">تا وزن</Field.Label>
-                  <InputGroup
+                  <NumberField
+                    size="sm"
+                    allowDecimals
+                    placeholder="۰"
+                    value={row.toWeight}
+                    onChange={(v) => onUpdate(row.id, { toWeight: v })}
+                    inputProps={{ bg: 'bg.panel', pe: '0' }}
                     endElement={
                       <UnitSelect
                         value={row.toUnit}
@@ -452,18 +434,7 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
                         options={WEIGHT_UNITS}
                       />
                     }
-                  >
-                    <Input
-                      bg="bg.panel"
-                      size="sm"
-                      placeholder="۰"
-                      value={row.toWeight}
-                      onChange={(e) => onUpdate(row.id, { toWeight: e.target.value })}
-                      type="text"
-                      inputMode="decimal"
-                      pe="0"
-                    />
-                  </InputGroup>
+                  />
                 </Field.Root>
 
               </Grid>
@@ -471,23 +442,17 @@ function WeightTable({ ranges, onAdd, onDelete, onUpdate }: WeightTableProps) {
               {/* مبلغ — standalone Field.Root (isolated from Switch to prevent disabled propagation) */}
               <Field.Root>
                 <Field.Label fontSize="xs" fontWeight="semibold" color="fg">مبلغ</Field.Label>
-                <InputGroup
-                  w="full"
+                <NumberField
+                  size="sm"
+                  placeholder="هزینه"
+                  value={row.isFree ? '' : row.amount}
+                  disabled={row.isFree}
+                  onChange={(v) => onUpdate(row.id, { amount: v })}
+                  inputProps={{ bg: 'bg.panel' }}
                   endElement={
                     <Text fontSize="xs" color="fg.muted" px="1" flexShrink={0}>تومان</Text>
                   }
-                >
-                  <Input
-                    bg="bg.panel"
-                    size="sm"
-                    placeholder="هزینه"
-                    value={row.isFree ? '' : row.amount}
-                    disabled={row.isFree}
-                    onChange={(e) => onUpdate(row.id, { amount: e.target.value })}
-                    type="text"
-                    inputMode="numeric"
-                  />
-                </InputGroup>
+                />
               </Field.Root>
 
               {/* ارسال رایگان + delete — outside Field.Root, fills width */}
@@ -635,7 +600,11 @@ function SectionContent({ data, onChange }: SectionContentProps) {
         {/* LAST = leftmost = زمان مورد نیاز — row 1 left in mobile */}
         <Field.Root>
           <Field.Label fontSize="sm" fontWeight="semibold" color="fg">زمان مورد نیاز تا ارسال</Field.Label>
-          <InputGroup
+          <NumberField
+            placeholder="زمان تا ارسال"
+            value={data.deliveryDays}
+            onChange={(v) => onChange({ deliveryDays: v })}
+            inputProps={{ pe: '0' }}
             endElement={
               <UnitSelect
                 value={data.deliveryUnit}
@@ -643,16 +612,7 @@ function SectionContent({ data, onChange }: SectionContentProps) {
                 options={DELIVERY_UNITS}
               />
             }
-          >
-            <Input
-              placeholder="زمان تا ارسال"
-              value={data.deliveryDays}
-              onChange={(e) => onChange({ deliveryDays: e.target.value })}
-              type="text"
-              inputMode="numeric"
-              pe="0"
-            />
-          </InputGroup>
+          />
         </Field.Root>
 
       </Grid>

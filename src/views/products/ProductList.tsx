@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Badge, Box, Flex, IconButton, Input, InputGroup,
   SegmentGroup, Select, Spacer, Stat, Switch, Text,
@@ -91,6 +92,7 @@ function StatCard({ stat, showBar }: { stat: StatItem; showBar: boolean }) {
 }
 
 export function ProductList() {
+  const router = useRouter()
   const isCompact = useCompactMode()
   const [search, setSearch] = useState('')
   const [view, setView] = useState('list')
@@ -157,7 +159,7 @@ export function ProductList() {
       <Header
         title="لیست محصولات"
         breadcrumbs={[{ label: 'داشبورد', href: '/' }, { label: 'لیست محصولات' }]}
-        cta={<HeaderCTA label="افزودن محصول" icon={<Plus size={16} />} />}
+        cta={<HeaderCTA label="افزودن محصول" icon={<Plus size={16} />} onClick={() => router.push('/products/new')} />}
       />
 
       {/* ── Stats ── */}

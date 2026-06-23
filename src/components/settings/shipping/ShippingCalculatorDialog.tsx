@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import {
-  Dialog, Portal, CloseButton, Button, Field, Input,
+  Dialog, Portal, CloseButton, Button, Field,
   SegmentGroup, Flex, Box, Text, Badge, Grid, Separator,
 } from '@chakra-ui/react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
+import { NumberField } from '@/components/ui/NumberField'
 
 // ─── Types (exported — used by ShippingSettings & AddShippingMethod) ──────────
 
@@ -206,13 +207,12 @@ export function ShippingCalculatorDialog({
                 <Flex gap="3" align="flex-start" flex="1" minW="0">
                   {/* FIRST = rightmost = weight input */}
                   <Field.Root flex="1" invalid={!!error}>
-                    <Input
+                    <NumberField
+                      allowDecimals
                       placeholder="وزن مرسوله را وارد کنید"
                       value={weight}
-                      onChange={(e) => { setWeight(e.target.value); setError('') }}
-                      type="text"
-                      inputMode="decimal"
-                      onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+                      onChange={(v) => { setWeight(v); setError('') }}
+                      inputProps={{ onKeyDown: (e) => e.key === 'Enter' && handleCalculate() }}
                     />
                     {error && <Field.ErrorText fontSize="xs">{error}</Field.ErrorText>}
                   </Field.Root>
