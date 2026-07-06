@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Box, Flex, Drawer, Portal, CloseButton } from '@chakra-ui/react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
 import { CompactModeProvider } from '@/contexts/CompactModeContext'
@@ -11,6 +12,12 @@ import logoSrc from '../../assets/logo.svg'
 export function Layout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isCompact, setIsCompact] = useState(false)
+  const pathname = usePathname()
+
+  // در حالت موبایل/همبرگری: با تغییر مسیر (کلیک روی آیتم منو) drawer بسته شود
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
 
   return (
     /* Outer: full-width, natural height — window scrolls (RTL scrollbar at browser left edge) */

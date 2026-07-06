@@ -30,6 +30,7 @@ pnpm start   # serve production build
 |-------|------|
 | `/` | داشبورد |
 | `/products/list` | لیست محصولات (جدول + view کارت، فیلتر، pagination، انتخاب گروهی) |
+| `/products/new` | افزودن محصول جدید (مرحله‌ای: اطلاعات / گالری / تنوع‌ها) |
 | `/products/categories` | دسته‌بندی محصولات |
 | `/products/reviews` | نظرات محصولات |
 | `/orders/list` | لیست سفارش‌ها |

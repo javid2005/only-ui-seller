@@ -274,6 +274,7 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - Color mode toggle → uses `<Theme appearance="light"|"dark">` wrapper in `ColorModeProvider`; persists to `localStorage` key `vitrina-color-mode`
 - Avatar.Root / complex components → do NOT forward refs for `asChild`. Wrap in `<Box as="button" type="button">` first
 - `sx` prop → **nested selectors NOT injected** (`'& .child': {...}`, `'&:focus-within': {...}` کار نمی‌کنن). برای nested CSS از `editorProps.attributes.style` (Tiptap)، `_focusWithin` prop (Chakra)، یا `Global` از `@emotion/react` استفاده کن
+- `Combobox.Root` با `inputValue` **کنترل‌شده** + `allowCustomValue={true}` → گاهی رویداد تایپِ متن دلخواه (که با هیچ آیتمی مطابقت ندارد) گم می‌شود و ورودی کاربر ثبت نمی‌شود. راه‌حل: `defaultInputValue` (uncontrolled) به‌جای `inputValue` + خواندن مقدار لحظهٔ ثبت مستقیم از DOM (`ref`)، نه از React state. برای reset از بیرون (بعد از ثبت) از `key` جدید برای remount استفاده کن، نه پاک‌کردن state کنترل‌شده. الگو: `src/components/products/new/VariantAccordion.tsx` (`SuggestCombobox`)
 
 ---
 

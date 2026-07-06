@@ -1,16 +1,17 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-06-21
+> آخرین آپدیت: 2026-07-06
 
 ## الان
-**صفحه فاکتور + دکمه مشاهده فاکتور + breadcrumb wrap** (commit `161f1ea` · branch `nextjs`):
-- `OrderPrintInvoice`: باکس سرفصل مطابق Figma (لوگو ۲۰px، عنوان lg، متا stacked در دسکتاپ / ردیفی در < sm)؛ ستون «فی (قیمت واحد)» جای «جمع»؛ کارت موبایل (`ItemCard`) به‌جای جدول در < sm/compact؛ دکمه پرینت آیکنی در < sm؛ حذف خط زیر «هزینه ارسال»
-- `OrderDetails`: دکمه «مشاهده فاکتور» (آیکن `ReceiptText`، آیکن‌first/راست) کنار دکمه وضعیت → ناوبری به `/orders/[orderId]/print-invoice`؛ آیکنی در < sm
-- `Header`: breadcrumb حالا `flexWrap="wrap"` (نه overflow/scroll) — container-based، موبایل + compact
-- `CLAUDE.md`: قانون «Breadcrumb — wrap نه overflow» اضافه شد
+**تب «تنوع‌ها» + «گالری» تکمیل شد (uncommitted روی branch `nextjs`)**:
+- `VariantAccordion.tsx`: گروه تنوع — عنوان/مقدار با Chakra `Combobox` (پیشنهاد پیش‌فرض + متن آزاد)، جلوگیری از عنوان تکراری (خطای قرمز + حذف از پیشنهادها)، ریسپانسیو (`<sm`: فیلدها ستونی fill، دکمه‌ها زیر و چپ‌چین)
+- `VariantCombinationCard.tsx`: کارت ماتریس ترکیب — فعال/فروش‌تلفنی/موجودی‌نامحدود/تخفیف با قفل فیلد مربوطه، ریسپانسیو (`<sm`: badgeها زیر SKU)
+- `VariantsTab.tsx`: orchestration کامل — Accordionها + ماتریس + فیلتر ریسپانسیو (دسکتاپ: ردیف inline · موبایل/`isCompact`: دکمه فیلتر + `FiltersDialog` مودال با Apply/Cancel) + EmptyStateهای «هیچ تنوعی»/«هیچ ترکیبی»/«موردی یافت نشد»
+- `GalleryTab.tsx` + `VariantSelectDialog.tsx` هم این session کامل شد
 
 ## بعدی
-- merge `nextjs` → `main` (هنوز معوق)
-- معوق قدیمی: Persian numbers utility + Persian calendar همه‌جا
+- commit تغییرات فعلی (نه هنوز commit شده)
+- بعد از commit: merge `nextjs` → `main`
 
 ## نکته
-- دکمه‌های آیکن‌first (راست/leading) convention پروژه است — حتی اگر Figma آیکن را trailing نشان دهد (مثل «مشاهده فاکتور» و دکمه‌های پرینت)
+- Chakra `Combobox` با `inputValue` کنترل‌شده + `allowCustomValue` گاهی رویداد تایپ متن دلخواه را گم می‌کند — راه‌حل: uncontrolled (`defaultInputValue`) + خواندن مقدار مستقیم از DOM (`ref`) در لحظهٔ ثبت، نه از React state. نگاه کن `VariantAccordion.tsx`
+- `isCompact` واقعیتِ viewport را عوض نمی‌کند → برای display-swap (نه فقط layout prop) باید هم breakpoint هم `isCompact` را جدا چک کرد: `isCompact ? 'none' : { base:'none', md:'flex' }`

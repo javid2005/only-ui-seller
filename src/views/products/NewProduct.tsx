@@ -1,33 +1,21 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Box, Flex, EmptyState } from '@chakra-ui/react'
-import { Upload, Images, Boxes } from 'lucide-react'
+import { Box, Flex } from '@chakra-ui/react'
+import { Upload } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header, HeaderCTA } from '@/components/layout/Header'
 import { StepNav, type StepStatus } from '@/components/products/new/StepNav'
 import { InfoTab } from '@/components/products/new/InfoTab'
-import { EMPTY_FORM, type ProductForm, type StepId } from '@/components/products/new/data'
-
-// ─── Placeholder برای تب‌هایی که هنوز طراحی/پیاده نشده‌اند ──────────────────────
-function StepPlaceholder({ icon, title }: { icon: React.ReactNode; title: string }) {
-  return (
-    <EmptyState.Root size="sm">
-      <EmptyState.Content>
-        <EmptyState.Indicator>{icon}</EmptyState.Indicator>
-        <EmptyState.Title>{title}</EmptyState.Title>
-        <EmptyState.Description>این بخش به‌زودی اضافه می‌شود.</EmptyState.Description>
-      </EmptyState.Content>
-    </EmptyState.Root>
-  )
-}
+import { GalleryTab } from '@/components/products/new/GalleryTab'
+import { VariantsTab } from '@/components/products/new/VariantsTab'
+import { EMPTY_FORM, pricingModeOf, type ProductForm, type StepId } from '@/components/products/new/data'
 
 /**
  * NewProduct — صفحه «محصول جدید»
  * Template: Two Columns Right Center (نویگیشن مرحله‌ای راست + فرم مرکز max 960)
  * Route: /products/new
  *
- * این پاس: فقط تب «اطلاعات محصول» در حالت استاندارد (UI + state محلی).
- * گالری / تنوع‌ها فعلاً placeholder. حالت‌های طلا/ارزی/تنوع بعداً شرطی اضافه می‌شوند.
+ * سه تب: اطلاعات محصول / گالری / تنوع‌ها (Accordion + ماتریس ترکیب‌ها) — UI + state محلی.
  */
 export function NewProduct() {
   const router = useRouter()
@@ -40,21 +28,23 @@ export function NewProduct() {
 
   // ─── تکمیل هر تب ──────────────────────────────────────────────────────────────
   // اطلاعات محصول: نام + دسته + قیمت (مگر فروش تلفنی) + موجودی (مگر نامحدود/تنوع)
+  const isGold = pricingModeOf(form.category) === 'gold'
+  const priceFilled = isGold ? form.goldWeight.trim() : form.price.trim()
   const infoComplete = Boolean(
     form.name.trim() &&
     form.category &&
-    (form.phoneSale || form.price.trim()) &&
+    (form.phoneSale || priceFilled) &&
     (form.unlimitedInventory || form.hasVariants || form.inventory.trim()),
   )
-  // TODO: وقتی تب گالری ساخته شد → حداقل یک تصویر لازم است
-  const galleryComplete = false
+  // گالری: حداقل یک تصویر لازم است
+  const galleryComplete = form.gallery.length > 0
   // تنوع اختیاری است؛ نبودِ تنوع هم معتبر است
   const variantsComplete = true
 
   const statuses: Record<StepId, StepStatus> = {
     info: infoComplete ? 'complete' : 'pending',
     gallery: galleryComplete ? 'complete' : 'pending',
-    variants: 0,
+    variants: form.combinations.length,
   }
 
   // انتشار فقط وقتی اطلاعات اجباری هر سه تب کامل باشد
@@ -95,7 +85,6 @@ export function NewProduct() {
             active={activeStep}
             onSelect={setActiveStep}
             statuses={statuses}
-            disabled={['gallery', 'variants']}
           />
         </Box>
 
@@ -116,7 +105,6 @@ export function NewProduct() {
                 active={activeStep}
                 onSelect={setActiveStep}
                 statuses={statuses}
-                disabled={['gallery', 'variants']}
               />
             </Box>
           )}
@@ -127,10 +115,10 @@ export function NewProduct() {
               <InfoTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
             {activeStep === 'gallery' && (
-              <StepPlaceholder icon={<Images size={24} />} title="گالری مدیا" />
+              <GalleryTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
             {activeStep === 'variants' && (
-              <StepPlaceholder icon={<Boxes size={24} />} title="تنوع‌های محصول" />
+              <VariantsTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
           </Flex>
 

@@ -9,16 +9,18 @@ import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { RichTextEditor } from '@/components/ui/RichTextEditor'
 import { NumberField } from '@/components/ui/NumberField'
+import { GoldInfoCard } from './GoldInfoCard'
 import { toPersianDigits, toLatinDigits, formatThousands, toPersianWords } from '@/utils/numbers'
 import {
   categoryCollection, CURRENCY_UNITS, DISCOUNT_TYPES, currencyLabel,
-  USD_RATE, USD_RATE_UPDATED, type ProductForm, type Attribute,
+  USD_RATE, USD_RATE_UPDATED, GOLD_GRAM_PRICE, pricingModeOf,
+  type ProductForm, type Attribute,
 } from './data'
 
 // ─── UnitSelect — NativeSelect inline addon داخل InputGroup endElement ──────────
 // dev-engine-disable
 // NativeSelect صحیح است اینجا: addon درون InputGroup، نه فیلد standalone (الگوی AddShippingMethod).
-function UnitSelect({
+export function UnitSelect({
   value, onChange, options,
 }: { value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
   return (
@@ -68,24 +70,41 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
     onChange({ attributes: form.attributes.map((a) => (a.id === id ? { ...a, ...patch } : a)) })
 
   // ─── Pricing (محاسبهٔ کلاینت — این پاس بدون API) ──────────────────────────────
-  const isUsd = form.currency === 'usd'
-  const priceNum = Number(toLatinDigits(form.price).replace(/[^\d.]/g, ''))
-  const hasPrice = form.price.trim() !== '' && Number.isFinite(priceNum) && priceNum > 0
-  // معادل تومانی (در حالت ارزی: قیمت × نرخ دلار)
-  const tomanValue = isUsd ? priceNum * USD_RATE : priceNum
+  const num = (s: string) => Number(toLatinDigits(s).replace(/[^\d.]/g, '')) || 0
+  const isGold = pricingModeOf(form.category) === 'gold'
+  const isUsd = !isGold && form.currency === 'usd'
 
-  // help text زیر «قیمت اصلی»
-  const priceHelp = !hasPrice
-    ? 'قیمت به تومان و به حروف نمایش داده می شود'
-    : isUsd
-      ? `(~ ${toPersianDigits(formatThousands(tomanValue))} تومان) ${toPersianWords(tomanValue)} تومان`
-      : `${toPersianWords(priceNum)} تومان`
+  const priceNum = num(form.price)
+  const hasManualPrice = form.price.trim() !== '' && priceNum > 0
 
-  // «قیمت بعد از تخفیف» = derived از قیمت اصلی + مقدار/نوع تخفیف (در واحد قیمت)
-  const discountNum = Number(toLatinDigits(form.discountValue).replace(/[^\d.]/g, ''))
+  // ── طلا: قیمت نهایی = پایه×(۱+اجرت)×(۱+سود) + مالیاتِ (اجرت+سود) ──
+  const goldWeight = num(form.goldWeight)
+  const goldBase = goldWeight * GOLD_GRAM_PRICE
+  const goldAddedValue = goldBase * (1 + num(form.goldWage) / 100) * (1 + num(form.goldProfit) / 100) - goldBase
+  const goldTaxAmount = goldAddedValue * (num(form.goldTax) / 100)
+  const goldFinal = Math.round(goldBase + goldAddedValue + goldTaxAmount)
+  const goldHasValue = goldWeight > 0
+
+  // قیمتِ مؤثر برای محاسبهٔ تخفیف/معادل تومانی + اینکه قیمت معتبر داریم یا نه
+  const effectivePrice = isGold ? goldFinal : priceNum
+  const hasPrice = isGold ? goldHasValue : hasManualPrice
+  const priceUnit = isGold ? 'تومان' : currencyLabel(form.currency)
+
+  // help text زیر «قیمت اصلی / نهایی»
+  const tomanValue = isUsd ? priceNum * USD_RATE : effectivePrice
+  const priceHelp = isGold
+    ? 'طلا فقط با واحد تومان — محاسبه بر اساس فرمول طلا'
+    : !hasPrice
+      ? 'قیمت به تومان و به حروف نمایش داده می شود'
+      : isUsd
+        ? `(~ ${toPersianDigits(formatThousands(tomanValue))} تومان) ${toPersianWords(tomanValue)} تومان`
+        : `${toPersianWords(priceNum)} تومان`
+
+  // «قیمت بعد از تخفیف» = derived از قیمتِ مؤثر + مقدار/نوع تخفیف (در واحد قیمت)
+  const discountNum = num(form.discountValue)
   const hasDiscountVal = form.discountValue.trim() !== '' && Number.isFinite(discountNum)
   const finalPrice = hasPrice && hasDiscountVal
-    ? Math.max(0, Math.round(form.discountType === 'percent' ? priceNum - (priceNum * discountNum) / 100 : priceNum - discountNum))
+    ? Math.max(0, Math.round(form.discountType === 'percent' ? effectivePrice - (effectivePrice * discountNum) / 100 : effectivePrice - discountNum))
     : null
   const finalPriceDisplay = finalPrice !== null ? toPersianDigits(formatThousands(finalPrice)) : ''
 
@@ -192,23 +211,30 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
         <TitleBar title="قیمت گذاری" subtitle="قیمت اصلی و تخفیف محصول را تنظیم کنید." size="xl" divider />
         <Flex direction="column" gap="4" pt="4">
 
-          {/* قیمت اصلی + واحد + تخفیف دارد */}
-          <Flex gap="4" align="flex-end" direction={isCompact ? 'row' : { base: 'column', sm: 'row' }}>
+          {/* کارت اطلاعات اختصاصی طلا — فقط دستهٔ طلا */}
+          {isGold && <GoldInfoCard form={form} onChange={onChange} />}
+
+          {/* قیمت اصلی/نهایی + واحد + تخفیف دارد */}
+          <Flex gap="4" align={isCompact ? 'stretch' : { base: 'stretch', sm: 'flex-end' }} direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}>
             <Field.Root required flex={isCompact ? '1' : { base: 'none', sm: '1' }} w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
               <Field.Label fontSize="sm" fontWeight="semibold">
-                قیمت اصلی<Field.RequiredIndicator />
+                {isGold ? 'قیمت نهایی' : 'قیمت اصلی'}<Field.RequiredIndicator />
               </Field.Label>
               <NumberField
-                placeholder="قیمت اصلی"
-                value={form.price}
-                onChange={(v) => onChange({ price: v })}
-                disabled={form.phoneSale}
+                placeholder={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
+                value={isGold ? (goldHasValue ? String(goldFinal) : '') : form.price}
+                onChange={isGold ? () => {} : (v) => onChange({ price: v })}
+                disabled={isGold || form.phoneSale || form.hasVariants}
                 endElement={
-                  <UnitSelect
-                    value={form.currency}
-                    onChange={(v) => onChange({ currency: v })}
-                    options={CURRENCY_UNITS}
-                  />
+                  isGold ? (
+                    <Text fontSize="sm" color="fg.muted" px="2">تومان</Text>
+                  ) : (
+                    <UnitSelect
+                      value={form.currency}
+                      onChange={(v) => onChange({ currency: v })}
+                      options={CURRENCY_UNITS}
+                    />
+                  )
                 }
                 endElementProps={{ px: '1' }}
               />
@@ -216,7 +242,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
             </Field.Root>
 
             {/* تخفیف دارد — RTL: Switch FIRST=راست، Text LAST=چپ */}
-            <Flex align="center" gap="2.5" pb={isCompact ? '7' : { base: '0', sm: '7' }} flexShrink={0}>
+            <Flex align="center" gap="2.5" pb={isCompact ? '0' : { base: '0', sm: '7' }} flexShrink={0}>
               <Switch.Root
                 colorPalette="brand"
                 checked={form.hasDiscount}
@@ -260,7 +286,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                   <Field.Root flex="1" w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
                     <Field.Label fontSize="sm" fontWeight="semibold">قیمت بعد از تخفیف</Field.Label>
                     <InputGroup
-                      endElement={<Text fontSize="sm" color="fg.muted" px="2">{currencyLabel(form.currency)}</Text>}
+                      endElement={<Text fontSize="sm" color="fg.muted" px="2">{priceUnit}</Text>}
                     >
                       <Input
                         bg="bg.panel"
@@ -332,7 +358,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
             </Alert.Root>
           )}
 
-          <Flex gap="4" align="flex-end" direction={isCompact ? 'row' : { base: 'column', sm: 'row' }}>
+          <Flex gap="4" align={isCompact ? 'stretch' : { base: 'stretch', sm: 'flex-end' }} direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}>
             <Field.Root required flex={isCompact ? '1' : { base: 'none', sm: '1' }} w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
               <Field.Label fontSize="sm" fontWeight="semibold">
                 موجودی<Field.RequiredIndicator />
@@ -347,7 +373,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
             </Field.Root>
 
             {/* موجودی نامحدود — Switch FIRST=راست، Text چپ */}
-            <Flex align="center" gap="2.5" pb={isCompact ? '1.5' : { base: '0', sm: '1.5' }} flexShrink={0}>
+            <Flex align="center" gap="2.5" pb={isCompact ? '0' : { base: '0', sm: '1.5' }} flexShrink={0}>
               <Switch.Root
                 colorPalette="brand"
                 checked={form.unlimitedInventory}
