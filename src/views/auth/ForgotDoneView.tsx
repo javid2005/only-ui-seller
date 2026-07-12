@@ -11,7 +11,7 @@ export function ForgotDoneView() {
   const phone = searchParams.get('phone') ?? ''
 
   return (
-    <AuthLayout centerContent showFooterLinks={false}>
+    <AuthLayout centerContent>
       <Box bg="brand.subtle" color="brand.fg" p="4" borderRadius="lg" display="flex">
         <CircleCheckBig size={34} />
       </Box>

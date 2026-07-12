@@ -52,39 +52,36 @@ export function AuthLayout({
           h={{ base: 'auto', md: '720px' }}
           direction="column"
           align="center"
-          pt={{ base: title ? '10' : '6', md: title ? '24' : '10' }}
-          pb={{ base: '6', md: '4' }}
-          px={{ base: '4', sm: '6', md: '10' }}
+          gap="6"
+          pt={{ base: '0', md: title ? '24' : '10' }}
+          pb={{ base: centerContent ? '4' : '0', md: '4' }}
+          px={{ base: '0', md: '10' }}
           position="relative"
           borderRadius="2xl"
           overflow="hidden"
           justify={centerContent ? 'center' : undefined}
         >
-          {backHref && (
-            <Link
-              asChild
-              variant="plain"
-              colorPalette="gray"
-              position="absolute"
-              top="0"
-              insetInlineStart="0"
-              display="flex"
-              alignItems="center"
-              gap="2"
-              px="4"
-              py="2"
-              fontSize="sm"
-              fontWeight="semibold"
-              color="gray.fg"
-              {...focusVisibleOnly}
-            >
-              <NextLink href={backHref}>
-                {/* آیکون FIRST در DOM = راست (قرارداد پروژه) */}
-                <ArrowRight size={20} />
-                بازگشت
-              </NextLink>
-            </Link>
-          )}
+          {/* موبایل: باکس تصویر کوچیک بالای محتوا (طبق Figma، در همهٔ صفحات از جمله Done) — دسکتاپ: illustration جدا سمت چپ (پایین‌تر) */}
+          <Flex
+            display={{ base: 'flex', md: 'none' }}
+            bg="purple.subtle"
+            borderRadius="2xl"
+            w="full"
+            h={{ base: 'auto', sm: '256px' }}
+            aspectRatio={{ base: 448 / 256, sm: 'auto' }}
+            align="center"
+            justify="center"
+            overflow="hidden"
+            flexShrink={0}
+          >
+            <img
+              src={loginIllustration.src}
+              alt=""
+              width={208}
+              height={208}
+              style={{ width: 'auto', height: 'auto', maxWidth: '82%', maxHeight: '82%' }}
+            />
+          </Flex>
 
           <Flex
             direction="column"
@@ -95,13 +92,41 @@ export function AuthLayout({
             maxW="400px"
             minW="0"
             flex="1"
+            position="relative"
           >
+            {/* هم‌تراز با بالای لوگو، سمت راست — sibling هدر در فیگما (هر دو y=0 همون Content) */}
+            {backHref && (
+              <Link
+                asChild
+                variant="plain"
+                colorPalette="gray"
+                position="absolute"
+                top="0"
+                insetInlineStart="0"
+                display="flex"
+                alignItems="center"
+                gap="2"
+                px="0"
+                py="0"
+                fontSize="sm"
+                fontWeight="semibold"
+                color="gray.fg"
+                {...focusVisibleOnly}
+              >
+                <NextLink href={backHref}>
+                  {/* آیکون FIRST در DOM = راست (قرارداد پروژه) */}
+                  <ArrowRight size={20} />
+                  بازگشت
+                </NextLink>
+              </Link>
+            )}
+
             {title && (
               <Flex direction="column" align="center" gap="4" w="full">
                 <NextLink href="/">
                   <img src={logoMarkSrc.src} alt="ویترینا" height={53} style={{ width: 'auto' }} />
                 </NextLink>
-                <Text fontWeight="semibold" fontSize="2xl" lineHeight="1.333" textAlign="center" w="full">
+                <Text fontWeight="semibold" fontSize={{ base: 'xl', sm: '2xl' }} lineHeight="1.333" textAlign="center" w="full">
                   {title}
                 </Text>
               </Flex>
@@ -120,21 +145,6 @@ export function AuthLayout({
             {children}
 
             {!centerContent && <Box flex="1" minH="0" w="full" />}
-
-            {showFooterLinks && (
-              <Flex gap="4" align="center" justify="center" w="full">
-                {/* آیکون FIRST در DOM = راست (قرارداد پروژه) */}
-                <Link href="#" variant="plain" display="flex" gap="1" alignItems="center" px="2" py="0.5" borderRadius="l2" fontSize="xs" fontWeight="medium" color="gray.fg" {...focusVisibleOnly}>
-                  <Headset size={14} />
-                  تماس با پشتیبانی
-                </Link>
-                <Separator orientation="vertical" h="5" />
-                <Link href="#" variant="plain" display="flex" gap="1" alignItems="center" px="2" py="0.5" borderRadius="l2" fontSize="xs" fontWeight="medium" color="gray.fg" {...focusVisibleOnly}>
-                  <TriangleAlert size={14} />
-                  قوانین و مقررات
-                </Link>
-              </Flex>
-            )}
           </Flex>
         </Flex>
 
@@ -154,16 +164,42 @@ export function AuthLayout({
         </Flex>
       </Flex>
 
-      <Flex gap="4" align="center" justify="center" maxW="1242px" w="full" fontSize="xs" color="fg.muted" wrap="wrap">
-        {/* راست‌ترین FIRST: متن حقوقی (x=533) → جداکننده → کردیت سپهر (x=365) */}
-        <Text lineHeight="4">تمامی حقوق مادی و معنوی ویترینا مربوط به آکادمی معین فرجی می‌باشد.</Text>
-        <Text lineHeight="4">|</Text>
-        <Text lineHeight="4">
-          {'طراحی و توسعه توسط '}
-          <Link href="https://Sepehr.it" target="_blank" rel="noreferrer" variant="underline" colorPalette="brand" {...focusVisibleOnly}>
-            سپهر
-          </Link>
-        </Text>
+      <Flex
+        direction={{ base: 'column', md: 'row' }}
+        align="center"
+        justify={{ base: 'center', md: showFooterLinks ? 'space-between' : 'center' }}
+        gap={{ base: '2', md: '4' }}
+        maxW="1242px"
+        w="full"
+        px="4"
+      >
+        {/* لینک‌ها — راست در دسکتاپ (RTL: FIRST در DOM = راست)، ردیف بالا در موبایل */}
+        {showFooterLinks && (
+          <Flex gap="4" align="center" justify="center" wrap="wrap">
+            {/* آیکون FIRST در DOM = راست (قرارداد پروژه) */}
+            <Link href="#" variant="plain" display="flex" gap="1" alignItems="center" px="2" py="0.5" borderRadius="l2" fontSize="xs" fontWeight="medium" color="gray.fg" {...focusVisibleOnly}>
+              <Headset size={14} />
+              تماس با پشتیبانی
+            </Link>
+            <Separator orientation="vertical" h="5" />
+            <Link href="#" variant="plain" display="flex" gap="1" alignItems="center" px="2" py="0.5" borderRadius="l2" fontSize="xs" fontWeight="medium" color="gray.fg" {...focusVisibleOnly}>
+              <TriangleAlert size={14} />
+              قوانین و مقررات
+            </Link>
+          </Flex>
+        )}
+
+        {/* نوشته‌های حقوقی — چپ در دسکتاپ، ردیف پایین در موبایل */}
+        <Flex gap="4" align="center" justify="center" fontSize="xs" color="fg.muted" wrap="wrap">
+          <Text lineHeight="1.333" textAlign="center">تمامی حقوق مادی و معنوی ویترینا مربوط به آکادمی معین فرجی می‌باشد.</Text>
+          <Text lineHeight="1.333" textAlign="center">|</Text>
+          <Text lineHeight="1.333" textAlign="center">
+            {'طراحی و توسعه توسط '}
+            <Link href="https://Sepehr.it" target="_blank" rel="noreferrer" variant="underline" colorPalette="brand" {...focusVisibleOnly}>
+              سپهر
+            </Link>
+          </Text>
+        </Flex>
       </Flex>
     </Flex>
   )

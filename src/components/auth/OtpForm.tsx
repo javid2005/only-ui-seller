@@ -64,8 +64,15 @@ export function OtpForm({ phone, submitLabel, editHref, onSubmit, onResend, load
   return (
     <Flex direction="column" gap="4" w="full" align="flex-end">
       {/* راست‌ترین FIRST: متن توضیح (x=78) → دکمهٔ ویرایش LAST (x=0) */}
-      <Flex gap="2" align="center" justify="flex-end" w="full" wrap="wrap">
-        <Text fontSize="sm" color="fg.muted" textAlign="right" flex="1">
+      <Flex
+        direction={{ base: 'column', sm: 'row' }}
+        gap="2"
+        align="center"
+        justify="flex-end"
+        w="full"
+        wrap="wrap"
+      >
+        <Text fontSize="sm" color="fg.muted" textAlign={{ base: 'center', sm: 'right' }} flex={{ base: 'none', sm: '1' }}>
           {'کد ارسال شده به شماره '}
           <Text as="span" fontWeight="bold">{toPersianDigits(phone)}</Text>
           {' را وارد نمایید.'}
