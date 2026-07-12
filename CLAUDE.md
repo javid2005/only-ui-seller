@@ -190,6 +190,12 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - pnpm
 - Dev: `pnpm dev` (Next dev, Turbopack — port 5174 via `.claude/launch.json`) · Build: `pnpm build` · Serve prod: `pnpm start`
 
+### Architectural Decisions
+
+| موضوع | تصمیم | چرا |
+|-------|-------|-----|
+| Auth | `src/services/auth.ts` کاملاً mock (delay مصنوعی، بدون API واقعی) | تا وصل‌شدن به backend — هر شماره موبایلی «موجود» فرض می‌شه، مسیر signup فعلاً تست نمی‌شه |
+
 ### Next.js — App Router conventions (اجباری)
 
 > پروژه از Vite SPA به Next 16 App Router مهاجرت کرد. این یه داشبورد client-rendered است؛ data fetching همچنان client-side (axios + TanStack Query). RSC/server-fetch استفاده نمی‌کنیم.
@@ -275,6 +281,9 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - Avatar.Root / complex components → do NOT forward refs for `asChild`. Wrap in `<Box as="button" type="button">` first
 - `sx` prop → **nested selectors NOT injected** (`'& .child': {...}`, `'&:focus-within': {...}` کار نمی‌کنن). برای nested CSS از `editorProps.attributes.style` (Tiptap)، `_focusWithin` prop (Chakra)، یا `Global` از `@emotion/react` استفاده کن
 - `Combobox.Root` با `inputValue` **کنترل‌شده** + `allowCustomValue={true}` → گاهی رویداد تایپِ متن دلخواه (که با هیچ آیتمی مطابقت ندارد) گم می‌شود و ورودی کاربر ثبت نمی‌شود. راه‌حل: `defaultInputValue` (uncontrolled) به‌جای `inputValue` + خواندن مقدار لحظهٔ ثبت مستقیم از DOM (`ref`)، نه از React state. برای reset از بیرون (بعد از ثبت) از `key` جدید برای remount استفاده کن، نه پاک‌کردن state کنترل‌شده. الگو: `src/components/products/new/VariantAccordion.tsx` (`SuggestCombobox`)
+- `PinInput.Root autoFocus` باید روی **Root** باشه، نه `autoFocus` روی `PinInput.Input` (native HTML attribute) — وگرنه با hydration Next.js race می‌کنه و machine در state `idle` گیر می‌کنه (فقط خانهٔ اول پر می‌شه، بقیه advance نمی‌کنن). جزئیات: `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`
+- `PinInput` با `type="numeric"` ارقام فارسی (۰-۹) رو کامل reject می‌کنه (نه فقط نمایش اشتباه) — برای فیلد OTP باید `pattern="^[0-9۰-۹]+$"` بدی + در `onValueChange` با `toLatinDigits` نرمالایز کنی. الگو: `src/components/auth/OtpForm.tsx`
+- Flex ستونی با `justify="center"` که تنها فرزندش `flex="1"` داره → `justify` بی‌اثر می‌شه (فرزند تمام فضا رو می‌بلعه، چیزی برای centering نمی‌مونه). باید `justify` رو مستقیم روی همون فرزند flex=1 هم بذاری. الگو: `src/components/auth/AuthLayout.tsx` (`centerContent` prop)
 
 ---
 

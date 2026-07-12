@@ -19,6 +19,12 @@ export function Layout({ children }: { children: ReactNode }) {
     setMobileOpen(false)
   }, [pathname])
 
+  // صفحات auth (لاگین/ثبت‌نام) لایوت مستقل دارند — بدون Navbar/Sidebar
+  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup')
+  if (isAuthRoute) {
+    return <>{children}</>
+  }
+
   return (
     /* Outer: full-width, natural height — window scrolls (RTL scrollbar at browser left edge) */
     <CompactModeProvider value={isCompact}>

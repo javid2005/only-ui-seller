@@ -29,6 +29,14 @@ pnpm start   # serve production build
 | Route | صفحه |
 |-------|------|
 | `/` | داشبورد |
+| `/login` | ورود با شماره موبایل + کد تایید |
+| `/login/otp` | تایید کد OTP (ورود) |
+| `/login/password` | ورود با رمز عبور |
+| `/login/forgot` | فراموشی رمز عبور — وارد کردن شماره موبایل |
+| `/login/forgot/otp` | تایید کد OTP (فراموشی رمز) |
+| `/login/forgot/new-password` | تعیین رمز عبور جدید |
+| `/login/forgot/done` | تایید تغییر رمز عبور |
+| `/signup` | ثبت‌نام (placeholder — پیاده‌سازی نشده) |
 | `/products/list` | لیست محصولات (جدول + view کارت، فیلتر، pagination، انتخاب گروهی) |
 | `/products/new` | افزودن محصول جدید (مرحله‌ای: اطلاعات / گالری / تنوع‌ها) |
 | `/products/categories` | دسته‌بندی محصولات |

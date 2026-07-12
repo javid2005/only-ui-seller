@@ -1,17 +1,16 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-07-06
+> آخرین آپدیت: 2026-07-12
 
 ## الان
-**تب «تنوع‌ها» + «گالری» تکمیل شد (uncommitted روی branch `nextjs`)**:
-- `VariantAccordion.tsx`: گروه تنوع — عنوان/مقدار با Chakra `Combobox` (پیشنهاد پیش‌فرض + متن آزاد)، جلوگیری از عنوان تکراری (خطای قرمز + حذف از پیشنهادها)، ریسپانسیو (`<sm`: فیلدها ستونی fill، دکمه‌ها زیر و چپ‌چین)
-- `VariantCombinationCard.tsx`: کارت ماتریس ترکیب — فعال/فروش‌تلفنی/موجودی‌نامحدود/تخفیف با قفل فیلد مربوطه، ریسپانسیو (`<sm`: badgeها زیر SKU)
-- `VariantsTab.tsx`: orchestration کامل — Accordionها + ماتریس + فیلتر ریسپانسیو (دسکتاپ: ردیف inline · موبایل/`isCompact`: دکمه فیلتر + `FiltersDialog` مودال با Apply/Cancel) + EmptyStateهای «هیچ تنوعی»/«هیچ ترکیبی»/«موردی یافت نشد»
-- `GalleryTab.tsx` + `VariantSelectDialog.tsx` هم این session کامل شد
+**فلوی auth (ورود/فراموشی رمز) پیاده‌سازی شد — uncommitted روی `main`**:
+- صفحات: `/login`، `/login/otp`، `/login/password`، `/login/forgot`، `/login/forgot/otp`، `/login/forgot/new-password`، `/login/forgot/done` + `/signup` (placeholder)
+- کامپوننت‌های مشترک: `PhoneInput`، `OtpForm`، `AuthLayout` در `src/components/auth/`
+- `src/services/auth.ts` → کاملاً mock (→ see CLAUDE.md Architectural Decisions)
+- این session سه باگ پیدا و فیکس شد: PinInput فارسی‌نویسی (reject می‌شد)، PinInput autoFocus race با hydration (فقط خانهٔ اول پر می‌شد)، AuthLayout centering (`flex=1` بدون `justify`) — جزئیات در CLAUDE.md § Chakra v3 Known Issues
 
 ## بعدی
-- commit تغییرات فعلی (نه هنوز commit شده)
-- بعد از commit: merge `nextjs` → `main`
+- commit تغییرات فعلی (uncommitted: `login/`, `signup/`, `components/auth/`, `services/auth.ts`, `views/auth/`, `Layout.tsx`)
+- ادامهٔ auth flow (کاربر مشخص نکرد کدوم بخش — احتمالاً تکمیل `/signup` که فعلاً فقط placeholder-است)
 
 ## نکته
-- Chakra `Combobox` با `inputValue` کنترل‌شده + `allowCustomValue` گاهی رویداد تایپ متن دلخواه را گم می‌کند — راه‌حل: uncontrolled (`defaultInputValue`) + خواندن مقدار مستقیم از DOM (`ref`) در لحظهٔ ثبت، نه از React state. نگاه کن `VariantAccordion.tsx`
-- `isCompact` واقعیتِ viewport را عوض نمی‌کند → برای display-swap (نه فقط layout prop) باید هم breakpoint هم `isCompact` را جدا چک کرد: `isCompact ? 'none' : { base:'none', md:'flex' }`
+- برای autoFocus روی PinInput همیشه سطح `Root` بذار، نه روی `Input` — جزئیات: CLAUDE.md
