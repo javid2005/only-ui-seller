@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AuthLayout } from '@/components/auth/AuthLayout'
 import { OtpForm } from '@/components/auth/OtpForm'
-import { sendOtp, verifyOtp } from '@/services/auth'
+import { checkPhoneExists, getSignupProgress, sendOtp, verifyOtp, SIGNUP_STEP_ROUTE } from '@/services/auth'
 
 export function LoginOtpView() {
   const router = useRouter()
@@ -19,8 +19,18 @@ export function LoginOtpView() {
   async function handleSubmit(code: string) {
     setLoading(true)
     const { success } = await verifyOtp(phone, code)
+    if (!success) {
+      setLoading(false)
+      return
+    }
+    const exists = await checkPhoneExists(phone)
     setLoading(false)
-    if (success) router.push('/')
+    if (!exists) {
+      const step = getSignupProgress(phone)?.step ?? 'basic-info'
+      router.push(`${SIGNUP_STEP_ROUTE[step]}?phone=${phone}`)
+      return
+    }
+    router.push('/')
   }
 
   if (!phone) return null

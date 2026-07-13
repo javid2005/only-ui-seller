@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
 import NextLink from 'next/link'
-import { Box, Flex, Text, Separator, Link } from '@chakra-ui/react'
-import { ArrowRight, Headset, TriangleAlert } from 'lucide-react'
+import { Box, Flex, Text, Link } from '@chakra-ui/react'
+import { ArrowRight } from 'lucide-react'
 import logoMarkSrc from '@/assets/logo-mark.svg'
 import loginIllustration from '@/assets/login/Login.svg'
+import { AuthFooter } from '@/components/auth/AuthFooter'
 
 interface AuthLayoutProps {
   /** عنوان زیر لوگو — نبودش یعنی هدر/لوگو اصلاً رندر نشه (صفحهٔ Done) */
@@ -164,43 +165,7 @@ export function AuthLayout({
         </Flex>
       </Flex>
 
-      <Flex
-        direction={{ base: 'column', md: 'row' }}
-        align="center"
-        justify={{ base: 'center', md: showFooterLinks ? 'space-between' : 'center' }}
-        gap={{ base: '2', md: '4' }}
-        maxW="1242px"
-        w="full"
-        px="4"
-      >
-        {/* لینک‌ها — راست در دسکتاپ (RTL: FIRST در DOM = راست)، ردیف بالا در موبایل */}
-        {showFooterLinks && (
-          <Flex gap="4" align="center" justify="center" wrap="wrap">
-            {/* آیکون FIRST در DOM = راست (قرارداد پروژه) */}
-            <Link href="#" variant="plain" display="flex" gap="1" alignItems="center" px="2" py="0.5" borderRadius="l2" fontSize="xs" fontWeight="medium" color="gray.fg" {...focusVisibleOnly}>
-              <Headset size={14} />
-              تماس با پشتیبانی
-            </Link>
-            <Separator orientation="vertical" h="5" />
-            <Link href="#" variant="plain" display="flex" gap="1" alignItems="center" px="2" py="0.5" borderRadius="l2" fontSize="xs" fontWeight="medium" color="gray.fg" {...focusVisibleOnly}>
-              <TriangleAlert size={14} />
-              قوانین و مقررات
-            </Link>
-          </Flex>
-        )}
-
-        {/* نوشته‌های حقوقی — چپ در دسکتاپ، ردیف پایین در موبایل */}
-        <Flex gap="4" align="center" justify="center" fontSize="xs" color="fg.muted" wrap="wrap">
-          <Text lineHeight="1.333" textAlign="center">تمامی حقوق مادی و معنوی ویترینا مربوط به آکادمی معین فرجی می‌باشد.</Text>
-          <Text lineHeight="1.333" textAlign="center">|</Text>
-          <Text lineHeight="1.333" textAlign="center">
-            {'طراحی و توسعه توسط '}
-            <Link href="https://Sepehr.it" target="_blank" rel="noreferrer" variant="underline" colorPalette="brand" {...focusVisibleOnly}>
-              سپهر
-            </Link>
-          </Text>
-        </Flex>
-      </Flex>
+      <AuthFooter showLinks={showFooterLinks} />
     </Flex>
   )
 }

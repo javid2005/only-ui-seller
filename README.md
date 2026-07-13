@@ -36,7 +36,8 @@ pnpm start   # serve production build
 | `/login/forgot/otp` | تایید کد OTP (فراموشی رمز) |
 | `/login/forgot/new-password` | تعیین رمز عبور جدید |
 | `/login/forgot/done` | تایید تغییر رمز عبور |
-| `/signup` | ثبت‌نام (placeholder — پیاده‌سازی نشده) |
+| `/signup` | ریدایرکت به `/login` (entry point ثبت‌نام/ورود یکپارچه شده) |
+| `/signup/basic-info` | ثبت‌نام مرحله ۱ — اطلاعات پایه (نام، نام فروشگاه، آدرس اختصاصی، کد دعوت) |
 | `/products/list` | لیست محصولات (جدول + view کارت، فیلتر، pagination، انتخاب گروهی) |
 | `/products/new` | افزودن محصول جدید (مرحله‌ای: اطلاعات / گالری / تنوع‌ها) |
 | `/products/categories` | دسته‌بندی محصولات |

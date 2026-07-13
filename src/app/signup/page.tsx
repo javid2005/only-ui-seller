@@ -1,13 +1,25 @@
 'use client'
 
-import { Suspense } from 'react'
-import { SignupPlaceholderView } from '@/views/auth/SignupPlaceholderView'
+import { Suspense, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-// SignupPlaceholderView reads query params via useSearchParams() → needs a Suspense boundary.
+// ورود شماره موبایل برای هر دو مسیر (ورود/ثبت‌نام) یکپارچه شده → /login
+function SignupRedirect() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const phone = searchParams.get('phone')
+
+  useEffect(() => {
+    router.replace(phone ? `/login?phone=${phone}` : '/login')
+  }, [phone, router])
+
+  return null
+}
+
 export default function Page() {
   return (
     <Suspense>
-      <SignupPlaceholderView />
+      <SignupRedirect />
     </Suspense>
   )
 }

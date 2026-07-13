@@ -6,7 +6,7 @@ import NextLink from 'next/link'
 import { Button, Link } from '@chakra-ui/react'
 import { AuthLayout, focusVisibleOnly } from '@/components/auth/AuthLayout'
 import { PhoneInput } from '@/components/auth/PhoneInput'
-import { checkPhoneExists, sendOtp } from '@/services/auth'
+import { sendOtp } from '@/services/auth'
 
 const PHONE_RE = /^09\d{9}$/
 
@@ -28,11 +28,7 @@ export function LoginMobileView() {
     }
     setError('')
     setLoading(true)
-    const exists = await checkPhoneExists(phone)
-    if (!exists) {
-      router.push(`/signup?phone=${phone}`)
-      return
-    }
+    // برای هر دو مسیر (ورود/ثبت‌نام) ابتدا OTP ارسال می‌شه؛ تشخیص کاربر جدید بعد از تایید OTP انجام می‌شه
     await sendOtp(phone)
     router.push(`/login/otp?phone=${phone}`)
   }
