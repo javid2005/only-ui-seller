@@ -15,8 +15,14 @@ interface SignupLayoutProps {
   onContinue: () => void
   continueLoading?: boolean
   continueDisabled?: boolean
+  /** فاصلهٔ بین محتوا و ردیف دکمه‌های پایین — پیش‌فرض همون فاصلهٔ هدر↔محتوا (base:6/md:10) */
+  footerGap?: { base: string; md: string }
+  /** خطوط اطلاعات پایهٔ واردشده — در description مرحلهٔ ۱ استپر عمودی نمایش داده می‌شه */
+  basicInfoSummary?: string[]
   children: ReactNode
 }
+
+const CONTENT_GAP = { base: '6', md: '10' }
 
 export function SignupLayout({
   title,
@@ -27,6 +33,8 @@ export function SignupLayout({
   onContinue,
   continueLoading,
   continueDisabled,
+  footerGap = CONTENT_GAP,
+  basicInfoSummary,
   children,
 }: SignupLayoutProps) {
   return (
@@ -55,14 +63,13 @@ export function SignupLayout({
           flex={{ md: '1' }}
           flexShrink={0}
         >
-          <SignupStepper currentStep={currentStep} />
+          <SignupStepper currentStep={currentStep} basicInfoSummary={basicInfoSummary} />
         </Box>
 
         <Flex
           direction="column"
           flex="1"
           minW="0"
-          gap={{ base: '6', md: '10' }}
           pt={{ base: '0', md: '10' }}
           px={{ base: '0', md: '10' }}
           pb={{ base: '0', md: '4' }}
@@ -76,6 +83,8 @@ export function SignupLayout({
             </Text>
           </Flex>
 
+          <Box h={CONTENT_GAP} flexShrink={0} />
+
           <Flex direction="column" gap="4" align="flex-end" w="full" flex="1" minH="0">
             {subtitle && (
               <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">
@@ -84,6 +93,8 @@ export function SignupLayout({
             )}
             {children}
           </Flex>
+
+          <Box h={footerGap} flexShrink={0} />
 
           <Flex gap="2" align="center" w="full" wrap="wrap">
             {/* راست‌ترین FIRST: تغییر شماره موبایل → اسپیسر → بازگشت → ادامه (LAST=چپ، طبق قرارداد پروژه primary LAST) */}

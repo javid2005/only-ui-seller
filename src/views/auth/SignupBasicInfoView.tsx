@@ -96,7 +96,6 @@ export function SignupBasicInfoView() {
       title="اطلاعات پایه"
       subtitle="جهت ثبت نام اطلاعات زیر را وارد نمایید."
       currentStep={0}
-      backHref={`/login/otp?phone=${phone}`}
       changePhoneHref={`/login?phone=${phone}`}
       onContinue={handleContinue}
       continueLoading={loading}

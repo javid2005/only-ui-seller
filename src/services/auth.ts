@@ -51,6 +51,7 @@ export interface SignupBasicInfo {
 export interface SignupProgress {
   step: SignupStep
   basicInfo?: SignupBasicInfo
+  categoryIds?: string[]
 }
 
 export const SIGNUP_STEP_ROUTE: Record<SignupStep, string> = {

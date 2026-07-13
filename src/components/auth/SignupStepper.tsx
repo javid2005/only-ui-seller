@@ -1,4 +1,4 @@
-import { Box, Flex, Steps } from '@chakra-ui/react'
+import { Box, Flex, Steps, Text } from '@chakra-ui/react'
 import { Check } from 'lucide-react'
 import { toPersianDigits } from '@/utils/numbers'
 
@@ -11,12 +11,14 @@ const STEPS = [
 export interface SignupStepperProps {
   /** ایندکس صفر-پایه (۰=اطلاعات پایه، ۱=دسته‌بندی، ۲=پلن) */
   currentStep: 0 | 1 | 2
+  /** خطوط توضیحِ اطلاعات پایهٔ واردشده — وقتی موجوده، جای description پیش‌فرض step۰ (فقط عمودی) رو می‌گیره */
+  basicInfoSummary?: string[]
 }
 
 // ‌Steps.Indicator سپس Steps.Title/Description (ترتیب Chakra) = indicator راست‌ترین در RTL —
 // طبق مختصات x فیگما (indicator x=280 > title x=0) دقیقاً همین ترتیب لازمه، بدون نیاز به reverse دستی.
 
-export function SignupStepper({ currentStep }: SignupStepperProps) {
+export function SignupStepper({ currentStep, basicInfoSummary }: SignupStepperProps) {
   return (
     <>
       {/* دسکتاپ (md+) — عمودی، با description. Steps.Root رسیپی پیش‌فرضش h=100% است که با پنل کشیده‌شده (align=stretch)
@@ -35,9 +37,22 @@ export function SignupStepper({ currentStep }: SignupStepperProps) {
                   </Steps.Indicator>
                   <Box display="flex" flexDirection="column" gap="1.5" flex="1" minW="0">
                     <Steps.Title fontWeight="semibold" fontSize="sm" textAlign="right">{s.title}</Steps.Title>
-                    <Steps.Description fontSize="xs" textAlign="right">{s.description}</Steps.Description>
+                    {i === 0 && basicInfoSummary?.length ? (
+                      <Box fontSize="xs" color="fg.muted">
+                        {basicInfoSummary.map((line, idx) => {
+                          const isUrl = line.startsWith('http')
+                          return (
+                            <Text key={idx} lineHeight="1.333" textAlign={isUrl ? 'left' : 'right'} dir={isUrl ? 'ltr' : undefined}>
+                              {line}
+                            </Text>
+                          )
+                        })}
+                      </Box>
+                    ) : (
+                      <Steps.Description fontSize="xs" textAlign="right">{s.description}</Steps.Description>
+                    )}
                   </Box>
-                  <Steps.Separator />
+                  <Steps.Separator minH="12" />
                 </Steps.Item>
               ))}
             </Steps.List>
