@@ -72,7 +72,7 @@ export function SignupCategoriesView() {
     if (selectedIds.size === 0) return
     setLoading(true)
     saveSignupStep(phone, 'plan', { categoryIds: Array.from(selectedIds) })
-    router.push(`/signup/plan?phone=${phone}`)
+    router.push(`/signup/preparing?phone=${phone}`)
   }
 
   if (!phone) return null

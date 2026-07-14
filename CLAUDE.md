@@ -288,6 +288,7 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - `Steps.Root orientation="vertical"` → رسیپی پیش‌فرضش `height:100%` است؛ اگه پنل والد stretch شده باشه (`align="stretch"`)، آیتم‌ها (`flex:1 0 0`) کل ارتفاع پنل رو مساوی تقسیم می‌کنن و خط رابط (`separator`) خیلی کشیده می‌شه. فیکس: `h="auto"` روی `Steps.Root` (override رسیپی) + یه `Box flex="1"` spacer بعدش که فضای اضافه رو جذب کنه. الگو: `src/components/auth/SignupStepper.tsx`
 - `Steps.Status` بدون prop `current` → قدم فعلی رو با عدد **لاتین** رندر می‌کنه (fallback به `incomplete` نمی‌ره). باید `current` رو صریح بدی (مثلاً `current={toPersianDigits(i+1)}`) وگرنه فقط قدم‌های غیرفعال فارسی می‌شن.
 - `InputGroup` با `startElement`/`endElement` متنی (نه آیکون کوچیک) → فرمول پیش‌فرض padding (`ps`/`pe` بر اساس `var(--input-height)`) برای متن عریض‌تر از یک آیکون کافی نیست و متن ورودی با دکوریشن overlap می‌کنه. باید `ps`/`pe` رو دستی روی `<Input>` ست کنی متناسب با عرض واقعی متن (اندازه‌گیری با `getBoundingClientRect`). الگو: `src/views/auth/SignupBasicInfoView.tsx` (فیلد آدرس اختصاصی فروشگاه، `https://`/`.vitrinaa.shop`)
+- `Progress.Root striped` → **BROKEN** (نسخهٔ `3.35.0`) — recipe داخلی `--stripe-color` رو با مقدار conditional (`_light`/`_dark`) روی یه CSS custom property ست می‌کنه که resolve نمی‌شه (computed value خالی → `backgroundImage` invalid → `none`). فیکس: `backgroundImage`/`backgroundSize` رو مستقیم روی `<Progress.Range>` بده + override با `_dark` (نه custom property). جزئیات: `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/views/auth/SignupPreparingView.tsx`
 
 ---
 
