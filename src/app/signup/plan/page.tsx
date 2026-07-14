@@ -1,0 +1,13 @@
+'use client'
+
+import { Suspense } from 'react'
+import { SignupPlanView } from '@/views/auth/SignupPlanView'
+
+// SignupPlanView reads query params via useSearchParams() → needs a Suspense boundary.
+export default function Page() {
+  return (
+    <Suspense>
+      <SignupPlanView />
+    </Suspense>
+  )
+}

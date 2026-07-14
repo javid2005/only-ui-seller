@@ -13,12 +13,14 @@ export interface SignupStepperProps {
   currentStep: 0 | 1 | 2
   /** خطوط توضیحِ اطلاعات پایهٔ واردشده — وقتی موجوده، جای description پیش‌فرض step۰ (فقط عمودی) رو می‌گیره */
   basicInfoSummary?: string[]
+  /** نام دسته‌بندی‌های انتخاب‌شده — وقتی موجوده، جای description پیش‌فرض step۱ (فقط عمودی) رو می‌گیره */
+  categorySummary?: string[]
 }
 
 // ‌Steps.Indicator سپس Steps.Title/Description (ترتیب Chakra) = indicator راست‌ترین در RTL —
 // طبق مختصات x فیگما (indicator x=280 > title x=0) دقیقاً همین ترتیب لازمه، بدون نیاز به reverse دستی.
 
-export function SignupStepper({ currentStep, basicInfoSummary }: SignupStepperProps) {
+export function SignupStepper({ currentStep, basicInfoSummary, categorySummary }: SignupStepperProps) {
   return (
     <>
       {/* دسکتاپ (md+) — عمودی، با description. Steps.Root رسیپی پیش‌فرضش h=100% است که با پنل کشیده‌شده (align=stretch)
@@ -37,20 +39,22 @@ export function SignupStepper({ currentStep, basicInfoSummary }: SignupStepperPr
                   </Steps.Indicator>
                   <Box display="flex" flexDirection="column" gap="1.5" flex="1" minW="0">
                     <Steps.Title fontWeight="semibold" fontSize="sm" textAlign="right">{s.title}</Steps.Title>
-                    {i === 0 && basicInfoSummary?.length ? (
-                      <Box fontSize="xs" color="fg.muted">
-                        {basicInfoSummary.map((line, idx) => {
-                          const isUrl = line.startsWith('http')
-                          return (
-                            <Text key={idx} lineHeight="1.333" textAlign={isUrl ? 'left' : 'right'} dir={isUrl ? 'ltr' : undefined}>
-                              {line}
-                            </Text>
-                          )
-                        })}
-                      </Box>
-                    ) : (
-                      <Steps.Description fontSize="xs" textAlign="right">{s.description}</Steps.Description>
-                    )}
+                    {(() => {
+                      const summary = i === 0 ? basicInfoSummary : i === 1 ? categorySummary : undefined
+                      if (!summary?.length) return <Steps.Description fontSize="xs" textAlign="right">{s.description}</Steps.Description>
+                      return (
+                        <Box fontSize="xs" color="fg.muted">
+                          {summary.map((line, idx) => {
+                            const isUrl = line.startsWith('http')
+                            return (
+                              <Text key={idx} lineHeight="1.333" textAlign={isUrl ? 'left' : 'right'} dir={isUrl ? 'ltr' : undefined}>
+                                {line}
+                              </Text>
+                            )
+                          })}
+                        </Box>
+                      )
+                    })()}
                   </Box>
                   <Steps.Separator minH="12" />
                 </Steps.Item>

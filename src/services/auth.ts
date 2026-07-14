@@ -48,10 +48,14 @@ export interface SignupBasicInfo {
   inviteCode?: string
 }
 
+export type BillingPeriod = '6' | '12'
+
 export interface SignupProgress {
   step: SignupStep
   basicInfo?: SignupBasicInfo
   categoryIds?: string[]
+  planId?: string
+  billingPeriod?: BillingPeriod
 }
 
 export const SIGNUP_STEP_ROUTE: Record<SignupStep, string> = {

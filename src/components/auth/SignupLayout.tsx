@@ -15,10 +15,14 @@ interface SignupLayoutProps {
   onContinue: () => void
   continueLoading?: boolean
   continueDisabled?: boolean
+  /** متن دکمهٔ ادامه — پیش‌فرض «ادامه» */
+  continueLabel?: string
   /** فاصلهٔ بین محتوا و ردیف دکمه‌های پایین — پیش‌فرض همون فاصلهٔ هدر↔محتوا (base:6/md:10) */
   footerGap?: { base: string; md: string }
   /** خطوط اطلاعات پایهٔ واردشده — در description مرحلهٔ ۱ استپر عمودی نمایش داده می‌شه */
   basicInfoSummary?: string[]
+  /** نام دسته‌بندی‌های انتخاب‌شده — در description مرحلهٔ ۲ استپر عمودی نمایش داده می‌شه */
+  categorySummary?: string[]
   children: ReactNode
 }
 
@@ -33,8 +37,10 @@ export function SignupLayout({
   onContinue,
   continueLoading,
   continueDisabled,
+  continueLabel = 'ادامه',
   footerGap = CONTENT_GAP,
   basicInfoSummary,
+  categorySummary,
   children,
 }: SignupLayoutProps) {
   return (
@@ -46,7 +52,7 @@ export function SignupLayout({
         borderRadius={{ base: '2xl', md: '3xl' }}
         maxW="1242px"
         w="full"
-        minH={{ base: 'auto', md: '880px' }}
+        h={{ base: 'auto', md: '880px' }}
         p="4"
         gap={{ base: '10', md: '4' }}
         direction={{ base: 'column', md: 'row' }}
@@ -63,35 +69,41 @@ export function SignupLayout({
           flex={{ md: '1' }}
           flexShrink={0}
         >
-          <SignupStepper currentStep={currentStep} basicInfoSummary={basicInfoSummary} />
+          <SignupStepper currentStep={currentStep} basicInfoSummary={basicInfoSummary} categorySummary={categorySummary} />
         </Box>
 
         <Flex
           direction="column"
           flex="1"
           minW="0"
+          minH="0"
           pt={{ base: '0', md: '10' }}
           px={{ base: '0', md: '10' }}
           pb={{ base: '0', md: '4' }}
         >
-          <Flex direction="column" align="center" gap="4" w="full">
-            <NextLink href="/">
-              <img src={logoMarkSrc.src} alt="ویترینا" height={53} style={{ width: 'auto' }} />
-            </NextLink>
-            <Text fontWeight="semibold" fontSize={{ base: 'xl', sm: '2xl' }} lineHeight="1.333" textAlign="center" w="full">
-              {title}
-            </Text>
-          </Flex>
-
-          <Box h={CONTENT_GAP} flexShrink={0} />
-
-          <Flex direction="column" gap="4" align="flex-end" w="full" flex="1" minH="0">
-            {subtitle && (
-              <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">
-                {subtitle}
+          {/* flex=1 + minH=0 + overflowY=auto = کل محتوا (هدر+subtitle+children) اسکرول می‌خوره؛ فقط ردیف دکمه‌های پایین بیرون از این بلوکه و ثابت می‌مونه (ستون ۸۸۰px دسکتاپ).
+              gap روی این Flex عمداً ست نشده — فاصلهٔ هدر↔محتوا باید دقیقاً CONTENT_GAP (40px@md) باشه، نه +gap دوباره؛ فاصلهٔ subtitle↔children جدا با gap روی Flex داخلی مدیریت می‌شه.
+              align="center" = هدر و هر بچهٔ بدون w="full" (مثل SegmentGroup) وسط‌چین می‌شه؛ بچه‌های w="full" (متن/فرم‌ها) تحت تأثیر قرار نمی‌گیرن. */}
+          <Flex direction="column" align="center" w="full" flex="1" minH="0" overflowY="auto" overflowX="hidden">
+            <Flex direction="column" align="center" gap="4" w="full" flexShrink={0}>
+              <NextLink href="/">
+                <img src={logoMarkSrc.src} alt="ویترینا" height={53} style={{ width: 'auto' }} />
+              </NextLink>
+              <Text fontWeight="semibold" fontSize={{ base: 'xl', sm: '2xl' }} lineHeight="1.333" textAlign="center" w="full">
+                {title}
               </Text>
-            )}
-            {children}
+            </Flex>
+
+            <Box h={CONTENT_GAP} flexShrink={0} />
+
+            <Flex direction="column" gap="4" align="center" w="full">
+              {subtitle && (
+                <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">
+                  {subtitle}
+                </Text>
+              )}
+              {children}
+            </Flex>
           </Flex>
 
           <Box h={footerGap} flexShrink={0} />
@@ -110,7 +122,7 @@ export function SignupLayout({
               </Button>
             )}
             <Button colorPalette="brand" loading={continueLoading} disabled={continueDisabled} onClick={onContinue}>
-              ادامه
+              {continueLabel}
             </Button>
           </Flex>
         </Flex>
