@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@chakra-ui/react'
+import { Button, chakra } from '@chakra-ui/react'
 import { AuthLayout } from '@/components/auth/AuthLayout'
 import { PhoneInput } from '@/components/auth/PhoneInput'
 import { sendOtp } from '@/services/auth'
@@ -16,7 +17,8 @@ export function ForgotMobileView() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit() {
+  async function handleSubmit(e?: FormEvent) {
+    e?.preventDefault()
     if (!phone) {
       setError('شماره موبایل را وارد نمایید')
       return
@@ -37,10 +39,13 @@ export function ForgotMobileView() {
       subtitle="جهت بازیابی رمز عبور شماره موبایل خود را وارد نمایید"
       backHref={phone ? `/login/password?phone=${phone}` : '/login'}
     >
-      <PhoneInput value={phone} onChange={setPhone} error={error} />
-      <Button w="full" colorPalette="brand" loading={loading} onClick={handleSubmit}>
-        ارسال کد تایید
-      </Button>
+      {/* form + type="submit" = Enter در فیلد شماره موبایل هم دکمه رو trigger می‌کنه */}
+      <chakra.form onSubmit={handleSubmit} display="flex" flexDirection="column" gap="4" w="full">
+        <PhoneInput value={phone} onChange={setPhone} error={error} />
+        <Button type="submit" w="full" colorPalette="brand" loading={loading}>
+          ارسال کد تایید
+        </Button>
+      </chakra.form>
     </AuthLayout>
   )
 }

@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import NextLink from 'next/link'
-import { Button, Link } from '@chakra-ui/react'
+import { Button, Link, chakra } from '@chakra-ui/react'
 import { AuthLayout, focusVisibleOnly } from '@/components/auth/AuthLayout'
 import { PhoneInput } from '@/components/auth/PhoneInput'
 import { sendOtp } from '@/services/auth'
@@ -17,7 +18,8 @@ export function LoginMobileView() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleSendOtp() {
+  async function handleSendOtp(e?: FormEvent) {
+    e?.preventDefault()
     if (!phone) {
       setError('شماره موبایل را وارد نمایید')
       return
@@ -35,10 +37,13 @@ export function LoginMobileView() {
 
   return (
     <AuthLayout title="به ویترینا خوش آمدید" subtitle="جهت ورود یا ثبت نام شماره موبایل خود را وارد نمایید.">
-      <PhoneInput value={phone} onChange={setPhone} error={error} />
-      <Button w="full" colorPalette="brand" loading={loading} onClick={handleSendOtp}>
-        ارسال کد تایید
-      </Button>
+      {/* form + type="submit" = Enter در فیلد شماره موبایل هم دکمه رو trigger می‌کنه (رفتار پیش‌فرض مرورگر) */}
+      <chakra.form onSubmit={handleSendOtp} display="flex" flexDirection="column" gap="4" w="full">
+        <PhoneInput value={phone} onChange={setPhone} error={error} />
+        <Button type="submit" w="full" colorPalette="brand" loading={loading}>
+          ارسال کد تایید
+        </Button>
+      </chakra.form>
       <Link asChild variant="plain" colorPalette="brand" display="block" w="full" textAlign="center" fontSize="sm" fontWeight="semibold" {...focusVisibleOnly}>
         <NextLink href={phone ? `/login/password?phone=${phone}` : '/login/password'}>
           ورود با رمز عبور

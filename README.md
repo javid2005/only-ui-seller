@@ -40,6 +40,8 @@ pnpm start   # serve production build
 | `/signup/basic-info` | ثبت‌نام مرحله ۱ — اطلاعات پایه (نام، نام فروشگاه، آدرس اختصاصی، کد دعوت) |
 | `/signup/categories` | ثبت‌نام مرحله ۲ — انتخاب دسته‌بندی(های) فروشگاه (جستجو، آکاردئون زیردسته، حداقل ۱ اجباری) |
 | `/signup/preparing` | صفحهٔ بینابینی «آماده‌سازی فروشگاه» — progress bar انیمیشنی (۵s) + ۴ ردیف وضعیت، بعد از ۲s خودکار به `/signup/plan` می‌ره |
+| `/signup/plan` | ثبت‌نام مرحله ۳ — انتخاب اشتراک (۶/۱۲ماهه، ۴ پلن) |
+| `/signup/done` | تکمیل ثبت‌نام — خلاصهٔ ۳ مرحله (استپر) + کارت پلن رایگان ۱۴روزه + ورود به حساب |
 | `/products/list` | لیست محصولات (جدول + view کارت، فیلتر، pagination، انتخاب گروهی) |
 | `/products/new` | افزودن محصول جدید (مرحله‌ای: اطلاعات / گالری / تنوع‌ها) |
 | `/products/categories` | دسته‌بندی محصولات |
@@ -69,7 +71,7 @@ src/
   views/      — کامپوننت صفحات (توسط app/**/page.tsx render می‌شن)
   services/   — api.ts
   theme/      — index.ts (createSystem) · tokens.ts (توکن‌های Vitrina)
-  utils/      — numbers.ts (toPersianDigits / toLatinDigits)
+  utils/      — numbers.ts (toPersianDigits / toLatinDigits) · dates.ts (formatJalaliDate)
   types/      — nav.ts
 ```
 

@@ -23,6 +23,7 @@ export function UserMenu({
       positioning={{ placement: 'bottom-end' }}
       onSelect={(details) => {
         if (details.value === 'account') router.push('/account/user-info')
+        if (details.value === 'logout') router.push('/login')
       }}
     >
       {/* Wrap Avatar in plain button — Avatar.Root doesn't forward refs for asChild */}

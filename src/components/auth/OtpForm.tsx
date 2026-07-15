@@ -30,7 +30,8 @@ export interface OtpFormProps {
   submitLabel: string
   /** مقصد لینک «ویرایش» — بازگشت به صفحهٔ ورود شماره */
   editHref: string
-  onSubmit: (code: string) => void | Promise<void>
+  /** false برگردون یعنی کد اشتباهه — OtpForm خودش خطا رو نشون می‌ده و پین رو پاک می‌کنه */
+  onSubmit: (code: string) => boolean | void | Promise<boolean | void>
   onResend?: () => void | Promise<void>
   loading?: boolean
 }
@@ -52,13 +53,21 @@ export function OtpForm({ phone, submitLabel, editHref, onSubmit, onResend, load
     await onResend?.()
   }
 
-  function handleSubmit() {
-    if (code.length < 5) {
+  async function submitCode(codeToSubmit: string) {
+    if (codeToSubmit.length < 5) {
       setError('کد تایید را وارد نمایید')
       return
     }
     setError('')
-    onSubmit(code)
+    const result = await onSubmit(codeToSubmit)
+    if (result === false) {
+      setError('کد تایید وارد شده صحیح نیست')
+      setPinValue(['', '', '', '', ''])
+    }
+  }
+
+  function handleSubmit() {
+    void submitCode(code)
   }
 
   return (
@@ -90,6 +99,7 @@ export function OtpForm({ phone, submitLabel, editHref, onSubmit, onResend, load
         <PinInput.Root
           value={pinValue}
           onValueChange={(e) => { setPinValue(e.value.map(toLatinDigits)); if (error) setError('') }}
+          onValueComplete={(e) => { void submitCode(e.value.map(toLatinDigits).join('')) }}
           otp
           dir="ltr"
           pattern="^[0-9۰-۹]+$"

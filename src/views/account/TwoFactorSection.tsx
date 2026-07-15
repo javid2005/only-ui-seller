@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
   Alert, Badge, Button, Dialog, Field, Flex, Input,
@@ -7,6 +7,7 @@ import {
 import { Copy, KeyRound, Mail, Smartphone } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { OtpDialog } from '@/components/ui/OtpDialog'
+import { toLatinDigits } from '@/utils/numbers'
 
 // ─── InfoAlert ────────────────────────────────────────────────────────────────
 
@@ -193,6 +194,26 @@ interface AuthQrDialogProps {
 function AuthQrDialog({ open, onClose, onConfirm }: AuthQrDialogProps) {
   const isCompact = useCompactMode()
   const [pinValue, setPinValue] = useState<string[]>(['', '', '', '', ''])
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (open) {
+      setPinValue(['', '', '', '', ''])
+      setError('')
+    }
+  }, [open])
+
+  // مسیر تست‌پذیر «کد اشتباه» — هماهنگ با auth.ts::verifyOtp (کد ۰۰۰۰۰ = رد می‌شود)
+  function handleConfirm(code: string) {
+    if (code.length < 5) return
+    if (code === '00000') {
+      setError('کد تایید وارد شده صحیح نیست')
+      setPinValue(['', '', '', '', ''])
+      return
+    }
+    setError('')
+    onConfirm()
+  }
 
   return (
     <Dialog.Root open={open} onOpenChange={({ open: o }) => !o && onClose()} placement="center">
@@ -272,24 +293,37 @@ function AuthQrDialog({ open, onClose, onConfirm }: AuthQrDialogProps) {
                 ۲. کد ایجاد شده در Google Authenticator را وارد نمایید.
               </Text>
 
-              {/* dir="ltr" روی Control — Dialog.Positioner dir="rtl" cascade میشه */}
-              <PinInput.Root value={pinValue} onValueChange={(e) => setPinValue(e.value)} otp dir="ltr">
-                <PinInput.HiddenInput />
-                <PinInput.Control dir="ltr" gap="2">
-                  <PinInput.Input index={0} />
-                  <PinInput.Input index={1} />
-                  <PinInput.Input index={2} />
-                  <PinInput.Input index={3} />
-                  <PinInput.Input index={4} />
-                </PinInput.Control>
-              </PinInput.Root>
+              {/* dir="ltr" روی Control — Dialog.Positioner dir="rtl" cascade میشه.
+                  pattern + toLatinDigits = ارقام فارسی هم قبول می‌شن. */}
+              <Field.Root invalid={!!error} w="full">
+                <PinInput.Root
+                  value={pinValue}
+                  onValueChange={(e) => { setPinValue(e.value.map(toLatinDigits)); if (error) setError('') }}
+                  onValueComplete={(e) => handleConfirm(e.value.map(toLatinDigits).join(''))}
+                  otp
+                  dir="ltr"
+                  pattern="^[0-9۰-۹]+$"
+                >
+                  <PinInput.HiddenInput />
+                  <PinInput.Control dir="ltr" gap="2" justifyContent="center" w="full">
+                    <PinInput.Input index={0} />
+                    <PinInput.Input index={1} />
+                    <PinInput.Input index={2} />
+                    <PinInput.Input index={3} />
+                    <PinInput.Input index={4} />
+                  </PinInput.Control>
+                </PinInput.Root>
+                {error && (
+                  <Field.ErrorText display="block" textAlign="center" w="full">{error}</Field.ErrorText>
+                )}
+              </Field.Root>
             </Dialog.Body>
 
             {/* Footer — انصراف FIRST=راست، تایید LAST=چپ (consistent با ButtonFooter) */}
             <Dialog.Footer pt="2" pb="4" px="6">
               <Flex gap="3">
                 <Button variant="outline" onClick={onClose}>انصراف</Button>
-                <Button colorPalette="brand" onClick={onConfirm}>تایید و فعال کردن</Button>
+                <Button colorPalette="brand" onClick={() => handleConfirm(pinValue.join(''))}>تایید و فعال کردن</Button>
               </Flex>
             </Dialog.Footer>
 

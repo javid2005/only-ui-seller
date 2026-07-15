@@ -46,7 +46,7 @@ export function SignupLayout({
   return (
     <Flex direction="column" align="center" justify="center" minH="100dvh" bg="bg.subtle" px="4" py="4" gap="4">
       <Flex
-        bg="white"
+        bg="bg.panel"
         borderWidth="1px"
         borderColor="border"
         borderRadius={{ base: '2xl', md: '3xl' }}

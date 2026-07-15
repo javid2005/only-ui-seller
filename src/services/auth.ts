@@ -18,9 +18,10 @@ export function sendOtp(phone: string): Promise<{ success: true }> {
   return delay({ success: true })
 }
 
+// مسیر تست‌پذیر برای «کد اشتباه»: کد ۰۰۰۰۰ همیشه رد می‌شود؛ هر کد ۵رقمی دیگر تایید می‌شود.
 export function verifyOtp(phone: string, code: string): Promise<{ success: boolean }> {
   void phone
-  return delay({ success: code.length === 5 })
+  return delay({ success: code.length === 5 && code !== '00000' })
 }
 
 export function loginWithPassword(phone: string, password: string): Promise<{ success: boolean }> {

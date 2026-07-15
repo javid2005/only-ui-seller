@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Box, Field, Flex, Input, InputGroup, Text } from '@chakra-ui/react'
-import { Check, Circle } from 'lucide-react'
+import { CircleCheck, Circle } from 'lucide-react'
 import { SignupLayout } from '@/components/auth/SignupLayout'
 import { saveSignupStep, type SignupBasicInfo } from '@/services/auth'
 
@@ -175,7 +175,7 @@ export function SignupBasicInfoView() {
           {rules.map((rule) => (
             <Flex key={rule.key} flex="1" minW="220px" gap="2" align="center" px="3" py="1.5" borderRadius="l3">
               <Box color={rule.ok ? 'green.solid' : 'fg.subtle'} flexShrink={0}>
-                {rule.ok ? <Check size={14} /> : <Circle size={14} />}
+                {rule.ok ? <CircleCheck size={14} /> : <Circle size={14} />}
               </Box>
               <Text fontSize="xs" fontWeight="medium" color={rule.ok ? 'green.fg' : 'fg.subtle'} textAlign="right" flex="1">
                 {rule.label}

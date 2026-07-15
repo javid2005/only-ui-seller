@@ -196,6 +196,7 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 |-------|-------|-----|
 | Auth | `src/services/auth.ts` کاملاً mock (delay مصنوعی، بدون API واقعی) | تا وصل‌شدن به backend. `checkPhoneExists`: رقم آخر شماره فرد=کاربر جدید (signup)، زوج=کاربر موجود (login) — تا هر دو مسیر تست‌پذیر باشن |
 | Signup progress | `getSignupProgress`/`saveSignupStep` در `auth.ts` با `localStorage` mock می‌شه | با همون شماره، کاربر به آخرین مرحلهٔ ذخیره‌شدهٔ signup برمی‌گرده (بعد از OTP verify) |
+| OTP verify | `verifyOtp` در `auth.ts`: کد `۰۰۰۰۰` رد می‌شه، هر کد ۵رقمی دیگه تایید می‌شه | مسیر «کد اشتباه» تست‌پذیر باشه — همهٔ نقاط PinInput (`OtpForm`, `OtpDialog`, `AuthQrDialog` در `TwoFactorSection.tsx`) هم روی همین قرارداد auto-submit/auto-error دارن |
 
 ### Next.js — App Router conventions (اجباری)
 
@@ -258,6 +259,25 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - dev-engine قانون `button-icon-after-text` را خودکار flag می‌کند (Latin/فارسی، multi-line، arrow-fn).
 - theme `order:-1` روی `[data-scope="switch"][data-part="control"]` = CSS fallback — اما DOM order صحیح باز هم اجباری.
 
+**⚠️ `justify`/`align` هم زیر RTL معنی‌شون برعکس می‌شه — نه فقط ترتیب child ها:**
+```
+Flex/Box با dir=rtl (ارثی از html) — مقادیر flex-start/flex-end فیزیکی flip می‌شن:
+
+direction="row" (پیش‌فرض):
+  justify="flex-start" → راست (نه چپ!)   justify="flex-end" → چپ (نه راست!)
+direction="column":
+  align="flex-start"   → راست (نه چپ!)   align="flex-end"   → چپ (نه راست!)
+
+❌ ممنوع: کپی خام justify-end/justify-start از کلاس Tailwind خروجی Figma —
+   اون export فرض می‌کنه container LTR است؛ زیر dir=rtl واقعی پروژه برعکس resolve می‌شه.
+✅ همیشه با evidence چک کن: getBoundingClientRect() روی رندر واقعی، یا مقایسه با screenshot —
+   حدس نزن که کدوم سمت "start"/"end" می‌شه.
+
+سابقه: 1404 — SignupDoneView Package Card، یه ردیف با justify="flex-end" (کپی خام از Figma)
+سه آیتم رو به‌جای چسبوندن به راست، چسبوند به چپ (~۳۴۰px فاصلهٔ مرده سمت راست) — با
+getBoundingClientRect تشخیص داده شد، نه با چشم.
+```
+
 ### RTL in Portal components (Menu, Drawer, Popover, Tooltip)
 
 - Portal content renders under `<body>` but DOES inherit `dir="rtl"` from `<html>` via CSS cascade
@@ -265,14 +285,15 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - **DOM order still controls flex direction** — only partially fixable via CSS (Switch has order:-1 in theme)
 - Always put elements in correct RTL DOM order: icon/avatar FIRST (rightmost), text SECOND, action LAST (leftmost)
 - **Switch + label RTL rule:** Switch FIRST in DOM (rightmost = right side) → label text LAST (leftmost = left side). Never text-then-switch.
-- `bg="white"` → OK (Chakra palette token, not hardcoded). `bg="#ffffff"` → NOT OK
+- `bg="white"` → از نظر gate hardcode نیست (token واقعی Chakra است، نه hex خام مثل `#ffffff`)، ولی **theme-aware نیست** — در dark mode هم white می‌مونه. برای سطوح/کارت/پنل از `bg="bg.panel"` استفاده کن (semantic، خودکار dark-adapt می‌شه). `bg="white"` فقط جایی درسته که واقعاً می‌خوای رنگ ثابت بمونه (نه یک surface تم‌پذیر).
 
 ---
 
 ### Chakra v3 Known Issues
 
 - `lineHeight="8"` → **BROKEN** — resolves to unitless CSS `line-height: 8` = 8× font-size (e.g. 8×24px = 192px!). Use ratio strings instead: `lineHeight="1.333"` for 32px at 2xl, `lineHeight="1.14"` for 32px at 3xl. Never use numeric lineHeight tokens.
-- `bg="bg.default"` → **BROKEN** (CSS var resolves to transparent). Use `bg="white"` or `bg="bg"` instead
+- `bg="bg.default"` → **BROKEN** (CSS var resolves to transparent). Use `bg="bg"` instead
+- `bg="white"` روی کارت/پنل → **hardcode، dark mode رو می‌شکنه** (white در dark هم white می‌مونه). به‌جاش `bg="bg.panel"` (white در light، gray.950 در dark). سابقه: 1404 — چهار صفحهٔ auth (`AuthLayout`, `SignupLayout`, `SignupPreparingView`, `SignupDoneView`) با `bg="white"` ship شدن، در dark mode کارت روشن موند تا کشف و فیکس شد.
 - `bg="bg.subtle"` → works (`#fafafa`)
 - Tooltip = namespace: `Tooltip.Root` / `Tooltip.Trigger asChild` / `Tooltip.Content`
 - `Text` and `Flex` don't accept `href` prop → for internal navigation wrap with `next/link` (`<Link href=...>`), e.g. logo/breadcrumb. (`SettingCard` uses `<Box as={Link} href=...>`.)

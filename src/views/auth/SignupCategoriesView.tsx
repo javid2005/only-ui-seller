@@ -15,9 +15,8 @@ export function SignupCategoriesView() {
   const phone = searchParams.get('phone') ?? ''
 
   const progress = getSignupProgress(phone)
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(
-    () => new Set(progress?.categoryIds ?? []),
-  )
+  // آرایه (نه Set) چون ترتیب انتخاب مهمه: اولی = پیش‌فرض. حذف پیش‌فرض → نفر بعدی به ترتیب انتخاب جایگزین می‌شه.
+  const [selectedIds, setSelectedIds] = useState<string[]>(progress?.categoryIds ?? [])
   const basicInfo = progress?.basicInfo
   const basicInfoSummary = basicInfo
     ? [
@@ -44,19 +43,13 @@ export function SignupCategoriesView() {
     )
   }, [searchQuery])
 
-  // اولین دسته‌بندیِ انتخاب‌شده به ترتیب لیست (نه ترتیب کلیک) = پیش‌فرض
-  const defaultId = useMemo(
-    () => SIGNUP_CATEGORIES.find((c) => selectedIds.has(c.id))?.id,
-    [selectedIds],
-  )
+  // اولین دسته‌بندیِ انتخاب‌شده به ترتیب کلیک (نه ترتیب لیست) = پیش‌فرض
+  const defaultId = selectedIds[0]
 
   function toggleSelect(id: string) {
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    )
   }
 
   function toggleOpen(id: string) {
@@ -69,9 +62,9 @@ export function SignupCategoriesView() {
   }
 
   async function handleContinue() {
-    if (selectedIds.size === 0) return
+    if (selectedIds.length === 0) return
     setLoading(true)
-    saveSignupStep(phone, 'plan', { categoryIds: Array.from(selectedIds) })
+    saveSignupStep(phone, 'plan', { categoryIds: selectedIds })
     router.push(`/signup/preparing?phone=${phone}`)
   }
 
@@ -86,7 +79,7 @@ export function SignupCategoriesView() {
       changePhoneHref={`/login?phone=${phone}`}
       onContinue={handleContinue}
       continueLoading={loading}
-      continueDisabled={selectedIds.size === 0}
+      continueDisabled={selectedIds.length === 0}
       footerGap={{ base: '6', md: '6' }}
       basicInfoSummary={basicInfoSummary}
     >
@@ -123,7 +116,7 @@ export function SignupCategoriesView() {
           <SignupCategoryAccordion
             key={category.id}
             category={category}
-            selected={selectedIds.has(category.id)}
+            selected={selectedIds.includes(category.id)}
             isDefault={category.id === defaultId}
             isOpen={openIds.has(category.id)}
             onToggleSelect={() => toggleSelect(category.id)}

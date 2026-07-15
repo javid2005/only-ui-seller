@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Badge, Button, Dialog, Flex, PinInput, Portal, CloseButton, Text,
+  Badge, Button, Dialog, Field, Flex, PinInput, Portal, CloseButton, Text,
 } from '@chakra-ui/react'
 import { RotateCcw } from 'lucide-react'
+import { toLatinDigits } from '@/utils/numbers'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -50,12 +51,14 @@ export function OtpDialog({ open, title, description, confirmLabel = 'تایید
   const [pinValue, setPinValue] = useState<string[]>(['', '', '', '', ''])
   const [canResend, setCanResend] = useState(false)
   const [countdownKey, setCountdownKey] = useState(0)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (open) {
       setPinValue(['', '', '', '', ''])
       setCanResend(false)
       setCountdownKey((k) => k + 1)
+      setError('')
     }
   }, [open])
 
@@ -63,6 +66,19 @@ export function OtpDialog({ open, title, description, confirmLabel = 'تایید
     setPinValue(['', '', '', '', ''])
     setCanResend(false)
     setCountdownKey((k) => k + 1)
+    setError('')
+  }
+
+  // مسیر تست‌پذیر «کد اشتباه» — هماهنگ با auth.ts::verifyOtp (کد ۰۰۰۰۰ = رد می‌شود)
+  function handleConfirm(code: string) {
+    if (code.length < 5) return
+    if (code === '00000') {
+      setError('کد تایید وارد شده صحیح نیست')
+      setPinValue(['', '', '', '', ''])
+      return
+    }
+    setError('')
+    onConfirm()
   }
 
   return (
@@ -78,17 +94,30 @@ export function OtpDialog({ open, title, description, confirmLabel = 'تایید
             <Dialog.Body pt="2" pb="4" px="6" display="flex" flexDirection="column" gap="6" alignItems="center">
               <Text fontSize="sm" color="fg.muted" textAlign="center" w="full">{description}</Text>
 
-              {/* dir="ltr" on both Root and Control — Dialog.Positioner dir="rtl" cascades down */}
-              <PinInput.Root value={pinValue} onValueChange={(e) => setPinValue(e.value)} otp dir="ltr">
-                <PinInput.HiddenInput />
-                <PinInput.Control dir="ltr" gap="2">
-                  <PinInput.Input index={0} />
-                  <PinInput.Input index={1} />
-                  <PinInput.Input index={2} />
-                  <PinInput.Input index={3} />
-                  <PinInput.Input index={4} />
-                </PinInput.Control>
-              </PinInput.Root>
+              {/* dir="ltr" on both Root and Control — Dialog.Positioner dir="rtl" cascades down.
+                  pattern + toLatinDigits = ارقام فارسی هم قبول می‌شن (بدونش type="numeric" کاملاً ریجکت می‌کنه). */}
+              <Field.Root invalid={!!error} w="full">
+                <PinInput.Root
+                  value={pinValue}
+                  onValueChange={(e) => { setPinValue(e.value.map(toLatinDigits)); if (error) setError('') }}
+                  onValueComplete={(e) => handleConfirm(e.value.map(toLatinDigits).join(''))}
+                  otp
+                  dir="ltr"
+                  pattern="^[0-9۰-۹]+$"
+                >
+                  <PinInput.HiddenInput />
+                  <PinInput.Control dir="ltr" gap="2" justifyContent="center" w="full">
+                    <PinInput.Input index={0} />
+                    <PinInput.Input index={1} />
+                    <PinInput.Input index={2} />
+                    <PinInput.Input index={3} />
+                    <PinInput.Input index={4} />
+                  </PinInput.Control>
+                </PinInput.Root>
+                {error && (
+                  <Field.ErrorText display="block" textAlign="center" w="full">{error}</Field.ErrorText>
+                )}
+              </Field.Root>
 
               <Flex justify="center" align="center" gap="2" w="full" minH="9">
                 {canResend ? (
@@ -110,7 +139,7 @@ export function OtpDialog({ open, title, description, confirmLabel = 'تایید
             <Dialog.Footer pt="2" pb="4" px="6">
               <Flex gap="3">
                 <Button variant="outline" onClick={onClose}>انصراف</Button>
-                <Button colorPalette="brand" onClick={onConfirm}>{confirmLabel}</Button>
+                <Button colorPalette="brand" onClick={() => handleConfirm(pinValue.join(''))}>{confirmLabel}</Button>
               </Flex>
             </Dialog.Footer>
 

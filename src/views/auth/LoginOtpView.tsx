@@ -21,7 +21,7 @@ export function LoginOtpView() {
     const { success } = await verifyOtp(phone, code)
     if (!success) {
       setLoading(false)
-      return
+      return false
     }
     const exists = await checkPhoneExists(phone)
     setLoading(false)

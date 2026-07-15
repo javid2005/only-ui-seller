@@ -59,7 +59,7 @@ export function SignupPreparingView() {
   return (
     <Flex direction="column" align="center" justify="center" minH="100dvh" bg="bg.subtle" px="4" py="4" gap="4">
       <Flex
-        bg="white"
+        bg="bg.panel"
         borderWidth="1px"
         borderColor="border"
         borderRadius={{ base: '2xl', md: '3xl' }}
@@ -102,10 +102,11 @@ export function SignupPreparingView() {
             <Flex direction="column" gap="4" align="center" w="full" dir="rtl">
               {STATUS_ROWS.map((label, i) => (
                 <Flex key={label} gap="2" align="center" justify="center" w="full" opacity={activeRows[i] ? 1 : 0.2} transition="opacity 0.2s">
-                  <Text fontSize="sm" color="fg" textAlign="center">{label}</Text>
+                  {/* آیکون FIRST در DOM = راست‌ترین در RTL (قرارداد پروژه) */}
                   <Box color="green.solid" flexShrink={0}>
                     <CircleCheckBig size={20} />
                   </Box>
+                  <Text fontSize="sm" color="fg" textAlign="center">{label}</Text>
                 </Flex>
               ))}
             </Flex>

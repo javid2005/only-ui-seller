@@ -20,7 +20,8 @@ export function ForgotOtpView() {
     setLoading(true)
     const { success } = await verifyOtp(phone, code)
     setLoading(false)
-    if (success) router.push(`/login/forgot/new-password?phone=${phone}`)
+    if (!success) return false
+    router.push(`/login/forgot/new-password?phone=${phone}`)
   }
 
   if (!phone) return null
