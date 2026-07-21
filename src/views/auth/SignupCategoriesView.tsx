@@ -72,8 +72,8 @@ export function SignupCategoriesView() {
 
   return (
     <SignupLayout
-      title="دسته بندی فروشگاه"
-      subtitle="دسته بندی(های) مورد نظر خود را به فروشگاه اضافه کنید."
+      title="دسته بندی ها"
+      subtitle="دسته بندی(های) مرتبط با کسب و کار خود را انتخاب نمایید."
       currentStep={1}
       backHref={`/signup/basic-info?phone=${phone}`}
       changePhoneHref={`/login?phone=${phone}`}
@@ -88,7 +88,7 @@ export function SignupCategoriesView() {
         <Flex align="flex-start" gap="2" w="full">
           <Text as="span" fontSize="xs" color="fg.muted" flexShrink={0}>•</Text>
           <Text fontSize="xs" color="fg.muted" textAlign="right" flex="1" minW="0">
-            برای افزودن دسته به فروشگاه روی{' '}
+            برای افزودن دسته بندی روی{' '}
             <Box as="span" display="inline-block" verticalAlign="middle" color="fg.muted">
               <CirclePlus size={14} />
             </Box>{' '}
@@ -98,7 +98,7 @@ export function SignupCategoriesView() {
         <Flex align="flex-start" gap="2" w="full">
           <Text as="span" fontSize="xs" color="fg.muted" flexShrink={0}>•</Text>
           <Text fontSize="xs" color="fg.muted" textAlign="right" flex="1" minW="0">
-            اولین دسته بندی انتخاب شده به عنوان <Text as="span" fontWeight="bold" color="fg">دسته بندی پیش فرض</Text> در سایت نمایش داده می شود.
+            اولین دسته بندی انتخاب شده به عنوان <Text as="span" fontWeight="bold" color="fg">دسته بندی پیش فرض</Text> نمایش داده می شود.
           </Text>
         </Flex>
       </Flex>

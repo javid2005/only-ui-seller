@@ -9,10 +9,10 @@ import logoMarkSrc from '@/assets/logo-mark.svg'
 import { AuthFooter } from '@/components/auth/AuthFooter'
 
 const STATUS_ROWS = [
-  'در حال ساخت پایگاه داده',
-  'در حال ایجاد دسترسی ها',
-  'در حال آپلود یا پیکربندی کدها',
-  'در حال ثبت و فعال سازی فروشگاه',
+  'ساخت پایگاه داده',
+  'ایجاد دسترسی ها',
+  'آپلود یا پیکربندی کدها',
+  'ثبت و فعال سازی',
 ]
 
 // زمان‌بندی از Figma motion data (نسبت‌های 5000ms) — هر ردیف با progress bar هماهنگ روشن می‌شه.
@@ -76,7 +76,7 @@ export function SignupPreparingView() {
               <img src={logoMarkSrc.src} alt="ویترینا" height={53} style={{ width: 'auto' }} />
             </NextLink>
             <Text fontWeight="semibold" fontSize={{ base: 'xl', sm: '2xl' }} lineHeight="1.333" textAlign="center">
-              آماده سازی فروشگاه
+              درحال آماده سازی
             </Text>
           </Flex>
 

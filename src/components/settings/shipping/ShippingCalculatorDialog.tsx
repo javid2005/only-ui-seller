@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Dialog, Portal, CloseButton, Button, Field,
-  SegmentGroup, Flex, Box, Text, Badge, Grid, Separator,
+  SegmentGroup, Flex, Box, Text, Badge, Grid, Separator, Table,
 } from '@chakra-ui/react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { NumberField } from '@/components/ui/NumberField'
@@ -80,53 +80,45 @@ function formatPrice(price: string): string {
   return `${n.toLocaleString('fa-IR')} تومان`
 }
 
-// ─── PriceItem (Shipping-Price Item) ─────────────────────────────────────────
+// ─── Price display helpers ─────────────────────────────────────────────────
 
-function PriceItem({ result, stacked = false }: { result: CalcResult; stacked?: boolean }) {
-  const priceText =
+function priceDisplay(result: CalcResult) {
+  const text =
     result.type === 'free'         ? '۰ تومان'       :
     result.type === 'disabled'     ? 'غیر فعال'      :
     result.type === 'out_of_range' ? 'خارج از بازه'  :
     formatPrice(result.price)
+  const subdued = result.type === 'disabled' || result.type === 'out_of_range'
+  return { text, subdued }
+}
 
-  const isSubdued = result.type === 'disabled' || result.type === 'out_of_range'
+function PriceBadge({ type }: { type: PriceType }) {
+  if (type === 'free')   return <Badge colorPalette="green"  variant="subtle" size="sm">رایگان</Badge>
+  if (type === 'fixed')  return <Badge colorPalette="purple" variant="subtle" size="sm">ثابت</Badge>
+  if (type === 'weight') return <Badge colorPalette="blue"   variant="subtle" size="sm">براساس وزن</Badge>
+  return null
+}
 
-  if (stacked) {
-    return (
-      <Flex
-        bg="bg.subtle"
-        rounded="md"
-        p="2"
-        direction="column"
-        align="flex-start"
-        gap="1"
-        minH="9"
-      >
-        {result.type === 'free'   && <Badge colorPalette="green"  variant="subtle" size="sm">رایگان</Badge>}
-        {result.type === 'fixed'  && <Badge colorPalette="purple" variant="subtle" size="sm">ثابت</Badge>}
-        {result.type === 'weight' && <Badge colorPalette="blue"   variant="subtle" size="sm">براساس وزن</Badge>}
-        <Text fontSize="sm" color={isSubdued ? 'fg.muted' : 'fg'}>{priceText}</Text>
-      </Flex>
-    )
-  }
+// ─── PriceCell — table cell content: badge (label) above price (value) ──────
 
+function PriceCell({ result }: { result: CalcResult }) {
+  const { text, subdued } = priceDisplay(result)
   return (
-    <Flex
-      bg="bg.subtle"
-      rounded="md"
-      p="2"
-      align="center"
-      justify="space-between"
-      overflow="clip"
-      minH="9"
-      gap="2"
-    >
-      {result.type === 'free'   && <Badge colorPalette="green"  variant="subtle" size="sm" flexShrink={0}>رایگان</Badge>}
-      {result.type === 'fixed'  && <Badge colorPalette="purple" variant="subtle" size="sm" flexShrink={0}>ثابت</Badge>}
-      {result.type === 'weight' && <Badge colorPalette="blue"   variant="subtle" size="sm" flexShrink={0}>براساس وزن</Badge>}
-      <Text fontSize="sm" color={isSubdued ? 'fg.muted' : 'fg'}>
-        {priceText}
-      </Text>
+    <Flex direction="column" align="flex-start" gap="1">
+      <PriceBadge type={result.type} />
+      <Text fontSize="sm" fontWeight="semibold" color={subdued ? 'fg.muted' : 'fg'}>{text}</Text>
+    </Flex>
+  )
+}
+
+// ─── PriceItem — mobile boxed variant ────────────────────────────────────────
+
+function PriceItem({ result }: { result: CalcResult }) {
+  const { text, subdued } = priceDisplay(result)
+  return (
+    <Flex bg="bg.subtle" rounded="md" p="2" direction="column" align="flex-start" gap="1" minH="9">
+      <PriceBadge type={result.type} />
+      <Text fontSize="sm" color={subdued ? 'fg.muted' : 'fg'}>{text}</Text>
     </Flex>
   )
 }
@@ -254,27 +246,38 @@ export function ShippingCalculatorDialog({
                 <>
                   <Separator />
 
-                  {/* ── Desktop (≥ sm, non-compact): 3-col grid ── */}
-                  <Grid
-                    display={isCompact ? 'none' : { base: 'none', sm: 'grid' }}
-                    templateColumns="1fr 1fr 1fr"
-                    gap="2"
+                  {/* ── Desktop (≥ sm, non-compact): striped Table ── */}
+                  <Table.ScrollArea
+                    display={isCompact ? 'none' : { base: 'none', sm: 'block' }}
+                    overflowX="auto"
+                    borderWidth="0"
                   >
-                    {/* RTL col order: روش ارسال (right) | درون شهری | بین شهری (left) */}
-                    <Text fontSize="md" fontWeight="semibold" color="fg">روش ارسال</Text>
-                    <Text fontSize="md" fontWeight="semibold" color="fg">درون شهری</Text>
-                    <Text fontSize="md" fontWeight="semibold" color="fg">بین شهری</Text>
-
-                    {methods.map((m, i) => (
-                      <>
-                        <Flex key={`name-${m.id}`} bg="bg.subtle" rounded="md" p="2" align="center" minH="9" overflow="clip">
-                          <Text fontSize="sm" color="fg" minW="0">{m.name}</Text>
-                        </Flex>
-                        <PriceItem key={`intra-${m.id}`} result={results[i][0]} />
-                        <PriceItem key={`inter-${m.id}`} result={results[i][1]} />
-                      </>
-                    ))}
-                  </Grid>
+                    <Table.Root size="md">
+                      <Table.Header>
+                        {/* RTL col order: روش ارسال (right) | درون شهری | بین شهری (left) */}
+                        <Table.Row bg="bg.subtle">
+                          <Table.ColumnHeader textAlign="start">روش ارسال</Table.ColumnHeader>
+                          <Table.ColumnHeader>درون شهری</Table.ColumnHeader>
+                          <Table.ColumnHeader>بین شهری</Table.ColumnHeader>
+                        </Table.Row>
+                      </Table.Header>
+                      <Table.Body>
+                        {methods.map((m, i) => (
+                          <Table.Row key={m.id} bg={i % 2 === 1 ? 'bg.subtle' : 'bg'}>
+                            <Table.Cell>
+                              <Text fontSize="sm" color="fg">{m.name}</Text>
+                            </Table.Cell>
+                            <Table.Cell>
+                              <PriceCell result={results[i][0]} />
+                            </Table.Cell>
+                            <Table.Cell>
+                              <PriceCell result={results[i][1]} />
+                            </Table.Cell>
+                          </Table.Row>
+                        ))}
+                      </Table.Body>
+                    </Table.Root>
+                  </Table.ScrollArea>
 
                   {/* ── Mobile (< sm or compact): 2-col per method with inline labels ── */}
                   <Flex
@@ -289,11 +292,11 @@ export function ShippingCalculatorDialog({
                         <Grid templateColumns="1fr 1fr" gap="2">
                           <Flex direction="column" gap="1">
                             <Text fontSize="xs" fontWeight="semibold" color="fg">درون شهری</Text>
-                            <PriceItem result={results[i][0]} stacked />
+                            <PriceItem result={results[i][0]} />
                           </Flex>
                           <Flex direction="column" gap="1">
                             <Text fontSize="xs" fontWeight="semibold" color="fg">بین شهری</Text>
-                            <PriceItem result={results[i][1]} stacked />
+                            <PriceItem result={results[i][1]} />
                           </Flex>
                         </Grid>
                       </Box>

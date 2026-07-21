@@ -86,7 +86,7 @@ export function SignupDoneView() {
             </NextLink>
 
             <Text fontWeight="semibold" fontSize={{ base: 'xl', sm: '2xl' }} lineHeight="1.333" textAlign="center" w="full">
-              فروشگاه شما با موفقیت ایجاد شد!
+              کسب و کار شما با موفقیت ایجاد شد!
             </Text>
 
             <Flex
@@ -114,7 +114,7 @@ export function SignupDoneView() {
                 </Text>
                 {/* راست‌ترین FIRST — «با ایجاد فروشگاه» → Badge → «برای شما فعال شد.» (ترتیب خام DOM فیگما آینه‌ای بود، طبق screenshot زوم‌شده تصحیح شد) */}
                 <Flex gap="2" align="center" justify="flex-start" w="full" wrap="wrap">
-                  <Text fontSize="sm" color="fg.muted">با ایجاد فروشگاه</Text>
+                  <Text fontSize="sm" color="fg.muted">با ایجاد کسب و کار</Text>
                   <Badge variant="subtle" colorPalette="purple" size="sm" borderRadius="l2">
                     پلن رایگان ۱۴ روزه
                   </Badge>

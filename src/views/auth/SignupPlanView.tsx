@@ -59,7 +59,7 @@ export function SignupPlanView() {
       changePhoneHref={`/login?phone=${phone}`}
       onContinue={handleContinue}
       continueLoading={loading}
-      continueLabel="ادامه و ثبت فروشگاه"
+      continueLabel="ثبت و ادامه"
       footerGap={{ base: '6', md: '6' }}
       basicInfoSummary={basicInfoSummary}
       categorySummary={categorySummary}

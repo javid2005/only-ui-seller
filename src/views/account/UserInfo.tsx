@@ -10,6 +10,8 @@ import { Header } from '@/components/layout/Header'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { OtpDialog } from '@/components/ui/OtpDialog'
+import { NationalIdInput } from '@/components/ui/NationalIdInput'
+import { isValidNationalId } from '@/utils/validation'
 import { SecuritySection } from './SecuritySection'
 import { IdentitySection } from './IdentitySection'
 
@@ -154,6 +156,7 @@ export function UserInfo() {
   const [mobile, setMobile]           = useState('۰۹۱۲۳۴۵۶۷۸۹')
   const [email, setEmail]             = useState('')
   const [nationalId, setNationalId]   = useState('')
+  const [nationalIdError, setNationalIdError] = useState('')
 
   const [mobileVerified, setMobileVerified] = useState(true)
   const [emailVerified, setEmailVerified]   = useState(false)
@@ -176,6 +179,16 @@ export function UserInfo() {
     if (target === 'mobile') { setMobileVerified(true); setVerifiedMobile(mobile) }
     else if (target === 'email') { setEmailVerified(true); setVerifiedEmail(email) }
     setOtpTarget(null)
+  }
+
+  function validateNationalId() {
+    const valid = !nationalId.trim() || isValidNationalId(nationalId)
+    setNationalIdError(valid ? '' : 'کد ملی وارد شده صحیح نمی باشد')
+    return valid
+  }
+
+  function handleSaveUserInfo() {
+    if (!validateNationalId()) return
   }
 
   return (
@@ -208,9 +221,9 @@ export function UserInfo() {
               onValueChange={(e) => setActiveTab(e.value as Tab)}
               w="full"
             >
-              <Tabs.List>
+              <Tabs.List w="full">
                 {TABS.map((tab) => (
-                  <Tabs.Trigger key={tab.value} value={tab.value} fontSize="sm">
+                  <Tabs.Trigger key={tab.value} value={tab.value} flex="1" justifyContent="center" fontSize="sm">
                     {tab.label}
                   </Tabs.Trigger>
                 ))}
@@ -373,16 +386,14 @@ export function UserInfo() {
 
                   {/* کد ملی */}
                   <Box flex="1 0 0" minW={isCompact ? 'full' : { base: 'full', md: '380px' }}>
-                    <Field.Root>
-                      <Field.Label fontSize="sm" fontWeight="semibold" color="fg">کد ملی</Field.Label>
-                      <Input
-                        placeholder="کد ملی را وارد نمایید"
-                        value={nationalId}
-                        onChange={(e) => setNationalId(e.target.value)}
-                        dir="ltr"
-                        textAlign="right"
-                      />
-                    </Field.Root>
+                    <NationalIdInput
+                      label="کد ملی"
+                      placeholder="کد ملی را وارد نمایید"
+                      value={nationalId}
+                      onChange={(val) => { setNationalId(val); if (nationalIdError) setNationalIdError('') }}
+                      onBlur={validateNationalId}
+                      error={nationalIdError}
+                    />
                   </Box>
 
                   {/* تاریخ تولد — Chakra DatePicker با تقویم جلالی */}
@@ -407,7 +418,7 @@ export function UserInfo() {
                 </Flex>
 
                 <ButtonFooter
-                  primary={{ label: 'ذخیره تغییرات', onClick: () => {} }}
+                  primary={{ label: 'ذخیره تغییرات', onClick: handleSaveUserInfo }}
                 />
               </>
             )}

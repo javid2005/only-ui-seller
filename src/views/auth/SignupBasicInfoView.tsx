@@ -141,7 +141,7 @@ export function SignupBasicInfoView() {
         </Field.Root>
         <Field.Root required invalid={!!slugError} flex="1" minW="220px">
           <Field.Label fontSize="sm" fontWeight="semibold">
-            آدرس اختصاصی فروشگاه<Field.RequiredIndicator />
+            آدرس اختصاصی<Field.RequiredIndicator />
           </Field.Label>
           {/* dir="ltr" روی خود InputGroup لازمه — وگرنه start/end منطقی بر اساس dir=rtl صفحه resolve می‌شن و https:// سمت چپ/.vitrinaa.shop سمت راست جابه‌جا می‌شن.
               ps/pe دستی چون فرمول پیش‌فرض InputGroup (بر اساس ارتفاع اینپوت) برای دکوریشن‌های متنی عریض‌تر از یک آیکون کوچیک کافی نیست و باعث overlap با متن ورودی می‌شه. */}
@@ -153,7 +153,7 @@ export function SignupBasicInfoView() {
             <Input
               value={slug}
               onChange={(e) => { setSlug(normalizeSlug(e.target.value)); if (slugError) setSlugError('') }}
-              placeholder="آدرس اختصاصی فروشگاه"
+              placeholder="آدرس اختصاصی"
               dir="ltr"
               ps="20"
               pe="32"
@@ -168,7 +168,7 @@ export function SignupBasicInfoView() {
 
       <Box w="full">
         <Text fontWeight="semibold" fontSize="sm" textAlign="right" mb="1.5" w="full">
-          قوانین ثبت آدرس اختصاصی فروشگاه:
+          قوانین ثبت آدرس اختصاصی:
         </Text>
         {/* آیکون FIRST در DOM = راست (قرارداد پروژه) */}
         <Flex bg="bg.subtle" borderWidth="1px" borderStyle="dashed" borderColor="border.emphasized" borderRadius="sm" py="1" wrap="wrap" gap="2">

@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import {
-  Alert, Badge, Box, Button, Field,
-  FileUpload, Flex, Icon, Input, Separator, Steps, Text,
+  Alert, Badge, Box, Button,
+  FileUpload, Flex, Icon, Separator, Steps, Text,
   useBreakpointValue,
 } from '@chakra-ui/react'
 import { Check, Upload } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
+import { NationalIdInput } from '@/components/ui/NationalIdInput'
+import { isValidNationalId } from '@/utils/validation'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -43,6 +45,7 @@ export function IdentitySection() {
 
   const [status, setStatus] = useState<IdentityStatus>('empty')
   const [nationalId, setNationalId] = useState('')
+  const [nationalIdError, setNationalIdError] = useState('')
 
   const { label, colorPalette } = STATUS_CONFIG[status]
   const isSubmitted = status !== 'empty'
@@ -51,8 +54,14 @@ export function IdentitySection() {
   // empty=0 (step1 active), pending=1 (step1 done, step2 active), approved=2 (all done)
   const activeStep = status === 'empty' ? 0 : status === 'pending' ? 1 : 2
 
+  function validateNationalId() {
+    const valid = !nationalId.trim() || isValidNationalId(nationalId)
+    setNationalIdError(valid ? '' : 'کد ملی وارد شده صحیح نمی باشد')
+    return valid
+  }
+
   function handleSubmit() {
-    if (!nationalId.trim()) return
+    if (!nationalId.trim() || !validateNationalId()) return
     setStatus('pending')
   }
 
@@ -116,19 +125,19 @@ export function IdentitySection() {
       <Flex direction="column" gap="6" w="full">
 
         {/* کد ملی */}
-        <Field.Root w={isCompact ? 'full' : { base: 'full', md: '472px' }}>
-          <Field.Label fontSize="sm" fontWeight="semibold" color="fg">کد ملی</Field.Label>
-          <Input
+        <Box w={isCompact ? 'full' : { base: 'full', md: '472px' }}>
+          <NationalIdInput
+            label="کد ملی"
             placeholder="کد ملی را وارد کنید."
             value={isSubmitted ? MOCK_NATIONAL_ID : nationalId}
-            onChange={(e) => !isSubmitted && setNationalId(e.target.value)}
+            onChange={(val) => { if (isSubmitted) return; setNationalId(val); if (nationalIdError) setNationalIdError('') }}
+            onBlur={validateNationalId}
+            error={nationalIdError}
             readOnly={isSubmitted}
             disabled={isApproved}
             type={status === 'pending' ? 'password' : 'text'}
-            dir="ltr"
-            textAlign="right"
           />
-        </Field.Root>
+        </Box>
 
         {/* آپلود تصویر کارت ملی */}
         <Box w="full">

@@ -4,8 +4,8 @@ import { toPersianDigits } from '@/utils/numbers'
 
 const STEPS = [
   { title: 'اطلاعات پایه', description: 'اطلاعات پایه و  هویتی' },
-  { title: 'دسته بندی فروشگاه', description: 'انتخاب دسته بندی های مرتبط با فروشگاه' },
-  { title: 'پلن انتخابی', description: 'پلن انتخاب شده برای فروشگاه' },
+  { title: 'دسته بندی ها', description: 'دسته بندی های مرتبط با کسب و کار' },
+  { title: 'انتخاب اشتراک', description: 'اشتراک انتخاب شده برای کسب و کار' },
 ]
 
 export interface SignupStepperProps {

@@ -291,7 +291,7 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial, phones = []
                   {/* آدرس */}
                   <Field.Root required>
                     <Field.Label fontSize="sm" color="fg">
-                      آدرس
+                      آدرس دقیق پستی
                       <Field.RequiredIndicator />
                     </Field.Label>
                     <Textarea

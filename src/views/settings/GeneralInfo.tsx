@@ -64,12 +64,13 @@ function IdentityTab() {
             onChange={(e) => setName(e.target.value)}
           />
         </Field.Root>
-        <Field.Root>
-          <Field.Label fontSize="sm" fontWeight="semibold">نام فروشگاه به انگلیسی</Field.Label>
+        <Field.Root disabled>
+          <Field.Label fontSize="sm" fontWeight="semibold">آدرسی اختصاصی</Field.Label>
           <Input
             placeholder="Store name in English"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
+            disabled
           />
         </Field.Root>
       </Grid>
@@ -323,6 +324,16 @@ function AddressTab({ phones }: { phones: Phone[] }) {
   )
 }
 
+// ─── Tabs config ──────────────────────────────────────────────────────────────
+
+type Tab = 'identity' | 'contact' | 'address'
+
+const TABS: { value: Tab; label: string }[] = [
+  { value: 'identity', label: 'اطلاعات هویتی' },
+  { value: 'contact',  label: 'راه های ارتباطی' },
+  { value: 'address',  label: 'آدرس ها' },
+]
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 /**
@@ -333,6 +344,7 @@ function AddressTab({ phones }: { phones: Phone[] }) {
 export function GeneralInfo() {
   const isCompact = useCompactMode()
   const [phones, setPhones] = useState<Phone[]>([])
+  const [activeTab, setActiveTab] = useState<Tab>('identity')
 
   return (
     <Flex direction="column" gap="4" w="full">
@@ -358,30 +370,79 @@ export function GeneralInfo() {
         w="full"
         overflow="clip"
       >
-        {/* Inner container: max 960px centered */}
-        <Box maxW="960px" mx="auto" w="full">
-          <Tabs.Root defaultValue="identity" variant="enclosed" w="full">
+        <Flex
+          gap="10"
+          align="flex-start"
+          direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
+        >
 
-            <Tabs.List w="full" overflowX="auto" flexShrink="0">
-              <Tabs.Trigger value="identity" whiteSpace="nowrap">اطلاعات هویتی</Tabs.Trigger>
-              <Tabs.Trigger value="contact" whiteSpace="nowrap">راه های ارتباطی</Tabs.Trigger>
-              <Tabs.Trigger value="address" whiteSpace="nowrap">آدرس ها</Tabs.Trigger>
-            </Tabs.List>
+          {/* ══ Horizontal tabs — < lg viewport OR compact ══ */}
+          <Box
+            display={isCompact ? 'block' : { base: 'block', lg: 'none' }}
+            w="full"
+            flexShrink={0}
+          >
+            <Tabs.Root
+              variant="subtle"
+              value={activeTab}
+              onValueChange={(e) => setActiveTab(e.value as Tab)}
+              w="full"
+            >
+              <Tabs.List w="full">
+                {TABS.map((tab) => (
+                  <Tabs.Trigger key={tab.value} value={tab.value} flex="1" justifyContent="center" fontSize="sm" whiteSpace="nowrap">
+                    {tab.label}
+                  </Tabs.Trigger>
+                ))}
+              </Tabs.List>
+            </Tabs.Root>
+          </Box>
 
-            <Tabs.Content value="identity">
-              <IdentityTab />
-            </Tabs.Content>
+          {/* ══ Vertical tabs — >= lg viewport AND not compact ══
+               Chakra Tabs.Root orientation="vertical" variant="subtle"
+               FIRST in DOM = rightmost in RTL row layout ✓ */}
+          <Box
+            display={isCompact ? 'none' : { base: 'none', lg: 'block' }}
+            flexShrink={0}
+            w="200px"
+            position="sticky"
+            top="4"
+            alignSelf="flex-start"
+          >
+            <Tabs.Root
+              variant="subtle"
+              orientation="vertical"
+              value={activeTab}
+              onValueChange={(e) => setActiveTab(e.value as Tab)}
+              w="full"
+            >
+              <Tabs.List w="full">
+                {TABS.map((tab) => (
+                  <Tabs.Trigger
+                    key={tab.value}
+                    value={tab.value}
+                    w="full"
+                    justifyContent="flex-start"
+                    fontSize="sm"
+                  >
+                    {tab.label}
+                  </Tabs.Trigger>
+                ))}
+              </Tabs.List>
+            </Tabs.Root>
+          </Box>
 
-            <Tabs.Content value="contact">
-              <ContactTab phones={phones} onPhonesChange={setPhones} />
-            </Tabs.Content>
-
-            <Tabs.Content value="address">
-              <AddressTab phones={phones} />
-            </Tabs.Content>
-
-          </Tabs.Root>
-        </Box>
+          {/* ══ Main content ══ */}
+          <Box
+            flex="1"
+            w="full"
+            maxW={isCompact ? 'full' : { base: 'full', lg: '960px' }}
+          >
+            {activeTab === 'identity' && <IdentityTab />}
+            {activeTab === 'contact' && <ContactTab phones={phones} onPhonesChange={setPhones} />}
+            {activeTab === 'address' && <AddressTab phones={phones} />}
+          </Box>
+        </Flex>
       </Box>
 
     </Flex>
