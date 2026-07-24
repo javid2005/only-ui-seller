@@ -4,7 +4,7 @@ import storeCover from '@/assets/store/store-cover.jpg'
 import storeThumbnail from '@/assets/store/store-thumbnail.jpg'
 import {
   Box, Flex, Text, Badge, IconButton,
-  Menu, Dialog, Button, Portal, Grid,
+  Switch, Dialog, Button, Portal, Grid,
 } from '@chakra-ui/react'
 import {
   Truck,
@@ -15,7 +15,6 @@ import {
   DollarSign,
   Globe,
   CreditCard,
-  EllipsisVertical,
   X,
 } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
@@ -132,6 +131,7 @@ function CardList({ cards }: { cards: Section['cards'] }) {
 // ─── Store Profile Header ─────────────────────────────────────────────────────
 
 function StoreHeader() {
+  const isCompact = useCompactMode()
   const [isOrderActive, setIsOrderActive] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -139,6 +139,28 @@ function StoreHeader() {
     setIsOrderActive((prev) => !prev)
     setDialogOpen(false)
   }
+
+  // onCheckedChange دیالوگ تأیید را باز می‌کند (نه فلیپ مستقیم)؛
+  // چون checked از isOrderActive کنترل می‌شود، انصراف = بازگشت سوییچ.
+  // لیبل اول در DOM = راست‌ترین · Control دوم = چپ (به‌درخواست کاربر، برخلاف قاعدهٔ عمومی Switch)
+  const orderSwitch = (
+    <Switch.Root
+      checked={isOrderActive}
+      onCheckedChange={() => setDialogOpen(true)}
+      colorPalette="brand"
+      size="md"
+    >
+      <Switch.HiddenInput />
+      <Switch.Label fontSize="sm" color="fg.muted">
+        سفارش‌گیری
+      </Switch.Label>
+      {/* theme دارای override سراسری order:-1 روی control است (کنترل همیشه راست)؛
+          اینجا صریحاً override می‌شود تا لیبل راست بیفتد، طبق درخواست کاربر */}
+      <Switch.Control css={{ order: '1 !important' }}>
+        <Switch.Thumb />
+      </Switch.Control>
+    </Switch.Root>
+  )
 
   return (
     <Box w="full" flexShrink={0}>
@@ -157,7 +179,7 @@ function StoreHeader() {
         />
       </Box>
 
-      {/* Data row: thumbnail | store info | ellipsis */}
+      {/* Data row: thumbnail | store info (+ switch on mobile) | switch (desktop) */}
       <Flex gap={{ base: '3', sm: '6' }} alignItems="flex-start" px={{ base: '3', sm: '6' }} w="full">
 
         {/* Thumbnail — FIRST in DOM = rightmost in RTL */}
@@ -200,41 +222,20 @@ function StoreHeader() {
           >
             {isOrderActive ? 'سفارش گیری فعال' : 'سفارش گیری غیرفعال'}
           </Badge>
+
+          {/* موبایل/compact (<md): سوییچ زیر badge می‌آید */}
+          <Box display={isCompact ? 'flex' : { base: 'flex', md: 'none' }} pt="1">
+            {orderSwitch}
+          </Box>
         </Flex>
 
-        {/* Ellipsis menu — LAST in DOM = leftmost in RTL */}
-        <Box pt={{ base: '10', sm: '14' }} flexShrink={0}>
-          <Menu.Root
-            positioning={{
-              placement: 'bottom-start',
-              flip: true,
-            }}
-          >
-            <Menu.Trigger asChild>
-              <IconButton
-                variant="ghost"
-                size="md"
-                aria-label="گزینه‌های بیشتر"
-                color="fg.muted"
-              >
-                <EllipsisVertical size={20} />
-              </IconButton>
-            </Menu.Trigger>
-            <Portal>
-              <Menu.Positioner dir="rtl">
-                <Menu.Content minW="200px">
-                  <Menu.Item
-                    value="toggle-orders"
-                    onClick={() => setDialogOpen(true)}
-                  >
-                    {isOrderActive
-                      ? 'غیرفعالسازی سفارش گیری'
-                      : 'فعالسازی سفارش گیری'}
-                  </Menu.Item>
-                </Menu.Content>
-              </Menu.Positioner>
-            </Portal>
-          </Menu.Root>
+        {/* دسکتاپ (md+): سوییچ سمت چپ ردیف — LAST در DOM = چپ‌ترین در RTL */}
+        <Box
+          pt={{ base: '10', sm: '14' }}
+          flexShrink={0}
+          display={isCompact ? 'none' : { base: 'none', md: 'flex' }}
+        >
+          {orderSwitch}
         </Box>
 
       </Flex>

@@ -1,9 +1,9 @@
 import { useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  Box, Button, Flex, IconButton, Input, InputGroup, Text,
+  Box, Button, Flex, Input, InputGroup, Text,
 } from '@chakra-ui/react'
-import { ChevronsDownUp, ChevronsUpDown, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header } from '@/components/layout/Header'
 import { TitleBar } from '@/components/ui/TitleBar'
@@ -46,11 +46,6 @@ export function ProductCategories() {
       .filter((sec) => sec.categories.length > 0)
   }, [sections, searchQuery])
 
-  const allVisibleIds = useMemo(
-    () => filtered.flatMap((s) => s.categories.map((c) => c.id)),
-    [filtered],
-  )
-
   // ─── Handlers ─────────────────────────────────────────────────────────────
   function toggle(id: string) {
     setOpenIds((prev) => {
@@ -59,8 +54,6 @@ export function ProductCategories() {
       return next
     })
   }
-  const expandAll = () => setOpenIds(new Set(allVisibleIds))
-  const collapseAll = () => setOpenIds(new Set())
 
   function updateCategory(catId: string, fn: (subs: SubCategory[]) => SubCategory[]) {
     setSections((prev) =>
@@ -169,37 +162,14 @@ export function ProductCategories() {
             />
 
             {/* SearchBar */}
-            <Flex align="center" gap="2">
-              {/* FIRST = rightmost: search input */}
-              <InputGroup flex="1" startElement={<Search size={16} />}>
-                <Input
-                  placeholder="جستجو در دسته‌ها و زیردسته‌ها..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  size="md"
-                />
-              </InputGroup>
-
-              {/* LAST: collapse / expand all */}
-              <IconButton
-                variant="outline"
+            <InputGroup startElement={<Search size={16} />}>
+              <Input
+                placeholder="جستجو در دسته‌ها و زیردسته‌ها..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 size="md"
-                aria-label="بستن همه"
-                onClick={collapseAll}
-                disabled={openIds.size === 0}
-              >
-                <ChevronsDownUp size={18} />
-              </IconButton>
-              <IconButton
-                variant="outline"
-                size="md"
-                aria-label="باز کردن همه"
-                onClick={expandAll}
-                disabled={openIds.size === allVisibleIds.length && allVisibleIds.length > 0}
-              >
-                <ChevronsUpDown size={18} />
-              </IconButton>
-            </Flex>
+              />
+            </InputGroup>
 
             {/* Sections */}
             {filtered.length > 0 ? (

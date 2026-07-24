@@ -1,7 +1,13 @@
-import { Box, Flex, Text, Select, createListCollection } from '@chakra-ui/react'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import {
+  Box, Flex, Text, Select, createListCollection, Badge, Button, IconButton,
+  Tooltip as ChakraTooltip, Portal,
+} from '@chakra-ui/react'
 import {
   LayoutDashboard, Boxes, ClipboardList, DollarSign,
   LayoutTemplate, Headset, BadgePercent, Settings, LockKeyhole, Megaphone, Users,
+  Star, Plus, CircleHelp,
 } from 'lucide-react'
 import { SidebarItem } from './SidebarItem'
 import type { NavGroup } from '@/types/nav'
@@ -120,10 +126,18 @@ const NAV_GROUPS: NavGroup[] = [
 ]
 
 const storeCollection = createListCollection({
-  items: [{ label: 'پیج مزباکس', value: 'mazbox' }],
+  items: [
+    { label: 'مزباکس', value: 'mazbox' },
+    { label: 'شیرینی کوک', value: 'cookie' },
+    { label: 'پوشاک ۲۴', value: 'clothing24' },
+  ],
 })
 
 export function Sidebar() {
+  const router = useRouter()
+  const [defaultStoreValue, setDefaultStoreValue] = useState('cookie')
+  const [tipOpen, setTipOpen] = useState(false)
+
   return (
     <Box
       as="aside"
@@ -137,9 +151,50 @@ export function Sidebar() {
 
         {/* Store selector */}
         <Box flexShrink={0}>
-          <Text fontSize="xs" fontWeight="medium" color="fg.muted" mb="1" textAlign="right">
-            فروشگاه
-          </Text>
+          {/* Label row — RTL: متن اول (راست) · آیکون راهنما دوم (چپ) */}
+          <Flex align="center" gap="1" mb="1">
+            <Text fontSize="xs" fontWeight="medium" color="fg.muted">
+              محیط کسب و کار
+            </Text>
+            <ChakraTooltip.Root
+              open={tipOpen}
+              onOpenChange={(e) => setTipOpen(e.open)}
+              openDelay={100}
+              closeDelay={100}
+              closeOnPointerDown={false}
+              positioning={{ placement: 'bottom' }}
+            >
+              <ChakraTooltip.Trigger asChild>
+                <IconButton
+                  variant="ghost"
+                  size="2xs"
+                  boxSize="6"
+                  minW="6"
+                  p="0"
+                  color="fg.muted"
+                  aria-label="راهنمای محیط کسب و کار"
+                  onClick={() => setTipOpen((v) => !v)}
+                >
+                  <CircleHelp size={16} />
+                </IconButton>
+              </ChakraTooltip.Trigger>
+              <Portal>
+                <ChakraTooltip.Positioner dir="rtl">
+                  <ChakraTooltip.Content
+                    dir="rtl"
+                    maxW="240px"
+                    fontSize="xs"
+                    lineHeight="1.7"
+                    textAlign="right"
+                  >
+                    از این منو بین کسب‌وکارهای خود جابه‌جا می‌شوید. با زدن ستاره کنار هر کسب‌وکار،
+                    آن را «پیش‌فرض» کنید تا در هر ورود — فارغ از اینکه آخرین بار کجا بودید — مستقیم
+                    وارد همان محیط شوید.
+                  </ChakraTooltip.Content>
+                </ChakraTooltip.Positioner>
+              </Portal>
+            </ChakraTooltip.Root>
+          </Flex>
           <Select.Root
             collection={storeCollection}
             size="sm"
@@ -157,12 +212,54 @@ export function Sidebar() {
             </Select.Control>
             <Select.Positioner>
               <Select.Content>
-                {storeCollection.items.map((item) => (
-                  <Select.Item key={item.value} item={item}>
-                    <Select.ItemText>{item.label}</Select.ItemText>
-                    <Select.ItemIndicator />
-                  </Select.Item>
-                ))}
+                {storeCollection.items.map((item) => {
+                  const isDefault = item.value === defaultStoreValue
+                  return (
+                    <Select.Item key={item.value} item={item}>
+                      {/* 1. ستاره → اول = راست‌ترین در RTL */}
+                      <IconButton
+                        aria-label={isDefault ? 'کسب‌وکار پیش‌فرض' : 'انتخاب به‌عنوان پیش‌فرض'}
+                        variant="ghost"
+                        size="xs"
+                        color={isDefault ? 'brand.solid' : 'fg.muted'}
+                        flexShrink={0}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setDefaultStoreValue(item.value)
+                        }}
+                      >
+                        <Star size={14} />
+                      </IconButton>
+
+                      {/* 2. نام فروشگاه → پر می‌کند فضای وسط */}
+                      <Select.ItemText flex="1">{item.label}</Select.ItemText>
+
+                      {/* 3. Badge پیش‌فرض (اختیاری) */}
+                      {isDefault && (
+                        <Badge bg="brand.subtle" color="brand.fg" size="sm" flexShrink={0}>
+                          پیش فرض
+                        </Badge>
+                      )}
+
+                      {/* 4. Checkmark انتخاب‌شده → آخر = چپ‌ترین در RTL */}
+                      <Select.ItemIndicator />
+                    </Select.Item>
+                  )
+                })}
+
+                <Box pt="2" w="full">
+                  <Button
+                    colorPalette="brand"
+                    variant="solid"
+                    size="xs"
+                    w="full"
+                    onClick={() => router.push('/signup')}
+                  >
+                    {/* متن → اول = راست‌ترین · آیکون + → آخر = چپ‌ترین (طبق طرح Figma) */}
+                    ایجاد کسب و کار جدید
+                    <Plus size={14} />
+                  </Button>
+                </Box>
               </Select.Content>
             </Select.Positioner>
           </Select.Root>
