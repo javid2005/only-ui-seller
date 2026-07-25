@@ -13,6 +13,7 @@ import { SignupStepper } from '@/components/auth/SignupStepper'
 import { SIGNUP_CATEGORIES } from '@/components/auth/signupCategoriesData'
 import { getSignupProgress } from '@/services/auth'
 import { formatJalaliDate } from '@/utils/dates'
+import { toPersianDigits } from '@/utils/numbers'
 
 const TRIAL_DAYS = 14
 
@@ -76,7 +77,7 @@ export function SignupDoneView() {
           flex={{ md: '1' }}
           flexShrink={0}
         >
-          <SignupStepper currentStep={3} basicInfoSummary={basicInfoSummary} categorySummary={categorySummary} planSummary={['پلن ۱۴ روزه رایگان']} />
+          <SignupStepper currentStep={4} mobile={toPersianDigits(phone)} basicInfoSummary={basicInfoSummary} categorySummary={categorySummary} planSummary={['پلن ۱۴ روزه رایگان']} />
         </Box>
 
         <Flex flex="1" minW="0" direction="column" align="center" justify="center" py={{ base: '0', md: '10' }} px={{ base: '0', md: '10' }}>

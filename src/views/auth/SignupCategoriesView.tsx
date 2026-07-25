@@ -8,6 +8,7 @@ import { SignupLayout } from '@/components/auth/SignupLayout'
 import { SignupCategoryAccordion } from '@/components/auth/SignupCategoryAccordion'
 import { SIGNUP_CATEGORIES } from '@/components/auth/signupCategoriesData'
 import { getSignupProgress, saveSignupStep } from '@/services/auth'
+import { toPersianDigits } from '@/utils/numbers'
 
 export function SignupCategoriesView() {
   const router = useRouter()
@@ -74,7 +75,8 @@ export function SignupCategoriesView() {
     <SignupLayout
       title="دسته بندی ها"
       subtitle="دسته بندی(های) مرتبط با کسب و کار خود را انتخاب نمایید."
-      currentStep={1}
+      currentStep={2}
+      mobile={toPersianDigits(phone)}
       backHref={`/signup/basic-info?phone=${phone}`}
       changePhoneHref={`/login?phone=${phone}`}
       onContinue={handleContinue}

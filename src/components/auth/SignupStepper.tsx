@@ -3,26 +3,29 @@ import { Check } from 'lucide-react'
 import { toPersianDigits } from '@/utils/numbers'
 
 const STEPS = [
+  { title: 'شماره موبایل', description: '' },
   { title: 'اطلاعات پایه', description: 'اطلاعات پایه و  هویتی' },
   { title: 'دسته بندی ها', description: 'دسته بندی های مرتبط با کسب و کار' },
   { title: 'انتخاب اشتراک', description: 'اشتراک انتخاب شده برای کسب و کار' },
 ]
 
 export interface SignupStepperProps {
-  /** ایندکس صفر-پایه (۰=اطلاعات پایه، ۱=دسته‌بندی، ۲=پلن) — ۳ = عبور از همه (صفحهٔ Done، هر سه complete) */
-  currentStep: 0 | 1 | 2 | 3
-  /** خطوط توضیحِ اطلاعات پایهٔ واردشده — وقتی موجوده، جای description پیش‌فرض step۰ (فقط عمودی) رو می‌گیره */
+  /** ایندکس صفر-پایه (۰=شماره موبایل، ۱=اطلاعات پایه، ۲=دسته‌بندی، ۳=پلن) — ۴ = عبور از همه (صفحهٔ Done، هر چهار complete) */
+  currentStep: 0 | 1 | 2 | 3 | 4
+  /** شمارهٔ موبایل تاییدشده — description ثابتِ step۰ (کاربر همیشه این مرحله رو قبل از رسیدن به این صفحات پشت سر گذاشته) */
+  mobile?: string
+  /** خطوط توضیحِ اطلاعات پایهٔ واردشده — وقتی موجوده، جای description پیش‌فرض step۱ (فقط عمودی) رو می‌گیره */
   basicInfoSummary?: string[]
-  /** نام دسته‌بندی‌های انتخاب‌شده — وقتی موجوده، جای description پیش‌فرض step۱ (فقط عمودی) رو می‌گیره */
+  /** نام دسته‌بندی‌های انتخاب‌شده — وقتی موجوده، جای description پیش‌فرض step۲ (فقط عمودی) رو می‌گیره */
   categorySummary?: string[]
-  /** خط توضیحِ پلن انتخابی — وقتی موجوده، جای description پیش‌فرض step۲ (فقط عمودی) رو می‌گیره */
+  /** خط توضیحِ پلن انتخابی — وقتی موجوده، جای description پیش‌فرض step۳ (فقط عمودی) رو می‌گیره */
   planSummary?: string[]
 }
 
 // ‌Steps.Indicator سپس Steps.Title/Description (ترتیب Chakra) = indicator راست‌ترین در RTL —
 // طبق مختصات x فیگما (indicator x=280 > title x=0) دقیقاً همین ترتیب لازمه، بدون نیاز به reverse دستی.
 
-export function SignupStepper({ currentStep, basicInfoSummary, categorySummary, planSummary }: SignupStepperProps) {
+export function SignupStepper({ currentStep, mobile, basicInfoSummary, categorySummary, planSummary }: SignupStepperProps) {
   return (
     <>
       {/* دسکتاپ (md+) — عمودی، با description. Steps.Root رسیپی پیش‌فرضش h=100% است که با پنل کشیده‌شده (align=stretch)
@@ -42,7 +45,7 @@ export function SignupStepper({ currentStep, basicInfoSummary, categorySummary, 
                   <Box display="flex" flexDirection="column" gap="1.5" flex="1" minW="0">
                     <Steps.Title fontWeight="semibold" fontSize="sm" textAlign="right">{s.title}</Steps.Title>
                     {(() => {
-                      const summary = i === 0 ? basicInfoSummary : i === 1 ? categorySummary : i === 2 ? planSummary : undefined
+                      const summary = i === 0 ? (mobile ? [mobile] : undefined) : i === 1 ? basicInfoSummary : i === 2 ? categorySummary : i === 3 ? planSummary : undefined
                       if (!summary?.length) return <Steps.Description fontSize="xs" textAlign="right">{s.description}</Steps.Description>
                       return (
                         <Box fontSize="xs" color="fg.muted">

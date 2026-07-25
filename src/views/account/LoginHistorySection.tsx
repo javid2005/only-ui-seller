@@ -123,6 +123,7 @@ export function LoginHistorySection() {
           <Box flex="1" minW="0">
             <Text fontSize="sm" fontWeight="semibold" color="fg">وضعیت</Text>
           </Box>
+          <Box w="32" flexShrink={0} />
         </Flex>
 
         {/* ── Rows ────────────────────────────────────────────────────────── */}
@@ -155,13 +156,20 @@ export function LoginHistorySection() {
               <Text fontSize="sm" color="fg">{entry.date}</Text>
             </Box>
 
-            {/* وضعیت LAST = leftmost */}
+            {/* وضعیت */}
             <Box flex="1" minW="0">
               {entry.isCurrent ? (
                 <Badge colorPalette="green">آنلاین</Badge>
               ) : (
                 <Text fontSize="sm" color="fg">-</Text>
               )}
+            </Box>
+
+            {/* خروج LAST = leftmost */}
+            <Box w="32" flexShrink={0}>
+              <Button variant="outline" colorPalette="red" size="sm" w="full" onClick={() => {}}>
+                خروج
+              </Button>
             </Box>
           </Flex>
         ))}

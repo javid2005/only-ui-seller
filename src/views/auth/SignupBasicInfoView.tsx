@@ -6,6 +6,7 @@ import { Box, Field, Flex, Input, InputGroup, Text } from '@chakra-ui/react'
 import { CircleCheck, Circle } from 'lucide-react'
 import { SignupLayout } from '@/components/auth/SignupLayout'
 import { saveSignupStep, type SignupBasicInfo } from '@/services/auth'
+import { toPersianDigits } from '@/utils/numbers'
 
 const ALLOWED_CHARS_RE = /^[a-z0-9-]+$/
 const RESERVED_SLUGS = ['admin', 'test', 'shop', 'api', 'www']
@@ -95,7 +96,8 @@ export function SignupBasicInfoView() {
     <SignupLayout
       title="اطلاعات پایه"
       subtitle="جهت ثبت نام اطلاعات زیر را وارد نمایید."
-      currentStep={0}
+      currentStep={1}
+      mobile={toPersianDigits(phone)}
       changePhoneHref={`/login?phone=${phone}`}
       onContinue={handleContinue}
       continueLoading={loading}

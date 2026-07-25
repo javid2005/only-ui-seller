@@ -8,6 +8,7 @@ import { PlanCard } from '@/components/auth/PlanCard'
 import { SIGNUP_PLANS, DEFAULT_SIGNUP_PLAN_ID } from '@/components/auth/plansData'
 import { SIGNUP_CATEGORIES } from '@/components/auth/signupCategoriesData'
 import { getSignupProgress, saveSignupStep, type BillingPeriod } from '@/services/auth'
+import { toPersianDigits } from '@/utils/numbers'
 
 // ۶ماهه FIRST در آرایه = راست‌ترین (RTL) — طبق درخواست کاربر
 const PERIOD_ITEMS = [
@@ -54,7 +55,8 @@ export function SignupPlanView() {
   return (
     <SignupLayout
       title="انتخاب اشتراک"
-      currentStep={2}
+      currentStep={3}
+      mobile={toPersianDigits(phone)}
       backHref={`/signup/categories?phone=${phone}`}
       changePhoneHref={`/login?phone=${phone}`}
       onContinue={handleContinue}

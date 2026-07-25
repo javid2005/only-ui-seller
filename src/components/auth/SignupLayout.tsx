@@ -9,7 +9,7 @@ import { SignupStepper } from '@/components/auth/SignupStepper'
 interface SignupLayoutProps {
   title: string
   subtitle?: string
-  currentStep: 0 | 1 | 2
+  currentStep: 1 | 2 | 3
   backHref?: string
   changePhoneHref: string
   onContinue: () => void
@@ -19,9 +19,11 @@ interface SignupLayoutProps {
   continueLabel?: string
   /** فاصلهٔ بین محتوا و ردیف دکمه‌های پایین — پیش‌فرض همون فاصلهٔ هدر↔محتوا (base:6/md:10) */
   footerGap?: { base: string; md: string }
-  /** خطوط اطلاعات پایهٔ واردشده — در description مرحلهٔ ۱ استپر عمودی نمایش داده می‌شه */
+  /** شمارهٔ موبایل تاییدشده — description ثابتِ step۰ استپر (فارسی/توپرشده در فراخوان) */
+  mobile?: string
+  /** خطوط اطلاعات پایهٔ واردشده — در description مرحلهٔ ۲ استپر عمودی نمایش داده می‌شه */
   basicInfoSummary?: string[]
-  /** نام دسته‌بندی‌های انتخاب‌شده — در description مرحلهٔ ۲ استپر عمودی نمایش داده می‌شه */
+  /** نام دسته‌بندی‌های انتخاب‌شده — در description مرحلهٔ ۳ استپر عمودی نمایش داده می‌شه */
   categorySummary?: string[]
   children: ReactNode
 }
@@ -39,6 +41,7 @@ export function SignupLayout({
   continueDisabled,
   continueLabel = 'ادامه',
   footerGap = CONTENT_GAP,
+  mobile,
   basicInfoSummary,
   categorySummary,
   children,
@@ -69,7 +72,7 @@ export function SignupLayout({
           flex={{ md: '1' }}
           flexShrink={0}
         >
-          <SignupStepper currentStep={currentStep} basicInfoSummary={basicInfoSummary} categorySummary={categorySummary} />
+          <SignupStepper currentStep={currentStep} mobile={mobile} basicInfoSummary={basicInfoSummary} categorySummary={categorySummary} />
         </Box>
 
         <Flex
