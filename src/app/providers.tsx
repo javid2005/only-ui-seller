@@ -8,6 +8,7 @@ import { ChakraProvider, LocaleProvider } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { system } from '@/theme'
 import { ColorModeProvider } from '@/contexts/ColorModeContext'
+import { Toaster } from '@/components/ui/toaster'
 
 // Emotion SSR registry — flushes Chakra/Emotion styles into the server HTML <head>
 // via useServerInsertedHTML so the server and client markup match (no hydration mismatch / FOUC).
@@ -49,6 +50,7 @@ export function Providers({ children }: { children: ReactNode }) {
         <LocaleProvider locale="fa-IR">
           <ColorModeProvider>
             <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+            <Toaster />
           </ColorModeProvider>
         </LocaleProvider>
       </ChakraProvider>

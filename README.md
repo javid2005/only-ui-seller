@@ -60,6 +60,7 @@ pnpm start   # serve production build
 | `/settings/themes` | پوسته‌ها |
 | `/settings/themes/customize` | سفارشی‌سازی پوسته |
 | `/settings/badges` | نمادها و مجوزها |
+| `/settings/domain` | دامنه اختصاصی فروشگاه (افزودن/تایید/تغییر دامنه) |
 
 ## ساختار
 

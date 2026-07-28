@@ -1,14 +1,14 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-07-25
+> آخرین آپدیت: 2026-07-28
 
 ## الان
-آخرین commit (`54e89b3`): store switcher default-star، order-taking switch، simplify categories search.
-از اون‌موقع (uncommitted روی `main`):
-- استپر ثبت‌نام یه مرحلهٔ جدید «شماره موبایل» در ابتدا گرفت (همیشه complete + نمایش شماره) — `SignupStepper.tsx` + `SignupLayout.tsx` + هر ۴ view مرحله (`currentStep` یک واحد شیفت شد)
-- `LoginHistorySection.tsx`: ستون «خروج» که در جدول دسکتاپ اصلاً وجود نداشت (فقط کارت موبایل داشت) اضافه شد
+آخرین commit (`4303695`): مرحلهٔ «شماره موبایل» به استپر ثبت‌نام اضافه شد.
+از اون‌موقع (uncommitted روی `main`) — صفحهٔ تنظیمات «دامنه» (`/settings/domain`) ساخته شده:
+- `src/views/settings/Domain.tsx` + کارت‌ها/دیالوگ‌های `src/components/settings/domain/` (افزودن دامنه، تایید دامنه، نتیجهٔ بررسی دامنه، ویرایش آدرس ویترینا، کارت لینک ویترینا)
+- `src/services/domain.ts` (mock service)
+- `Toaster` سراسری اضافه شد (`src/components/ui/toaster.tsx`) و در `providers.tsx` وایر شد — الان در کل اپ در دسترسه
+- `TitleBar.tsx` و `Settings.tsx` هم تغییر کردن (احتمالاً برای پشتیبانی از کارت/صفحهٔ دامنه)
+- `README.md` صفحات پیاده‌شده sync شد: ردیف `/settings/domain` اضافه شد
 
 ## بعدی
-- commit تغییرات فعلی (لیست بالا)
-
-## نکته
-- برخلاف HANDOFF قبلی: `/signup/plan` (مرحلهٔ ۳، انتخاب اشتراک) دیگه ۴۰۴ نمی‌ده — کامل پیاده‌سازی شده و در `SignupPlanView.tsx` کار می‌کنه
+commit همین تغییرات Domain.

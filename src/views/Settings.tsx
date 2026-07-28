@@ -65,6 +65,14 @@ const SETTINGS_SECTIONS: Section[] = [
         iconColor: 'orange.fg',
         to: '/settings/themes',
       },
+      {
+        title: 'دامنه',
+        description: 'مشاهده و ویرایش دامنه اختصاصی فروشگاه',
+        icon: <Globe size={24} />,
+        iconBg: 'pink.subtle',
+        iconColor: 'pink.fg',
+        to: '/settings/domain',
+      },
     ],
   },
   {
@@ -91,14 +99,6 @@ const SETTINGS_SECTIONS: Section[] = [
   {
     title: 'به زودی...',
     cards: [
-      {
-        title: 'دامنه',
-        description: 'مشاهده و ویرایش دامنه اختصاصی فروشگاه',
-        icon: <Globe size={24} />,
-        iconBg: 'pink.subtle',
-        iconColor: 'pink.fg',
-        state: 'disabled' as const,
-      },
       {
         title: 'درگاه پرداخت',
         description: 'مدیریت و ویرایش تنظیمات درگاه های پرداخت',
@@ -282,20 +282,20 @@ function StoreHeader() {
               </Dialog.Body>
 
               <Dialog.Footer pt="2" pb="4" px="6">
-                {/* DOM order: primary action FIRST = rightmost in RTL */}
-                <Button
-                  colorPalette={isOrderActive ? 'red' : 'green'}
-                  size="sm"
-                  onClick={handleConfirm}
-                >
-                  {isOrderActive ? 'غیرفعال کن' : 'فعال کن'}
-                </Button>
+                {/* DOM order: cancel FIRST = rightmost, primary LAST = leftmost in RTL */}
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setDialogOpen(false)}
                 >
                   لغو
+                </Button>
+                <Button
+                  colorPalette={isOrderActive ? 'red' : 'green'}
+                  size="sm"
+                  onClick={handleConfirm}
+                >
+                  {isOrderActive ? 'غیرفعال کن' : 'فعال کن'}
                 </Button>
               </Dialog.Footer>
 
