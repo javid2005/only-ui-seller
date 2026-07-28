@@ -2,13 +2,11 @@
 > آخرین آپدیت: 2026-07-28
 
 ## الان
-آخرین commit (`4303695`): مرحلهٔ «شماره موبایل» به استپر ثبت‌نام اضافه شد.
-از اون‌موقع (uncommitted روی `main`) — صفحهٔ تنظیمات «دامنه» (`/settings/domain`) ساخته شده:
-- `src/views/settings/Domain.tsx` + کارت‌ها/دیالوگ‌های `src/components/settings/domain/` (افزودن دامنه، تایید دامنه، نتیجهٔ بررسی دامنه، ویرایش آدرس ویترینا، کارت لینک ویترینا)
-- `src/services/domain.ts` (mock service)
-- `Toaster` سراسری اضافه شد (`src/components/ui/toaster.tsx`) و در `providers.tsx` وایر شد — الان در کل اپ در دسترسه
-- `TitleBar.tsx` و `Settings.tsx` هم تغییر کردن (احتمالاً برای پشتیبانی از کارت/صفحهٔ دامنه)
-- `README.md` صفحات پیاده‌شده sync شد: ردیف `/settings/domain` اضافه شد
+آخرین commit (`6039969`): صفحهٔ تنظیمات «دامنه اختصاصی» (`/settings/domain`) اضافه شد.
+از اون‌موقع (uncommitted روی `main`) — فیکس باگ در `DomainCard.tsx` NS-setup stepper:
+- `orientation` به‌جای responsive object، با `useBreakpointValue` به یه string قطعی resolve می‌شه (باگ DS-level Chakra v3 Steps — جزئیات: `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`)
+- `Steps.Item` روی آیتم‌هایی که separator واقعی دارن `minH="20"` می‌گیره تا خط اتصال عمودی زیر indicator بعدی گم نشه؛ آیتم آخر (بدون separator) hug می‌کنه
+- `CLAUDE.md`: breakpoint doc تصحیح شد (`lg` واقعی Chakra v3 = 1024px، نه 992px)
 
 ## بعدی
-commit همین تغییرات Domain.
+commit فیکس stepper (`DomainCard.tsx`) + `CLAUDE.md`.

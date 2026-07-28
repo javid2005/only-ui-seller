@@ -469,8 +469,9 @@ toLatinDigits(s: string): string             // برای input → API
 
 ### Breakpoints — Vitrina targets (project-specific)
 ```
-xs(360px) | sm(480px) | md(768px) | lg(992px) | xl(1280px) | 2xl(1536px)
+xs(360px) | sm(480px) | md(768px) | lg(1024px) | xl(1280px) | 2xl(1536px)
 ```
+> `lg` واقعی Chakra v3 default = `1024px` (نه `992px` — که مقدار Chakra v2 بود). تأیید شده از `node_modules/@chakra-ui/react/dist/esm/theme/breakpoints.js` و مصرف پیوستهٔ `lg` در کل کدبیس (مثلاً `GeneralInfo.tsx`, `UserInfo.tsx`, `ThemeCustomize.tsx`).
 Vitrina targets: **360px** (mobile) · **480px** (mobile+) · **1440px** (desktop) · **1920px** (wide)
 
 **Responsive pattern برای 360px:**

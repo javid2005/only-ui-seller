@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Badge, Box, Button, Flex, IconButton, Steps, Text } from '@chakra-ui/react'
+import { Badge, Box, Button, Flex, IconButton, Steps, Text, useBreakpointValue } from '@chakra-ui/react'
 import { Check, Copy } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
@@ -62,6 +62,12 @@ function NsField({ label, value }: { label: string; value: string }) {
 
 export function DomainCard({ domain, onCancelRequest, onActivate, onDeactivate, onDelete }: DomainCardProps) {
   const isCompact = useCompactMode()
+  // orientation باید یه string قطعی باشه، نه responsive object — Steps recipe variant
+  // horizontal/vertical کامل هم رو reset نمی‌کنن (position/top/insetStart از vertical لو
+  // می‌ره)، پس مسیر امتحان‌شده useBreakpointValue است (الگو: IdentitySection.tsx).
+  const bpOrientation = useBreakpointValue({ base: 'vertical', lg: 'horizontal' } as const) ?? 'horizontal'
+  const stepsOrientation = isCompact ? 'vertical' : bpOrientation
+  const isStepsHorizontal = stepsOrientation === 'horizontal'
   const badge = STATUS_BADGE[domain.status]
   const [confirmVariant, setConfirmVariant] = useState<ConfirmDomainVariant | null>(null)
 
@@ -129,10 +135,14 @@ export function DomainCard({ domain, onCancelRequest, onActivate, onDeactivate, 
 
         {domain.status === 'pending' ? (
           <Box bg="bg.subtle" borderWidth="1px" borderColor="border" rounded="lg" p="4" w="full">
-            {/* orientation switches to vertical in compact/narrow — confirmed via Figma's 512px
-                mobile frame (steps stack top-to-bottom with a rotated separator). Same logical
-                child order (Indicator/Title) works for both — Steps handles RTL internally
-                per orientation, per the project's Chakra-namespace-component exception. */}
+            {/* orientation switches to vertical below lg (1024px) — steps stack top-to-bottom
+                with a rotated separator. Same logical child order (Indicator/Title) works for
+                both — Steps handles RTL internally per orientation, per the project's
+                Chakra-namespace-component exception. orientation باید string قطعی باشه
+                (useBreakpointValue) نه responsive object — رسیپی Steps واریانت
+                horizontal/vertical رو کامل reset نمی‌کنه (position/top/insetStart از vertical
+                لو می‌ره) و خط اتصال با یه responsive object محو می‌شد. Separator minW/minH
+                حداقل طول خط رابط رو تضمین می‌کنن (40px افقی، 24px عمودی). */}
             <Steps.Root
               step={1}
               count={2}
@@ -140,11 +150,25 @@ export function DomainCard({ domain, onCancelRequest, onActivate, onDeactivate, 
               size="sm"
               w="full"
               h="auto"
-              orientation={isCompact ? 'vertical' : { base: 'vertical', md: 'horizontal' }}
+              orientation={stepsOrientation}
             >
               <Steps.List>
                 {NS_STEPS.map((s, i) => (
-                  <Steps.Item key={i} index={i} flex="1">
+                  // minH="20" (80px) فقط عمودی و فقط آیتم‌هایی که separator واقعاً دارن
+                  // (یعنی همه به‌جز آخری — رسیپی خودش separator آیتم آخر رو hide می‌کنه)
+                  // لازمه: separator عمودی رسیپی مطلق‌جایگذاری‌شده با
+                  // maxHeight: calc(100% - steps-size(32px) - gutter*2(24px)) محاسبه می‌شه —
+                  // بدون ارتفاع کافی روی خودِ Item، این calc تقریباً صفر می‌شه و خط رابط
+                  // زیر indicator آیتم بعدی گم/overlap می‌شه. 80 = 32 + 24 + 24 (حداقل طول
+                  // خط رابط هدف). آیتم آخر چون separator نداره باید با محتواش hug کنه، نه
+                  // این ارتفاع رو بگیره. افقی این محدودیت رو نداره (separator اونجا
+                  // width:100% معمولی هست، نه absolute).
+                  <Steps.Item
+                    key={i}
+                    index={i}
+                    flex="1"
+                    minH={!isStepsHorizontal && i < NS_STEPS.length - 1 ? '20' : undefined}
+                  >
                     <Steps.Indicator>
                       <Steps.Status
                         complete={<Check size={16} />}
@@ -156,7 +180,10 @@ export function DomainCard({ domain, onCancelRequest, onActivate, onDeactivate, 
                       <Steps.Title fontSize="sm">{s.title}</Steps.Title>
                       <Steps.Description fontSize="xs">{s.description}</Steps.Description>
                     </Box>
-                    <Steps.Separator />
+                    <Steps.Separator
+                      minW={isStepsHorizontal ? '10' : undefined}
+                      minH={isStepsHorizontal ? undefined : '6'}
+                    />
                   </Steps.Item>
                 ))}
               </Steps.List>
