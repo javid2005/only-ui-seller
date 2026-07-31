@@ -47,6 +47,7 @@ pnpm start   # serve production build
 | `/products/categories` | دسته‌بندی محصولات |
 | `/products/reviews` | نظرات محصولات |
 | `/orders/list` | لیست سفارش‌ها |
+| `/orders/new` | ایجاد سفارش دستی — ویزارد ۵مرحله‌ای (مرحله ۱: انتخاب مشتری) |
 | `/orders/[orderId]` | جزئیات سفارش |
 | `/orders/[orderId]/print-label` | پرینت برچسب (قالب 6-ستون مرکز، چاپ‌محور) |
 | `/orders/[orderId]/print-invoice` | پرینت فاکتور (قالب 6-ستون مرکز، چاپ‌محور) |
