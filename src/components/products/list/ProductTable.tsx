@@ -109,19 +109,19 @@ export function ProductTable({
                 {/* قیمت */}
                 <Table.Cell>
                   <Flex direction="column" gap="0.5">
-                    {p.priceOriginal && (
-                      <Flex align="center" gap="1.5">
-                        {p.discount && (
-                          <Badge size="xs" colorPalette="orange" variant="subtle">{p.discount}</Badge> // dev-engine-ignore
-                        )}
-                        <Text fontSize="xs" color="fg.subtle" textDecoration="line-through">
-                          {p.priceOriginal}{p.currency === 'تومان' ? ' ت' : ''}
-                        </Text>
-                      </Flex>
-                    )}
                     <Text fontSize="sm" fontWeight="medium">
                       {p.priceMain}{p.currency === 'تومان' ? ' ت' : ''}
                     </Text>
+                    {p.priceOriginal && (
+                      <Flex align="center" gap="1.5">
+                        <Text fontSize="xs" color="fg.subtle" textDecoration="line-through">
+                          {p.priceOriginal}{p.currency === 'تومان' ? ' ت' : ''}
+                        </Text>
+                        {p.discount && (
+                          <Badge size="xs" colorPalette="orange" variant="subtle">{p.discount}</Badge> // dev-engine-ignore
+                        )}
+                      </Flex>
+                    )}
                   </Flex>
                 </Table.Cell>
 
