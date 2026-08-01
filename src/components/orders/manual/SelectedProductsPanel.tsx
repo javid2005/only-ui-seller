@@ -118,7 +118,7 @@ function SelectedProductRow({ product, line, max, onQtyChange, onRemove }: {
           {line.variantLabels && line.variantLabels.length > 0 && (
             <Flex justify="flex-start" gap="1.5" wrap="wrap" w="full">
               {line.variantLabels.map((label) => (
-                <Badge key={label} size="xs" colorPalette="green" variant="subtle">{label}</Badge>
+                <Badge key={label} size="xs" colorPalette="gray" variant="outline">{label}</Badge>
               ))}
             </Flex>
           )}

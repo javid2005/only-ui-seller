@@ -4,9 +4,8 @@ import type { ManualProduct } from './manualOrderData'
 
 /**
  * VariantSelectDialog — دیالوگ «انتخاب تنوع» (Figma node 2096:35636).
- * الگوی Dialog از AddCustomerDialog گرفته شده. تفاوت رفتاری کلیدی طبق یادداشت طراح:
- * با کلیک «افزودن تنوع» دیالوگ بسته نمی‌شود — کاربر می‌تواند چند ترکیب تنوع پشت سر هم
- * انتخاب و اضافه کند و در پایان خودش «بستن» را بزند.
+ * الگوی Dialog از AddCustomerDialog گرفته شده. با کلیک «افزودن تنوع» ترکیبِ انتخاب‌شده
+ * به سبد اضافه و دیالوگ بسته می‌شود (طبق درخواست کاربر).
  *
  * RTL DOM order (اولین = راست‌ترین — طبق screenshot طرح، نه ترتیب خام Figma):
  *   ردیف محصول: تصویر (راست) → عنوان/SKU (چپ)
@@ -76,6 +75,7 @@ export function VariantSelectDialog({ open, product, onClose, onAddVariant, rema
   function handleAdd() {
     if (outOfStock) return
     onAddVariant(groups.map((g) => selection[g.label]))
+    onClose()
   }
 
   return (

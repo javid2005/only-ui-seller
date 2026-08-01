@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Alert, Box, Flex, Grid, Text } from '@chakra-ui/react'
+import { Alert, Box, Button, Flex, Grid, Text } from '@chakra-ui/react'
+import { NotepadText } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header } from '@/components/layout/Header'
+import { toaster } from '@/components/ui/toaster'
 import { ManualOrderStepper } from '@/components/orders/manual/ManualOrderStepper'
 import { CustomerSelectPanel } from '@/components/orders/manual/CustomerSelectPanel'
 import { ProductSelectPanel } from '@/components/orders/manual/ProductSelectPanel'
@@ -11,8 +13,10 @@ import { ShippingSelectPanel } from '@/components/orders/manual/ShippingSelectPa
 import { ShippingAddressForm, type ShippingAddressValue } from '@/components/orders/manual/ShippingAddressForm'
 import { DiscountSelectPanel } from '@/components/orders/manual/DiscountSelectPanel'
 import { DiscountCodeForm } from '@/components/orders/manual/DiscountCodeForm'
+import { OrderReviewPanel } from '@/components/orders/manual/OrderReviewPanel'
 import { OrderDraftSummary } from '@/components/orders/manual/OrderDraftSummary'
 import { ManualOrderFooter } from '@/components/orders/manual/ManualOrderFooter'
+import { ManualOrderConfirmFooter } from '@/components/orders/manual/ManualOrderConfirmFooter'
 import { AddCustomerDialog } from '@/components/orders/manual/AddCustomerDialog'
 import { VariantSelectDialog } from '@/components/orders/manual/VariantSelectDialog'
 import {
@@ -39,6 +43,7 @@ export function ManualOrderNew() {
   const isCompact = useCompactMode()
   const router = useRouter()
   const [step, setStep] = useState(0)
+  const summaryRef = useRef<HTMLDivElement>(null)
 
   /** با تغییر مرحله («ادامه»/«بازگشت») اسکرول به بالای صفحه برمی‌گردد */
   useEffect(() => {
@@ -104,7 +109,7 @@ export function ManualOrderNew() {
     addOrBumpLine(productId)
   }
 
-  /** از دیالوگِ «انتخاب تنوع» — دیالوگ بسته نمی‌شود تا کاربر خودش «بستن» را بزند */
+  /** از دیالوگِ «انتخاب تنوع» — با «افزودن تنوع» خودِ دیالوگ هم بسته می‌شود (VariantSelectDialog) */
   function handleAddVariant(variantLabels: string[]) {
     if (!variantDialogProductId) return
     addOrBumpLine(variantDialogProductId, variantLabels)
@@ -130,6 +135,7 @@ export function ManualOrderNew() {
   const hasProductSelection = selectedLines.length > 0
 
   const variantDialogProduct = MANUAL_PRODUCTS.find((p) => p.id === variantDialogProductId) ?? null
+  const selectedCustomer = customers.find((c) => c.id === customerId) ?? null
 
   // ─── روش ارسال (مرحلهٔ ۳) ────────────────────────────────────────────────────
   const shippingMethod = MANUAL_SHIPPING_METHODS.find((m) => m.id === shippingMethodId) ?? null
@@ -190,12 +196,21 @@ export function ManualOrderNew() {
       setShippingSubmitAttempted(true)
       return
     }
-    setStep((s) => Math.min(s + 1, 3))
+    setStep((s) => Math.min(s + 1, 4))
   }
 
   function handleBack() {
     if (step === 0) router.push('/orders/list')
     else setStep((s) => s - 1)
+  }
+
+  /** مرحلهٔ ۵ — mock: لینک پرداختِ ساختگی کپی می‌شود و کاربر به لیست سفارشات برمی‌گردد
+   * (سرویس واقعیِ ساختِ سفارش/لینک هنوز وصل نشده — طبق قراردادِ mock پروژه). */
+  function handleCreateOrder() {
+    const mockLink = `https://pay.vitrinaa.shop/${selectedCustomer?.id ?? 'order'}`
+    navigator.clipboard?.writeText(mockLink)
+    toaster.create({ id: 'manual-order-link-toast', title: 'سفارش ایجاد شد و لینک پرداخت کپی شد', type: 'success', duration: 2500 })
+    router.push('/orders/list')
   }
 
   return (
@@ -208,6 +223,26 @@ export function ManualOrderNew() {
           { label: 'لیست سفارشات', href: '/orders/list' },
           { label: 'ایجاد سفارش دستی' },
         ]}
+        cta={step === 4 && isCompact ? (
+          <Button
+            variant="outline"
+            size="sm"
+            h="9"
+            px="3.5"
+            rounded="md"
+            fontWeight="semibold"
+            fontSize="sm"
+            color="brand.fg"
+            borderColor="brand.solid"
+            bg="bg.panel"
+            _hover={{ bg: 'brand.bg' }}
+            onClick={() => summaryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          >
+            {/* RTL: آیکن trailing = چپِ متن (طبق screenshot طرح) */}
+            خلاصه سفارش
+            <NotepadText size={16} />
+          </Button>
+        ) : undefined}
       />
 
       <ManualOrderStepper step={step} />
@@ -287,31 +322,60 @@ export function ManualOrderNew() {
               />
             </Flex>
           )}
+
+          {step === 4 && selectedCustomer && shippingMethod && (
+            <OrderReviewPanel
+              customer={selectedCustomer}
+              lines={selectedLines}
+              products={MANUAL_PRODUCTS}
+              shippingMethod={shippingMethod}
+            />
+          )}
         </Box>
 
+        {/* top="20" (80px) = ارتفاعِ Navbar (h="16"=64px، sticky top=0) + فاصلهٔ ۱۶px —
+            وگرنه با top="4" پنل زیرِ Navbar (zIndex بالاتر) گم می‌شود. الگو: NewProduct.tsx */}
         <Box
+          ref={summaryRef}
           gridArea="summary"
           minW="0"
           position={isCompact ? 'static' : { base: 'static', lg: 'sticky' }}
-          top="4"
+          top="20"
         >
           <OrderDraftSummary
             itemCount={hasProductSelection ? itemCount : undefined}
             itemsTotal={hasProductSelection ? `${formatToman(itemsTotalNumber)} ت` : undefined}
             payable={hasProductSelection ? `${formatToman(payableNumber)} ت` : undefined}
-            shippingPrice={step >= 2 ? (shippingMethod ? `${formatToman(shippingMethod.price)} ت` : '-') : undefined}
+            showShipping={step >= 2}
+            shippingPrice={shippingMethod ? `${formatToman(shippingMethod.price)} ت` : undefined}
             discountAmount={step >= 3 && discountAmountNumber > 0 ? `${formatToman(discountAmountNumber)} ت` : undefined}
           />
         </Box>
 
         <Box gridArea="footer" minW="0">
-          <ManualOrderFooter
-            nextDisabled={nextDisabled}
-            onNext={handleNext}
-            onCancel={handleBack}
-            cancelLabel={step === 0 ? 'بازگشت به لیست' : 'بازگشت'}
-            extraAction={step === 3 && appliedDiscount ? { label: 'حذف تخفیف', onClick: handleRemoveDiscount } : undefined}
-          />
+          {step < 4 ? (
+            <ManualOrderFooter
+              nextDisabled={nextDisabled}
+              onNext={handleNext}
+              onCancel={handleBack}
+              cancelLabel={step === 0 ? 'بازگشت به لیست' : 'بازگشت'}
+              extraAction={step === 3 && appliedDiscount ? { label: 'حذف تخفیف', onClick: handleRemoveDiscount } : undefined}
+            />
+          ) : (
+            <Flex direction="column" gap="4">
+              <Alert.Root status="info" variant="subtle">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>نهایی سازی سفارش</Alert.Title>
+                  <Alert.Description>
+                    بعد از کلیک روی «ثبت و ایجاد لینک پرداخت»، یک لینک پرداخت اختصاصی برای این مشتری ساخته می‌شود. این لینک را کپی کرده و برای مشتری ارسال کنید.
+                  </Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
+
+              <ManualOrderConfirmFooter onCreate={handleCreateOrder} onBack={handleBack} />
+            </Flex>
+          )}
         </Box>
       </Grid>
 

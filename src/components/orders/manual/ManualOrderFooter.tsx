@@ -1,5 +1,5 @@
-import { Box, Button, Flex } from '@chakra-ui/react'
-import { ArrowLeft } from 'lucide-react'
+import { Box, Button, Flex, IconButton } from '@chakra-ui/react'
+import { ArrowLeft, ArrowRight, Trash2 } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 
 interface ManualOrderFooterProps {
@@ -87,6 +87,8 @@ export function ManualOrderFooter({
             color="gray.fg"
             onClick={onCancel}
           >
+            {/* آیکن leading = راستِ متن (هم‌الگو با PrintFooterCTA / ManualOrderConfirmFooter) */}
+            <ArrowRight size={20} />
             {cancelLabel}
           </Button>
 
@@ -95,19 +97,35 @@ export function ManualOrderFooter({
               extraAction x=97 — یعنی extraAction از ادامه راست‌تر است، نه برعکس) */}
           <Flex align="center" gap="2">
             {extraAction && (
-              <Button
-                variant="outline"
-                colorPalette="red"
-                size="sm"
-                h="10"
-                px="4"
-                rounded="md"
-                fontWeight="semibold"
-                fontSize="sm"
-                onClick={extraAction.onClick}
-              >
-                {extraAction.label}
-              </Button>
+              <>
+                {/* زیر sm: IconButton با آیکن Trash2 به‌جای دکمهٔ متنی (طبق درخواست کاربر) */}
+                <IconButton
+                  aria-label={extraAction.label}
+                  variant="outline"
+                  colorPalette="red"
+                  size="sm"
+                  h="10"
+                  rounded="md"
+                  display={{ base: 'inline-flex', sm: 'none' }}
+                  onClick={extraAction.onClick}
+                >
+                  <Trash2 size={16} />
+                </IconButton>
+                <Button
+                  variant="outline"
+                  colorPalette="red"
+                  size="sm"
+                  h="10"
+                  px="4"
+                  rounded="md"
+                  fontWeight="semibold"
+                  fontSize="sm"
+                  display={{ base: 'none', sm: 'inline-flex' }}
+                  onClick={extraAction.onClick}
+                >
+                  {extraAction.label}
+                </Button>
+              </>
             )}
 
             <Button

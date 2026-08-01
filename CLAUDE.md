@@ -321,6 +321,7 @@ getBoundingClientRect تشخیص داده شد، نه با چشم.
 - Navbar: full-width (no `maxW` on outer container); controls DOM order (RTL): Min/Max | Bell | Avatar with `gap="6"` (24px)
 - Body (sidebar + content): `maxW="1920px" mx="auto"`, compact mode: `maxW="512px"`
 - Sidebar: `w="256px"` expanded, `w="16"` collapsed
+- **Sticky in-page panels (summary/step-nav columns):** Navbar خودش `position="sticky" top="0"` با `h="16"` (64px) و `zIndex="sticky"` است. هر پنل sticky دیگه‌ای زیر همون scroll container باید `top="20"` (80px = 64+16) بگیره، نه `top="4"` — وگرنه چون هر دو روی همون top=0 رقابت می‌کنن و Navbar zIndex بالاتری داره، پنل زیرِ Navbar گم می‌شه. الگوی درست از قبل در `NewProduct.tsx` (StepNav ستون) بود؛ `ManualOrderNew.tsx` (خلاصه سفارش) هم به همین اصلاح شد. ⚠️ `OrderDetails.tsx` و `GeneralInfo.tsx` هنوز `top="4"` دارن — احتمالاً همین باگ رو دارن، در صورت گزارش کاربر چک شه.
 
 ### Compact / Mobile mode
 

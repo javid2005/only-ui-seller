@@ -25,7 +25,7 @@ export const MANUAL_ORDER_STEPS = [
   'انتخاب محصول',
   'روش ارسال',
   'اعمال تخفیف',
-  'تایید و لینک',
+  'ثبت و ایجاد لینک',
 ]
 
 export const MANUAL_CUSTOMERS: ManualCustomer[] = [
@@ -98,7 +98,7 @@ export const MANUAL_PRODUCTS: ManualProduct[] = [
       { label: 'حافظه داخلی', options: ['۲۵۶ گیگابایت', '۵۱۲ گیگابایت'] },
     ],
   },
-  { id: 'mp6', name: 'آنر ۱۲۰ پرو',        sku: 'SKU-20006', image: prd6.src, category: 'آنر',                                priceUsd: '۱۳۵', hasVariety: false, inventory: 29 },
+  { id: 'mp6', name: 'آنر ۱۲۰ پرو',        sku: 'SKU-20006', image: prd6.src, category: 'آنر',     priceToman: '۳۱٬۷۰۰٬۰۰۰', priceUsd: '۱۳۵', hasVariety: false, inventory: 29 },
   { id: 'mp7', name: 'گلکسی A55',          sku: 'SKU-20007', image: prd7.src, category: 'سامسونگ', priceToman: '۸۹٬۰۰۰٬۰۰۰',                  hasVariety: false, inventory: 23 },
   {
     id: 'mp8', name: 'ویوو V29', sku: 'SKU-20008', image: prd8.src, category: 'ویوو',
@@ -108,7 +108,7 @@ export const MANUAL_PRODUCTS: ManualProduct[] = [
       { label: 'حافظه داخلی', options: ['۱۲۸ گیگابایت', '۲۵۶ گیگابایت'] },
     ],
   },
-  { id: 'mp9', name: 'نوکیا ۳.۴',          sku: 'SKU-20009', image: prd9.src, category: 'نوکیا',                              priceUsd: '۸۰',  hasVariety: false, inventory: 2 },
+  { id: 'mp9', name: 'نوکیا ۳.۴',          sku: 'SKU-20009', image: prd9.src, category: 'نوکیا',   priceToman: '۱۸٬۸۰۰٬۰۰۰', priceUsd: '۸۰',  hasVariety: false, inventory: 2 },
 ]
 
 export const MANUAL_PRODUCT_CATEGORIES = createListCollection<{ label: string; value: string }>({

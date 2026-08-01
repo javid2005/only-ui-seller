@@ -25,12 +25,13 @@ export function ManualOrderStepper({ step }: { step: number }) {
         step={step}
         count={MANUAL_ORDER_STEPS.length}
         colorPalette="teal"
+        size="sm"
         w="full"
         orientation="horizontal"
       >
         <Steps.List overflowX="auto" overflowY="hidden" pb="1">
           {MANUAL_ORDER_STEPS.map((title, i) => (
-            <Steps.Item key={i} index={i} flexGrow={1} flexShrink={0} title={title}>
+            <Steps.Item key={i} index={i} flexGrow={0} flexShrink={0} title={title}>
               <Steps.Indicator>
                 {/* current صریح — بدون آن، عدد مرحلهٔ جاری لاتین رندر می‌شود */}
                 <Steps.Status
@@ -40,7 +41,8 @@ export function ManualOrderStepper({ step }: { step: number }) {
                 />
               </Steps.Indicator>
               <Steps.Title whiteSpace="nowrap">{title}</Steps.Title>
-              <Steps.Separator />
+              {/* طولِ ثابت — نه flex:1 پیش‌فرضِ recipe — طبق درخواست کاربر: ۳۲px دسکتاپ، ۲۴px موبایل/کامپکت */}
+              <Steps.Separator flex="0 0 auto" w={isCompact ? '6' : { base: '6', md: '8' }} />
             </Steps.Item>
           ))}
         </Steps.List>
