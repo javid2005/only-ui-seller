@@ -25,8 +25,10 @@ const REQUIRED_MSG = 'این فیلد الزامی است'
  *
  * ردیف اول (RTL، اولین DOM = راست‌ترین — بر اساس x-metadata طرح):
  *   استان (راست) → شهر (وسط) → کد پستی (چپ)
- * روی موبایل/کامپکت، استان+شهر در یک ردیفِ دوستونه می‌مانند و کد پستی به ردیف مستقلِ
- * تمام‌عرض زیرشان می‌رود (`gridColumn: span 2`) — دقیقاً مطابق Figma mobile frame.
+ * از sm به بالا (و در حالت کامپکت که خودش شبیه‌سازِ ۵۱۲px است)، استان+شهر در یک ردیفِ
+ * دوستونه می‌مانند و کد پستی به ردیف مستقلِ تمام‌عرض زیرشان می‌رود (`gridColumn: span 2`)
+ * — مطابق Figma mobile frame. زیرِ sm (موبایل واقعیِ باریک)، هر سه فیلد تک‌ستونه زیر هم
+ * می‌افتند تا فیلدهای استان/شهر روی صفحه‌های خیلی باریک فشرده نشوند.
  *
  * اعتبارسنجی: دکمهٔ «ادامه» فقط با انتخابِ روش ارسال فعال می‌شود (نه تکمیلِ این فرم) —
  * اگر کاربر بدون پرکردنِ فیلدهای الزامی «ادامه» را بزند، `attemptedSubmit` از والد true
@@ -56,7 +58,7 @@ export function ShippingAddressForm({ value, onChange, attemptedSubmit = false }
       <TitleBar title="اطلاعات ارسال" subtitle="آدرس گیرنده را وارد کنید." divider />
 
       <Flex direction="column" gap="4" w="full">
-        <Grid templateColumns={isCompact ? '1fr 1fr' : { base: '1fr 1fr', lg: '1fr 1fr 1fr' }} gap="4" w="full">
+        <Grid templateColumns={isCompact ? '1fr 1fr' : { base: '1fr', sm: '1fr 1fr', lg: '1fr 1fr 1fr' }} gap="4" w="full">
           <Field.Root required invalid={missing('province')}>
             <Field.Label fontSize="sm" color="fg">
               استان
@@ -128,7 +130,7 @@ export function ShippingAddressForm({ value, onChange, attemptedSubmit = false }
           <Field.Root
             required
             invalid={missing('postal')}
-            gridColumn={isCompact ? 'span 2' : { base: 'span 2', lg: 'auto' }}
+            gridColumn={isCompact ? 'span 2' : { base: 'span 1', sm: 'span 2', lg: 'auto' }}
           >
             <Field.Label fontSize="sm" color="fg">
               کد پستی

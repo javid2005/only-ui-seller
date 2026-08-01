@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Box, Flex, Grid } from '@chakra-ui/react'
+import { Alert, Box, Flex, Grid, Text } from '@chakra-ui/react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header } from '@/components/layout/Header'
 import { ManualOrderStepper } from '@/components/orders/manual/ManualOrderStepper'
@@ -9,12 +9,14 @@ import { ProductSelectPanel } from '@/components/orders/manual/ProductSelectPane
 import { SelectedProductsPanel } from '@/components/orders/manual/SelectedProductsPanel'
 import { ShippingSelectPanel } from '@/components/orders/manual/ShippingSelectPanel'
 import { ShippingAddressForm, type ShippingAddressValue } from '@/components/orders/manual/ShippingAddressForm'
+import { DiscountSelectPanel } from '@/components/orders/manual/DiscountSelectPanel'
+import { DiscountCodeForm } from '@/components/orders/manual/DiscountCodeForm'
 import { OrderDraftSummary } from '@/components/orders/manual/OrderDraftSummary'
 import { ManualOrderFooter } from '@/components/orders/manual/ManualOrderFooter'
 import { AddCustomerDialog } from '@/components/orders/manual/AddCustomerDialog'
 import { VariantSelectDialog } from '@/components/orders/manual/VariantSelectDialog'
 import {
-  MANUAL_CUSTOMERS, MANUAL_PRODUCTS, MANUAL_SHIPPING_METHODS, formatToman, tomanToNumber, variantLineId,
+  MANUAL_CUSTOMERS, MANUAL_PRODUCTS, MANUAL_SHIPPING_METHODS, MANUAL_DISCOUNTS, formatToman, tomanToNumber, variantLineId,
   type ManualCustomer, type SelectedProductLine,
 } from '@/components/orders/manual/manualOrderData'
 
@@ -38,6 +40,11 @@ export function ManualOrderNew() {
   const router = useRouter()
   const [step, setStep] = useState(0)
 
+  /** با تغییر مرحله («ادامه»/«بازگشت») اسکرول به بالای صفحه برمی‌گردد */
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [step])
+
   const [customers, setCustomers] = useState<ManualCustomer[]>(MANUAL_CUSTOMERS)
   const [customerId, setCustomerId] = useState<string | null>(null)
   const [addOpen, setAddOpen] = useState(false)
@@ -51,7 +58,11 @@ export function ManualOrderNew() {
   /** true بعد از اولین «ادامه»یِ ناموفق در مرحلهٔ روش ارسال — فیلدهای آدرسِ خالی را نشان می‌دهد */
   const [shippingSubmitAttempted, setShippingSubmitAttempted] = useState(false)
 
-  const customer = customers.find((c) => c.id === customerId) ?? null
+  // ─── تخفیف (مرحلهٔ ۴) — انتخاب از لیست یا ورودِ دستیِ کد، دوتا mutually-exclusive ────
+  const [discountId, setDiscountId] = useState<string | null>(null)
+  const [manualCodeInput, setManualCodeInput] = useState('')
+  const [manualCodeError, setManualCodeError] = useState<string | undefined>(undefined)
+  const [manualDiscountId, setManualDiscountId] = useState<string | null>(null)
 
   function handleAddCustomer(newCustomer: ManualCustomer) {
     setCustomers((prev) => [newCustomer, ...prev])
@@ -126,7 +137,41 @@ export function ManualOrderNew() {
     shippingAddress.province && shippingAddress.city
     && shippingAddress.postal.trim() && shippingAddress.address.trim(),
   )
-  const payableNumber = itemsTotalNumber + (shippingMethod?.price ?? 0)
+
+  // ─── تخفیف (مرحلهٔ ۴) ────────────────────────────────────────────────────────
+  const appliedDiscount = discountId
+    ? MANUAL_DISCOUNTS.find((d) => d.id === discountId)
+    : MANUAL_DISCOUNTS.find((d) => d.id === manualDiscountId)
+  const discountAmountNumber = appliedDiscount?.amount ?? 0
+
+  function handleSelectDiscount(id: string) {
+    setDiscountId(id)
+    setManualDiscountId(null)
+    setManualCodeInput('')
+    setManualCodeError(undefined)
+  }
+
+  /** کد وارد شده با کدِ تخفیف‌های موجود مقایسه می‌شود — تطبیق یعنی معتبر (مطابق قرارداد mock پروژه، مثل verifyOtp) */
+  function handleApplyCode() {
+    const match = MANUAL_DISCOUNTS.find((d) => d.code.toLowerCase() === manualCodeInput.trim().toLowerCase())
+    if (match) {
+      setManualDiscountId(match.id)
+      setDiscountId(null)
+      setManualCodeError(undefined)
+    } else {
+      setManualDiscountId(null)
+      setManualCodeError('کد تخفیف نامعتبر است.')
+    }
+  }
+
+  function handleRemoveDiscount() {
+    setDiscountId(null)
+    setManualDiscountId(null)
+    setManualCodeInput('')
+    setManualCodeError(undefined)
+  }
+
+  const payableNumber = Math.max(0, itemsTotalNumber + (shippingMethod?.price ?? 0) - discountAmountNumber)
 
   const singleCol = `"form" "summary" "footer"`
 
@@ -145,7 +190,7 @@ export function ManualOrderNew() {
       setShippingSubmitAttempted(true)
       return
     }
-    setStep((s) => Math.min(s + 1, 2))
+    setStep((s) => Math.min(s + 1, 3))
   }
 
   function handleBack() {
@@ -216,6 +261,32 @@ export function ManualOrderNew() {
               />
             </Flex>
           )}
+
+          {step === 3 && (
+            <Flex direction="column" gap="4">
+              <Alert.Root status="info" variant="subtle">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Text fontSize="xs">اعمال تخفیف اختیاری است. در صورت عدم نیاز، این مرحله را رد کنید.</Text>
+                </Alert.Content>
+              </Alert.Root>
+
+              <DiscountSelectPanel
+                discounts={MANUAL_DISCOUNTS}
+                value={discountId}
+                onChange={handleSelectDiscount}
+                disabled={Boolean(manualDiscountId)}
+              />
+
+              <DiscountCodeForm
+                value={manualCodeInput}
+                onChange={setManualCodeInput}
+                onApply={handleApplyCode}
+                error={manualCodeError}
+                disabled={Boolean(appliedDiscount)}
+              />
+            </Flex>
+          )}
         </Box>
 
         <Box
@@ -225,12 +296,11 @@ export function ManualOrderNew() {
           top="4"
         >
           <OrderDraftSummary
-            customer={customer}
             itemCount={hasProductSelection ? itemCount : undefined}
             itemsTotal={hasProductSelection ? `${formatToman(itemsTotalNumber)} ت` : undefined}
             payable={hasProductSelection ? `${formatToman(payableNumber)} ت` : undefined}
-            shippingLabel={step >= 2 ? (shippingMethod?.title ?? '-') : undefined}
             shippingPrice={step >= 2 ? (shippingMethod ? `${formatToman(shippingMethod.price)} ت` : '-') : undefined}
+            discountAmount={step >= 3 && discountAmountNumber > 0 ? `${formatToman(discountAmountNumber)} ت` : undefined}
           />
         </Box>
 
@@ -240,6 +310,7 @@ export function ManualOrderNew() {
             onNext={handleNext}
             onCancel={handleBack}
             cancelLabel={step === 0 ? 'بازگشت به لیست' : 'بازگشت'}
+            extraAction={step === 3 && appliedDiscount ? { label: 'حذف تخفیف', onClick: handleRemoveDiscount } : undefined}
           />
         </Box>
       </Grid>

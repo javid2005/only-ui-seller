@@ -10,6 +10,8 @@ interface ManualOrderFooterProps {
   nextLabel?: string
   /** مرحلهٔ اول: «بازگشت به لیست» (خروج از ویزارد) — مراحل بعدی: «بازگشت» (مرحلهٔ قبل) */
   cancelLabel?: string
+  /** دکمهٔ اختیاریِ سوم — مثل «حذف تخفیف» در مرحلهٔ تخفیف، فقط وقتی چیزی برای حذف هست نمایش داده می‌شود */
+  extraAction?: { label: string; onClick: () => void }
 }
 
 /**
@@ -30,6 +32,7 @@ export function ManualOrderFooter({
   onCancel,
   nextLabel = 'ادامه',
   cancelLabel = 'بازگشت به لیست',
+  extraAction,
 }: ManualOrderFooterProps) {
   const isCompact = useCompactMode()
 
@@ -87,24 +90,45 @@ export function ManualOrderFooter({
             {cancelLabel}
           </Button>
 
-          <Button
-            bg="brand.solid"
-            color="brand.contrast"
-            size="sm"
-            h="10"
-            px="4"
-            rounded="md"
-            fontWeight="semibold"
-            fontSize="sm"
-            _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }}
-            disabled={nextDisabled}
-            onClick={onNext}
-          >
-            {/* استثنای icon-trailing (طبق Figma): فلشِ «جلو» در RTL به چپ اشاره می‌کند و باید
-                سمت چپِ متن — یعنی آخرِ DOM — بنشیند. قرینهٔ دکمهٔ «بازگشت» که فلشش راست است. */}
-            {nextLabel}
-            <ArrowLeft size={20} />
-          </Button>
+          {/* گروهِ اقدام اصلی — extraAction (مثل «حذف تخفیف») راست‌ترِ گروه = اولِ DOM،
+              دکمهٔ اصلی «ادامه» چپ‌ترِ گروه = آخرِ DOM (طبق x-metadata Figma: ادامه x=0،
+              extraAction x=97 — یعنی extraAction از ادامه راست‌تر است، نه برعکس) */}
+          <Flex align="center" gap="2">
+            {extraAction && (
+              <Button
+                variant="outline"
+                colorPalette="red"
+                size="sm"
+                h="10"
+                px="4"
+                rounded="md"
+                fontWeight="semibold"
+                fontSize="sm"
+                onClick={extraAction.onClick}
+              >
+                {extraAction.label}
+              </Button>
+            )}
+
+            <Button
+              bg="brand.solid"
+              color="brand.contrast"
+              size="sm"
+              h="10"
+              px="4"
+              rounded="md"
+              fontWeight="semibold"
+              fontSize="sm"
+              _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }}
+              disabled={nextDisabled}
+              onClick={onNext}
+            >
+              {/* استثنای icon-trailing (طبق Figma): فلشِ «جلو» در RTL به چپ اشاره می‌کند و باید
+                  سمت چپِ متن — یعنی آخرِ DOM — بنشیند. قرینهٔ دکمهٔ «بازگشت» که فلشش راست است. */}
+              {nextLabel}
+              <ArrowLeft size={20} />
+            </Button>
+          </Flex>
         </Flex>
       </Box>
     </>

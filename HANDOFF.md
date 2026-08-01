@@ -2,11 +2,12 @@
 > آخرین آپدیت: 2026-08-01
 
 ## الان
-آخرین commit (`cca39cb`): ویزارد «ایجاد سفارش دستی» مرحلهٔ ۱ (انتخاب مشتری).
-از اون‌موقع (uncommitted روی `main`):
-- مرحلهٔ ۲ (انتخاب محصول) کامل شد: `ProductSelectPanel`, `SelectedProductsPanel`, `VariantSelectDialog` + دیتای mock در `manualOrderData.ts` + `src/assets/ManualProducts/`.
-- مرحلهٔ ۳ (روش ارسال) این session کامل شد: `ShippingSelectPanel` (RadioCard، بج‌های بین‌شهری/درون‌شهری + پیش‌کرایه)، `ShippingAddressForm` (استان/شهر/کدپستی/آدرس/یادداشت)، `OrderDraftSummary` با ردیف‌های ارسال. اعتبارسنجی: دکمهٔ «ادامه» فقط با انتخاب روش ارسال فعال می‌شه؛ فرم آدرس با کلیکِ «ادامه» چک می‌شه (نه غیرفعال‌ماندن دکمه) و خطای «این فیلد الزامی است» رو per-field نشون می‌ده.
-- verify شده: `npx tsc --noEmit` سبز + دسکتاپ در preview (customer→product→shipping→validation error) تست شد. موبایل (360/480) هنوز چک نشده.
+مرحلهٔ ۴ ویزارد «ایجاد سفارش دستی» (اعمال تخفیف) این session تکمیل شد — uncommitted روی `main`:
+- `DiscountSelectPanel` (لیست تخفیف‌های از پیش تعریف‌شده، RadioCard) + `DiscountCodeForm` (ورود دستی کد) + دیتای mock در `manualOrderData.ts`.
+- `OrderDraftSummary` بازطراحی شد: بخش مشتری حذف شد، ردیف «روش ارسال» حذف شد (فقط «هزینه ارسال» می‌مونه)، رنگ‌بندی یکدست (fg.muted برای همه به‌جز تخفیف=fg.success و مبلغ‌قابل‌پرداخت=fg)، تخفیف+مبلغ‌قابل‌پرداخت بدون فاصله/separator بینشون گروه شدن.
+- منطق ویزارد: انتخاب از لیست یا کد دستی mutually-exclusive (انتخاب یکی، دیگری رو disable/clear می‌کنه)، «حذف تخفیف» در فوتر فقط وقتی تخفیفی اعمال شده نشون داده می‌شه، اسکرول به بالای صفحه با هر «ادامه»/«بازگشت».
+- دو باگ Chakra v3 کشف و مستند شد (`CLAUDE.md` + `dev-knowledge/.../known-bugs.md`): `RadioCard.Root value={x ?? undefined}` دیزلکت نمی‌کنه (باید `null` مستقیم بدی)، `direction` prop روی غیر از Flex/Stack بی‌صدا drop می‌شه (باید `flexDirection` بنویسی).
+- verify شده: `npx tsc --noEmit` سبز، در preview (۳۷۵px و ۱۴۴۰px) دستی تست شد.
 
 ## بعدی
-تست ریسپانسیو موبایل مرحلهٔ ۳ (360/480px) → بعد commit مرحله‌های ۲+۳ → منتظر لینک Figma مرحلهٔ ۴ (اعمال تخفیف).
+commit کردن مرحلهٔ ۴ (این session) → بعدش منتظر لینک Figma مرحلهٔ ۵ («تایید و لینک»، آخرین مرحلهٔ ویزارد).

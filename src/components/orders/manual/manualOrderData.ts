@@ -136,6 +136,25 @@ export const MANUAL_SHIPPING_METHODS: ShippingMethod[] = [
   { id: 'sm4', title: 'پیک موتوری', duration: 'تحویل همان روز',        distanceTag: 'درون شهری', price: 350000 },
 ]
 
+// ─── مرحله ۴ — اعمال تخفیف ──────────────────────────────────────────────────────
+
+export interface ManualDiscount {
+  id: string
+  title: string
+  code: string
+  /** خط دومِ اطلاعات — سقف تخفیف یا مبلغ ثابت، متنِ آماده مطابق Figma */
+  detail: string
+  badgeLabel: string
+  /** مبلغِ تخفیف برای این سفارش — لاتین، برای جمع + نمایش با formatToman */
+  amount: number
+}
+
+export const MANUAL_DISCOUNTS: ManualDiscount[] = [
+  { id: 'd1', title: 'جشنواره عیدانه موبایل',      code: 'EID15TY', detail: 'سقف: ۱۵۰٬۰۰۰',  badgeLabel: '۱۵٪', amount: 19_740_000 },
+  { id: 'd2', title: 'پروموشن ویژه عید',            code: 'PRM25',   detail: '۵۰٬۰۰۰ تومان',  badgeLabel: '۲۵٪', amount: 50_000 },
+  { id: 'd3', title: 'همکاری در فروش کیف و کفش',    code: 'COOP20',  detail: 'سقف: ۱۰۰٬۰۰۰',  badgeLabel: '۲۰٪', amount: 13_455_000 },
+]
+
 export const MANUAL_PROVINCES = createListCollection<{ label: string; value: string }>({
   items: [
     'تهران', 'اصفهان', 'فارس', 'خراسان رضوی', 'آذربایجان شرقی',
