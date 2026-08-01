@@ -1,12 +1,12 @@
 # Vitrina — Handoff
-> آخرین آپدیت: 2026-07-31
+> آخرین آپدیت: 2026-08-01
 
 ## الان
-آخرین commit (`b0dc906`): فیکس stepper دامنه + تصحیح breakpoint doc.
-از اون‌موقع (uncommitted روی `main`) — ویزارد «ایجاد سفارش دستی» (`/orders/new`) شروع شد، مرحله ۱ کامل:
-- `src/views/orders/ManualOrderNew.tsx` + `src/app/orders/new/page.tsx`
-- `src/components/orders/manual/`: `ManualOrderStepper` (الگوی `OrderSteps`)، `CustomerSelectPanel` (RadioCard، جستجوی زنده)، `OrderDraftSummary`، `ManualOrderFooter` (fixed در `<=md`، درون‌جریان در `>md`)، `AddCustomerDialog` (Figma node 2096:27044 + اعتبارسنجی موبایل هم‌الگو با `PhoneInput`/`LoginMobileView`)
-- `src/components/products/list/ProductTable.tsx` uncommitted از قبل این session مونده — بی‌ربط به ویزارد، هنوز commit نشده
+آخرین commit (`cca39cb`): ویزارد «ایجاد سفارش دستی» مرحلهٔ ۱ (انتخاب مشتری).
+از اون‌موقع (uncommitted روی `main`):
+- مرحلهٔ ۲ (انتخاب محصول) کامل شد: `ProductSelectPanel`, `SelectedProductsPanel`, `VariantSelectDialog` + دیتای mock در `manualOrderData.ts` + `src/assets/ManualProducts/`.
+- مرحلهٔ ۳ (روش ارسال) این session کامل شد: `ShippingSelectPanel` (RadioCard، بج‌های بین‌شهری/درون‌شهری + پیش‌کرایه)، `ShippingAddressForm` (استان/شهر/کدپستی/آدرس/یادداشت)، `OrderDraftSummary` با ردیف‌های ارسال. اعتبارسنجی: دکمهٔ «ادامه» فقط با انتخاب روش ارسال فعال می‌شه؛ فرم آدرس با کلیکِ «ادامه» چک می‌شه (نه غیرفعال‌ماندن دکمه) و خطای «این فیلد الزامی است» رو per-field نشون می‌ده.
+- verify شده: `npx tsc --noEmit` سبز + دسکتاپ در preview (customer→product→shipping→validation error) تست شد. موبایل (360/480) هنوز چک نشده.
 
 ## بعدی
-مرحله ۲ ویزارد سفارش دستی (انتخاب محصول) — منتظر لینک Figma.
+تست ریسپانسیو موبایل مرحلهٔ ۳ (360/480px) → بعد commit مرحله‌های ۲+۳ → منتظر لینک Figma مرحلهٔ ۴ (اعمال تخفیف).

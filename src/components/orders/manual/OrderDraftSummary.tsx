@@ -15,13 +15,24 @@ function Row({ label, value, size = 'sm' }: { label: string; value: string; size
 
 interface OrderDraftSummaryProps {
   customer: ManualCustomer | null
+  /** تعداد کل اقلام (جمع quantity همهٔ ردیف‌ها) — نبود یعنی هنوز محصولی انتخاب نشده */
+  itemCount?: number
+  /** جمع قیمت اقلام، فرمت‌شدهٔ فارسی با « ت» */
+  itemsTotal?: string
+  /** مبلغ قابل پرداخت، فرمت‌شدهٔ فارسی با « ت» */
+  payable?: string
+  /** عنوان روش ارسالِ انتخاب‌شده — نبود یعنی هنوز از مرحلهٔ «روش ارسال» عبور نشده */
+  shippingLabel?: string
+  /** هزینهٔ ارسال، فرمت‌شدهٔ فارسی با « ت» */
+  shippingPrice?: string
 }
 
 /**
  * OrderDraftSummary — پنل «جزئیات سفارش» ویزارد سفارش دستی.
  * تا وقتی چیزی انتخاب نشده، مقادیر «-» و رنگ fg.subtle می‌مانند.
+ * ردیف‌های ارسال فقط از مرحلهٔ «روش ارسال» به بعد نمایش داده می‌شوند (Figma node 4894:75862).
  */
-export function OrderDraftSummary({ customer }: OrderDraftSummaryProps) {
+export function OrderDraftSummary({ customer, itemCount, itemsTotal, payable, shippingLabel, shippingPrice }: OrderDraftSummaryProps) {
   return (
     <Flex
       direction="column"
@@ -57,13 +68,23 @@ export function OrderDraftSummary({ customer }: OrderDraftSummaryProps) {
         <Separator />
 
         <Flex direction="column" w="full">
-          <Row label="تعداد اقلام سفارش" value="-" />
-          <Row label="جمع قیمت اقلام" value="-" />
+          <Row label="تعداد اقلام سفارش" value={itemCount != null ? toPersianDigits(itemCount) : '-'} />
+          <Row label="جمع قیمت اقلام" value={itemsTotal ?? '-'} />
         </Flex>
+
+        {(shippingLabel != null || shippingPrice != null) && (
+          <>
+            <Separator />
+            <Flex direction="column" w="full">
+              <Row label="روش ارسال" value={shippingLabel ?? '-'} />
+              <Row label="هزینه ارسال" value={shippingPrice ?? '-'} />
+            </Flex>
+          </>
+        )}
 
         <Separator />
 
-        <Row label="مبلغ قابل پرداخت" value="-" size="md" />
+        <Row label="مبلغ قابل پرداخت" value={payable ?? '-'} size="md" />
       </Flex>
     </Flex>
   )

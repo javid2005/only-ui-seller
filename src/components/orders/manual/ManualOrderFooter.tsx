@@ -8,6 +8,8 @@ interface ManualOrderFooterProps {
   onNext: () => void
   onCancel: () => void
   nextLabel?: string
+  /** مرحلهٔ اول: «بازگشت به لیست» (خروج از ویزارد) — مراحل بعدی: «بازگشت» (مرحلهٔ قبل) */
+  cancelLabel?: string
 }
 
 /**
@@ -27,6 +29,7 @@ export function ManualOrderFooter({
   onNext,
   onCancel,
   nextLabel = 'ادامه',
+  cancelLabel = 'بازگشت به لیست',
 }: ManualOrderFooterProps) {
   const isCompact = useCompactMode()
 
@@ -35,14 +38,27 @@ export function ManualOrderFooter({
       {/* اسپیسر — فقط جایی که نوار fixed می‌شود، جای آن را در جریان صفحه نگه می‌دارد */}
       <Box display={isCompact ? 'block' : { base: 'block', md: 'none' }} h="24" aria-hidden />
 
-      {/* insetInlineStart/End هر دو یکسان (۴=۱۶px) — عرض به‌جای w/maxW ثابت، از فاصلهٔ دو لبه
-          محاسبه می‌شود (fill واقعی) و با کوچک‌شدن ویوپورت خودش کوچک می‌شود؛ چون مقدار دو طرف
-          برابر است، فرقی با چپ/راست فیزیکی ندارد — نیازی به ترفند translateX هم نیست. */}
+      {/*
+        روی موبایل واقعی ({ base }): insetInlineStart/End هر دو ۴=۱۶px — عرض از فاصلهٔ
+        دو لبهٔ ویوپورتِ واقعی محاسبه می‌شود (fill واقعی)، چون ویوپورت خودش همان عرضِ
+        باریک است.
+
+        isCompact اما شبیه‌سازیِ صرفاً بصریِ ۵۱۲px روی یک مرورگر دسکتاپِ واقعاً پهن است
+        (فقط با maxW در Layout.tsx) — ویوپورتِ واقعی هنوز پهن است. چون position="fixed"
+        نسبت به ویوپورتِ واقعی محاسبه می‌شود نه ستونِ شبیه‌سازی‌شده، insetInlineStart="4"
+        اینجا کل عرضِ واقعیِ صفحه را می‌گیرد نه ۴۸۰px. راه‌حل: inset صفر (تمام‌عرضِ
+        ویوپورتِ واقعی) + maxW="480px" + mx="auto" — مرورگر خودش نوار را در وسطِ
+        ویوپورتِ واقعی با همان عرضی که در حالت غیرِcompact داخلِ ستونِ ۵۱۲px می‌گرفت
+        (۵۱۲ - ۲×۱۶ padding) قرار می‌دهد؛ بدون نیاز به تغییرِ containing-block (که رفتارِ
+        «چسبیده به کفِ ویوپورت حین اسکرول» را می‌شکست — امتحان و برگردانده شد).
+      */}
       <Box
         position={isCompact ? 'fixed' : { base: 'fixed', md: 'static' }}
         bottom={isCompact ? '4' : { base: '4', md: 'auto' }}
-        insetInlineStart={isCompact ? '4' : { base: '4', md: 'auto' }}
-        insetInlineEnd={isCompact ? '4' : { base: '4', md: 'auto' }}
+        insetInlineStart={isCompact ? '0' : { base: '4', md: 'auto' }}
+        insetInlineEnd={isCompact ? '0' : { base: '4', md: 'auto' }}
+        maxW={isCompact ? '480px' : undefined}
+        mx={isCompact ? 'auto' : undefined}
         zIndex="sticky"
       >
         <Flex
@@ -68,7 +84,7 @@ export function ManualOrderFooter({
             color="gray.fg"
             onClick={onCancel}
           >
-            بازگشت به لیست
+            {cancelLabel}
           </Button>
 
           <Button
