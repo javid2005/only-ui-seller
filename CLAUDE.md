@@ -184,11 +184,20 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 ### dev-engine CLI — اجرای صحیح (اجباری)
 
-`dev-engine` global لینک نشده — دستور خام `dev-engine` در PATH نیست. باینری واقعی build‌شده اینجاست:
+`dev-engine` حالا **گلوبال لینک شده** (`npm link` از پکیج) و مستقیم در PATH هست:
+```bash
+dev-engine --version      # باید 0.1.0 بده
 ```
-~/Documents/GitHub/Tools/dev-agents/packages/dev-engine/dist/cli.js
+اگه یه روز `command -v dev-engine` چیزی برنگردوند (مثلاً بعد از پاک‌شدن node_modules)،
+**متوقف نشو و چک رو skip نکن** — یکی از این دو:
+```bash
+cd ~/Documents/GitHub/Tools/dev-agents/packages/dev-engine && npm run build && npm link
+# یا مستقیم:
+node ~/Documents/GitHub/Tools/dev-agents/packages/dev-engine/dist/cli.js <args>
 ```
-با `node <مسیر بالا> <args>` صداش بزن.
+> سابقه: 1404 — اسکیل‌ها `command -v dev-engine || "به کاربر بگو نصب کنه و stop"` داشتن؛
+> چون لینک نبود، یه session کامل بدون هیچ چکی کد زد و بعداً معلوم شد pipeline اجرا نشده.
+> **قانون: step اجرا نشد → یا درستش کن، یا به کاربر بگو. هیچ‌وقت بی‌صدا رد نشو.**
 
 **⚠️ gotcha حیاتی:** آرگومان `path` هم‌زمان هم root اسکن فایل‌هاست هم root حل‌کردن cache/config
 (`.dev-engine.json`, `.claude/context/figma-layout.json`, ...). اگه یه subdirectory بدی
@@ -200,6 +209,33 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 سابقه: 1404 — یه session کامل `node cli.js src/components/marketing --fix` زد و «۰ issue» گزارش
 داد؛ بعداً معلوم شد چون root غلط بود، `layout-diff` اصلاً cache رو لود نکرده بود. با یه decoy file
 تست شد که از repo root (`path="."`) واقعاً mismatch رو می‌گیره.
+
+---
+
+### تطابق با طرح فیگما — دو لایه (اجباری برای Tier 2)
+
+هیچ‌کدوم از این دو خودکار نیستن؛ **سوختشون رو باید بنویسی وگرنه بی‌صدا no-op می‌شن.**
+
+| لایه | چی می‌سنجه | سوخت |
+|------|-----------|------|
+| `layout-diff` (ماژول) | **متن کد** vs طرح — childOrder، textAlign، justify/align، سمت و رنگ آیکون | `.claude/context/figma-layout.json` |
+| `verify-render` (subcommand) | **پیکسل رندرشده** vs طرح — ردیف آینه‌ای، textAlign محاسبه‌شده، رنگ resolve‌شده | دامپ DOM از preview |
+
+```bash
+dev-engine layout-sync .                  # ۰ یعنی هیچی چک نمی‌شه
+dev-engine layout-sync . --set AdChannelCard --data '{"textAlign":"start","iconColor":"fg.muted"}'
+dev-engine verify-render --snippet        # اسنیپت → کنسول preview → render-snapshot.json
+dev-engine verify-render .
+```
+
+**⚠️ قرارداد semantic — پرتکرارترین خطا:** مقادیر `start`/`end` ان، نه `left`/`right`.
+در RTL: **`start` = راست · `end` = چپ**. canvas فیگما همیشه LTR رندر می‌شه، پس متنی که
+تو فیگما راست‌چین می‌بینی در این پروژه یعنی `start`. نگاشت مستقیم `textAlignHorizontal: RIGHT`
+به `"end"` کل قضاوت رو معکوس می‌کنه. `--set` مقدار فیزیکی رو رد می‌کنه تا جلوش گرفته شه.
+
+> سابقه: 1404 — تابع `normalizeAlign` جهت‌کور بود (`right`→`end` بدون توجه به RTL)، پس
+> هر قضاوت textAlign در این پروژه برعکس می‌شد: هم کد غلط «تمیز» گزارش می‌شد، هم کد درست
+> error می‌گرفت با auto-fix ای که متن رو به سمت اشتباه می‌برد. فیکس شد در `src/direction.ts`.
 
 ---
 
