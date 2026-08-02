@@ -1,0 +1,16 @@
+{
+  "AdChannelCard": {
+    "childOrder": ["Flex", "Flex", "Box"],
+    "layoutMode": "HORIZONTAL",
+    "textAlign": "end",
+    "_synced": "2026-08-02",
+    "_source": "mcp",
+    "_note": "childOrder is degenerate — positions 1 and 2 are both generic <Flex> (icon box, content column), so this snapshot only catches a regression that swaps the action <Box> with either <Flex>, not an icon/content swap. Root cause: no named sub-components, just Chakra primitives. Real protection for icon-vs-content order still relies on the code comment + this JSON file's textAlign/RTL evidence, not on this childOrder check."
+  },
+  "AdChannels": {
+    "childOrder": ["Header", "Box"],
+    "layoutMode": "VERTICAL",
+    "_synced": "2026-08-02",
+    "_source": "mcp"
+  }
+}

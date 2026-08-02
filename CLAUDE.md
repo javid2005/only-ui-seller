@@ -182,6 +182,27 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 ---
 
+### dev-engine CLI — اجرای صحیح (اجباری)
+
+`dev-engine` global لینک نشده — دستور خام `dev-engine` در PATH نیست. باینری واقعی build‌شده اینجاست:
+```
+~/Documents/GitHub/Tools/dev-agents/packages/dev-engine/dist/cli.js
+```
+با `node <مسیر بالا> <args>` صداش بزن.
+
+**⚠️ gotcha حیاتی:** آرگومان `path` هم‌زمان هم root اسکن فایل‌هاست هم root حل‌کردن cache/config
+(`.dev-engine.json`, `.claude/context/figma-layout.json`, ...). اگه یه subdirectory بدی
+(مثل `src/components/marketing`) نه repo root، این cacheها silently پیدا نمی‌شن (چون دنبالشون
+تو `src/components/marketing/.claude/context/...` می‌گرده) و ماژول‌هایی مثل `layout-diff` بدون
+هیچ خطایی «۰ issue» گزارش می‌دن — یعنی گزارش clean که در واقع یعنی «هیچی چک نشد»، نه «چک شد و
+تمیز بود». **همیشه از repo root با `path="."` اجرا کن**، حتی اگه فقط می‌خوای یه subfolder رو بررسی کنی.
+
+سابقه: 1404 — یه session کامل `node cli.js src/components/marketing --fix` زد و «۰ issue» گزارش
+داد؛ بعداً معلوم شد چون root غلط بود، `layout-diff` اصلاً cache رو لود نکرده بود. با یه decoy file
+تست شد که از repo root (`path="."`) واقعاً mismatch رو می‌گیره.
+
+---
+
 ## Stack
 
 - React 19 + **Next.js 16 (App Router)** + TypeScript

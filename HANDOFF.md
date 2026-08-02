@@ -2,16 +2,22 @@
 > آخرین آپدیت: 2026-08-02
 
 ## الان
-مرحلهٔ ۵ ویزارد «ایجاد سفارش دستی» («ثبت و ایجاد لینک» — آخرین مرحله) این session از روی Figma پیاده و بعد با فیدبک مستقیم روی preview کامل اصلاح شد — uncommitted روی `main`:
-- کامپوننت‌های جدید: `ManualReviewPrdCard` (کارت فقط-نمایشی محصول)، `OrderReviewPanel` (بررسی نهایی: مشتری/اقلام/روش ارسال)، `ManualOrderConfirmFooter` (فوتر مرحلهٔ آخر — fixed در موبایل مثل بقیهٔ مراحل، non-fixed در دسکتاپ).
-- `ManualOrderNew.tsx`: فوتر مرحلهٔ ۵ به grid area مشترک «footer» منتقل شد (نه داخل ستون «form») تا زیر «جزئیات سفارش» بیفته — دقیقاً هم‌الگو با دو فریم Figma (موبایل تکستونه، دسکتاپ دوستونهٔ sticky).
-- فیکس‌های RTL: `align="flex-end"` روی column flex در چند جا اشتباه به‌جای `flex-start` بود (باعث چپ‌چین‌شدن به‌جای راست‌چین می‌شد) — طبق قاعدهٔ مستندشدهٔ پروژه.
-- `OrderDraftSummary`: عنوان «جزئیات سفارش» حذف شد (در همهٔ ۵ مرحله)، ردیف «نوع ارسال» اضافه شد (قبل از انتخاب روش: «تعیین نشده»/«براساس نوع ارسال» → بعدش: «پیش کرایه»/قیمت واقعی).
-- `manualOrderData.ts`: دو محصول فقط-دلاری (آنر ۱۲۰ پرو، نوکیا ۳.۴) حالا `priceToman` هم دارن.
-- `VariantSelectDialog`: با «افزودن تنوع» دیالوگ بسته می‌شه (قبلاً باز می‌موند).
-- `ManualOrderStepper`: `size="sm"` + طول ثابت separator (۳۲px دسکتاپ/۲۴px موبایل، نه elastic).
-- باگ کشف‌شده و مستندشده در `CLAUDE.md` (بخش Layout): پنل‌های sticky زیر Navbar باید `top="20"` بگیرن نه `top="4"` — وگرنه زیر Navbar (`zIndex` بالاتر) گم می‌شن. `ManualOrderNew.tsx` فیکس شد؛ `OrderDetails.tsx`/`GeneralInfo.tsx` هنوز `top="4"` دارن (بررسی نشده).
-- verify شده: `npx tsc --noEmit` سبز، در preview (۳۲۰/۳۷۵/۴۸۰/۸۰۰/۱۲۸۰px) دستی تست شد.
+دو تکه کار uncommitted روی `main`:
+
+**۱. کانال‌های تبلیغاتی (`/marketing/channels`)** — این session، کامل و verify شده:
+- `AdChannelCard` (`src/components/marketing/channels/AdChannelCard.tsx`) — کارت ردیفی با سه سطح ریسپانسیو: `media≥lg` (آیکون کنار محتوا، دکمه sibling هم‌عرض متن در چپ)، `sm..lg` (دکمه wrap‌شده زیر محتوا، hug، چپ‌چین)، `media<sm` (آیکون بالای محتوا، دکمه fill). state=Hover از Figma (`bg="brand.bg"` + `borderColor="brand.focusRing"`).
+- `AdChannels` (`src/views/marketing/AdChannels.tsx`) — قالب **One Column Center** (پنل full-width، محتوا `maxW="960px" mx="auto"` داخلش — نه پنل خودش capped، طبق الگوی `Reviews.tsx`/`ThemeSettings.tsx`). ۴ کانال mock (ترب فعال، ایمالز قابل‌فعال‌سازی محلی، کمپینو با پیش‌نیاز/Alert، دیوار به‌زودی).
+- assets: `src/assets/Marketing/{torob,emalls,campaingo,divar}.png` (دانلود واقعی از Figma).
+- `.claude/context/figma-layout.json` — cache جدید `layout-diff` init و برای `AdChannelCard`/`AdChannels` پر شد (با caveat مستند‌شده داخل فایل دربارهٔ محدودیت childOrder وقتی سیبلینگ‌ها همه `Flex` عمومی‌ان).
+- دو باگ real پیدا و فیکس شد که ابزار خودکار نگرفت (جزئیات چرا در تاریخچهٔ همین session): `justify="flex-end"` به‌جای `flex-start` عنوان+بج رو چپ می‌کشید؛ و ساختار پنل که باید full-width می‌بود نه خودش `maxW=960`.
+- verify: `npx tsc --noEmit` سبز، `dev-engine` (از repo root، `node .../dist/cli.js . --report-only`) صفر یافته روی این فایل‌ها.
+
+**۲. پیام تکمیل سفارش (`OrderCompletePanel`)** — از session قبل، هنوز commit نشده:
+- `src/components/orders/manual/OrderCompletePanel.tsx` + تغییرات مرتبط در `ManualOrderNew.tsx` (جزئیات کامل در commit history نیست چون خودش uncommitted — قبلاً در همین فایل مستند بود، جزئیات: EmptyState «سفارش با موفقیت ثبت شد!» + لینک پرداخت mock `ORD-####`).
+- verify شده بود: تایپ‌چک سبز، ویزارد کامل دستی تست شده (دسکتاپ+موبایل).
 
 ## بعدی
-commit کردن مرحلهٔ ۵ (این session).
+commit کردن هر دو تکهٔ بالا (به‌ترتیب یا با هم — کاربر تصمیم گرفت).
+
+## نکات محیطی مهم این session
+- `dev-engine` CLI global لینک نشده؛ باینری واقعی و gotcha اجرای صحیحش → مستند شد در `CLAUDE.md` (بخش جدید «dev-engine CLI — اجرای صحیح»).
