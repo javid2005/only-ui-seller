@@ -4,7 +4,6 @@ import { Alert, Box, Button, Flex, Grid, Text } from '@chakra-ui/react'
 import { NotepadText } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header } from '@/components/layout/Header'
-import { toaster } from '@/components/ui/toaster'
 import { ManualOrderStepper } from '@/components/orders/manual/ManualOrderStepper'
 import { CustomerSelectPanel } from '@/components/orders/manual/CustomerSelectPanel'
 import { ProductSelectPanel } from '@/components/orders/manual/ProductSelectPanel'
@@ -15,6 +14,7 @@ import { DiscountSelectPanel } from '@/components/orders/manual/DiscountSelectPa
 import { DiscountCodeForm } from '@/components/orders/manual/DiscountCodeForm'
 import { OrderReviewPanel } from '@/components/orders/manual/OrderReviewPanel'
 import { OrderDraftSummary } from '@/components/orders/manual/OrderDraftSummary'
+import { OrderCompletePanel } from '@/components/orders/manual/OrderCompletePanel'
 import { ManualOrderFooter } from '@/components/orders/manual/ManualOrderFooter'
 import { ManualOrderConfirmFooter } from '@/components/orders/manual/ManualOrderConfirmFooter'
 import { AddCustomerDialog } from '@/components/orders/manual/AddCustomerDialog'
@@ -68,6 +68,10 @@ export function ManualOrderNew() {
   const [manualCodeInput, setManualCodeInput] = useState('')
   const [manualCodeError, setManualCodeError] = useState<string | undefined>(undefined)
   const [manualDiscountId, setManualDiscountId] = useState<string | null>(null)
+
+  // ─── تکمیل سفارش (بعد از «ثبت و ایجاد لینک پرداخت») ─────────────────────────
+  const [orderCreated, setOrderCreated] = useState(false)
+  const [paymentLink, setPaymentLink] = useState('')
 
   function handleAddCustomer(newCustomer: ManualCustomer) {
     setCustomers((prev) => [newCustomer, ...prev])
@@ -204,13 +208,30 @@ export function ManualOrderNew() {
     else setStep((s) => s - 1)
   }
 
-  /** مرحلهٔ ۵ — mock: لینک پرداختِ ساختگی کپی می‌شود و کاربر به لیست سفارشات برمی‌گردد
-   * (سرویس واقعیِ ساختِ سفارش/لینک هنوز وصل نشده — طبق قراردادِ mock پروژه). */
+  /** مرحلهٔ ۵ — mock: لینک پرداختِ ساختگی ساخته می‌شود و صفحهٔ «پیام تکمیل سفارش» نشان
+   * داده می‌شود (به‌جای redirect فوری) — طبق طرح Manual/Order Complete. کدِ سفارش هم‌الگو
+   * با orderNo موجود در لیست سفارشات (`ORD-####`، الگوی `orderData.ts`/`list/data.ts`). */
   function handleCreateOrder() {
-    const mockLink = `https://pay.vitrinaa.shop/${selectedCustomer?.id ?? 'order'}`
-    navigator.clipboard?.writeText(mockLink)
-    toaster.create({ id: 'manual-order-link-toast', title: 'سفارش ایجاد شد و لینک پرداخت کپی شد', type: 'success', duration: 2500 })
-    router.push('/orders/list')
+    const orderCode = `ORD-${Math.floor(1000 + Math.random() * 9000)}`
+    setPaymentLink(`https://vitrina.ir/pay/${orderCode}?t=${Date.now()}`)
+    setOrderCreated(true)
+  }
+
+  /** «ایجاد سفارش جدید» — ویزارد را کامل به حالت اولیه برمی‌گرداند (بدون navigation،
+   * چون همان route است و push به همان URL چیزی را remount نمی‌کند). */
+  function handleCreateNewOrder() {
+    setStep(0)
+    setCustomerId(null)
+    setSelectedLines([])
+    setShippingMethodId(null)
+    setShippingAddress(EMPTY_SHIPPING_ADDRESS)
+    setShippingSubmitAttempted(false)
+    setDiscountId(null)
+    setManualCodeInput('')
+    setManualCodeError(undefined)
+    setManualDiscountId(null)
+    setOrderCreated(false)
+    setPaymentLink('')
   }
 
   return (
@@ -223,7 +244,7 @@ export function ManualOrderNew() {
           { label: 'لیست سفارشات', href: '/orders/list' },
           { label: 'ایجاد سفارش دستی' },
         ]}
-        cta={step === 4 && isCompact ? (
+        cta={step === 4 && isCompact && !orderCreated ? (
           <Button
             variant="outline"
             size="sm"
@@ -245,139 +266,150 @@ export function ManualOrderNew() {
         ) : undefined}
       />
 
-      <ManualOrderStepper step={step} />
+      {orderCreated ? (
+        <OrderCompletePanel
+          customerName={selectedCustomer?.name ?? ''}
+          paymentLink={paymentLink}
+          onCreateNew={handleCreateNewOrder}
+          onGoToList={() => router.push('/orders/list')}
+        />
+      ) : (
+        <>
+          <ManualOrderStepper step={step} />
 
-      <Grid
-        w="full"
-        gap="4"
-        alignItems="start"
-        templateAreas={isCompact ? singleCol : { base: singleCol, lg: `"form summary" "footer summary"` }}
-        templateColumns={isCompact ? '1fr' : { base: '1fr', lg: '1fr minmax(320px, 396px)' }}
-      >
-        <Box gridArea="form" minW="0">
-          {step === 0 && (
-            <CustomerSelectPanel
-              customers={customers}
-              value={customerId}
-              onChange={setCustomerId}
-              onAddNew={() => setAddOpen(true)}
-            />
-          )}
-
-          {step === 1 && (
-            <Flex direction="column" gap="4">
-              <ProductSelectPanel
-                products={MANUAL_PRODUCTS}
-                remainingStock={remainingStock}
-                onAdd={handleAddProduct}
-              />
-              {hasProductSelection && (
-                <SelectedProductsPanel
-                  lines={selectedLines}
-                  products={MANUAL_PRODUCTS}
-                  onQtyChange={handleQtyChange}
-                  onRemove={handleRemoveProduct}
+          <Grid
+            w="full"
+            gap="4"
+            alignItems="start"
+            templateAreas={isCompact ? singleCol : { base: singleCol, lg: `"form summary" "footer summary"` }}
+            templateColumns={isCompact ? '1fr' : { base: '1fr', lg: '1fr minmax(320px, 396px)' }}
+          >
+            <Box gridArea="form" minW="0">
+              {step === 0 && (
+                <CustomerSelectPanel
+                  customers={customers}
+                  value={customerId}
+                  onChange={setCustomerId}
+                  onAddNew={() => setAddOpen(true)}
                 />
               )}
-            </Flex>
-          )}
 
-          {step === 2 && (
-            <Flex direction="column" gap="4">
-              <ShippingSelectPanel
-                methods={MANUAL_SHIPPING_METHODS}
-                value={shippingMethodId}
-                onChange={setShippingMethodId}
+              {step === 1 && (
+                <Flex direction="column" gap="4">
+                  <ProductSelectPanel
+                    products={MANUAL_PRODUCTS}
+                    remainingStock={remainingStock}
+                    onAdd={handleAddProduct}
+                  />
+                  {hasProductSelection && (
+                    <SelectedProductsPanel
+                      lines={selectedLines}
+                      products={MANUAL_PRODUCTS}
+                      onQtyChange={handleQtyChange}
+                      onRemove={handleRemoveProduct}
+                    />
+                  )}
+                </Flex>
+              )}
+
+              {step === 2 && (
+                <Flex direction="column" gap="4">
+                  <ShippingSelectPanel
+                    methods={MANUAL_SHIPPING_METHODS}
+                    value={shippingMethodId}
+                    onChange={setShippingMethodId}
+                  />
+                  <ShippingAddressForm
+                    value={shippingAddress}
+                    onChange={setShippingAddress}
+                    attemptedSubmit={shippingSubmitAttempted}
+                  />
+                </Flex>
+              )}
+
+              {step === 3 && (
+                <Flex direction="column" gap="4">
+                  <Alert.Root status="info" variant="subtle">
+                    <Alert.Indicator />
+                    <Alert.Content>
+                      <Text fontSize="xs">اعمال تخفیف اختیاری است. در صورت عدم نیاز، این مرحله را رد کنید.</Text>
+                    </Alert.Content>
+                  </Alert.Root>
+
+                  <DiscountSelectPanel
+                    discounts={MANUAL_DISCOUNTS}
+                    value={discountId}
+                    onChange={handleSelectDiscount}
+                    disabled={Boolean(manualDiscountId)}
+                  />
+
+                  <DiscountCodeForm
+                    value={manualCodeInput}
+                    onChange={setManualCodeInput}
+                    onApply={handleApplyCode}
+                    error={manualCodeError}
+                    disabled={Boolean(appliedDiscount)}
+                  />
+                </Flex>
+              )}
+
+              {step === 4 && selectedCustomer && shippingMethod && (
+                <OrderReviewPanel
+                  customer={selectedCustomer}
+                  lines={selectedLines}
+                  products={MANUAL_PRODUCTS}
+                  shippingMethod={shippingMethod}
+                />
+              )}
+            </Box>
+
+            {/* top="20" (80px) = ارتفاعِ Navbar (h="16"=64px، sticky top=0) + فاصلهٔ ۱۶px —
+                وگرنه با top="4" پنل زیرِ Navbar (zIndex بالاتر) گم می‌شود. الگو: NewProduct.tsx */}
+            <Box
+              ref={summaryRef}
+              gridArea="summary"
+              minW="0"
+              position={isCompact ? 'static' : { base: 'static', lg: 'sticky' }}
+              top="20"
+            >
+              <OrderDraftSummary
+                itemCount={hasProductSelection ? itemCount : undefined}
+                itemsTotal={hasProductSelection ? `${formatToman(itemsTotalNumber)} ت` : undefined}
+                payable={hasProductSelection ? `${formatToman(payableNumber)} ت` : undefined}
+                showShipping={step >= 2}
+                shippingPrice={shippingMethod ? `${formatToman(shippingMethod.price)} ت` : undefined}
+                discountAmount={step >= 3 && discountAmountNumber > 0 ? `${formatToman(discountAmountNumber)} ت` : undefined}
               />
-              <ShippingAddressForm
-                value={shippingAddress}
-                onChange={setShippingAddress}
-                attemptedSubmit={shippingSubmitAttempted}
-              />
-            </Flex>
-          )}
+            </Box>
 
-          {step === 3 && (
-            <Flex direction="column" gap="4">
-              <Alert.Root status="info" variant="subtle">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Text fontSize="xs">اعمال تخفیف اختیاری است. در صورت عدم نیاز، این مرحله را رد کنید.</Text>
-                </Alert.Content>
-              </Alert.Root>
+            <Box gridArea="footer" minW="0">
+              {step < 4 ? (
+                <ManualOrderFooter
+                  nextDisabled={nextDisabled}
+                  onNext={handleNext}
+                  onCancel={handleBack}
+                  cancelLabel={step === 0 ? 'بازگشت به لیست' : 'بازگشت'}
+                  extraAction={step === 3 && appliedDiscount ? { label: 'حذف تخفیف', onClick: handleRemoveDiscount } : undefined}
+                />
+              ) : (
+                <Flex direction="column" gap="4">
+                  <Alert.Root status="info" variant="subtle">
+                    <Alert.Indicator />
+                    <Alert.Content>
+                      <Alert.Title>نهایی سازی سفارش</Alert.Title>
+                      <Alert.Description>
+                        بعد از کلیک روی «ثبت و ایجاد لینک پرداخت»، یک لینک پرداخت اختصاصی برای این مشتری ساخته می‌شود. این لینک را کپی کرده و برای مشتری ارسال کنید.
+                      </Alert.Description>
+                    </Alert.Content>
+                  </Alert.Root>
 
-              <DiscountSelectPanel
-                discounts={MANUAL_DISCOUNTS}
-                value={discountId}
-                onChange={handleSelectDiscount}
-                disabled={Boolean(manualDiscountId)}
-              />
-
-              <DiscountCodeForm
-                value={manualCodeInput}
-                onChange={setManualCodeInput}
-                onApply={handleApplyCode}
-                error={manualCodeError}
-                disabled={Boolean(appliedDiscount)}
-              />
-            </Flex>
-          )}
-
-          {step === 4 && selectedCustomer && shippingMethod && (
-            <OrderReviewPanel
-              customer={selectedCustomer}
-              lines={selectedLines}
-              products={MANUAL_PRODUCTS}
-              shippingMethod={shippingMethod}
-            />
-          )}
-        </Box>
-
-        {/* top="20" (80px) = ارتفاعِ Navbar (h="16"=64px، sticky top=0) + فاصلهٔ ۱۶px —
-            وگرنه با top="4" پنل زیرِ Navbar (zIndex بالاتر) گم می‌شود. الگو: NewProduct.tsx */}
-        <Box
-          ref={summaryRef}
-          gridArea="summary"
-          minW="0"
-          position={isCompact ? 'static' : { base: 'static', lg: 'sticky' }}
-          top="20"
-        >
-          <OrderDraftSummary
-            itemCount={hasProductSelection ? itemCount : undefined}
-            itemsTotal={hasProductSelection ? `${formatToman(itemsTotalNumber)} ت` : undefined}
-            payable={hasProductSelection ? `${formatToman(payableNumber)} ت` : undefined}
-            showShipping={step >= 2}
-            shippingPrice={shippingMethod ? `${formatToman(shippingMethod.price)} ت` : undefined}
-            discountAmount={step >= 3 && discountAmountNumber > 0 ? `${formatToman(discountAmountNumber)} ت` : undefined}
-          />
-        </Box>
-
-        <Box gridArea="footer" minW="0">
-          {step < 4 ? (
-            <ManualOrderFooter
-              nextDisabled={nextDisabled}
-              onNext={handleNext}
-              onCancel={handleBack}
-              cancelLabel={step === 0 ? 'بازگشت به لیست' : 'بازگشت'}
-              extraAction={step === 3 && appliedDiscount ? { label: 'حذف تخفیف', onClick: handleRemoveDiscount } : undefined}
-            />
-          ) : (
-            <Flex direction="column" gap="4">
-              <Alert.Root status="info" variant="subtle">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>نهایی سازی سفارش</Alert.Title>
-                  <Alert.Description>
-                    بعد از کلیک روی «ثبت و ایجاد لینک پرداخت»، یک لینک پرداخت اختصاصی برای این مشتری ساخته می‌شود. این لینک را کپی کرده و برای مشتری ارسال کنید.
-                  </Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
-
-              <ManualOrderConfirmFooter onCreate={handleCreateOrder} onBack={handleBack} />
-            </Flex>
-          )}
-        </Box>
-      </Grid>
+                  <ManualOrderConfirmFooter onCreate={handleCreateOrder} onBack={handleBack} />
+                </Flex>
+              )}
+            </Box>
+          </Grid>
+        </>
+      )}
 
       <AddCustomerDialog
         open={addOpen}
