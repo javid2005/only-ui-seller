@@ -28,12 +28,7 @@ export function Campaigns() {
 
   const handleConfirmNewCampaign = (type: CampaignTypeId) => {
     setNewCampaignOpen(false)
-    if (type === 'sales') {
-      router.push('/marketing/campaigns/new?type=sales')
-      return
-    }
-    // کمپین پروموشن هنوز صفحهٔ ایجاد اختصاصی ندارد
-    toaster.create({ id: 'new-campaign-type', title: 'نوع کمپین انتخاب شد: کمپین پروموشن', type: 'success', duration: 2500 })
+    router.push(`/marketing/campaigns/new?type=${type}`)
   }
 
   return (

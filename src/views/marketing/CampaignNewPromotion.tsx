@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import {
+  Alert,
   Badge,
   Box,
   Button,
@@ -10,35 +11,36 @@ import {
   Input,
   Select,
   Stat,
-  TagsInput,
   Text,
   Textarea,
   createListCollection,
 } from '@chakra-ui/react'
-import { Handshake, Package } from 'lucide-react'
+import { Info, Megaphone, Package } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { toaster } from '@/components/ui/toaster'
+import { NumberField } from '@/components/ui/NumberField'
 import { toPersianDigits, formatThousands } from '@/utils/numbers'
 import { CAMPAIGN_TYPE_OPTIONS } from '@/components/marketing/campaigns/NewCampaignDialog'
 import { CAMPAIGN_CATEGORY_OPTIONS, type CampaignProduct } from '@/components/marketing/campaigns/data'
 import { ProductPickerDialog } from '@/components/marketing/campaigns/ProductPickerDialog'
-import { CampaignFeeInput, type CampaignFeeType } from '@/components/marketing/campaigns/CampaignFeeInput'
 import { DateField } from '@/components/marketing/campaigns/DateField'
 
 const CATEGORY_COLLECTION = createListCollection({ items: CAMPAIGN_CATEGORY_OPTIONS })
 
-function FinancialStat({
+function PromotionStat({
   label,
   value,
+  caption,
   bg,
   borderColor,
   textColor,
 }: {
   label: string
-  value: number
+  value: string
+  caption: string
   bg: string
   borderColor: string
   textColor: string
@@ -56,41 +58,45 @@ function FinancialStat({
     >
       <Stat.Label color={textColor} fontSize="sm">{label}</Stat.Label>
       <Stat.ValueText color={textColor} fontSize="xl" fontWeight="semibold" letterSpacing="tight">
-        {toPersianDigits(formatThousands(value))} تومان
+        {value}
       </Stat.ValueText>
+      <Text fontSize="xs" color={textColor}>{caption}</Text>
     </Stat.Root>
   )
 }
 
-export function CampaignNewSales() {
+export function CampaignNewPromotion() {
   const router = useRouter()
-  const salesType = CAMPAIGN_TYPE_OPTIONS.find((o) => o.id === 'sales')!
+  const promotionType = CAMPAIGN_TYPE_OPTIONS.find((o) => o.id === 'promotion')!
 
   const [pickerOpen, setPickerOpen] = useState(false)
   const [product, setProduct] = useState<CampaignProduct | null>(null)
   const [category, setCategory] = useState<string[]>([])
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [tags, setTags] = useState<string[]>([])
-  const [feeType, setFeeType] = useState<CampaignFeeType>('value')
-  const [feeAmount, setFeeAmount] = useState('')
-  const [feePercent, setFeePercent] = useState('')
+  const [perSignupRate, setPerSignupRate] = useState('')
+  const [perViewRate, setPerViewRate] = useState('')
+  const [totalBudget, setTotalBudget] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
 
-  const { sellerShare, marketerShare, productPrice } = useMemo(() => {
-    const price = product?.price ?? 0
-    const fee = feeType === 'percent'
-      ? Math.round((price * Number(feePercent || '0')) / 100)
-      : Number(feeAmount || '0')
-    const marketer = Math.min(Math.max(fee, 0), price)
-    return { productPrice: price, marketerShare: marketer, sellerShare: Math.max(price - marketer, 0) }
-  }, [product, feeType, feeAmount, feePercent])
+  const { estimatedSignups, estimatedViews, conversionRate } = useMemo(() => {
+    const budget = Number(totalBudget || '0')
+    const signupRate = Number(perSignupRate || '0')
+    const viewRate = Number(perViewRate || '0')
+    const signups = signupRate > 0 ? Math.floor(budget / signupRate) : 0
+    const views = viewRate > 0 ? Math.round((budget / viewRate) * 1000) : 0
+    const rate = views > 0 ? (signups / views) * 100 : 0
+    return { estimatedSignups: signups, estimatedViews: views, conversionRate: rate }
+  }, [totalBudget, perSignupRate, perViewRate])
 
-  const canSubmit = Boolean(product && category.length > 0 && title.trim() && description.trim() && startDate && endDate)
+  const canSubmit = Boolean(
+    product && category.length > 0 && title.trim() && description.trim()
+    && perSignupRate && perViewRate && totalBudget && startDate && endDate
+  )
 
-  const handleCreate = () => {
-    toaster.create({ id: 'campaign-created', title: 'کمپین ایجاد شد', type: 'success', duration: 2500 })
+  const handlePublish = () => {
+    toaster.create({ id: 'campaign-published', title: 'کمپین منتشر شد', type: 'success', duration: 2500 })
     router.push('/marketing/campaigns')
   }
 
@@ -137,15 +143,15 @@ export function CampaignNewSales() {
           p="4"
         >
           {/* آیکون — FIRST = راست‌ترین */}
-          <Flex bg={salesType.iconBg} color={salesType.iconColor} rounded="lg" p="2" flexShrink={0} align="center" justify="center">
-            <Handshake size={24} />
+          <Flex bg={promotionType.iconBg} color={promotionType.iconColor} rounded="lg" p="2" flexShrink={0} align="center" justify="center">
+            <Megaphone size={24} />
           </Flex>
           <Flex direction="column" gap="1" flex="1" minW="0" alignItems="flex-start">
             <Flex gap="4" align="center" justify="flex-start" w="full">
-              <Text fontSize="md" fontWeight="semibold" color="fg">{salesType.title}</Text>
-              <Badge colorPalette={salesType.badgeColor} variant="subtle" size="sm">{salesType.badgeLabel}</Badge>
+              <Text fontSize="md" fontWeight="semibold" color="fg">{promotionType.title}</Text>
+              <Badge colorPalette={promotionType.badgeColor} variant="subtle" size="sm">{promotionType.badgeLabel}</Badge>
             </Flex>
-            <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">{salesType.description}</Text>
+            <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">{promotionType.description}</Text>
           </Flex>
         </Flex>
 
@@ -252,7 +258,7 @@ export function CampaignNewSales() {
               <Input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="مثال: کمپین تابستانه کفش ورزشی"
+                placeholder="مثال: پروموشن ویژه عید"
                 textAlign="right"
               />
             </Field.Root>
@@ -270,64 +276,103 @@ export function CampaignNewSales() {
                 minH="30"
               />
               <Field.HelperText>
-                به بازاریاب بگویید محصول چیست، مزیت آن چیست و چه نکاتی در تبلیغ مهم‌ترند
-              </Field.HelperText>
-            </Field.Root>
-
-            {/* تگ‌های بازاریابی */}
-            <Field.Root w="full">
-              <Field.Label fontSize="sm" fontWeight="semibold" color="fg">تگ‌های بازاریابی</Field.Label>
-              <TagsInput.Root value={tags} onValueChange={(e) => setTags(e.value)} w="full">
-                <TagsInput.Control>
-                  <TagsInput.Context>
-                    {(api) => api.value.map((value, index) => (
-                      <TagsInput.Item key={`${value}-${index}`} index={index} value={value}>
-                        <TagsInput.ItemPreview>
-                          <TagsInput.ItemText>{value}</TagsInput.ItemText>
-                          <TagsInput.ItemDeleteTrigger />
-                        </TagsInput.ItemPreview>
-                        <TagsInput.ItemInput />
-                      </TagsInput.Item>
-                    ))}
-                  </TagsInput.Context>
-                  <TagsInput.Input placeholder="مثال: مناسب هدیه، ضدآب، اورجینال" />
-                </TagsInput.Control>
-                <TagsInput.HiddenInput />
-              </TagsInput.Root>
-              <Field.HelperText>
-                ویژگی‌هایی که به بازاریاب در معرفی بهتر کمک می‌کند
+                هدف کمپین و مخاطب مورد نظر را برای بازاریاب توضیح دهید
               </Field.HelperText>
             </Field.Root>
           </Flex>
         </Flex>
 
-        {/* بخش ۲ — کارمزد فروش */}
+        {/* بخش ۲ — مدل پرداخت و بودجه */}
         <Flex direction="column" gap="6" alignItems="flex-start" w="full" maxW="670px">
           <TitleBar
-            title="کارمزد فروش"
-            subtitle="با وارد کردن مقدار کارمزد پیش نمایش های مالی فعال بروزرسانی خواهند شد."
+            title="مدل پرداخت و بودجه"
+            subtitle="اطلاعات پرداخت و بودجه را تکمیل کنید."
             size="lg"
             divider
           />
-          <CampaignFeeInput
-            feeType={feeType}
-            onFeeTypeChange={setFeeType}
-            amount={feeAmount}
-            onAmountChange={setFeeAmount}
-            percent={feePercent}
-            onPercentChange={setFeePercent}
-          />
+
+          <Flex direction="column" gap="4" alignItems="flex-start" w="full">
+            {/* نرخ‌های پرداخت — راست: هر ۱۰۰۰ بازدید · چپ: هر ثبت‌نام (بر اساس x-metadata طرح) */}
+            <Flex direction={{ base: 'column', sm: 'row' }} gap="4" w="full">
+              <Field.Root required flex="1" minW="0">
+                <Field.Label fontSize="sm" fontWeight="semibold" color="fg">
+                  پرداخت به ازای هر ۱۰۰۰ بازدید<Field.RequiredIndicator />
+                </Field.Label>
+                <NumberField
+                  value={perViewRate}
+                  onChange={setPerViewRate}
+                  placeholder="مبلغ را وارد کنید"
+                  endElement={<Text fontSize="sm" color="fg.muted" px="2">تومان</Text>}
+                />
+              </Field.Root>
+              <Field.Root required flex="1" minW="0">
+                <Field.Label fontSize="sm" fontWeight="semibold" color="fg">
+                  پرداخت به ازای هر ثبت‌نام<Field.RequiredIndicator />
+                </Field.Label>
+                <NumberField
+                  value={perSignupRate}
+                  onChange={setPerSignupRate}
+                  placeholder="مبلغ را وارد کنید"
+                  endElement={<Text fontSize="sm" color="fg.muted" px="2">تومان</Text>}
+                />
+              </Field.Root>
+            </Flex>
+
+            {/* بودجه کل کمپین */}
+            <Field.Root required w="full">
+              <Field.Label fontSize="sm" fontWeight="semibold" color="fg">
+                بودجه کل کمپین<Field.RequiredIndicator />
+              </Field.Label>
+              <NumberField
+                value={totalBudget}
+                onChange={setTotalBudget}
+                placeholder="مبلغ را وارد کنید"
+                endElement={<Text fontSize="sm" color="fg.muted" px="2">تومان</Text>}
+              />
+              <Field.HelperText>
+                بودجه هنگام انتشار کمپین پرداخت می‌شود و به عنوان سقف اجرایی عمل می‌کند
+              </Field.HelperText>
+            </Field.Root>
+
+            <Alert.Root status="warning" variant="subtle" w="full">
+              <Alert.Indicator />
+              <Alert.Content>
+                <Text fontSize="xs">
+                  مبلغ {toPersianDigits(formatThousands(totalBudget || '0'))} تومان هنگام انتشار کمپین از حساب شما کسر می‌شود.
+                </Text>
+              </Alert.Content>
+            </Alert.Root>
+          </Flex>
         </Flex>
 
-        {/* پیش نمایش مالی */}
+        {/* پیش نمایش مالی — راست: برآورد بازدید · وسط: برآورد ثبت‌نام · چپ: نرخ تبدیل (بر اساس x-metadata طرح) */}
         <Flex direction="column" gap="2" alignItems="flex-start" w="full" maxW="670px">
           <TitleBar title="پیش نمایش مالی" size="md" />
           <Flex direction={{ base: 'column', sm: 'row' }} gap="4" w="full">
-            {/* جای قیمت محصول و سهم فروشنده به درخواست کاربر جابه‌جا شد (خلاف ترتیب اولیه Figma) —
-                قیمت محصول (راست) → سهم بازاریاب → سهم فروشنده (چپ). زیر sm: زیر هم به همین ترتیب */}
-            <FinancialStat label="قیمت محصول" value={productPrice} bg="blue.bg" borderColor="blue.muted" textColor="blue.fg" />
-            <FinancialStat label="سهم بازاریاب" value={marketerShare} bg="purple.bg" borderColor="purple.muted" textColor="purple.fg" />
-            <FinancialStat label="سهم فروشنده" value={sellerShare} bg="brand.bg" borderColor="brand.muted" textColor="green.fg" />
+            <PromotionStat
+              label="برآورد بازدید"
+              value={toPersianDigits(formatThousands(estimatedViews))}
+              caption={`براساس نرخ ${toPersianDigits(formatThousands(perViewRate || '0'))} ت / ۱۰۰۰ بازدید`}
+              bg="blue.bg" borderColor="blue.muted" textColor="blue.fg"
+            />
+            <PromotionStat
+              label="برآورد ثبت نام"
+              value={toPersianDigits(formatThousands(estimatedSignups))}
+              caption={`براساس نرخ ${toPersianDigits(formatThousands(perSignupRate || '0'))} ت / هر ثبت نام`}
+              bg="purple.bg" borderColor="purple.muted" textColor="purple.fg"
+            />
+            <PromotionStat
+              label="نرخ تبدیل تخمینی"
+              value={`% ${toPersianDigits(conversionRate.toFixed(1))}`}
+              caption="نسبت ثبت نام به بازدید"
+              bg="brand.bg" borderColor="brand.muted" textColor="green.fg"
+            />
+          </Flex>
+          <Flex gap="2" align="center" justify="flex-start" w="full" pt="4">
+            <Info size={16} color="var(--chakra-colors-fg-muted)" style={{ flexShrink: 0 }} />
+            <Text flex="1" fontSize="xs" color="fg.muted" textAlign="right">
+              این برآورد صرفاً جهت راهنمایی است و بازدهی واقعی بستگی به کیفیت تبلیغ و مخاطب هدف دارد.
+            </Text>
           </Flex>
         </Flex>
 
@@ -343,7 +388,7 @@ export function CampaignNewSales() {
 
         <Box w="full" maxW="670px">
           <ButtonFooter
-            primary={{ label: 'ایجاد کمپین', onClick: handleCreate, disabled: !canSubmit }}
+            primary={{ label: 'انتشار کمپین', onClick: handlePublish, disabled: !canSubmit }}
             secondary={{ label: 'ذخیره پیش‌نویس', onClick: handleSaveDraft }}
             back={{ label: 'انصراف', onClick: () => router.push('/marketing/campaigns'), hideIcon: true }}
           />

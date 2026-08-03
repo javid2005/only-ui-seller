@@ -254,6 +254,7 @@ dev-engine verify-render .
 | Auth | `src/services/auth.ts` کاملاً mock (delay مصنوعی، بدون API واقعی) | تا وصل‌شدن به backend. `checkPhoneExists`: رقم آخر شماره فرد=کاربر جدید (signup)، زوج=کاربر موجود (login) — تا هر دو مسیر تست‌پذیر باشن |
 | Signup progress | `getSignupProgress`/`saveSignupStep` در `auth.ts` با `localStorage` mock می‌شه | با همون شماره، کاربر به آخرین مرحلهٔ ذخیره‌شدهٔ signup برمی‌گرده (بعد از OTP verify) |
 | OTP verify | `verifyOtp` در `auth.ts`: کد `۰۰۰۰۰` رد می‌شه، هر کد ۵رقمی دیگه تایید می‌شه | مسیر «کد اشتباه» تست‌پذیر باشه — همهٔ نقاط PinInput (`OtpForm`, `OtpDialog`, `AuthQrDialog` در `TwoFactorSection.tsx`) هم روی همین قرارداد auto-submit/auto-error دارن |
+| Jalali DatePicker | `src/components/ui/DatePicker.tsx` — دستی با `Intl.DateTimeFormat('...-ca-persian-nu-latn')`، صفر کتابخانهٔ خارجی | هیچ پکیج jalali/date در پروژه نبود؛ ICU خودش leap-year/طول ماه رو حساب می‌کنه، پس نیازی به پیاده‌سازی الگوریتم تقویم یا اضافه‌کردن dependency نیست |
 
 ### Next.js — App Router conventions (اجباری)
 
@@ -370,6 +371,7 @@ getBoundingClientRect تشخیص داده شد، نه با چشم.
 - `position="fixed"` + centering با `left:"50%"` + `transform:"translateX(-50%)"` → اگه `left` رو با `insetInlineStart` (منطقی) بدی، در RTL به `right` تبدیل می‌شه و فرمول centering (که فیزیکی و جهت‌مستقله) بهم می‌ریزه — عنصر به‌جای وسط، به چپ صفحه پرت می‌شه. باید `left` فیزیکی باشه. **راه‌حل ساده‌تر و ترجیحی:** وقتی عرض باید «fill» بمونه (نه یک maxW ثابت)، اصلاً از `left+transform` استفاده نکن — `insetInlineStart`/`insetInlineEnd` رو با مقدار **یکسان** (مثلاً هر دو `'4'`) بده؛ چون مقدار دو طرف برابره، منطقی/فیزیکی فرقی نداره و عرض خودش از فاصلهٔ دو لبه محاسبه می‌شه (با کوچک‌شدن ویوپورت خودش کوچیک می‌شه، بدون نیاز به `maxW`/`w`/`transform`). الگو: `src/components/orders/manual/ManualOrderFooter.tsx`
 - `RadioCard.Root value={x ?? undefined}` → **کنترل‌شده به‌درستی پاک نمی‌شه** — `undefined` برای RadioGroup زیرینِ zag یعنی uncontrolled، پس یه بار انتخاب‌شده دیگه با state بیرونی پاک نمی‌شه (مثلاً دکمهٔ «حذف» state رو null می‌کنه ولی کارت هنوز checked می‌مونه). باید `value` رو مستقیم (با نوع `string | null`) پاس بدی، نه با `?? undefined`. جزئیات: `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/components/orders/manual/DiscountSelectPanel.tsx`
 - `direction` prop روی هر کامپوننتی جز `Flex`/`Stack` (مثل `RadioCard.ItemControl`, `Grid`) → **بی‌صدا drop می‌شه**، چون ترجمهٔ `direction`→`flexDirection` فقط داخل `Flex`/`Stack` هست، نه یه shorthand عمومیِ style-system. همیشه `flexDirection` بنویس. جزئیات: `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/components/orders/manual/DiscountSelectPanel.tsx`
+- `Popover.Trigger asChild` + `<Box as="button">` → **type error** (`disabled`/`type` روی نوع props وجود نداره، چون `as` فقط تگ رندرشده رو عوض می‌کنه نه inference تایپ‌اسکریپت). به‌جاش استایل رو مستقیم روی خودِ `Popover.Trigger` بده (بدون `asChild`) — چون `PopoverTriggerProps` از `HTMLChakraProps<"button">` ارث می‌بره و خودش یه دکمهٔ استایل‌پذیره. الگو: `src/components/ui/DatePicker.tsx`
 
 ---
 
@@ -493,6 +495,7 @@ toLatinDigits(s: string): string             // برای input → API
 - هر جا `Date` نمایش داده میشه باید این locale استفاده بشه
 
 > **وضعیت:** `src/utils/numbers.ts` ساخته شده — `toPersianDigits` + `toLatinDigits` موجود.
+> **DatePicker:** `src/components/ui/DatePicker.tsx` — تقویم جلالی سفارشی، **بدون کتابخانهٔ خارجی** (هیچ پکیج jalali/date در dependencies نیست). محاسبات (طول ماه، سال کبیسه، تبدیل) صرفاً با `Intl.DateTimeFormat('fa-IR-u-ca-persian-nu-latn')` روی حساب روزهای میلادی — چون هر دو تقویم شمسی‌اند، جابه‌جایی روزبه‌روز با `Date.setDate` صحیحه و ICU خودش کبیسه رو حساب می‌کنه. مقدار ورودی/خروجی همچنان ISO میلادی (`YYYY-MM-DD`) است، فقط نمایش/انتخاب جلالی‌ست. `DateField` (کمپین‌ها) از این کامپوننت استفاده می‌کنه؛ برای هر فیلد تاریخ جدید همینو import کن، دوباره نساز.
 
 ---
 

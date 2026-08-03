@@ -57,8 +57,9 @@ export function ProductPickerDialog({ open, onClose, selectedProductId, onConfir
 
             <Dialog.Body pt="2" pb="6" px="6">
               <Flex direction="column" gap="4" alignItems="flex-start" w="full">
-                <Flex gap="2" w="full" align="flex-start">
-                  <InputGroup flex="1" minW="200px" startElement={<Search size={16} color="var(--chakra-colors-fg-subtle)" />}>
+                {/* زیر sm: ستونی (جستجو بالا، دسته‌بندی زیرش، هر دو تمام‌عرض) — sm به بالا: هم‌ردیف */}
+                <Flex direction={{ base: 'column', sm: 'row' }} gap="2" w="full" align={{ base: 'stretch', sm: 'flex-start' }}>
+                  <InputGroup flex="1" minW="200px" w="full" startElement={<Search size={16} color="var(--chakra-colors-fg-subtle)" />}>
                     <Input
                       placeholder="جستجوی نام یا SKU محصول..."
                       value={search}
@@ -71,7 +72,8 @@ export function ProductPickerDialog({ open, onClose, selectedProductId, onConfir
                     value={[category]}
                     onValueChange={(e) => setCategory(e.value[0] ?? 'all')}
                     size="md"
-                    maxW="160px"
+                    w="full"
+                    maxW={{ base: 'full', sm: '160px' }}
                   >
                     <Select.HiddenSelect />
                     <Select.Control>

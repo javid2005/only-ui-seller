@@ -59,16 +59,32 @@ export function ProductPickerItem({ product, selected, onSelect }: ProductPicker
         <Package size={20} color="var(--chakra-colors-fg-subtle)" />
       </Flex>
 
-      {/* عنوان + SKU */}
+      {/* عنوان + SKU — زیر sm: عنوان اینجا، SKU و قیمت به بلوک موبایل زیر منتقل می‌شن */}
       <Flex direction="column" gap="2" flex="1" minW="0" alignItems="flex-start">
         <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="right" lineClamp={1}>
           {product.name}
         </Text>
-        <Text fontSize="xs" color="fg.muted" textAlign="right">{product.sku}</Text>
+        <Text display={{ base: 'none', sm: 'block' }} fontSize="xs" color="fg.muted" textAlign="right">
+          {product.sku}
+        </Text>
+
+        {/* زیر sm فقط: SKU زیر عنوان، بعد قیمت (چپ) + بج دلاری (راست) هم‌ردیف */}
+        <Flex display={{ base: 'flex', sm: 'none' }} direction="column" gap="2" alignItems="flex-start" w="full">
+          <Text fontSize="xs" color="fg.muted" textAlign="right">{product.sku}</Text>
+          <Flex align="center" justify="flex-end" gap="4" w="full">
+            {/* بج دلاری — FIRST = راست‌ترین */}
+            {product.costUsd != null && (
+              <Badge size="xs" colorPalette="gray" variant="subtle">{`$ ${toPersianDigits(product.costUsd)}`}</Badge>
+            )}
+            <Text fontSize="md" fontWeight="medium" color="fg" whiteSpace="nowrap">
+              {toPersianDigits(formatThousands(product.price))} ت
+            </Text>
+          </Flex>
+        </Flex>
       </Flex>
 
-      {/* قیمت — LAST = چپ‌ترین */}
-      <Flex direction="column" gap="2" alignItems="flex-end" flexShrink={0}>
+      {/* قیمت — sm به بالا فقط — LAST = چپ‌ترین */}
+      <Flex display={{ base: 'none', sm: 'flex' }} direction="column" gap="2" alignItems="flex-end" flexShrink={0}>
         <Text fontSize="md" fontWeight="medium" color="fg" textAlign="left" whiteSpace="nowrap">
           {toPersianDigits(formatThousands(product.price))} ت
         </Text>
