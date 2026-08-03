@@ -45,5 +45,22 @@
     "_source": "mcp",
     "_note": "columns FIRST-to-LAST = name(rightmost) → startDate → endDate → status → actions(leftmost). Reversed from raw Figma LTR canvas column order (actions, status, endDate, startDate, name).",
     "justify": "start"
+  },
+  "CampaignFeeInput": {
+    "childOrder": [
+      "SegmentGroupToggle",
+      "AmountOrPercentInput"
+    ],
+    "justify": "end",
+    "_synced": "2026-08-03"
+  },
+  "ProductPickerItem": {
+    "childOrder": [
+      "RadioMark",
+      "Image",
+      "Content",
+      "Price"
+    ],
+    "_synced": "2026-08-03"
   }
 }
