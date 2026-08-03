@@ -4,6 +4,7 @@
   "calendar": "jalali",
   "ds": "chakra-v3",
   "icon_lib": "lucide",
+  "figma_source": "mcp",
   "ignore": [
     "node_modules",
     "dist",

@@ -1,6 +1,10 @@
 {
   "AdChannelCard": {
-    "childOrder": ["Flex", "Flex", "Box"],
+    "childOrder": [
+      "Flex",
+      "Flex",
+      "Box"
+    ],
     "layoutMode": "HORIZONTAL",
     "textAlign": "end",
     "_synced": "2026-08-02",
@@ -8,9 +12,38 @@
     "_note": "childOrder is degenerate — positions 1 and 2 are both generic <Flex> (icon box, content column), so this snapshot only catches a regression that swaps the action <Box> with either <Flex>, not an icon/content swap. Root cause: no named sub-components, just Chakra primitives. Real protection for icon-vs-content order still relies on the code comment + this JSON file's textAlign/RTL evidence, not on this childOrder check."
   },
   "AdChannels": {
-    "childOrder": ["Header", "Box"],
+    "childOrder": [
+      "Header",
+      "Box"
+    ],
     "layoutMode": "VERTICAL",
     "_synced": "2026-08-02",
     "_source": "mcp"
+  },
+  "CampaignCard": {
+    "childOrder": [
+      "Flex",
+      "Flex"
+    ],
+    "layoutMode": "VERTICAL",
+    "textAlign": "start",
+    "_synced": "2026-08-03",
+    "_source": "mcp",
+    "_note": "childOrder is degenerate — root has 2 generic <Flex> rows (header, footer), so this only catches a header/footer swap. NO `justify` field here on purpose: layout-diff checks every justify-bearing element against one flat value, and CampaignCard legitimately has two different correct values — outer header Flex justify=space-between (first child=TitleGroup at start/right, last child=MenuTrigger at end/left) and nested TitleGroup Flex justify=start (right-aligns title+badge within its own flex box). Any single value here false-positives on one of the two lines — verified 2026-08-03 (tried 'start', then 'space-between', both flagged one real line as wrong). This granularity gap is a known layout-diff limitation; protection for both justify values relies on the code comment only, not this snapshot. footer row internal order = [startDate(first=rightmost), endDate(middle), status(last=leftmost)] — reversed from raw Figma LTR canvas order (status, endDate, startDate) per rightmost-visual=first-DOM-child rule. INCIDENT 2026-08-03: nested TitleGroup was originally shipped with justify=end (LTR intuition) which resolves to LEFT under RTL — content hugged the left edge next to the menu button instead of the card's right edge. Fixed to justify=start. Never copy justify=flex-end assuming it means right under RTL."
+  },
+  "CampaignTable": {
+    "childOrder": [
+      "Table.ColumnHeader",
+      "Table.ColumnHeader",
+      "Table.ColumnHeader",
+      "Table.ColumnHeader",
+      "Table.ColumnHeader"
+    ],
+    "layoutMode": "HORIZONTAL",
+    "textAlign": "start",
+    "_synced": "2026-08-03",
+    "_source": "mcp",
+    "_note": "columns FIRST-to-LAST = name(rightmost) → startDate → endDate → status → actions(leftmost). Reversed from raw Figma LTR canvas column order (actions, status, endDate, startDate, name).",
+    "justify": "start"
   }
 }

@@ -13,6 +13,8 @@ interface ActionBtn {
 interface BackBtn {
   label: string
   onClick: () => void
+  /** پیش‌فرض آیکون فلش دارد؛ فقط برای صفحاتی که صراحتاً نمی‌خواهند ست شود */
+  hideIcon?: boolean
 }
 
 export interface ButtonFooterProps {
@@ -64,7 +66,7 @@ export function ButtonFooter({ primary, secondary, tertiary, back }: ButtonFoote
             onClick={back.onClick}
             _hover={{ color: 'fg' }}
           >
-            <ArrowRight size={16} />
+            {!back.hideIcon && <ArrowRight size={16} />}
             {back.label}
           </Button>
         )}

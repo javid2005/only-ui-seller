@@ -521,6 +521,13 @@ toLatinDigits(s: string): string             // برای input → API
 | `map.controlBg` | gray.900 | gray.900 |
 | `map.controlBgHover` | gray.700 | gray.700 |
 
+### Vitrina Extra "bg" Tokens (`src/theme/tokens.ts`)
+> Chakra v3 default palettes only ship `contrast/fg/subtle/muted/emphasized/solid/focusRing/border` — no `.bg`. `brand.bg` already existed; `purple.bg`/`blue.bg` added when a Figma spec called for an extra-light (`.50`/`.950`) card background distinct from `.subtle`. Add more `{color}.bg` entries the same way if another Figma spec needs one — don't fall back to `.subtle` as a stand-in.
+| Token | Light | Dark |
+|-------|-------|------|
+| `purple.bg` | purple.50 | purple.950 |
+| `blue.bg` | blue.50 | blue.950 |
+
 ---
 
 ## Design Scale

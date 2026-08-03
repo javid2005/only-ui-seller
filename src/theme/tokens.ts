@@ -64,6 +64,10 @@ import { defineConfig } from '@chakra-ui/react'
  *   map.controlBg      → gray.900 / gray.900  (map button bg, dark in both modes)
  *   map.controlBgHover → gray.700 / gray.700  (map button hover)
  *
+ * ── EXTRA "bg" VARIANT (custom — Chakra's default palettes don't ship one) ──
+ *   purple.bg          → purple.50 / purple.950  (extra-light tint bg)
+ *   blue.bg            → blue.50   / blue.950    (extra-light tint bg)
+ *
  * ── PALETTE TOKENS (raw colors) ─────────────────────────────
  *   transparent | current | black | white
  *   whiteAlpha.50–950  | blackAlpha.50–950
@@ -149,6 +153,14 @@ export const vitrinaTokens = defineConfig({
         map: {
           controlBg: { value: { _light: '{colors.gray.900}', _dark: '{colors.gray.900}' } },
           controlBgHover: { value: { _light: '{colors.gray.700}', _dark: '{colors.gray.700}' } },
+        },
+        // ── extra-light "bg" variant (Chakra default palettes only ship
+        // contrast/fg/subtle/muted/emphasized/solid/focusRing/border) ──
+        purple: {
+          bg: { value: { _light: '{colors.purple.50}', _dark: '{colors.purple.950}' } },
+        },
+        blue: {
+          bg: { value: { _light: '{colors.blue.50}', _dark: '{colors.blue.950}' } },
         },
       },
     },
