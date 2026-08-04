@@ -62,5 +62,41 @@
       "Price"
     ],
     "_synced": "2026-08-03"
+  },
+  "PromotionCard": {
+    "childOrder": [
+      "Flex",
+      "Flex"
+    ],
+    "layoutMode": "HORIZONTAL",
+    "textAlign": "start",
+    "iconSide": "start",
+    "_note": "root childOrder degenerate (icon box + content column both generic Flex) — real check relies on textAlign/iconSide. Icon FIRST=rightmost (metadata: card width 960, Content x=16-880, Image/icon x=896-944 — icon at higher x = rightmost). Within inner Top row: title+badge+desc block FIRST=rightmost (Content x=56-864), Switch SECOND=leftmost (SwitchBase x=0-40) — reversed from raw Figma LTR JSX order which lists SwitchBase before Content. Within title Wrapper: Title text FIRST=rightmost (x=702-808), category Badge SECOND=leftmost (x=573-694) — matches AdChannelCard convention (title closer to icon). Bottom row: Badges cluster FIRST=rightmost (x=516-864), action Button SECOND=leftmost (x=0-77).",
+    "_synced": "2026-08-04"
+  },
+  "DiscountSettingsDialog": {
+    "childOrder": [
+      "SegmentGroup.Item",
+      "SegmentGroup.Item"
+    ],
+    "textAlign": "start",
+    "_note": "SegmentGroup toggle: درصدی FIRST=راست‌ترین، مقداری SECOND=چپ‌ترین — از screenshot طرح (node 2700:43295/43551/43660/43661)، برعکسِ ترتیب CampaignFeeInput.tsx (کامپوننت دیگه، طرح دیگه). Dialog footer: انصراف FIRST=راست‌ترین، ذخیره(primary) LAST=چپ‌ترین — طبق قرارداد پروژه (ButtonFooter/NewCampaignDialog). Input addon ٪/تومان → endElement (چپ) نه startElement — طبق قرارداد InfoTab.tsx/CampaignFeeInput.tsx.",
+    "_synced": "2026-08-04"
+  },
+  "FreeShippingGeoSection": {
+    "childOrder": [
+      "Box",
+      "Box"
+    ],
+    "_note": "root childOrder degenerate (هر دو Box) — واقعی: Treeview(LocationTreeView) FIRST=راست‌ترین، Selected(SelectedLocationsPanel) SECOND=چپ‌ترین. از متادیتای طرح node 2724:40293: Container 928px، Treeview فرزند x=472 (راست‌تر)، Selected فرزند x=0 (چپ‌تر) — reversed از JSX خام (LTR canvas). تأیید مستقل کاربر: «ستون سمت راست شامل chakra treeview است».",
+    "_synced": "2026-08-04"
+  },
+  "FreeShipping": {
+    "childOrder": [
+      "ShippingScopeCard",
+      "ShippingScopeCard"
+    ],
+    "_note": "RadioCard scope toggle: کل‌کشور(value=all) FIRST=راست‌ترین، موقعیت‌جغرافیایی(value=geo) SECOND=چپ‌ترین — از متادیتای node 2724:40253 Wrapper (Left-Radio-Card اول x پایین‌تر=کل‌کشور در فایل all، دوم x بالاتر). داخل هر ItemControl: Content(عنوان+توضیح) FIRST=راست‌تر، ItemIndicator(radio dot) LAST=چپ‌تر — برعکسِ CampaignTypeCard (اون کارت icon هم داشت، سه‌جزیی بود؛ این دوجزیی، Indicator آخر).",
+    "_synced": "2026-08-04"
   }
 }

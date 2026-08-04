@@ -52,9 +52,9 @@ export interface ButtonFooterProps {
  */
 export function ButtonFooter({ primary, secondary, tertiary, back }: ButtonFooterProps) {
   return (
-    <Box pt="4">
+    <Box pt="4" w="full">
       <Separator mb="4" />
-      <Flex align="center" gap="2">
+      <Flex align="center" gap="2" w="full">
 
         {/* RTL: FIRST = rightmost — back/cancel link */}
         {back && (

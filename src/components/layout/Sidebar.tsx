@@ -102,7 +102,7 @@ const NAV_GROUPS: NavGroup[] = [
         path: '/promotions',
         subItems: [
           { label: 'کدهای تخفیف', path: '/promotions/codes' },
-          { label: 'پروموشن و آگهی', path: '/promotions/ads' },
+          { label: 'پروموشن ها', path: '/promotions/ads' },
           { label: 'سبدهای خرید رها شده', path: '/promotions/abandoned-carts' },
         ],
       },
