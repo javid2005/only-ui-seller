@@ -13,6 +13,8 @@ export interface PromotionCardProps {
   actionLabel: string
   onAction?: () => void
   badges: string[]
+  /** state=Disabled در طرح (node 2685:39343) — کارت غیرفعال: toggle/دکمه غیرقابل‌کلیک، محتوا کم‌رنگ */
+  disabled?: boolean
 }
 
 /**
@@ -40,6 +42,7 @@ export function PromotionCard({
   actionLabel,
   onAction,
   badges,
+  disabled = false,
 }: PromotionCardProps) {
   const isCompact = useCompactMode()
 
@@ -49,10 +52,11 @@ export function PromotionCard({
       align="center"
       justify="center"
       boxSize="12"
-      bg={`${iconColor}.subtle`}
+      bg={disabled ? 'bg.muted' : `${iconColor}.subtle`}
       borderWidth="1px"
-      borderColor={`${iconColor}.muted`}
+      borderColor={disabled ? 'border.muted' : `${iconColor}.muted`}
       color={`${iconColor}.solid`}
+      opacity={disabled ? 0.4 : 1}
       rounded="4px"
     >
       {icon}
@@ -63,7 +67,8 @@ export function PromotionCard({
     <Switch.Root
       colorPalette="brand"
       size="md"
-      checked={enabled}
+      checked={disabled ? false : enabled}
+      disabled={disabled}
       onCheckedChange={(e) => onToggle(e.checked)}
       flexShrink={0}
     >
@@ -78,10 +83,10 @@ export function PromotionCard({
     <Flex direction="column" gap="2" flex="1" minW="0" alignItems="flex-end">
       <Flex align="center" gap="2" w="full" justify="flex-start">
         {/* عنوان FIRST = راست‌ترین (نزدیک آیکون)، برچسب دسته SECOND = چپ‌تر */}
-        <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="right">{title}</Text>
-        <Badge colorPalette="gray" variant="subtle" size="md" flexShrink={0}>{category}</Badge>
+        <Text fontSize="md" fontWeight="semibold" color={disabled ? 'fg.subtle' : 'fg'} textAlign="right">{title}</Text>
+        <Badge colorPalette="gray" variant="subtle" size="md" flexShrink={0} opacity={disabled ? 0.4 : 1}>{category}</Badge>
       </Flex>
-      <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">{description}</Text>
+      <Text fontSize="sm" color="fg.muted" textAlign="right" w="full" opacity={disabled ? 0.4 : 1}>{description}</Text>
     </Flex>
   )
 
@@ -102,6 +107,7 @@ export function PromotionCard({
       px="3.5"
       fontWeight="semibold"
       onClick={onAction}
+      disabled={disabled}
       flexShrink={0}
       w={fullWidth ? 'full' : undefined}
     >
@@ -112,11 +118,11 @@ export function PromotionCard({
   return (
     <Box
       borderWidth="1px"
-      borderColor="border"
+      borderColor={disabled ? 'border.muted' : 'border'}
       rounded="md"
       p="4"
       w="full"
-      _hover={{ borderColor: 'brand.focusRing' }}
+      _hover={disabled ? undefined : { borderColor: 'brand.focusRing' }}
     >
       {/* دسکتاپ (md+، غیر-compact) — آیکون sibling کارت، Switch کنار عنوان */}
       <Flex display={isCompact ? 'none' : { base: 'none', md: 'flex' }} gap="4" w="full" align="flex-start">
@@ -127,7 +133,7 @@ export function PromotionCard({
             {switchControl}
           </Flex>
           <Separator w="full" />
-          <Flex justify="space-between" align="center" w="full">
+          <Flex justify="space-between" align="center" w="full" opacity={disabled ? 0.4 : 1}>
             {badgesRow}
             {actionButton(false)}
           </Flex>
@@ -142,8 +148,10 @@ export function PromotionCard({
         </Flex>
         {titleBlock}
         <Separator w="full" />
-        {badgesRow}
-        {actionButton(true)}
+        <Flex direction="column" gap="4" w="full" opacity={disabled ? 0.4 : 1}>
+          {badgesRow}
+          {actionButton(true)}
+        </Flex>
       </Flex>
     </Box>
   )

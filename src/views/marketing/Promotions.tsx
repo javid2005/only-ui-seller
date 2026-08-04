@@ -112,9 +112,12 @@ export function Promotions() {
                       ? () => handleOpenSettings(promo.id)
                       : promo.id === 'free-shipping'
                         ? () => router.push('/promotions/free-shipping')
-                        : undefined
+                        : promo.id === 'bulk-sms'
+                          ? () => router.push('/promotions/bulk-sms')
+                          : undefined
                   }
                   badges={promo.badges}
+                  disabled={promo.disabled}
                 />
               )
             })}

@@ -1,10 +1,10 @@
 # Vitrina — Handoff
-> 2026-08-04 13:33
+> 2026-08-04
 
 ## الان
-آخرین commit: فلوی «ایجاد کمپین پروموشن» + `DatePicker` جلالی (`e8368c3`).
+✅ **کمیت شد:** سه صفحهٔ پروموشن (ads/free-shipping/bulk-sms) + کامپوننت‌های پایه (`49377d9`).
 
-**uncommitted (۷ فایل):** صفحه «پروموشن‌ها» (`/promotions/ads`) — `Promotions.tsx` + `PromotionCard` + `DiscountSettingsDialog` + mock data؛ Sidebar لینک «پروموشن ها»؛ cache فیگما.
+**جاری:** تقویت صفحهٔ `bulk-sms` — جدول تاریخچهٔ پیامک + منوی اقدامات ردیف + کامپوننت `PromotionSmsCard`.
 
 ## بعدی
 [منتظر پاسخ کاربر]

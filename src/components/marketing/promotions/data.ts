@@ -7,6 +7,7 @@ export interface PromotionData {
   enabled: boolean
   actionLabel: string
   badges: string[]
+  disabled?: boolean
 }
 
 export const PROMOTIONS: PromotionData[] = [
@@ -49,5 +50,6 @@ export const PROMOTIONS: PromotionData[] = [
     enabled: true,
     actionLabel: 'تنظیمات',
     badges: ['آخرین ارسال: ۱۴۰۴/۰۲/۱۵', '۲۳۴ نفر'],
+    disabled: true,
   },
 ]
