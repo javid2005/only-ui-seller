@@ -98,5 +98,15 @@
     ],
     "_note": "RadioCard scope toggle: کل‌کشور(value=all) FIRST=راست‌ترین، موقعیت‌جغرافیایی(value=geo) SECOND=چپ‌ترین — از متادیتای node 2724:40253 Wrapper (Left-Radio-Card اول x پایین‌تر=کل‌کشور در فایل all، دوم x بالاتر). داخل هر ItemControl: Content(عنوان+توضیح) FIRST=راست‌تر، ItemIndicator(radio dot) LAST=چپ‌تر — برعکسِ CampaignTypeCard (اون کارت icon هم داشت، سه‌جزیی بود؛ این دوجزیی، Indicator آخر).",
     "_synced": "2026-08-04"
+  },
+  "AbandonedCartCard": {
+    "textAlign": "start",
+    "iconSide": "end",
+    "_synced": "2026-08-06"
+  },
+  "AbandonedCartDetailsDrawer": {
+    "textAlign": "start",
+    "iconSide": "end",
+    "_synced": "2026-08-06"
   }
 }

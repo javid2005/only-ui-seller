@@ -14,5 +14,11 @@
 
 **Sidebar navigation:** شامل تمام دسترسی‌ها + planned routes (`/promotions/codes`, `/promotions/abandoned-carts` برای بعد).
 
-## بعدی
-[منتظر پاسخ کاربر]
+## بعدی — Abandoned Carts (۶ فایل جاری)
+صفحهٔ `/promotions/abandoned-carts` در حال ساخت:
+- کارت‌های abandoned (لیست)
+- جزئیات‌نمای drawer
+- جدول cart items
+- تیمی abandoned carts (جدول، تاریخچه)
+
+Ready برای commit.
