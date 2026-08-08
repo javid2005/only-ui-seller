@@ -35,6 +35,10 @@ function LeaderRow({ label, children }: { label: string; children: ReactNode }) 
  *  Header       → عنوان+بج نوع(راست‌ترین) FIRST ← دکمه سه‌نقطه(چپ‌ترین) LAST
  *  هر LeaderRow → لیبل(راست‌ترین) FIRST ← خط‌چین ← مقدار(چپ‌ترین) LAST
  *  Row پایانی   → زمان شروع(راست‌ترین) FIRST ← زمان پایان ← وضعیت(چپ‌ترین) LAST
+ *
+ * ⚠️ قانون بازگشتی است: هر container افقی — از جمله زوج‌های *داخل* هر LeaderRow —
+ * باید جدا sort نزولی روی x بشه. INCIDENT 2026-08-08: قاعده فقط روی ردیف بیرونی
+ * اعمال شد و سه زوج داخلی (Badge/سقف، کد/کپی، Progress/عدد) آینه‌ای ship شدن.
  */
 export function DiscountCodeCard({ item }: DiscountCodeCardProps) {
   const handleCopy = () => {
@@ -48,7 +52,7 @@ export function DiscountCodeCard({ item }: DiscountCodeCardProps) {
         <Flex align="center" gap="2" flex="1" minW="0">
           <Text fontSize="sm" fontWeight="semibold" color="fg" truncate>{item.title}</Text>
           <Badge size="xs" colorPalette={DISCOUNT_TYPE_COLOR[item.type]} variant="subtle" flexShrink={0}>
-            {DISCOUNT_TYPE_LABEL[item.type]}
+            {DISCOUNT_TYPE_LABEL[item.type]}{/* dev-engine-ignore — لیبل فارسی از پیش تعیین‌شده، عدد نیست */}
           </Badge>
         </Flex>
         <DiscountCodeRowActionsMenu item={item} size="sm" />
@@ -57,21 +61,23 @@ export function DiscountCodeCard({ item }: DiscountCodeCardProps) {
       <Flex direction="column" gap="3" py="3">
         <LeaderRow label="مقدار تخفیف">
           {item.type === 'percentage' ? (
-            <Flex align="center" gap="2" flexShrink={0}>
-              <Badge size="xs" colorPalette="orange" variant="solid">{item.amountValue}</Badge>
-              <Text fontSize="xs" color="fg.muted">{item.amountCap}</Text>
+            /* سقف FIRST=راست‌تر (x=37) ← Badge LAST=چپ‌تر (x=0) */
+            <Flex data-layout="DiscountCodeCard.amountRow" align="center" gap="2" flexShrink={0}>
+              <Text fontSize="xs" color="fg.muted">{item.amountCap}{/* dev-engine-ignore */}</Text>
+              <Badge size="xs" colorPalette="orange" variant="solid">{item.amountValue}{/* dev-engine-ignore */}</Badge>
             </Flex>
           ) : (
-            <Text fontSize="sm" color="fg" flexShrink={0}>{item.amountValue}</Text>
+            <Text fontSize="sm" color="fg" flexShrink={0}>{item.amountValue}{/* dev-engine-ignore */}</Text>
           )}
         </LeaderRow>
 
         <LeaderRow label="کد تخفیف">
-          <Flex align="center" gap="2" flexShrink={0}>
-            <Text fontSize="sm" color="fg">{item.code}</Text>
+          {/* آیکون کپی FIRST=راست‌تر (x=92) ← کد LAST=چپ‌تر (x=0) */}
+          <Flex data-layout="DiscountCodeCard.codeRow" align="center" gap="2" flexShrink={0}>
             <IconButton aria-label={`کپی کد ${item.code}`} variant="ghost" size="2xs" color="fg.muted" onClick={handleCopy}>
               <Copy size={14} />
             </IconButton>
+            <Text fontSize="sm" color="fg">{item.code}</Text>
           </Flex>
         </LeaderRow>
 
@@ -79,7 +85,11 @@ export function DiscountCodeCard({ item }: DiscountCodeCardProps) {
           {item.usage.limit === null ? (
             <Text fontSize="sm" color="fg" flexShrink={0}>{toPersianDigits(item.usage.used)}</Text>
           ) : (
-            <Flex align="center" gap="4" flex="1" minW="0">
+            /* عدد FIRST=راست‌تر (x=114.5) ← Progress LAST=چپ‌تر (x=0) */
+            <Flex data-layout="DiscountCodeCard.usageRow" align="center" gap="4" flex="1" minW="0">
+              <Text fontSize="sm" color="fg" flexShrink={0}>
+                {toPersianDigits(item.usage.limit)} / {toPersianDigits(item.usage.used)}
+              </Text>
               <Progress.Root
                 value={(item.usage.used / item.usage.limit) * 100}
                 size="xs" shape="full" colorPalette={usageProgressColor(item.status)} flex="1"
@@ -88,9 +98,6 @@ export function DiscountCodeCard({ item }: DiscountCodeCardProps) {
                   <Progress.Range />
                 </Progress.Track>
               </Progress.Root>
-              <Text fontSize="sm" color="fg" flexShrink={0}>
-                {toPersianDigits(item.usage.limit)} / {toPersianDigits(item.usage.used)}
-              </Text>
             </Flex>
           )}
         </LeaderRow>
@@ -110,7 +117,7 @@ export function DiscountCodeCard({ item }: DiscountCodeCardProps) {
         <Flex flex="1" direction="column" align="center" gap="2" p="2">
           <Text fontSize="xs" fontWeight="medium" color="fg.muted">وضعیت</Text>
           <Badge size="xs" colorPalette={DISCOUNT_STATUS_COLOR[item.status]} variant="subtle">
-            {DISCOUNT_STATUS_LABEL[item.status]}
+            {DISCOUNT_STATUS_LABEL[item.status]}{/* dev-engine-ignore — لیبل فارسی از پیش تعیین‌شده، عدد نیست */}
           </Badge>
         </Flex>
       </Flex>

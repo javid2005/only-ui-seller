@@ -10,7 +10,7 @@ interface DiscountCodeRowActionsMenuProps {
 /**
  * منوی عملیات کد تخفیف (ellipsis ⋮) — Figma «MenuContent» (node 3122:74399).
  * چیدمان عمودی — ترتیب بالا به پایین طبق Figma تغییر نمی‌کند: ویرایش → حذف.
- * هر ردیف داخلی: آیکون (راست‌ترین) FIRST ← متن (چپ‌تر) SECOND، justify="flex-start" (RTL=راست)
+ * هر ردیف داخلی: آیکون (راست‌ترین) FIRST ← متن (چپ‌تر) SECOND، justify="start" (RTL=راست)
  * تا جفت آیکون+متن به لبه راست بچسبد — طبق قرارداد پروژه (الگوی BulkSmsRowActionsMenu).
  */
 export function DiscountCodeRowActionsMenu({ item, size = 'sm' }: DiscountCodeRowActionsMenuProps) {
@@ -25,13 +25,13 @@ export function DiscountCodeRowActionsMenu({ item, size = 'sm' }: DiscountCodeRo
         <Menu.Positioner dir="rtl">
           <Menu.Content minW="160px" p="1">
             <Menu.Item value="edit">
-              <Flex align="center" justify="flex-start" w="full" gap="2">
+              <Flex align="center" justify="start" w="full" gap="2">
                 <Pencil size={16} />
                 <Text fontSize="sm" color="fg">ویرایش</Text>
               </Flex>
             </Menu.Item>
             <Menu.Item value="delete">
-              <Flex align="center" justify="flex-start" w="full" gap="2" color="red.fg">
+              <Flex align="center" justify="start" w="full" gap="2" color="red.fg">
                 <Trash2 size={16} />
                 <Text fontSize="sm" color="red.fg">حذف</Text>
               </Flex>

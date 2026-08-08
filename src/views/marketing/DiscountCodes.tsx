@@ -16,7 +16,7 @@ export function DiscountCodes() {
   const isCompact = useCompactMode()
 
   return (
-    <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+    <Flex direction="column" gap="4" alignItems="end" w="full">
       <Header
         title="کدهای تخفیف"
         breadcrumbs={[
