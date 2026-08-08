@@ -163,7 +163,7 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 - [ ] Component Resolution رعایت شد (Local→DS MCP→Build) — کدوم مسیر؟
 - [ ] صفر hardcode (رنگ/spacing/font) — همه token
-- [ ] logical CSS props (`insetInlineEnd` نه `right`)
+- [ ] logical CSS props — طبق جهت واقعی پروژه (RTL: `right`→`insetInlineStart`، `left`→`insetInlineEnd`؛ مرجع دقیق‌تر زیرِ «RTL — پایه»)
 - [ ] RTL DOM order — **با evidence، نه checkbox خالی:** برای هر container افقیِ ساخته‌شده
   یک خط گزارش: `container → اولین DOM child → راست‌ترین المان در Figma` — تیک بدون این جدول = ⚠️
 - [ ] type-check سبز (`npx tsc --noEmit` یا `pnpm build` — اسکریپت `type-check` وجود نداره)
@@ -289,8 +289,9 @@ dev-engine verify-render .
 
 - `dir="rtl"` + `lang="fa"` on `<html>` in `src/app/layout.tsx`
 - `LocaleProvider locale="fa-IR"` wraps app in `src/app/providers.tsx`
-- RTL flex: **first DOM child = rightmost visually**
-- Use logical CSS props: `insetInlineEnd` not `right`, `borderInlineEndWidth` not `borderRightWidth`, `borderEndStartRadius` not `borderBottomRightRadius`
+- RTL flex **row** (پیش‌فرض): **first DOM child = rightmost visually** — در `column` این صدق نمی‌کنه (اولین child = بالاترین، نه راست‌ترین). جدول کامل axis پایین‌تر (بخش «RTL DOM Order»).
+- Use logical CSS props — طبق MDN (margin-inline-end docs): در RTL، `inline-start = right`، `inline-end = left` (برعکسِ intuition رایج LTR-first). یعنی: `insetInlineStart` not `right`، `borderInlineStartWidth` not `borderRightWidth`، `borderEndStartRadius` not `borderBottomRightRadius`.
+  > ⚠️ سابقه (۱۴۰۴): همین خط قبلاً `insetInlineEnd`/`borderInlineEndWidth` نوشته بود — دقیقاً همون باگِ جهت‌کور (`right→end` بدون چک RTL) که در `dev-engine`'s `css-logical-props.ts` هم پیدا و فیکس شد؛ خودِ این فایل با gotcha زیر («`position:fixed` centering») تناقض داشت که درست می‌گفت `insetInlineStart` در RTL یعنی `right`.
 - RTL column flex: `align="flex-start"` = RIGHT side, `align="flex-end"` = LEFT side (counterintuitive!)
 
 ### RTL DOM Order — الگوهای اجباری

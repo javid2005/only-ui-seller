@@ -1,24 +1,24 @@
 # Vitrina — Handoff
-> 2026-08-06
+> 2026-08-06 — Session Close
 
 ## الان
-✅ **سه صفحهٔ پروموشن تکمیل و commit شد:**
-- `/promotions/ads` — لیست کارت‌ها (خرید اول/بعدی/ارسال رایگان/پیامک انبوه)
-- `/promotions/free-shipping` — انتخاب مناطق جغرافیایی + پیکربندی تخفیف
-- `/promotions/bulk-sms` — جدول کمپین‌های پیامک + اقدامات ردیف
+✅ **چهار صفحهٔ promotions complete + committed:**
+- `/promotions/ads` (b8d9734) — کارت‌های پروموشن
+- `/promotions/free-shipping` (49377d9) — مناطق جغرافیایی + تخفیف
+- `/promotions/bulk-sms` (aebcbfa) — جدول کمپین‌های SMS
+- `/promotions/abandoned-carts` (b8d9734) — recovery UI
+
+**Documentation:**
+- ✅ `073d15c` — README routes table sync
+- ✅ CLAUDE.md — RTL logical properties clarification (uncommitted, ready)
 
 **آخرین commits:**
-- `aebcbfa` — bulk SMS page + history table + row actions
-- `49377d9` — سه promotions page + components + mock data
-- `e8368c3` — campaign promotion flow + Jalali DatePicker (custom, بدون library)
+- `b8d9734` — abandoned carts page
+- `073d15c` — documentation update
+- `aebcbfa` — bulk SMS page
+- `49377d9` — three promotions pages
+- `e8368c3` — campaigns + Jalali DatePicker
 
-**Sidebar navigation:** شامل تمام دسترسی‌ها + planned routes (`/promotions/codes`, `/promotions/abandoned-carts` برای بعد).
-
-## بعدی — Abandoned Carts (۶ فایل جاری)
-صفحهٔ `/promotions/abandoned-carts` در حال ساخت:
-- کارت‌های abandoned (لیست)
-- جزئیات‌نمای drawer
-- جدول cart items
-- تیمی abandoned carts (جدول، تاریخچه)
-
-Ready برای commit.
+## بعدی
+- Commit CLAUDE.md RTL improvements
+- Sidebar `/promotions/codes` (planned برای session بعد)
