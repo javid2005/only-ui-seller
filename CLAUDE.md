@@ -102,27 +102,10 @@ step 4: فقط Vitrina-specific adaptation اضافه کن (RTL، icon، token)
 ✅ مجاز: snippet + swap کردن startElement/endElement برای RTL direction
 ```
 
-**⚠️ Figma DOM order ≠ RTL DOM order — قانون مکانیکی، نه ذهنی:**
-```
-Figma canvas = LTR. خروجی get_design_context فرزندها رو چپ→راست لیست می‌کنه.
-در RTL app: FIRST child = راست. کپی verbatim ترتیب Figma = layout آینه‌ای.
-
-❌ ممنوع: ترتیب فرزندهای خروجی Figma رو برای هیچ container افقی کپی نکن.
-✅ الگوریتم اجباری (هر ردیف افقی Box/Flex/Grid):
-   1. مختصات x فرزندها رو از get_metadata (یا screenshot) بگیر
-   2. sort بر اساس x نزولی → راست‌ترین = اولین child در JSX
-   3. خروجی کد Figma فقط مرجع style/token هست، نه ساختار ردیف‌های افقی
-
-استثنا: namespace components چاکرا (Table, Pagination, Steps, Select, Menu...)
-خودشون dir="rtl" ست می‌کنن — داخلشون رو reorder نکن. قانون فقط برای
-Box/Flex/Grid ساده‌ست. (همین استثنا بود که باعث گیج‌شدن و کپی verbatim می‌شد.)
-
-قانون پروژه (از ButtonFooter): primary LAST در DOM = leftmost در RTL (سمت چپ).
-Dialog footer order: انصراف FIRST (راست) · brand LAST (چپ).
-
-سابقه: 1404 — سه نقطه آینه‌ای ship شد (OrderDetails cards، ShippingAddressPanel
-buttons، pagination rows) — هر سه کپی verbatim ترتیب Figma بودن.
-```
+**⚠️ Figma DOM order ≠ RTL DOM order** → قاعده، جدول الگوها و استثنای namespace componentها
+یک‌جا در «RTL — مرجع واحد» (پایین‌تر). تکرارش نکن؛ همان یک مرجع را بخوان.
+نکتهٔ مخصوصِ این مرحله: `get_design_context` فرزندها را چپ→راست لیست می‌کند، پس
+**هرگز** ترتیب خروجی‌اش را برای یک container افقی verbatim کپی نکن — با x مرتب کن.
 
 **Component descriptions = implementation checklist (اجباری):**
 ```
@@ -163,9 +146,11 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 - [ ] Component Resolution رعایت شد (Local→DS MCP→Build) — کدوم مسیر؟
 - [ ] صفر hardcode (رنگ/spacing/font) — همه token
-- [ ] logical CSS props — طبق جهت واقعی پروژه (RTL: `right`→`insetInlineStart`، `left`→`insetInlineEnd`؛ مرجع دقیق‌تر زیرِ «RTL — پایه»)
+- [ ] `dev-engine .` سبز از rule های `one-align-idiom` / `dom-order` / `layout-diff` — نه با چشم. مرجع: «RTL — مرجع واحد»
 - [ ] RTL DOM order — **با evidence، نه checkbox خالی:** برای هر container افقیِ ساخته‌شده
   یک خط گزارش: `container → اولین DOM child → راست‌ترین المان در Figma` — تیک بدون این جدول = ⚠️
+  هر container ای که چیدمانش حساس است باید `{/* @layout <name> */}` + `containers` در snapshot بگیرد،
+  وگرنه هیچ چکی از آن محافظت نمی‌کند و درس فقط در یک کامنت می‌ماند
 - [ ] type-check سبز (`npx tsc --noEmit` یا `pnpm build` — اسکریپت `type-check` وجود نداره)
 - [ ] Visual verification vs Figma — **opt-in، هیچ‌وقت خودکار نه.**
   > **قانون اجباری (کاربر، ۱۴۰۴):** هرگز خودبه‌خود preview/screenshot نگیر. **همیشه اول بپرس:**
@@ -218,20 +203,27 @@ node ~/Documents/GitHub/Tools/dev-agents/packages/dev-engine/dist/cli.js <args>
 
 | لایه | چی می‌سنجه | سوخت |
 |------|-----------|------|
-| `layout-diff` (ماژول) | **متن کد** vs طرح — childOrder، textAlign، justify/align، سمت و رنگ آیکون | `.claude/context/figma-layout.json` |
+| `layout-diff` (ماژول) | **متن کد** vs طرح — childOrder، textAlign، justify/align، سمت و رنگ آیکون. `justify`/`align` سطح‌بالا فقط **root** را می‌سنجند؛ containerهای داخلی → `containers` + marker | `.claude/context/figma-layout.json` |
 | `verify-render` (subcommand) | **پیکسل رندرشده** vs طرح — ردیف آینه‌ای، textAlign محاسبه‌شده، رنگ resolve‌شده | دامپ DOM از preview |
+
+> ⚠️ **snapshot خالی/کهنه دیگر بی‌صدا نیست:** `snapshot-incomplete` (layoutMode افقی بدون
+> facts محور)، `snapshot-stale` (childOrder ای که با هیچ فرزند واقعی match نمی‌کند)،
+> `container-marker-missing` و `container-snapshot-missing` همه warning می‌دهند.
+> پس «۰ issue» حالا واقعاً یعنی «چک شد»، نه «هیچی چک نشد».
+> **هرگز `childOrder` با اسم خیالی یا نام‌های یکسان (`[Flex, Flex]`) ننویس** — صفر قدرت تشخیص
+> دارد و فقط توهم پوشش می‌سازد. ۸ مورد از این نوع در 1404/05/17 حذف شدند.
 
 ```bash
 dev-engine layout-sync .                  # ۰ یعنی هیچی چک نمی‌شه
 dev-engine layout-sync . --set AdChannelCard --data '{"textAlign":"start","iconColor":"fg.muted"}'
+dev-engine layout-sync . --set X --data '{"childOrder":null}'   # null = حذف (merge است نه replace)
 dev-engine verify-render --snippet        # اسنیپت → کنسول preview → render-snapshot.json
 dev-engine verify-render .
 ```
 
-**⚠️ قرارداد semantic — پرتکرارترین خطا:** مقادیر `start`/`end` ان، نه `left`/`right`.
-در RTL: **`start` = راست · `end` = چپ**. canvas فیگما همیشه LTR رندر می‌شه، پس متنی که
-تو فیگما راست‌چین می‌بینی در این پروژه یعنی `start`. نگاشت مستقیم `textAlignHorizontal: RIGHT`
-به `"end"` کل قضاوت رو معکوس می‌کنه. `--set` مقدار فیزیکی رو رد می‌کنه تا جلوش گرفته شه.
+**⚠️ قرارداد semantic:** مقادیر `start`/`end` ان (RTL: `start`=راست). canvas فیگما همیشه LTR
+رندر می‌شه، پس متنی که تو فیگما راست‌چین می‌بینی در این پروژه یعنی `start`. نگاشت مستقیم
+`textAlignHorizontal: RIGHT` به `"end"` کل قضاوت رو معکوس می‌کنه. `--set` مقدار فیزیکی رو رد می‌کنه.
 
 > سابقه: 1404 — تابع `normalizeAlign` جهت‌کور بود (`right`→`end` بدون توجه به RTL)، پس
 > هر قضاوت textAlign در این پروژه برعکس می‌شد: هم کد غلط «تمیز» گزارش می‌شد، هم کد درست
@@ -255,6 +247,8 @@ dev-engine verify-render .
 | Signup progress | `getSignupProgress`/`saveSignupStep` در `auth.ts` با `localStorage` mock می‌شه | با همون شماره، کاربر به آخرین مرحلهٔ ذخیره‌شدهٔ signup برمی‌گرده (بعد از OTP verify) |
 | OTP verify | `verifyOtp` در `auth.ts`: کد `۰۰۰۰۰` رد می‌شه، هر کد ۵رقمی دیگه تایید می‌شه | مسیر «کد اشتباه» تست‌پذیر باشه — همهٔ نقاط PinInput (`OtpForm`, `OtpDialog`, `AuthQrDialog` در `TwoFactorSection.tsx`) هم روی همین قرارداد auto-submit/auto-error دارن |
 | Jalali DatePicker | `src/components/ui/DatePicker.tsx` — دستی با `Intl.DateTimeFormat('...-ca-persian-nu-latn')`، صفر کتابخانهٔ خارجی | هیچ پکیج jalali/date در پروژه نبود؛ ICU خودش leap-year/طول ماه رو حساب می‌کنه، پس نیازی به پیاده‌سازی الگوریتم تقویم یا اضافه‌کردن dependency نیست |
+| چیدمان RTL | یک idiom (`start`/`end`) + سمت از **هندسهٔ فیگما حساب** می‌شود (`layout-derive`)، نه از خروجی کد فیگما و نه با قضاوت دستی | سه incident (1404/05/12 ×۲، 05/17) همه از تایپ دستیِ `flex-end` آمدند. جزئیات: «RTL — مرجع واحد» |
+| گیت چیدمان | hook `Stop` → `.claude/hooks/rtl_gate.py` (`dev-engine --changed`، ~۰.۳s) | چک از قبل وجود داشت ولی اجرا نمی‌شد. hook تنها لایه‌ای است که نمی‌شود ردش کرد |
 
 ### Next.js — App Router conventions (اجباری)
 
@@ -285,57 +279,141 @@ dev-engine verify-render .
    - الگو: `InfoTab.tsx` (قیمت/تخفیف/وزن/موجودی)، `AddShippingMethod.tsx`، `ShippingCalculatorDialog.tsx`.
    - **استثنا:** `<Input>` متنیِ غیرعددی (نام، SKU، عنوان، جستجو) و فیلدهای read-only/derived که فقط نمایش می‌دهند (مقدار را با `toPersianDigits` فارسی کن، اما خودِ کامپوننت `NumberField` لازم نیست).
 
-### RTL — پایه
+## RTL — مرجع واحد
 
-- `dir="rtl"` + `lang="fa"` on `<html>` in `src/app/layout.tsx`
-- `LocaleProvider locale="fa-IR"` wraps app in `src/app/providers.tsx`
-- RTL flex **row** (پیش‌فرض): **first DOM child = rightmost visually** — در `column` این صدق نمی‌کنه (اولین child = بالاترین، نه راست‌ترین). جدول کامل axis پایین‌تر (بخش «RTL DOM Order»).
-- Use logical CSS props — طبق MDN (margin-inline-end docs): در RTL، `inline-start = right`، `inline-end = left` (برعکسِ intuition رایج LTR-first). یعنی: `insetInlineStart` not `right`، `borderInlineStartWidth` not `borderRightWidth`، `borderEndStartRadius` not `borderBottomRightRadius`.
-  > ⚠️ سابقه (۱۴۰۴): همین خط قبلاً `insetInlineEnd`/`borderInlineEndWidth` نوشته بود — دقیقاً همون باگِ جهت‌کور (`right→end` بدون چک RTL) که در `dev-engine`'s `css-logical-props.ts` هم پیدا و فیکس شد؛ خودِ این فایل با gotcha زیر («`position:fixed` centering») تناقض داشت که درست می‌گفت `insetInlineStart` در RTL یعنی `right`.
-- RTL column flex: `align="flex-start"` = RIGHT side, `align="flex-end"` = LEFT side (counterintuitive!)
+setup: `dir="rtl"` + `lang="fa"` روی `<html>` در `src/app/layout.tsx` · `LocaleProvider locale="fa-IR"` در `src/app/providers.tsx`.
 
-### RTL DOM Order — الگوهای اجباری
+### یک فکت، همه‌جا
 
-**قانون کلی:** در RTL، اولین child در DOM = راست‌ترین المان بصری. یک DOM می‌نویسی؛ `dir` خودش flip می‌کند — ترتیب را per-direction عوض نکن.
-
-```tsx
-// ✅ canonical — leading element FIRST in DOM = سمت start (RTL: راست · LTR: چپ)
-<Button>
-  <Plus size={16} />   {/* FIRST → راست */}
-  افزودن
-</Button>
+```
+start = راست        end = چپ
 ```
 
-| الگو | اولین child در DOM (= راست) | بعدی (= چپ) |
+همین. هر جا لازم شد سمتی را بگویی، این دو کلمه‌اند — در `justify`، `align`، `textAlign`،
+`alignSelf`، `ms/me`، `ps/pe`، `insetInlineStart/End`، snapshotهای فیگما، پیام‌های dev-engine.
+یک DOM می‌نویسی؛ `dir` خودش flip می‌کند — هرگز per-direction دو نسخه ننویس.
+
+**ممنوع (dev-engine خودکار error می‌دهد، rule `one-align-idiom`):**
+
+| ننویس | بنویس | چرا |
+|-------|-------|-----|
+| `flex-start` / `flex-end` | `start` / `end` | رفتار یکیه، ولی «end» به‌غلط «راست» خوانده می‌شه — سه incident از همین اسم |
+| `textAlign="right"` / `"left"` | `"start"` / `"end"` | فیزیکی، با جهت flip نمی‌شه |
+| `mr` `ml` `pr` `pl` `right:` `left:` | `me` `ms` `pe` `ps` `insetInlineEnd` `insetInlineStart` | همان |
+
+> ⚠️ تنها استثنا: centering با `left:"50%"` + `translateX(-50%)` — فرمول فیزیکی و
+> جهت‌مستقل است، پس `left` فیزیکی لازم دارد. راه بهترش: `insetInlineStart`/`End`
+> با مقدار **یکسان** (الگو: `ManualOrderFooter.tsx`).
+
+### کدام prop روی کدام محور
+
+| direction | محور افقی (سمت) | محور عمودی |
+|-----------|------------------|------------|
+| `row` (پیش‌فرض) | `justify` | `align` |
+| `column` | `align` | `justify` |
+
+پس `align="start"` روی یک `column` = **راست** (نه بالا). و `justify="start"` روی `row` = **راست**.
+
+### ترتیب DOM
+
+**قاعده:** اولین فرزند DOM = راست‌ترین بصری.
+
+**⚠️ بازگشتی است.** برای *هر* container افقی جدا اعمالش کن — نه فقط ردیف بیرونی:
+```
+1. مختصات x فرزندها را از get_metadata (یا screenshot) بگیر
+2. نزولی بر x sort کن → راست‌ترین = اولین فرزند JSX
+3. تکرار کن برای هر container افقیِ داخلِ آن
+```
+خروجی کد Figma فقط مرجع style/token است، نه ساختار ردیف‌های افقی — canvas فیگما
+همیشه LTR است، پس کپی verbatim ترتیبش = layout آینه‌ای.
+
+**استثنا:** namespace componentهای چاکرا (Table, Pagination, Steps, Select, Menu…) خودشان
+`dir="rtl"` ست می‌کنند — داخلشان reorder نکن. قاعده فقط برای `Box`/`Flex`/`Grid` ساده است.
+
+| الگو | اولین فرزند (= راست) | بعدی (= چپ) |
 |------|------|------|
 | Button + icon | **icon** (leading) | متن |
-| Switch standalone / Switch.Label | **Switch.Control** | label/متن |
-| Form row (full-width) | **Switch** (`flexShrink={0}`) | `<Text flex="1">` |
+| Switch (standalone یا در ردیف) | **Switch.Control** (`flexShrink={0}`) | label / `<Text flex="1">` |
 | Icon/Avatar row | **icon/avatar** | متن … action (LAST = چپ) |
-| Tabs.Trigger عمودی | `justifyContent="flex-start"` → متن راست | (`flex-end` = چپ ✗) |
+| Dialog / ButtonFooter | **انصراف** | primary (LAST = چپ) |
 
-- **استثنای icon trailing (تنها دو حالت):** کاربر صریح بگوید، یا آیکن هر دو طرف متن باشد.
-- dev-engine قانون `button-icon-after-text` را خودکار flag می‌کند (Latin/فارسی، multi-line، arrow-fn).
-- theme `order:-1` روی `[data-scope="switch"][data-part="control"]` = CSS fallback — اما DOM order صحیح باز هم اجباری.
+- **استثنای icon trailing (فقط دو حالت):** کاربر صریح بگوید، یا آیکن هر دو طرف متن باشد.
+- `Tabs.Trigger` عمودی: `justifyContent="start"` → متن راست.
+- theme `order:-1` روی `[data-scope="switch"][data-part="control"]` = CSS fallback؛ DOM order درست باز هم اجباری.
 
-**⚠️ `justify`/`align` هم زیر RTL معنی‌شون برعکس می‌شه — نه فقط ترتیب child ها:**
+### چطور مکانیکی چک می‌شود (نه با چشم و نه با کامنت)
+
+| لایه | چه چیزی را می‌گیرد | چطور فعال می‌شود |
+|------|--------------------|------------------|
+| **hook `rtl_gate`** | هر error چیدمانی، **قبل از بسته‌شدن turn** | خودکار (`Stop` در `.claude/settings.json`) |
+| `one-align-idiom` | هر `flex-*` یا مقدار فیزیکی | خودکار، بدون setup |
+| `dom-order` | آیکن بعد از متن در Button | خودکار |
+| `layout-diff` + `containers` | ترتیب/چیدمانِ یک container مشخص vs طرح — **متن کد** | anchor + `containers` در snapshot |
+| `verify-render` | همان، ولی **پیکسل اندازه‌گیری‌شده** | همان anchor + دامپ DOM از preview |
+
+### ⛔ قانون طلایی: سمت را حساب کن، قضاوت نکن
+
+**alignment و ترتیب هرگز از خروجی کد Figma و هرگز از کلمات خوانده نشود.**
+خروجی `get_design_context` کد آمادهٔ Tailwind/JSX می‌دهد که با فرض **LTR** تولید شده —
+`justify-end` و ترتیب فرزندهایش زیر `dir=rtl` برعکس resolve می‌شوند. آن یک ترجمهٔ غلط است، نه داده.
+
+**مسیر اجباری:**
+```bash
+# ۱. متادیتای فریم را بگیر (get_metadata) و در فایل بریز — یک call کل فریم را می‌دهد
+# ۲. nodeId هر container را در snapshot ثبت کن
+dev-engine layout-sync . --set DiscountCodesTable \
+  --data '{"containers":{"titleCell":{"nodeId":"2659:82005"}}}'
+# ۳. سمت و ترتیب را ماشین حساب کند — دست تو `start`/`end` تایپ نمی‌کند
+dev-engine layout-derive . --metadata dump.xml --write
 ```
-Flex/Box با dir=rtl (ارثی از html) — مقادیر flex-start/flex-end فیزیکی flip می‌شن:
 
-direction="row" (پیش‌فرض):
-  justify="flex-start" → راست (نه چپ!)   justify="flex-end" → چپ (نه راست!)
-direction="column":
-  align="flex-start"   → راست (نه چپ!)   align="flex-end"   → چپ (نه راست!)
+`layout-derive` از `x + width` در برابر لبهٔ والد سمت را **حساب** می‌کند و اگر مقدار
+دستیِ قبلی با هندسه نخواند، صریح می‌گوید «همان کلاس باگ». سه incident همه از تایپ‌کردن
+دستیِ همین دو کلمه آمدند.
 
-❌ ممنوع: کپی خام justify-end/justify-start از کلاس Tailwind خروجی Figma —
-   اون export فرض می‌کنه container LTR است؛ زیر dir=rtl واقعی پروژه برعکس resolve می‌شه.
-✅ همیشه با evidence چک کن: getBoundingClientRect() روی رندر واقعی، یا مقایسه با screenshot —
-   حدس نزن که کدوم سمت "start"/"end" می‌شه.
+نکات پیاده‌سازی که در همان سه incident گم شده بودند:
+- **جهت container با همپوشانی `y` تعیین می‌شود، نه با تفاوت `x`** — یک ستونِ راست‌چین
+  دقیقاً همان حالتی است که فرزندها x متفاوت دارند.
+- **فقط محور inline ثبت می‌شود.** تلهٔ RTL منحصراً روی inline است (راست↔چپ)؛ محور
+  block (بالا/پایین) ترجمه ندارد و اغلب والد انجامش می‌دهد (`Table.Cell` عمودی
+  وسط‌چین می‌کند) — ثبتش فقط خطای کاذب می‌سازد.
+- **هر container جدا.** جدول دسکتاپ و کارت موبایلِ همان داده می‌توانند یک زوج را
+  **برعکس هم** بچینند (در Discount: جدول متن‌راست، کارت آیکون‌راست). هیچ استنتاجی
+  از یک container به دیگری مجاز نیست.
 
-سابقه: 1404 — SignupDoneView Package Card، یه ردیف با justify="flex-end" (کپی خام از Figma)
-سه آیتم رو به‌جای چسبوندن به راست، چسبوند به چپ (~۳۴۰px فاصلهٔ مرده سمت راست) — با
-getBoundingClientRect تشخیص داده شد، نه با چشم.
+**anchor واحد — `data-layout="Component.containerName"`:**
+```tsx
+<Flex data-layout="DiscountCodesTable.actionsCell" gap="2" justify="end"> … </Flex>
 ```
+
+**چرا prop و نه کامنت:** anchor باید در **هر دو** لایه پیدا شود. `layout-diff` متن کد را
+می‌خواند ولی `verify-render` دامپ DOM را — و کامنت در DOM وجود ندارد. `data-layout` هم
+regex-پذیر است هم query-پذیر: یک مکانیزم، دو لایه، یک زبان. (روی کامپوننت‌های چاکرا
+type-check می‌شود و برخلاف `{/* */}` داخل شاخهٔ ternary هم parse می‌شود.)
+
+`containers` هم `justify`/`align`/`textAlign` می‌گیرد هم `childOrder` — پس ترتیبِ زوج‌های
+*داخلی* هم قابل‌چک است، همان جایی که باگ‌های واقعی می‌نشینند.
+
+**گرفتن دامپ پیکسلی:**
+```bash
+dev-engine verify-render --snippet     # اسنیپت → کنسول preview
+# خروجی → .claude/context/render-snapshot.json
+dev-engine verify-render .
+```
+> در هر عرض فقط containerهای *مرئی* سنجیده می‌شوند (پنهان‌ها x=0 می‌دهند و skip می‌شوند)،
+> پس برای پوشش کامل دو بار بگیر: یک‌بار ۱۹۲۰ (جدول) و یک‌بار ۳۶۰ (کارت موبایل).
+
+**سکوت در هیچ سمتی مجاز نیست:** `container-snapshot-missing` (anchor بی‌facts) ·
+`container-anchor-missing` (facts بی‌anchor) · `container-name-mismatch` (prefix غلط) ·
+`snapshot-stale` (childOrder ای که با فرزند واقعی match نمی‌کند) · و در `verify-render`
+گزارشِ هدف‌هایی که در دامپ بودند ولی snapshot نداشتند. برای پس‌گرفتن یک fact غلط:
+`--data '{"childOrder":null}'` (چون `--set` merge می‌کند، نه replace).
+
+> **سابقهٔ این کلاس باگ — سه بار، همه با کامنت «فیکس» شدند و هیچ‌کدام جلوی بعدی را نگرفت:**
+> `CampaignCard` (1404/05/12، justify=end روی TitleGroup) · `NewCampaignDialog` (همان روز،
+> alignItems=end روی RadioCard) · `DiscountCodesTable`+`DiscountCodeCard` (1404/05/17، چهار
+> سلول با end + سه زوج داخلیِ آینه‌ای). درسِ عملی: **fix باید rule یا marker شود، نه کامنت.**
+> کامنت جلوی نویسندهٔ بعدی را نمی‌گیرد؛ `--fix` می‌گیرد.
 
 ### RTL in Portal components (Menu, Drawer, Popover, Tooltip)
 

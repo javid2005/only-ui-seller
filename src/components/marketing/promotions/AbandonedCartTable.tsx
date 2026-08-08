@@ -49,11 +49,11 @@ export function AbandonedCartTable({ carts, onView }: AbandonedCartTableProps) {
 
               {/* ایجاد کننده — الگوی رسمی Persona (Chakra docs: Avatar#persona)، Avatar(راست) → نام/شماره(چپ) */}
               <Table.Cell>
-                <HStack w="full" gap="4" justify="flex-start">
+                <HStack w="full" gap="4" justify="start">
                   <Avatar.Root size="md" bg="brand.solid" color="brand.contrast" flexShrink={0}>
                     <Avatar.Fallback name={cart.customerName} />
                   </Avatar.Root>
-                  <Stack gap="1" align="flex-start" minW="0">
+                  <Stack gap="1" align="start" minW="0">
                     <Text fontSize="sm" fontWeight="semibold" color="fg">{cart.customerName}</Text>
                     <Text fontSize="xs" color="fg.muted">{cart.customerPhone}</Text>
                   </Stack>

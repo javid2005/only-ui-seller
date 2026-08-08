@@ -13,7 +13,7 @@ import type { ManualProduct, SelectedProductLine } from './manualOrderData'
  *
  * زیر sm (< 480px، هم‌الگو با SelectedProductRow): ردیف اصلی column می‌شود — تصویر+عنوان
  * در ردیف اول (عنوان wrap می‌شود، نه truncate)، قیمت+تعداد در ردیف دومِ زیرش، همچنان چپ‌چین
- * (`justify="flex-end"` روی خودِ ردیف، چون در حالت column دیگر عضوی از فلکس افقی نیست).
+ * (`justify="end"` روی خودِ ردیف، چون در حالت column دیگر عضوی از فلکس افقی نیست).
  */
 export function ManualReviewPrdCard({ product, line }: { product: ManualProduct; line: SelectedProductLine }) {
   return (
@@ -45,15 +45,15 @@ export function ManualReviewPrdCard({ product, line }: { product: ManualProduct;
           <Image src={product.image} alt={product.name} boxSize="full" objectFit="cover" />
         </Flex>
 
-        {/* عنوان + بج‌های تنوع — SECOND. align="flex-start" روی column flex در RTL = راست
-            (نه flex-end — طبق قاعدهٔ پروژه، هرچند اینجا چون فرزندها w="full" هستن اثر بصری نداشت).
+        {/* عنوان + بج‌های تنوع — SECOND. align="start" روی column flex در RTL = راست
+            (نه end — طبق قاعدهٔ پروژه، هرچند اینجا چون فرزندها w="full" هستن اثر بصری نداشت).
             زیر sm عنوان wrap می‌شود (بدون lineClamp) تا کامل خوانده شود؛ از sm به بالا یک‌خطی+truncate. */}
-        <Flex direction="column" gap="2" flex="1" minW="0" align="flex-start">
-          <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="right" lineClamp={{ base: undefined, sm: 1 }}>
+        <Flex direction="column" gap="2" flex="1" minW="0" align="start">
+          <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="start" lineClamp={{ base: undefined, sm: 1 }}>
             {product.name}
           </Text>
           {line.variantLabels && line.variantLabels.length > 0 && (
-            <Flex justify="flex-start" gap="1.5" wrap="wrap" w="full">
+            <Flex justify="start" gap="1.5" wrap="wrap" w="full">
               {line.variantLabels.map((label) => (
                 <Badge key={label} size="xs" colorPalette="gray" variant="outline">{label}</Badge>
               ))}
@@ -62,15 +62,15 @@ export function ManualReviewPrdCard({ product, line }: { product: ManualProduct;
         </Flex>
       </Flex>
 
-      {/* قیمت + تعداد — LAST = چپ‌ترین. align="flex-end" روی column flex در RTL = چپ
+      {/* قیمت + تعداد — LAST = چپ‌ترین. align="end" روی column flex در RTL = چپ
           (طبق درخواست کاربر: قیمت و تعدادِ زیرش هر دو چپ‌چین، نه راست‌چین).
-          زیر sm این کل بلوک به ردیفِ دومِ جدا می‌رود؛ justify="flex-end" چپ‌چین نگهش می‌دارد. */}
+          زیر sm این کل بلوک به ردیفِ دومِ جدا می‌رود؛ justify="end" چپ‌چین نگهش می‌دارد. */}
       <Flex
         direction="column"
         gap="1"
         flexShrink={0}
-        align="flex-end"
-        justify={{ base: 'flex-end', sm: 'flex-start' }}
+        align="end"
+        justify={{ base: 'end', sm: 'start' }}
         w={{ base: 'full', sm: 'auto' }}
       >
         <Flex align="center" gap="2">

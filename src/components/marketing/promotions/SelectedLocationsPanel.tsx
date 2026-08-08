@@ -35,15 +35,15 @@ export function SelectedLocationsPanel({ checkedValue, onCheckedChange }: Select
 
   return (
     <Box bg="bg.subtle" rounded="lg" p="4" w="full" h="full" overflowY="auto">
-      {/* ستونی + align="flex-start" = راست در RTL (برعکسِ شهودِ ظاهری flex-end) */}
-      <Flex direction="column" gap="8" alignItems="flex-start" w="full">
+      {/* ستونی + align="start" = راست در RTL (برعکسِ شهودِ ظاهری end) */}
+      <Flex direction="column" gap="8" alignItems="start" w="full">
         <Text fontSize="md" fontWeight="semibold" color="fg">استان ها و شهر های منتخب</Text>
 
         {selectedProvinces.length === 0 ? (
           <Text fontSize="sm" color="fg.subtle">هنوز استان یا شهری انتخاب نشده است.</Text>
         ) : (
           selectedProvinces.map(({ province, state }) => (
-            <Flex key={province.value} direction="column" gap="3" alignItems="flex-start" w="full">
+            <Flex key={province.value} direction="column" gap="3" alignItems="start" w="full">
               {/* نام استان FIRST=راست‌ترین، حذف SECOND=چپ‌ترین — دو سرِ ردیف (space-between)، نه چسبیده به هم */}
               <Flex align="center" justify="space-between" w="full">
                 <Text fontSize="md" fontWeight="semibold" color="fg">{province.label}</Text>
@@ -58,8 +58,8 @@ export function SelectedLocationsPanel({ checkedValue, onCheckedChange }: Select
                 </IconButton>
               </Flex>
 
-              {/* ردیفی + justify="flex-start" = راست در RTL — بج‌ها به راست می‌چسبن */}
-              <Flex gap="2" wrap="wrap" justify="flex-start" w="full">
+              {/* ردیفی + justify="start" = راست در RTL — بج‌ها به راست می‌چسبن */}
+              <Flex gap="2" wrap="wrap" justify="start" w="full">
                 {state === true ? (
                   <LocationBadge label="همه شهرها" onRemove={() => removeProvince(province.value)} />
                 ) : (

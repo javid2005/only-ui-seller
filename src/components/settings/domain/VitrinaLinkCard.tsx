@@ -28,7 +28,7 @@ export function VitrinaLinkCard({ slug, editLabel, onEdit }: VitrinaLinkCardProp
       p={isCompact ? '4' : { base: '4', sm: '6' }}
       w="full"
     >
-      <Flex direction="column" gap="6" alignItems="flex-end" w="full">
+      <Flex direction="column" gap="6" alignItems="end" w="full">
         <TitleBar
           title="لینک اختصاصی ویترینا"
           subtitle="این آدرس از زمان ثبت‌نام به‌صورت خودکار ساخته شده و آدرس اصلی و همیشگی فروشگاه شماست. مشتریان از طریق آن وارد ویترین شما می‌شوند."
@@ -64,7 +64,7 @@ export function VitrinaLinkCard({ slug, editLabel, onEdit }: VitrinaLinkCardProp
               را به انتهای رشته جابه‌جا می‌کند (چون کل خوشه داخل یک ancestor با dir=rtl است).
               با dir="ltr" ترتیب طبیعی DOM (mazbox سپس .vitrina.ir) درست خوانده می‌شود؛
               جایگاه کل خوشه در ردیف بیرونی (سمت راست) از قبل با DOM order آن Flex تضمین شده. */}
-          <Flex align="center" justify={{ base: 'center', sm: 'flex-start' }} w={{ base: 'full', sm: 'auto' }} dir="ltr">
+          <Flex align="center" justify={{ base: 'center', sm: 'start' }} w={{ base: 'full', sm: 'auto' }} dir="ltr">
             <Box bg="brand.subtle" px="2" rounded="8px">
               <Text fontSize="2xl" fontWeight="semibold" color="brand.fg">{slug}</Text>
             </Box>
@@ -74,7 +74,7 @@ export function VitrinaLinkCard({ slug, editLabel, onEdit }: VitrinaLinkCardProp
           {/* CTA group — SECOND = leftmost in RTL.
               Compact mode (512px Figma frame): icon-only IconButtons (no text label) —
               confirmed via get_design_context on the mobile Check-Domain frame. */}
-          <Flex gap="2" align="center" flexWrap="wrap" justify={{ base: 'center', sm: 'flex-end' }} w={{ base: 'full', sm: 'auto' }}>
+          <Flex gap="2" align="center" flexWrap="wrap" justify={{ base: 'center', sm: 'end' }} w={{ base: 'full', sm: 'auto' }}>
             {isCompact ? (
               <IconButton
                 variant="outline"

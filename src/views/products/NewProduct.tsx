@@ -88,7 +88,7 @@ export function NewProduct() {
           />
         </Box>
 
-        <Flex gap="10" align="flex-start">
+        <Flex gap="10" align="start">
 
           {/* FIRST = rightmost در RTL: ستون Start — Vertical StepNav (lg+، non-compact) */}
           {!isCompact && (
@@ -98,7 +98,7 @@ export function NewProduct() {
               flexShrink={0}
               position="sticky"
               top="20"
-              alignSelf="flex-start"
+              alignSelf="start"
             >
               <StepNav
                 orientation="vertical"

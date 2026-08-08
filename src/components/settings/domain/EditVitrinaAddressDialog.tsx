@@ -80,7 +80,7 @@ export function EditVitrinaAddressDialog({ open, currentSlug, lastChangedAt, nex
                 </Dialog.Header>
 
                 <Dialog.Body pt="2" pb="4" px="6">
-                  <Flex direction="column" gap="6" alignItems="flex-end" w="full">
+                  <Flex direction="column" gap="6" alignItems="end" w="full">
                     <Alert.Root status="warning" variant="subtle" w="full">
                       <Alert.Indicator />
                       <Alert.Content>
@@ -91,15 +91,15 @@ export function EditVitrinaAddressDialog({ open, currentSlug, lastChangedAt, nex
                       </Alert.Content>
                     </Alert.Root>
 
-                    <Flex direction="column" gap="2" alignItems="flex-end" w="full">
-                      <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="right">
+                    <Flex direction="column" gap="2" alignItems="end" w="full">
+                      <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="start">
                         چرا سفارش‌گیری باید موقتاً متوقف شود؟
                       </Text>
-                      <Text fontSize="sm" color="fg.muted" w="full" textAlign="right">
+                      <Text fontSize="sm" color="fg.muted" w="full" textAlign="start">
                         هنگام تعویض آدرس، اگر سفارشی در حال ثبت باشد ممکن است دچار تداخل شود. برای همین باید سفارش‌گیری چند لحظه متوقف شود؛ پس از ذخیره، خودکار دوباره فعال می‌شود.
                       </Text>
 
-                      <Flex direction="column" gap="3" alignItems="flex-start" borderWidth="1px" borderColor="border" rounded="lg" p="4" w="full" bg={orderPaused ? 'bg.muted' : undefined}>
+                      <Flex direction="column" gap="3" alignItems="start" borderWidth="1px" borderColor="border" rounded="lg" p="4" w="full" bg={orderPaused ? 'bg.muted' : undefined}>
                         {/* Switch cluster FIRST = rightmost, Badge SECOND = leftmost
                             (evidence: Figma metadata x-coords — SwitchBase x is consistently
                             higher/further-right than Badge x across both dialog states) */}
@@ -123,7 +123,7 @@ export function EditVitrinaAddressDialog({ open, currentSlug, lastChangedAt, nex
 
                         {orderPaused && (
                           <Flex bg="orange.50" borderWidth="1px" borderColor="orange.muted" rounded="md" p="4" w="full">
-                            <Text flex="1" fontSize="sm" fontWeight="semibold" color="orange.fg" textAlign="right">
+                            <Text flex="1" fontSize="sm" fontWeight="semibold" color="orange.fg" textAlign="start">
                               سفارش‌گیری موقتاً متوقف شد. اگر ذخیره نکنید، تا ۱۰ دقیقهٔ دیگر خودکار دوباره فعال می‌شود.
                             </Text>
                           </Flex>
@@ -132,7 +132,7 @@ export function EditVitrinaAddressDialog({ open, currentSlug, lastChangedAt, nex
                     </Flex>
 
                     <Box opacity={orderPaused ? 1 : 0.5} w="full">
-                      <Flex direction="column" gap="1.5" alignItems="flex-start" w="full">
+                      <Flex direction="column" gap="1.5" alignItems="start" w="full">
                         <Text fontSize="sm" fontWeight="semibold" color="fg">
                           <Text as="span" fontSize="2xs" color="red.fg">* </Text>
                           آدرس اختصاصی جدید
@@ -147,9 +147,9 @@ export function EditVitrinaAddressDialog({ open, currentSlug, lastChangedAt, nex
                           />
                         </InputGroup>
                         {slugError ? (
-                          <Text fontSize="xs" color="red.fg" w="full" textAlign="right">{slugError}</Text>
+                          <Text fontSize="xs" color="red.fg" w="full" textAlign="start">{slugError}</Text>
                         ) : (
-                          <Text fontSize="xs" color="fg.muted" w="full" textAlign="right">
+                          <Text fontSize="xs" color="fg.muted" w="full" textAlign="start">
                             ۱ تا ۲۰ کاراکتر · فقط حروف کوچک انگلیسی، عدد و خط‌تیره · کلمات رزرو (admin, api, shop…) مجاز نیست.
                           </Text>
                         )}
@@ -170,14 +170,14 @@ export function EditVitrinaAddressDialog({ open, currentSlug, lastChangedAt, nex
             ) : (
               <>
                 <Dialog.Body py="10" px="6">
-                  <Flex direction="column" gap="2" alignItems="flex-start" maxW="640px" w="full">
+                  <Flex direction="column" gap="2" alignItems="start" maxW="640px" w="full">
                     <Box bg="orange.subtle" p="4" rounded="lg" display="flex" alignItems="center" justifyContent="center" w="fit-content">
                       <TriangleAlert size={32} color="var(--chakra-colors-orange-fg)" />
                     </Box>
-                    <Text fontSize="xl" fontWeight="semibold" color="fg" w="full" textAlign="right">
+                    <Text fontSize="xl" fontWeight="semibold" color="fg" w="full" textAlign="start">
                       سفارش‌گیری متوقف است
                     </Text>
-                    <Text fontSize="sm" color="fg.muted" w="full" textAlign="right">
+                    <Text fontSize="sm" color="fg.muted" w="full" textAlign="start">
                       با بستن این پنجره، آدرس تغییر نمی‌کند و سفارش‌گیری فروشگاه دوباره فعال می‌شود.
                     </Text>
                   </Flex>

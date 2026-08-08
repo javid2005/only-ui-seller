@@ -18,7 +18,7 @@ export function ForgotDoneView() {
       <Text fontWeight="semibold" fontSize="xl" lineHeight="1.5" textAlign="center" w="full">
         رمز عبور جدید ثبت شد
       </Text>
-      <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">
+      <Text fontSize="sm" color="fg.muted" textAlign="start" w="full">
         هم اکنون میتوانید برای ورود به سایت از رمز عبور جدید استفاده نمایید.
       </Text>
       <Button

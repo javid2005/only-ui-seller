@@ -104,20 +104,20 @@ export function VariantSelectDialog({ open, product, onClose, onAddVariant, rema
                 </Flex>
                 {/* عنوان + SKU — SECOND */}
                 <Flex direction="column" gap="2" flex="1" minW="0">
-                  <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="right" lineClamp={1}>
+                  <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="start" lineClamp={1}>
                     {displayProduct.name}
                   </Text>
-                  <Text fontSize="xs" color="fg.muted" w="full" textAlign="right">{displayProduct.sku}</Text>
+                  <Text fontSize="xs" color="fg.muted" w="full" textAlign="start">{displayProduct.sku}</Text>
                 </Flex>
               </Flex>
 
               {/* گروه‌های تنوع */}
               {groups.map((group) => (
-                <Flex key={group.label} direction="column" gap="4" w="full" align="flex-end">
-                  <Text fontSize="sm" fontWeight="semibold" color="fg.muted" w="full" textAlign="right">
+                <Flex key={group.label} direction="column" gap="4" w="full" align="end">
+                  <Text fontSize="sm" fontWeight="semibold" color="fg.muted" w="full" textAlign="start">
                     {group.label}
                   </Text>
-                  <Flex gap="2" wrap="wrap" justify="flex-start" w="full">
+                  <Flex gap="2" wrap="wrap" justify="start" w="full">
                     {group.options.map((opt) => {
                       const active = selection[group.label] === opt
                       return (

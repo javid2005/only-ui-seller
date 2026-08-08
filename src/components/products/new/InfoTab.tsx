@@ -215,7 +215,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
           {isGold && <GoldInfoCard form={form} onChange={onChange} />}
 
           {/* قیمت اصلی/نهایی + واحد + تخفیف دارد */}
-          <Flex gap="4" align={isCompact ? 'stretch' : { base: 'stretch', sm: 'flex-end' }} direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}>
+          <Flex gap="4" align={isCompact ? 'stretch' : { base: 'stretch', sm: 'end' }} direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}>
             <Field.Root required flex={isCompact ? '1' : { base: 'none', sm: '1' }} w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
               <Field.Label fontSize="sm" fontWeight="semibold">
                 {isGold ? 'قیمت نهایی' : 'قیمت اصلی'}<Field.RequiredIndicator />
@@ -259,7 +259,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
           <Collapsible.Root open={form.hasDiscount} unmountOnExit>
             <Collapsible.Content>
               <Box bg="bg.muted" borderWidth="1px" borderColor="border" rounded="lg" p="4">
-                <Flex gap="4" align="flex-start" direction={isCompact ? 'row' : { base: 'column', sm: 'row' }}>
+                <Flex gap="4" align="start" direction={isCompact ? 'row' : { base: 'column', sm: 'row' }}>
 
                   {/* تخفیف * — FIRST = راست · مقدار + نوع (درصد/مبلغ) */}
                   <Field.Root required flex="1" w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
@@ -358,7 +358,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
             </Alert.Root>
           )}
 
-          <Flex gap="4" align={isCompact ? 'stretch' : { base: 'stretch', sm: 'flex-end' }} direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}>
+          <Flex gap="4" align={isCompact ? 'stretch' : { base: 'stretch', sm: 'end' }} direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}>
             <Field.Root required flex={isCompact ? '1' : { base: 'none', sm: '1' }} w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
               <Field.Label fontSize="sm" fontWeight="semibold">
                 موجودی<Field.RequiredIndicator />

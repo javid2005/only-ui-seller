@@ -88,7 +88,7 @@ export function Domain() {
   }
 
   return (
-    <Flex direction="column" gap="4" alignItems="flex-end" w="full" maxW="1082px" mx="auto">
+    <Flex direction="column" gap="4" alignItems="end" w="full" maxW="1082px" mx="auto">
       <Header
         title="دامنه اختصاصی"
         breadcrumbs={[
@@ -101,7 +101,7 @@ export function Domain() {
       {/* No outer panel here — unlike Settings.tsx, Figma's Domain page Container has no bg/border
           of its own (confirmed via get_metadata on node 4784:77342). Each section is its own
           independently-bordered Card (VitrinaLinkCard, the check-domain Card, each DomainCard). */}
-      <Flex direction="column" gap={isCompact ? '8' : { base: '8', sm: '10' }} w="full" alignItems="flex-end">
+      <Flex direction="column" gap={isCompact ? '8' : { base: '8', sm: '10' }} w="full" alignItems="end">
           <VitrinaLinkCard
             slug={subdomain.slug}
             editLabel={domains.length > 0 ? 'ویرایش آدرس' : 'ویرایش'}
@@ -109,12 +109,12 @@ export function Domain() {
           />
 
           {domains.length === 0 ? (
-            <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+            <Flex direction="column" gap="4" alignItems="end" w="full">
               <TitleBar title="اتصال دامنه اختصاصی" subtitle="یک قابلیت تکمیلی و اختیاری — مستقل از آدرس ویترینای بالا" size="xl" />
 
               <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" p="6" w="full">
-                <Flex direction="column" gap="10" alignItems="flex-end" w="full">
-                  <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+                <Flex direction="column" gap="10" alignItems="end" w="full">
+                  <Flex direction="column" gap="4" alignItems="end" w="full">
                     <TitleBar
                       title="قبل از شروع بدانید چه می‌کنید"
                       icon={<CircleQuestionMark size={16} color="var(--chakra-colors-brand-solid)" />}
@@ -122,7 +122,7 @@ export function Domain() {
                     />
                     <Flex direction={isCompact ? 'column' : { base: 'column', lg: 'row' }} gap="4" alignItems="stretch" w="full">
                       {START_STEPS.map((s, i) => (
-                        <Flex key={s.title} flex="1" gap="4" align="flex-start" justify="flex-end" bg="bg.subtle" borderWidth="1px" borderColor="border" rounded="lg" p="4">
+                        <Flex key={s.title} flex="1" gap="4" align="start" justify="end" bg="bg.subtle" borderWidth="1px" borderColor="border" rounded="lg" p="4">
                           {/* Indicator circle — FIRST in DOM = rightmost in RTL (per x-coordinate check: indicator sits at the card's right edge in Figma) */}
                           <Flex
                             flexShrink={0}
@@ -137,9 +137,9 @@ export function Domain() {
                             <Text fontSize="xs" fontWeight="medium" color="brand.fg">{toPersianDigits(i + 1)}</Text>
                           </Flex>
                           {/* Text block — SECOND = leftmost */}
-                          <Flex flex="1" direction="column" gap="1" alignItems="flex-start">
-                            <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" w="full">{s.title}</Text>
-                            <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">{s.description}</Text>
+                          <Flex flex="1" direction="column" gap="1" alignItems="start">
+                            <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" w="full">{s.title}</Text>
+                            <Text fontSize="sm" color="fg.muted" textAlign="start" w="full">{s.description}</Text>
                             {s.nsBadges && (
                               <Flex gap="4" mt="2">
                                 {s.nsBadges.map((ns) => (
@@ -153,7 +153,7 @@ export function Domain() {
                     </Flex>
                   </Flex>
 
-                  <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+                  <Flex direction="column" gap="4" alignItems="end" w="full">
                     <TitleBar
                       title="بررسی و اتصال دامنه شخصی"
                       subtitle="دامنهٔ اختصاصی خود (مثل yourshop.com) را به فروشگاه متصل کنید تا مشتریان با آدرس برند خودتان وارد شوند."
@@ -166,8 +166,8 @@ export function Domain() {
                         already confirmed on VitrinaLinkCard's URL container.
                         Figma itself uses flexWrap (not a column/row breakpoint switch) here — same
                         technique reused for both real narrow mobile and the 512px compact simulator. */}
-                    <Flex flexWrap="wrap" gap="4" align="flex-start" justify="center" w="full">
-                      <Flex flex="1" direction="column" gap="1.5" alignItems="flex-end" minW="200px" w="full">
+                    <Flex flexWrap="wrap" gap="4" align="start" justify="center" w="full">
+                      <Flex flex="1" direction="column" gap="1.5" alignItems="end" minW="200px" w="full">
                         <Input
                           dir="ltr"
                           placeholder="example.com"
@@ -175,7 +175,7 @@ export function Domain() {
                           onChange={(e) => setInlineValue(e.target.value)}
                           size="lg"
                         />
-                        <Text fontSize="xs" color={inlineError ? 'red.fg' : 'fg.muted'} textAlign="right" w="full">
+                        <Text fontSize="xs" color={inlineError ? 'red.fg' : 'fg.muted'} textAlign="start" w="full">
                           {inlineError || 'فقط دامنه ریشه قابل اتصال است (بدون www یا ساب‌دامنه)'}
                         </Text>
                       </Flex>
@@ -194,7 +194,7 @@ export function Domain() {
               </Box>
             </Flex>
           ) : (
-            <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+            <Flex direction="column" gap="4" alignItems="end" w="full">
               <TitleBar
                 title="دامنه‌های من"
                 subtitle="می‌توانید چند دامنه ثبت کنید و یکی را فعال کنید. در هر زمان فقط یک دامنه فعال است."

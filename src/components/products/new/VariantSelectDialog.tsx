@@ -61,7 +61,7 @@ export function VariantSelectDialog({ open, onClose, selectedTags, onConfirm }: 
         <Dialog.Positioner dir="rtl" py="6">
           <Dialog.Content maxW="384px" w="full" mx="4">
             <Dialog.Header pb="4" pt="6" px="6" position="relative">
-              <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="right" w="full">
+              <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="start" w="full">
                 انتخاب تنوع مربوط به تصویر
               </Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="3" insetEnd="3">

@@ -55,7 +55,7 @@ export function ThemeCard({
 
           {/* Content — bg, title subtle */}
           <Flex direction="column" gap="4" p="4" bg="bg">
-            <Text fontSize="md" fontWeight="semibold" color="fg.subtle" textAlign="right">
+            <Text fontSize="md" fontWeight="semibold" color="fg.subtle" textAlign="start">
               {name}
             </Text>
             {/* Placeholder height = button so card height matches normal cards */}
@@ -132,7 +132,7 @@ export function ThemeCard({
         position="relative"
         transition="background 0.15s"
       >
-        <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="right">
+        <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="start">
           {name}
         </Text>
 

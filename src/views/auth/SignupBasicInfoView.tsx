@@ -113,7 +113,7 @@ export function SignupBasicInfoView() {
             onChange={(e) => { setFirstName(e.target.value); if (firstNameError) setFirstNameError('') }}
             placeholder="نام"
           />
-          {firstNameError && <Field.ErrorText display="block" fontSize="xs" textAlign="right" w="full">{firstNameError}</Field.ErrorText>}
+          {firstNameError && <Field.ErrorText display="block" fontSize="xs" textAlign="start" w="full">{firstNameError}</Field.ErrorText>}
         </Field.Root>
         <Field.Root required invalid={!!lastNameError} flex="1" minW="200px">
           <Field.Label fontSize="sm" fontWeight="semibold">
@@ -124,7 +124,7 @@ export function SignupBasicInfoView() {
             onChange={(e) => { setLastName(e.target.value); if (lastNameError) setLastNameError('') }}
             placeholder="نام خانوادگی"
           />
-          {lastNameError && <Field.ErrorText display="block" fontSize="xs" textAlign="right" w="full">{lastNameError}</Field.ErrorText>}
+          {lastNameError && <Field.ErrorText display="block" fontSize="xs" textAlign="start" w="full">{lastNameError}</Field.ErrorText>}
         </Field.Root>
       </Flex>
 
@@ -139,7 +139,7 @@ export function SignupBasicInfoView() {
             onChange={(e) => { setStoreNameFa(e.target.value); if (storeNameFaError) setStoreNameFaError('') }}
             placeholder="نام فارسی فروشگاه"
           />
-          {storeNameFaError && <Field.ErrorText display="block" fontSize="xs" textAlign="right" w="full">{storeNameFaError}</Field.ErrorText>}
+          {storeNameFaError && <Field.ErrorText display="block" fontSize="xs" textAlign="start" w="full">{storeNameFaError}</Field.ErrorText>}
         </Field.Root>
         <Field.Root required invalid={!!slugError} flex="1" minW="220px">
           <Field.Label fontSize="sm" fontWeight="semibold">
@@ -161,15 +161,15 @@ export function SignupBasicInfoView() {
               pe="32"
             />
           </InputGroup>
-          {slugError && <Field.ErrorText display="block" fontSize="xs" textAlign="right" w="full">{slugError}</Field.ErrorText>}
-          <Text fontSize="xs" color="fg.muted" textAlign="right" w="full">
+          {slugError && <Field.ErrorText display="block" fontSize="xs" textAlign="start" w="full">{slugError}</Field.ErrorText>}
+          <Text fontSize="xs" color="fg.muted" textAlign="start" w="full">
             {`https://${slug || 'mazbox'}.vitrinaa.shop`}
           </Text>
         </Field.Root>
       </Flex>
 
       <Box w="full">
-        <Text fontWeight="semibold" fontSize="sm" textAlign="right" mb="1.5" w="full">
+        <Text fontWeight="semibold" fontSize="sm" textAlign="start" mb="1.5" w="full">
           قوانین ثبت آدرس اختصاصی:
         </Text>
         {/* آیکون FIRST در DOM = راست (قرارداد پروژه) */}
@@ -179,7 +179,7 @@ export function SignupBasicInfoView() {
               <Box color={rule.ok ? 'green.solid' : 'fg.subtle'} flexShrink={0}>
                 {rule.ok ? <CircleCheck size={14} /> : <Circle size={14} />}
               </Box>
-              <Text fontSize="xs" fontWeight="medium" color={rule.ok ? 'green.fg' : 'fg.subtle'} textAlign="right" flex="1">
+              <Text fontSize="xs" fontWeight="medium" color={rule.ok ? 'green.fg' : 'fg.subtle'} textAlign="start" flex="1">
                 {rule.label}
               </Text>
             </Flex>
@@ -187,8 +187,8 @@ export function SignupBasicInfoView() {
         </Flex>
       </Box>
 
-      {/* alignSelf="flex-start" = سمت راست در RTL (پدر align="flex-end" پیش‌فرضش چپ است) */}
-      <Field.Root maxW={{ base: 'full', md: '369px' }} alignSelf="flex-start">
+      {/* alignSelf="start" = سمت راست در RTL (پدر align="end" پیش‌فرضش چپ است) */}
+      <Field.Root maxW={{ base: 'full', md: '369px' }} alignSelf="start">
         <Field.Label fontSize="sm" fontWeight="semibold">کد دعوت دارید؟</Field.Label>
         <Input value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} placeholder="کد دعوت را وارد کنید." />
       </Field.Root>

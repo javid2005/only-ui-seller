@@ -22,8 +22,8 @@ export function AbandonedCartCard({ cart, onView }: AbandonedCartCardProps) {
   return (
     <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="lg" overflow="hidden" w="full">
       {/* Header — شناسه | تاریخ ایجاد */}
-      <Flex align="center" justify="flex-end" gap="2" px="4" py="2">
-        <Flex flex="1" gap="2" align="center" justify="flex-start">
+      <Flex align="center" justify="end" gap="2" px="4" py="2">
+        <Flex flex="1" gap="2" align="center" justify="start">
           <Text fontSize="sm" color="fg.muted" whiteSpace="nowrap">{cart.id}</Text>
           <Text fontSize="sm" color="fg.muted">|</Text>
           <Text fontSize="sm" color="fg.muted" whiteSpace="nowrap">{cart.createdDate}</Text>
@@ -38,12 +38,12 @@ export function AbandonedCartCard({ cart, onView }: AbandonedCartCardProps) {
       </Flex>
 
       {/* Avatar row */}
-      <Flex justify="flex-start" px="4" pb="4">
-        <Flex align="center" justify="flex-start" gap="4">
+      <Flex justify="start" px="4" pb="4">
+        <Flex align="center" justify="start" gap="4">
           <Avatar.Root size="md" bg="brand.solid" color="brand.contrast" flexShrink={0}>
             <Avatar.Fallback name={cart.customerName} />
           </Avatar.Root>
-          <Flex direction="column" gap="1" align="flex-start">
+          <Flex direction="column" gap="1" align="start">
             <Text fontSize="sm" fontWeight="semibold" color="fg">{cart.customerName}</Text>
             <Text fontSize="xs" color="fg.muted">{cart.customerPhone}</Text>
           </Flex>

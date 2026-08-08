@@ -32,7 +32,7 @@ export function Campaigns() {
   }
 
   return (
-    <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+    <Flex direction="column" gap="4" alignItems="end" w="full">
       <Header
         title="کمپین ها"
         breadcrumbs={[{ label: 'داشبورد', href: '/' }, { label: 'کمپین ها' }]}
@@ -41,7 +41,7 @@ export function Campaigns() {
       {/* Panel spans full width — One Column Center: only the inner Flex is capped/centered
           at 960px (پترن پروژه: AdChannels.tsx, Reviews.tsx, ThemeSettings.tsx) */}
       <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" p="6" w="full">
-        <Flex direction="column" gap="6" alignItems="flex-end" maxW="960px" w="full" mx="auto">
+        <Flex direction="column" gap="6" alignItems="end" maxW="960px" w="full" mx="auto">
           <TitleBar
             title="مدیریت کمپین ها"
             subtitle="کمپین‌های بازاریابی خود را مدیریت کنید."

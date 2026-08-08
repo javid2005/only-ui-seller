@@ -92,7 +92,7 @@ export function AddCustomerDialog({ open, onClose, onSubmit }: AddCustomerDialog
                   value={toPersianDigits(phone)}
                   onChange={(e) => { setPhone(normalizePhone(e.target.value)); if (phoneError) setPhoneError('') }}
                   dir="ltr"
-                  textAlign="right"
+                  textAlign="start"
                   inputMode="numeric"
                   type="tel"
                 />

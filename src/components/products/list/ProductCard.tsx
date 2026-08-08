@@ -79,7 +79,7 @@ export function ProductCard({ product: p, isSelected, onToggle }: ProductCardPro
         direction="column" gap="2" p="4" align="stretch" flex="1"
       >
         {/* title */}
-        <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" lineClamp={1}>
+        <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" lineClamp={1}>
           {p.name}
         </Text>
 
@@ -96,10 +96,10 @@ export function ProductCard({ product: p, isSelected, onToggle }: ProductCardPro
         <Box flex="1" minH="2" />
 
         {/* footer — price (start/راست، flex) + menu (end/چپ) */}
-        <Flex align="flex-end" gap="1">
+        <Flex align="end" gap="1">
           <Flex direction="column" align="stretch" gap="1" flex="1" minW="0">
             {p.priceOriginal && (
-              <Flex gap="2" align="center" justifyContent="flex-start" flexWrap="wrap">
+              <Flex gap="2" align="center" justifyContent="start" flexWrap="wrap">
                 {/* RTL: قیمت اصلی راست، badge تخفیف چپ */}
                 <Text fontSize="sm" color="fg.subtle" textDecoration="line-through">{p.priceOriginal}{tomanSuffix}</Text> {/* dev-engine-ignore */}
                 {p.discount && (
@@ -107,7 +107,7 @@ export function ProductCard({ product: p, isSelected, onToggle }: ProductCardPro
                 )}
               </Flex>
             )}
-            <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="right" lineClamp={1}>{p.priceMain}{tomanSuffix}</Text> {/* dev-engine-ignore */}
+            <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="start" lineClamp={1}>{p.priceMain}{tomanSuffix}</Text> {/* dev-engine-ignore */}
           </Flex>
           <RowActionsMenu />
         </Flex>

@@ -56,9 +56,9 @@ export function ProductPickerDialog({ open, onClose, selectedProductId, onConfir
             </Dialog.Header>
 
             <Dialog.Body pt="2" pb="6" px="6">
-              <Flex direction="column" gap="4" alignItems="flex-start" w="full">
+              <Flex direction="column" gap="4" alignItems="start" w="full">
                 {/* زیر sm: ستونی (جستجو بالا، دسته‌بندی زیرش، هر دو تمام‌عرض) — sm به بالا: هم‌ردیف */}
-                <Flex direction={{ base: 'column', sm: 'row' }} gap="2" w="full" align={{ base: 'stretch', sm: 'flex-start' }}>
+                <Flex direction={{ base: 'column', sm: 'row' }} gap="2" w="full" align={{ base: 'stretch', sm: 'start' }}>
                   <InputGroup flex="1" minW="200px" w="full" startElement={<Search size={16} color="var(--chakra-colors-fg-subtle)" />}>
                     <Input
                       placeholder="جستجوی نام یا SKU محصول..."
@@ -118,7 +118,7 @@ export function ProductPickerDialog({ open, onClose, selectedProductId, onConfir
 
             {/* دو دکمه — طبق قرارداد پروژه: انصراف FIRST (راست) · برند LAST (چپ) */}
             <Dialog.Footer pt="2" pb="4" px="6">
-              <Flex justify="flex-end" gap="3" w="full">
+              <Flex justify="end" gap="3" w="full">
                 <Button variant="outline" colorPalette="gray" onClick={onClose}>انصراف</Button>
                 <Button colorPalette="brand" disabled={!pendingId} onClick={handleConfirm}>تایید</Button>
               </Flex>

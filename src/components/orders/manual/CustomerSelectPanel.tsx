@@ -44,12 +44,12 @@ function CustomerCard({ customer }: { customer: ManualCustomer }) {
             <Avatar.Fallback name={customer.name} />
           </Avatar.Root>
 
-          {/* column flex در RTL: flex-start = راست ✓ (flex-end این‌جا چپ می‌شد) */}
-          <RadioCard.ItemContent minW="0" gap="1" alignItems="flex-start">
+          {/* column flex در RTL: start = راست ✓ (end این‌جا چپ می‌شد) */}
+          <RadioCard.ItemContent minW="0" gap="1" alignItems="start">
             <RadioCard.ItemText fontSize="sm" fontWeight="semibold" color="fg">
               {customer.name}
             </RadioCard.ItemText>
-            <RadioCard.ItemDescription fontSize="xs" color="fg.muted" w="full" textAlign="right" m="0">
+            <RadioCard.ItemDescription fontSize="xs" color="fg.muted" w="full" textAlign="start" m="0">
               {toPersianDigits(customer.phone)}
             </RadioCard.ItemDescription>
           </RadioCard.ItemContent>

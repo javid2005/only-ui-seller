@@ -15,7 +15,7 @@ export function SectionHeader({ title }: { title: string }) {
       px="2"
       py="2"
     >
-      <Text fontSize="lg" fontWeight="semibold" color="fg" textAlign="right" lineHeight="1.555">
+      <Text fontSize="lg" fontWeight="semibold" color="fg" textAlign="start" lineHeight="1.555">
         {title}
       </Text>
     </Box>

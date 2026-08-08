@@ -72,7 +72,7 @@ export function AddressCard({
         p="4"
         bg="bg.subtle"
         _groupHover={isDisabled ? undefined : { bg: 'brand.bg' }}
-        align="flex-start"
+        align="start"
       >
         {/* Title — faded when disabled */}
         <Text
@@ -80,7 +80,7 @@ export function AddressCard({
           fontWeight="semibold"
           color="fg"
           lineHeight="1.5"
-          textAlign="right"
+          textAlign="start"
           w="full"
           opacity={isDisabled ? 0.4 : 1}
         >

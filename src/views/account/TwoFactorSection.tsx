@@ -66,8 +66,8 @@ function TwoFactorCard({
         {icon}
       </Flex>
 
-      {/* Content — MIDDLE, alignItems=flex-start = right side in RTL column */}
-      <Flex flex="1" direction="column" gap="1" alignItems="flex-start" minW="0">
+      {/* Content — MIDDLE, alignItems=start = right side in RTL column */}
+      <Flex flex="1" direction="column" gap="1" alignItems="start" minW="0">
         {/* title FIRST = rightmost, badge SECOND = to its left */}
         <Flex gap="4" align="center" w="full">
           <Text fontSize="sm" fontWeight="semibold" color="fg" whiteSpace="nowrap" flexShrink={0}>

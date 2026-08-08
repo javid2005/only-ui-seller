@@ -34,7 +34,7 @@ export function RulesDialog({ open, onClose }: RulesDialogProps) {
             <Dialog.Body pt="2" pb="4" px="6" maxH="600px" overflowY="auto">
               <Flex direction="column" gap="5">
                 {RULES_PARAGRAPHS.map((p, i) => (
-                  <Text key={i} fontSize="sm" color="fg.muted" textAlign="right" lineHeight="1.43">
+                  <Text key={i} fontSize="sm" color="fg.muted" textAlign="start" lineHeight="1.43">
                     {p}
                   </Text>
                 ))}
@@ -43,7 +43,7 @@ export function RulesDialog({ open, onClose }: RulesDialogProps) {
 
             {/* دکمهٔ تنها (بستن) — چپ، طبق طرح Figma و قرارداد پروژه (primary/تنها دکمه = چپ) */}
             <Dialog.Footer pt="2" pb="4" px="6">
-              <Flex justify="flex-end" w="full">
+              <Flex justify="end" w="full">
                 <Button variant="outline" colorPalette="gray" onClick={onClose}>بستن</Button>
               </Flex>
             </Dialog.Footer>

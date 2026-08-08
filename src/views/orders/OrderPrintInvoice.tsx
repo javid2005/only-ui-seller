@@ -114,11 +114,11 @@ function MetaCell({ label, value, isCompact }: { label: string; value: string; i
     <Flex
       direction={isCompact ? 'row' : { base: 'row', sm: 'column' }}
       justify="space-between"
-      align={isCompact ? 'center' : { base: 'center', sm: 'flex-start' }}
+      align={isCompact ? 'center' : { base: 'center', sm: 'start' }}
       gap="1"
       w="full"
     >
-      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="right" whiteSpace="nowrap" flexShrink={0}>
+      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" whiteSpace="nowrap" flexShrink={0}>
         {label}
       </Text>
       <Text
@@ -138,9 +138,9 @@ function MetaCell({ label, value, isCompact }: { label: string; value: string; i
 /** ردیف آیکن + متن داخل کارت فروشنده/خریدار — RTL: آیکن اول (راست). */
 function PartyRow({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
-    <Flex align="flex-start" gap="2" w="full" minW="0">
+    <Flex align="start" gap="2" w="full" minW="0">
       <Box flexShrink={0} color="brand.solid" display="flex" alignItems="center" mt="0.5">{icon}</Box>
-      <Text flex="1" minW="0" fontSize="sm" fontWeight="medium" color="fg.muted" textAlign="right" dir="auto">
+      <Text flex="1" minW="0" fontSize="sm" fontWeight="medium" color="fg.muted" textAlign="start" dir="auto">
         {children}
       </Text>
     </Flex>
@@ -151,11 +151,11 @@ function PartyRow({ icon, children }: { icon: ReactNode; children: ReactNode }) 
 function PartyCard({ title, party }: { title: string; party: Party }) {
   return (
     <Flex direction="column" flex="1" minW="0">
-      <Text fontSize="md" fontWeight="semibold" color="fg.muted" textAlign="right" pb="2">
+      <Text fontSize="md" fontWeight="semibold" color="fg.muted" textAlign="start" pb="2">
         {title}
       </Text>
       <Flex direction="column" gap="2" w="full" h="full" minH="20" px="6" py="4" rounded="xl" borderWidth="1px" borderColor="border.muted">
-        <Text fontSize="lg" fontWeight="semibold" color="fg" textAlign="right" dir="auto" pb="1">
+        <Text fontSize="lg" fontWeight="semibold" color="fg" textAlign="start" dir="auto" pb="1">
           {party.name}
         </Text>
         <PartyRow icon={<MapPin size={16} />}>{party.address}</PartyRow>
@@ -169,11 +169,11 @@ function PartyCard({ title, party }: { title: string; party: Party }) {
 /** ردیف label–value (گیرنده / اطلاعات تکمیلی) — RTL: label راست · value چپ. */
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <Flex justify="space-between" align="flex-start" gap="4" py="1" w="full">
-      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="right" flexShrink={0}>
+    <Flex justify="space-between" align="start" gap="4" py="1" w="full">
+      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" flexShrink={0}>
         {label}
       </Text>
-      <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="left" dir="auto" maxW="65%" whiteSpace="pre-line">
+      <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="end" dir="auto" maxW="65%" whiteSpace="pre-line">
         {value}
       </Text>
     </Flex>
@@ -194,7 +194,7 @@ function TotalRow({ label, value }: { label: string; value: string }) {
 function TitledCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Flex direction="column" flex="1" minW="0">
-      <Text fontSize="md" fontWeight="semibold" color="fg.muted" textAlign="right" pb="2">
+      <Text fontSize="md" fontWeight="semibold" color="fg.muted" textAlign="start" pb="2">
         {title}
       </Text>
       <Flex direction="column" gap="0.5" w="full" h="full" minH="20" px="6" py="4" rounded="xl" borderWidth="1px" borderColor="border.muted">
@@ -209,7 +209,7 @@ function ItemCard({ item }: { item: InvoiceItem }) {
   return (
     <Flex direction="column" gap="3" w="full" p="3" rounded="xl" borderWidth="1px" borderColor="border.muted">
       {/* بالا — RTL: تصویر اول (راست/leading) · متن چپ */}
-      <Flex gap="3" align="flex-start" w="full">
+      <Flex gap="3" align="start" w="full">
         <Box
           flexShrink={0}
           w="12"
@@ -222,9 +222,9 @@ function ItemCard({ item }: { item: InvoiceItem }) {
         >
           <img src={item.image.src} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </Box>
-        <Flex direction="column" gap="1" flex="1" minW="0" align="flex-start">
-          <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" w="full">{item.name}</Text>
-          <Text fontSize="xs" color="fg.muted" textAlign="right" w="full">{item.attrs}</Text>
+        <Flex direction="column" gap="1" flex="1" minW="0" align="start">
+          <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" w="full">{item.name}</Text>
+          <Text fontSize="xs" color="fg.muted" textAlign="start" w="full">{item.attrs}</Text>
           <Badge colorPalette="gray" variant="subtle" size="sm">SKU: {item.sku}</Badge>
         </Flex>
       </Flex>
@@ -257,7 +257,7 @@ export function OrderPrintInvoice() {
 
   // اجزای سرفصل — در دسکتاپ یک ردیف (logo·title·contact)، در < sm: ردیف logo+contact و عنوان زیرِ آن
   const logoBlock = (
-    <Flex direction="column" flex="1" minW="0" align="flex-start" gap="1">
+    <Flex direction="column" flex="1" minW="0" align="start" gap="1">
       <img src={logoSrc.src} alt="ویترینا" style={{ height: '20px' }} />
       <Text fontSize="2xs" color="fg.muted">پلتفرم فروشگاه های اینستاگرام</Text>
     </Flex>
@@ -269,7 +269,7 @@ export function OrderPrintInvoice() {
     </Flex>
   )
   const contactBlock = (
-    <Flex direction="column" flex="1" minW="0" align="flex-end" gap="1.5">
+    <Flex direction="column" flex="1" minW="0" align="end" gap="1.5">
       <ContactRow icon={<Headset size={14} />}>{INVOICE.contact.phone}</ContactRow>
       <ContactRow icon={<Mail size={14} />}>{INVOICE.contact.email}</ContactRow>
     </Flex>
@@ -334,7 +334,7 @@ export function OrderPrintInvoice() {
         {/* ── Alert راهنما (چاپ نمی‌شود) ── */}
         <Alert.Root status="info" variant="surface" rounded="lg" px="3" py="3" gap="2">
           <Alert.Indicator />
-          <Alert.Title flex="1" fontSize="xs" fontWeight="medium" textAlign="right">
+          <Alert.Title flex="1" fontSize="xs" fontWeight="medium" textAlign="start">
             این برگه را پرینت بگیرید و به‌عنوان فاکتور فروش نگهداری کنید.
           </Alert.Title>
         </Alert.Root>
@@ -361,7 +361,7 @@ export function OrderPrintInvoice() {
                 <Flex
                   display={isCompact ? 'none' : { base: 'none', sm: 'flex' }}
                   direction="row"
-                  align="flex-start"
+                  align="start"
                   gap="4"
                   w="full"
                 >
@@ -377,7 +377,7 @@ export function OrderPrintInvoice() {
                   gap="4"
                   w="full"
                 >
-                  <Flex direction="row" align="flex-start" gap="4" w="full">
+                  <Flex direction="row" align="start" gap="4" w="full">
                     {logoBlock}
                     {contactBlock}
                   </Flex>
@@ -399,12 +399,12 @@ export function OrderPrintInvoice() {
               </Flex>
 
               {/* ══ ۲. وضعیت پرداخت (Alert سبز) ══ */}
-              <Alert.Root status="success" variant="surface" rounded="xl" px="3" py="2.5" gap="2" alignItems="flex-start">
+              <Alert.Root status="success" variant="surface" rounded="xl" px="3" py="2.5" gap="2" alignItems="start">
                 {/* RTL: Alert خودش dir می‌ذارد → آیکن سمت راست */}
                 <Alert.Indicator mt="0.5"><CreditCard size={16} /></Alert.Indicator>
                 <Alert.Content gap="0.5">
-                  <Alert.Title fontSize="xs" fontWeight="medium" textAlign="right">{INVOICE.paid.title}</Alert.Title>
-                  <Alert.Description fontSize="2xs" textAlign="right">{INVOICE.paid.body}</Alert.Description>
+                  <Alert.Title fontSize="xs" fontWeight="medium" textAlign="start">{INVOICE.paid.title}</Alert.Title>
+                  <Alert.Description fontSize="2xs" textAlign="start">{INVOICE.paid.body}</Alert.Description>
                 </Alert.Content>
               </Alert.Root>
 
@@ -420,20 +420,20 @@ export function OrderPrintInvoice() {
 
               {/* ══ ۴. اقلام سفارش ══ */}
               <Flex direction="column" gap="3" w="full">
-                <Text fontSize="md" fontWeight="semibold" color="fg.muted" textAlign="right">اقلام سفارش</Text>
+                <Text fontSize="md" fontWeight="semibold" color="fg.muted" textAlign="start">اقلام سفارش</Text>
 
                 {/* جدول — sm+ · RTL: کالا راست · تعداد وسط · فی چپ */}
                 <Box w="full" display={isCompact ? 'none' : { base: 'none', sm: 'block' }}>
                   {/* سرستون */}
                   <Flex w="full" borderBottomWidth="1px" borderColor="border" bg="bg.muted">
                     <Box flex="1" minW="0" px="4" py="2">
-                      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="right">کالا</Text>
+                      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start">کالا</Text>
                     </Box>
                     <Box flexShrink={0} w="16" px="4" py="2">
                       <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="center">تعداد</Text>
                     </Box>
                     <Box flexShrink={0} w="32" px="4" py="2">
-                      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="left">فی (تومان)</Text>
+                      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="end">فی (تومان)</Text>
                     </Box>
                   </Flex>
 
@@ -454,10 +454,10 @@ export function OrderPrintInvoice() {
                         >
                           <img src={item.image.src} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </Box>
-                        {/* RTL: align flex-start = راست → SKU badge زیر متن، سمت راست */}
-                        <Flex direction="column" gap="1" flex="1" minW="0" align="flex-start">
-                          <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" w="full" truncate>{item.name}</Text>
-                          <Text fontSize="xs" color="fg.muted" textAlign="right" w="full">{item.attrs}</Text>
+                        {/* RTL: align start = راست → SKU badge زیر متن، سمت راست */}
+                        <Flex direction="column" gap="1" flex="1" minW="0" align="start">
+                          <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" w="full" truncate>{item.name}</Text>
+                          <Text fontSize="xs" color="fg.muted" textAlign="start" w="full">{item.attrs}</Text>
                           <Badge colorPalette="gray" variant="subtle" size="sm">SKU: {item.sku}</Badge>
                         </Flex>
                       </Flex>
@@ -469,7 +469,7 @@ export function OrderPrintInvoice() {
 
                       {/* فی (قیمت واحد) — RTL: چپ‌چین */}
                       <Box flexShrink={0} w="32" px="4" py="3" display="flex" alignItems="center">
-                        <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="left" dir="auto" w="full">{item.unit} {CURRENCY}</Text>
+                        <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="end" dir="auto" w="full">{item.unit} {CURRENCY}</Text>
                       </Box>
                     </Flex>
                   ))}
@@ -488,7 +488,7 @@ export function OrderPrintInvoice() {
                 </Flex>
 
                 {/* جمع‌بندی — RTL: سمت چپ */}
-                <Box w={isCompact ? 'full' : { base: 'full', md: '320px' }} alignSelf="flex-end" pt="2">
+                <Box w={isCompact ? 'full' : { base: 'full', md: '320px' }} alignSelf="end" pt="2">
                   <TotalRow label="جمع کل اقلام" value={`${INVOICE.totals.sum} ${CURRENCY}`} />
                   <Separator my="2" />
 
@@ -528,11 +528,11 @@ export function OrderPrintInvoice() {
               </Flex>
 
               {/* ══ ۶. یادداشت فروشنده (Alert نارنجی) ══ */}
-              <Alert.Root status="warning" variant="surface" rounded="xl" px="3" py="2.5" gap="2" alignItems="flex-start">
+              <Alert.Root status="warning" variant="surface" rounded="xl" px="3" py="2.5" gap="2" alignItems="start">
                 <Alert.Indicator mt="0.5"><Info size={14} /></Alert.Indicator>
                 <Alert.Content gap="0.5">
-                  <Alert.Title fontSize="xs" fontWeight="medium" textAlign="right">یادداشت فروشنده:</Alert.Title>
-                  <Alert.Description fontSize="2xs" textAlign="right">{INVOICE.note}</Alert.Description>
+                  <Alert.Title fontSize="xs" fontWeight="medium" textAlign="start">یادداشت فروشنده:</Alert.Title>
+                  <Alert.Description fontSize="2xs" textAlign="start">{INVOICE.note}</Alert.Description>
                 </Alert.Content>
               </Alert.Root>
             </Flex>
@@ -544,7 +544,7 @@ export function OrderPrintInvoice() {
                 <Box flexShrink={0} color="fg.subtle" display="flex" alignItems="center">
                   <Info size={13} />
                 </Box>
-                <Text fontSize="2xs" color="fg.subtle" textAlign="right" flex="1" minW="0">
+                <Text fontSize="2xs" color="fg.subtle" textAlign="start" flex="1" minW="0">
                   این فاکتور به صورت سیستمی صادر شده و معتبر است.
                 </Text>
               </Flex>
@@ -553,7 +553,7 @@ export function OrderPrintInvoice() {
               <Text fontSize="2xs" color="fg.subtle" textAlign="center" flexShrink={0} px="2">صفحه ۱ از ۱</Text>
 
               {/* vitrina.ir (چپ) */}
-              <Flex flex="1" justify="flex-end">
+              <Flex flex="1" justify="end">
                 <Text fontSize="xs" fontWeight="medium" color="brand.solid">vitrina.ir</Text>
               </Flex>
             </Flex>

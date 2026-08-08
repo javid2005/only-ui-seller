@@ -101,7 +101,7 @@ export function SignupLayout({
 
             <Flex direction="column" gap="4" align="center" w="full">
               {subtitle && (
-                <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">
+                <Text fontSize="sm" color="fg.muted" textAlign="start" w="full">
                   {subtitle}
                 </Text>
               )}

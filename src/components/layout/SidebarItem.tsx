@@ -68,7 +68,7 @@ function SubItemRow({ item }: { item: SubNavItem }) {
           lineHeight="5"
           color={isActive ? 'brand.fg' : 'fg'}
           fontWeight={isActive ? 'medium' : 'normal'}
-          textAlign="right"
+          textAlign="start"
           w="full"
           whiteSpace="nowrap"
           overflow="hidden"
@@ -132,7 +132,7 @@ export function SidebarItem({
         <Text
           fontSize="sm"
           flex="1"
-          textAlign="right"
+          textAlign="start"
           lineHeight="5"
           color={(isActive && !hasSubItems) || branchActive ? 'brand.fg' : 'fg'}
           whiteSpace="nowrap"
@@ -188,7 +188,7 @@ export function SidebarItem({
           {/* RTL flex: first = rightmost
               ps="4" (16px in RTL = right padding) aligns SubLine bar
               under parent icon center: px(8) + half-icon(8) = 16px ✓ */}
-          <Flex align="flex-start" w="full" mt="1" ps="4">
+          <Flex align="start" w="full" mt="1" ps="4">
             {/* SubLines: FIRST → inline-start (RIGHT in RTL) ✓ tree connector */}
             <Flex direction="column" flexShrink={0}>
               {subItems.map((sub, i) => (

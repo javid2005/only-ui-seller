@@ -141,7 +141,7 @@ export function AddSocialDialog({ open, onClose, onSubmit, initial }: AddSocialD
                   value={handle}
                   onChange={(e) => setHandle(e.target.value)}
                   dir="ltr"
-                  textAlign="right"
+                  textAlign="start"
                 />
               </Field.Root>
 

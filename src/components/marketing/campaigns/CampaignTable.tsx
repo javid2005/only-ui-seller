@@ -33,7 +33,7 @@ export function CampaignTable({ campaigns, onDelete }: CampaignTableProps) {
             <Table.Row key={c.id} h="20" borderBottomWidth="1px" borderColor="border">
               {/* نام کمپین — عنوان + badge نوع */}
               <Table.Cell>
-                <Flex direction="column" gap="1" align="flex-start">
+                <Flex direction="column" gap="1" align="start">
                   <Text fontSize="sm" fontWeight="semibold" color="fg">{c.name}</Text>
                   <Badge size="xs" colorPalette={CAMPAIGN_TYPE_COLOR[c.type]} variant="subtle">{c.type}</Badge>
                 </Flex>
@@ -51,7 +51,7 @@ export function CampaignTable({ campaigns, onDelete }: CampaignTableProps) {
 
               {/* عملیات — ویرایش (fg.muted) + حذف (red)، bg gray.subtle/red.subtle */}
               <Table.Cell>
-                <Flex gap="2" justify="flex-start">
+                <Flex gap="2" justify="start">
                   <IconButton
                     aria-label="ویرایش کمپین" size="sm"
                     bg="gray.subtle" color="fg.muted" _hover={{ bg: 'gray.muted' }}

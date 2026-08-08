@@ -112,17 +112,17 @@ function SelectedProductRow({ product, line, max, onQtyChange, onRemove }: {
 
         {/* عنوان + تنوع + قیمت — SECOND */}
         <Flex direction="column" gap="1" flex="1" minW="0">
-          <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="right" lineClamp={1}>
+          <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="start" lineClamp={1}>
             {product.name}
           </Text>
           {line.variantLabels && line.variantLabels.length > 0 && (
-            <Flex justify="flex-start" gap="1.5" wrap="wrap" w="full">
+            <Flex justify="start" gap="1.5" wrap="wrap" w="full">
               {line.variantLabels.map((label) => (
                 <Badge key={label} size="xs" colorPalette="gray" variant="outline">{label}</Badge>
               ))}
             </Flex>
           )}
-          <Flex align="center" justify="flex-start" gap="2" w="full">
+          <Flex align="center" justify="start" gap="2" w="full">
             {/* برخلاف لیست محصولات، اینجا بج $ نمایش داده نمی‌شود — فقط قیمت (طبق درخواست کاربر) */}
             <Text fontSize="xs" fontWeight="medium" color="fg.muted" whiteSpace="nowrap">
               {product.priceToman ? `${product.priceToman} ت` : `$ ${product.priceUsd}`}
@@ -131,8 +131,8 @@ function SelectedProductRow({ product, line, max, onQtyChange, onRemove }: {
         </Flex>
       </Flex>
 
-      {/* QtyStepper — LAST = چپ‌ترین. روی موبایل (base) ردیفِ جدا، جمع‌شده به چپ (justify="flex-end" در RTL = چپ) */}
-      <Flex flexShrink={0} justify={{ base: 'flex-end', sm: 'flex-start' }} w={{ base: 'full', sm: 'auto' }}>
+      {/* QtyStepper — LAST = چپ‌ترین. روی موبایل (base) ردیفِ جدا، جمع‌شده به چپ (justify="end" در RTL = چپ) */}
+      <Flex flexShrink={0} justify={{ base: 'end', sm: 'start' }} w={{ base: 'full', sm: 'auto' }}>
         <QtyStepper
           quantity={line.quantity}
           max={max}

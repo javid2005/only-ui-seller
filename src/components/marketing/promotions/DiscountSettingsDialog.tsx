@@ -99,7 +99,7 @@ export function DiscountSettingsDialog({
             </Dialog.Header>
 
             <Dialog.Body pt="2" pb="6" px="6">
-              <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+              <Flex direction="column" gap="4" alignItems="end" w="full">
                 <Alert.Root status="info" variant="subtle" w="full">
                   <Alert.Indicator />
                   <Alert.Content>
@@ -217,7 +217,7 @@ export function DiscountSettingsDialog({
 
             {/* انصراف FIRST=راست‌ترین، ذخیره(primary) LAST=چپ‌ترین */}
             <Dialog.Footer pt="2" pb="4" px="6">
-              <Flex justify="flex-end" gap="3" w="full">
+              <Flex justify="end" gap="3" w="full">
                 <Button variant="outline" colorPalette="gray" onClick={onClose}>انصراف</Button>
                 <Button
                   bg="brand.solid"

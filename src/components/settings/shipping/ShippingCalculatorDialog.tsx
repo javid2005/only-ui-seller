@@ -104,7 +104,7 @@ function PriceBadge({ type }: { type: PriceType }) {
 function PriceCell({ result }: { result: CalcResult }) {
   const { text, subdued } = priceDisplay(result)
   return (
-    <Flex direction="column" align="flex-start" gap="1">
+    <Flex direction="column" align="start" gap="1">
       <PriceBadge type={result.type} />
       <Text fontSize="sm" fontWeight="semibold" color={subdued ? 'fg.muted' : 'fg'}>{text}</Text>
     </Flex>
@@ -116,7 +116,7 @@ function PriceCell({ result }: { result: CalcResult }) {
 function PriceItem({ result }: { result: CalcResult }) {
   const { text, subdued } = priceDisplay(result)
   return (
-    <Flex bg="bg.subtle" rounded="md" p="2" direction="column" align="flex-start" gap="1" minH="9">
+    <Flex bg="bg.subtle" rounded="md" p="2" direction="column" align="start" gap="1" minH="9">
       <PriceBadge type={result.type} />
       <Text fontSize="sm" color={subdued ? 'fg.muted' : 'fg'}>{text}</Text>
     </Flex>
@@ -193,10 +193,10 @@ export function ShippingCalculatorDialog({
               <Flex
                 direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}
                 gap="3"
-                align="flex-start"
+                align="start"
               >
                 {/* Inner row: Input + SegmentGroup always side-by-side */}
-                <Flex gap="3" align="flex-start" flex="1" minW="0">
+                <Flex gap="3" align="start" flex="1" minW="0">
                   {/* FIRST = rightmost = weight input */}
                   <Field.Root flex="1" invalid={!!error}>
                     <NumberField

@@ -123,7 +123,7 @@ export function SliderItem({
         flex="1"
         fontSize="sm"
         color={selected ? 'brand.fg' : 'fg'}
-        textAlign="right"
+        textAlign="start"
         minW="0"
         lineHeight="1.5"
       >

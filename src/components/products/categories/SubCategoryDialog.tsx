@@ -61,7 +61,7 @@ export function SubCategoryDialog({
 
             {/* ─── Header ─────────────────────────────────────────────── */}
             <Dialog.Header pb="4" pt="6" px="6" position="relative">
-              <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="right" w="full">
+              <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="start" w="full">
                 {title}
               </Dialog.Title>
               {/* close — insetEnd = چپ در RTL */}
@@ -107,7 +107,7 @@ export function SubCategoryDialog({
             </Dialog.Body>
 
             {/* ─── Footer ─────────────────────────────────────────────── */}
-            <Dialog.Footer px="6" pt="2" pb="4" justifyContent="flex-end" gap="3">
+            <Dialog.Footer px="6" pt="2" pb="4" justifyContent="end" gap="3">
               <Button variant="outline" onClick={handleClose}>
                 لغو
               </Button>

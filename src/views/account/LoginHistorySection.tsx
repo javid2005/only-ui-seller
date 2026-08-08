@@ -38,8 +38,8 @@ function LoginHistoryCard({ entry }: { entry: LoginEntry }) {
       gap="2"
       w="full"
     >
-      <Flex w="full" gap="2" align="flex-start">
-        <Flex direction="column" gap="1" flex="1" minW="0" align="flex-start" overflow="hidden">
+      <Flex w="full" gap="2" align="start">
+        <Flex direction="column" gap="1" flex="1" minW="0" align="start" overflow="hidden">
           <Text fontSize="sm" fontWeight="semibold" color="fg" lineClamp="1">{entry.device}</Text>
           <Text fontSize="xs" color="fg.subtle">{entry.browser ?? '-'}</Text>
         </Flex>
@@ -139,7 +139,7 @@ export function LoginHistorySection() {
             align="center"
           >
             {/* دستگاه FIRST = rightmost — two-line: device name + browser */}
-            <Flex flex="1" direction="column" gap="1" align="flex-start" minW="0" overflow="hidden">
+            <Flex flex="1" direction="column" gap="1" align="start" minW="0" overflow="hidden">
               <Text fontSize="sm" fontWeight="semibold" color="fg" lineClamp="1">
                 {entry.device}
               </Text>

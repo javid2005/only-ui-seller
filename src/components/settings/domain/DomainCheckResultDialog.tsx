@@ -78,7 +78,7 @@ export function DomainCheckResultDialog({ open, ns, onConfirm, onCancel }: Domai
             </Dialog.Header>
 
             <Dialog.Body py="10" px="6">
-              <Flex direction="column" gap="6" alignItems="flex-start" w="full">
+              <Flex direction="column" gap="6" alignItems="start" w="full">
                 <Flex direction="column" gap="10" alignItems="center" w="full">
                   <Box bg="brand.subtle" p="4" rounded="lg" display="flex" alignItems="center" justifyContent="center">
                     <Check size={32} color="var(--chakra-colors-brand-fg)" />
@@ -88,8 +88,8 @@ export function DomainCheckResultDialog({ open, ns, onConfirm, onCancel }: Domai
                   </Text>
                 </Flex>
 
-                <Flex direction="column" gap="4" alignItems="flex-end" bg="bg.subtle" borderWidth="1px" borderColor="border.muted" rounded="lg" p="6" w="full">
-                  <Flex direction="column" gap="1" alignItems="flex-start" w="full">
+                <Flex direction="column" gap="4" alignItems="end" bg="bg.subtle" borderWidth="1px" borderColor="border.muted" rounded="lg" p="6" w="full">
+                  <Flex direction="column" gap="1" alignItems="start" w="full">
                     <Text fontSize="md" fontWeight="semibold" color="fg">جهت اتصال نیم‌سرورها را در رجیسترر ثبت کنید</Text>
                     <Text fontSize="sm" color="fg.muted">وارد پنل ثبت‌کننده دامنه شوید و نیم‌سرورهای فعلی را با موارد زیر جایگزین کنید.</Text>
                   </Flex>

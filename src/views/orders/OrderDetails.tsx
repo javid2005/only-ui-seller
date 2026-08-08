@@ -72,7 +72,7 @@ export function OrderDetails() {
         ]}
         cta={
           /* RTL: «مشاهده فاکتور» اولِ DOM = راستِ وضعیت (سمت مرکز) · وضعیت آخر = چپ (سرِجای قبلی) */
-          <Flex align="flex-start" gap="2">
+          <Flex align="start" gap="2">
             <Button
               variant="outline"
               size="sm"
@@ -106,7 +106,7 @@ export function OrderDetails() {
       <Flex
         direction={isCompact ? 'column' : { base: 'column', xl: 'row' }}
         gap={isCompact ? '4' : { base: '4', xl: '10' }}
-        align="flex-start"
+        align="start"
         w="full"
       >
         {/* Middle — ستون اصلی */}

@@ -42,8 +42,8 @@ export function AuthLayout({
         p="4"
         gap="4"
         wrap="nowrap"
-        align="flex-start"
-        justify="flex-end"
+        align="start"
+        justify="end"
       >
         {/* محتوا FIRST در DOM = راست‌ترین در RTL (طبق مختصات x فیگما: ستون فرم x=629 > ستون تصویر x=16) */}
         <Flex
@@ -86,7 +86,7 @@ export function AuthLayout({
 
           <Flex
             direction="column"
-            align={centerContent ? 'center' : 'flex-end'}
+            align={centerContent ? 'center' : 'end'}
             justify={centerContent ? 'center' : undefined}
             gap="4"
             w="full"
@@ -135,7 +135,7 @@ export function AuthLayout({
 
             {subtitle && (
               // gap="4" پدر ۱۶px می‌ده؛ +mt="6" (۲۴px) = ۴۰px فاصلهٔ کل از عنوان
-              <Text fontSize="sm" color="fg.muted" textAlign="right" w="full" mt="6">
+              <Text fontSize="sm" color="fg.muted" textAlign="start" w="full" mt="6">
                 {subtitle}
               </Text>
             )}

@@ -29,7 +29,7 @@ export function PlanCard({ plan, period, selected, onSelect }: PlanCardProps) {
       borderColor={selected ? 'brand.focusRing' : 'border.muted'}
       _hover={!selected ? { borderColor: 'border' } : undefined}
       transition="border-color 0.15s"
-      textAlign="right"
+      textAlign="start"
       cursor="pointer"
     >
       {/* bg کارت رنگی داخلی (Top) نه کارت بیرونی — کارت بیرونی همیشه سفید با border همیشه ۱px (فقط رنگش عوض می‌شه، طبق طرح جدید Figma) تا با toggle شدن انتخاب جابه‌جا نشه.
@@ -70,8 +70,8 @@ export function PlanCard({ plan, period, selected, onSelect }: PlanCardProps) {
                 {plan.originalPrice[period]} ت
               </Text>
             )}
-            {/* pixel-check طرح: قیمت راست‌تره، بج تخفیف چپش — یعنی قیمت FIRST در DOM. justify="flex-start" چون در RTL flex-end یعنی چپ. */}
-            <Flex align="center" justify="flex-start" gap="2.5">
+            {/* pixel-check طرح: قیمت راست‌تره، بج تخفیف چپش — یعنی قیمت FIRST در DOM. justify="start" چون در RTL end یعنی چپ. */}
+            <Flex align="center" justify="start" gap="2.5">
               <Text fontWeight="semibold" fontSize="2xl" lineHeight="1.333" color="fg">
                 {plan.price[period]}
                 {!plan.isFree && ' ت'}
@@ -106,7 +106,7 @@ export function PlanCard({ plan, period, selected, onSelect }: PlanCardProps) {
       <Flex direction="column" gap="2" px="2">
         {/* pixel-check طرح: dot چسبیده به سمت راست متن — یعنی dot FIRST در DOM */}
         {plan.features.map((feature, i) => (
-          <Flex key={i} align="center" justify="flex-start" gap="2" w="full">
+          <Flex key={i} align="center" justify="start" gap="2" w="full">
             <Box color="brand.solid" flexShrink={0}>
               <Dot size={20} />
             </Box>

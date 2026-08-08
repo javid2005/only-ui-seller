@@ -198,8 +198,8 @@ export function IdentitySection() {
       {status === 'pending' && (
         <Box pt="4" w="full">
           <Separator mb="4" />
-          {/* justify="flex-end" در RTL = سمت چپ بصری */}
-          <Flex justify="flex-end">
+          {/* justify="end" در RTL = سمت چپ بصری */}
+          <Flex justify="end">
             <Button colorPalette="red" variant="outline" onClick={handleCancel}>
               لغو درخواست
             </Button>

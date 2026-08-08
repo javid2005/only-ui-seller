@@ -29,13 +29,13 @@ export function DiscountCodeForm({ value, onChange, onApply, error, disabled = f
     >
       <TitleBar title="ورود دستی کد تخفیف" subtitle="کد تخفیف دیگری دارید؟ اینجا وارد کنید." divider />
 
-      <Flex align="flex-start" gap="4" w="full">
+      <Flex align="start" gap="4" w="full">
         <Field.Root flex="1" invalid={Boolean(error)}>
           <Input
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="کد تخفیف را وارد کنید..."
-            textAlign="right"
+            textAlign="start"
             bg="bg.panel"
             disabled={disabled}
           />

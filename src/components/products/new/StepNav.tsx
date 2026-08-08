@@ -82,7 +82,7 @@ export function StepNav({
             disabled={disabled.includes(step.id)}
             w={isHorizontal ? 'auto' : 'full'}
             flexShrink={isHorizontal ? 0 : undefined}
-            justifyContent="flex-end"
+            justifyContent="end"
             gap="2.5"
             px="4"
             h="10"

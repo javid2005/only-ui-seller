@@ -1,24 +1,24 @@
 # Vitrina — Handoff
-> 2026-08-06 — Session Close
+> 2026-08-08
 
 ## الان
-✅ **چهار صفحهٔ promotions complete + committed:**
-- `/promotions/ads` (b8d9734) — کارت‌های پروموشن
-- `/promotions/free-shipping` (49377d9) — مناطق جغرافیایی + تخفیف
-- `/promotions/bulk-sms` (aebcbfa) — جدول کمپین‌های SMS
-- `/promotions/abandoned-carts` (b8d9734) — recovery UI
+صفحهٔ `/promotions/codes` ساخته شد (جدول + کارت موبایل + منوی ردیف)، و بعد از کشف باگ
+چیدمان RTL در آن، کل کلاس باگ از ریشه بسته شد — **همه uncommitted**.
 
-**Documentation:**
-- ✅ `073d15c` — README routes table sync
-- ✅ CLAUDE.md — RTL logical properties clarification (uncommitted, ready)
-
-**آخرین commits:**
-- `b8d9734` — abandoned carts page
-- `073d15c` — documentation update
-- `aebcbfa` — bulk SMS page
-- `49377d9` — three promotions pages
-- `e8368c3` — campaigns + Jalali DatePicker
+**دو repo تغییر کرده‌اند و باید جدا commit شوند:**
+- `Vitrina` — ۱۳۱ فایل
+- `~/Documents/GitHub/Tools/dev-agents` — ۷ فایل (۵۵۹ خط)، `dev-engine` گلوبال است پس روی همهٔ پروژه‌ها اثر دارد
 
 ## بعدی
-- Commit CLAUDE.md RTL improvements
-- Sidebar `/promotions/codes` (planned برای session بعد)
+commit دو repo (اول dev-agents، بعد Vitrina).
+
+## آنچه این session عوض شد
+- **codemod:** `flex-start`/`flex-end` → `start`/`end` در ۹۶ فایل (۳۳۳ مورد) + `textAlign` فیزیکی → semantic (۱۶۷ مورد). رندر یکسان، یک idiom.
+- **dev-engine نو:** rule `one-align-idiom` · `containers` + anchor `data-layout="Comp.name"` · subcommand `layout-derive` (سمت را از `x+width` حساب می‌کند) · `verify-render` anchor-aware · `--set` با `null` حذف می‌کند.
+- **hook `rtl_gate`** روی `Stop` — با error چیدمانی turn بسته نمی‌شود.
+- **۸ snapshot مردهٔ `childOrder` حذف شد** (اسم خیالی یا نام‌های یکسان = صفر قدرت تشخیص).
+- `AdChannelCard` snapshot `textAlign: end` → `start` (artifact باگ جهت‌کورِ قدیمی).
+
+## باگ‌های open
+- `PromotionCard` و `AdChannelCard`: `layoutMode=HORIZONTAL` بدون facts محور → warning. نیاز به `nodeId` + `layout-derive`.
+- `DiscountCodesTable.actionsCell`: `justify=end` تنها مقدار دستی‌ماندهٔ snapshot — از هندسهٔ فیگما استخراج‌شدنی نیست (سلول طرح دقیقاً اندازهٔ دو دکمه است). دلیل در `_note` ثبت شده.

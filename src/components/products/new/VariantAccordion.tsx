@@ -128,7 +128,7 @@ export function VariantAccordion({ variant, index, otherTitles, onChange, onTogg
         w="full"
         cursor="pointer"
       >
-        <Flex direction="column" align="flex-start" gap="0.5" flex="1" minW="0">
+        <Flex direction="column" align="start" gap="0.5" flex="1" minW="0">
           <Flex align="center" gap="4">
             <Text fontSize="sm" fontWeight="semibold" color="fg" whiteSpace="nowrap">
               تنوع {toPersianDigits(index + 1)}
@@ -139,7 +139,7 @@ export function VariantAccordion({ variant, index, otherTitles, onChange, onTogg
               </Badge>
             )}
           </Flex>
-          <Text fontSize="xs" color="fg.muted" textAlign="right" w="full">
+          <Text fontSize="xs" color="fg.muted" textAlign="start" w="full">
             عنوان و مقدار را از لیست پیشنهادی انتخاب و یا دستی وارد نمایید
           </Text>
         </Flex>
@@ -155,7 +155,7 @@ export function VariantAccordion({ variant, index, otherTitles, onChange, onTogg
               Fields — دسکتاپ (sm+): ردیف افقی [عنوان راست · مقدار · دکمه‌ها چپ‌ترین]، vertical-align top
               موبایل (<sm): عنوان/مقدار ستونی و full-width؛ دکمه‌ها ردیف جدا زیر فیلدها، چپ‌چین
             */}
-            <Flex direction={{ base: 'column', sm: 'row' }} gap="4" align={{ base: 'stretch', sm: 'flex-start' }} justify="flex-start" w="full">
+            <Flex direction={{ base: 'column', sm: 'row' }} gap="4" align={{ base: 'stretch', sm: 'start' }} justify="start" w="full">
               <Field.Root flex="1" w={{ base: 'full', sm: 'auto' }} invalid={isDuplicateTitle}>
                 <Field.Label fontSize="sm" fontWeight="semibold">عنوان</Field.Label>
                 <SuggestCombobox
@@ -182,7 +182,7 @@ export function VariantAccordion({ variant, index, otherTitles, onChange, onTogg
                 />
               </Field.Root>
               {/* دکمه‌ها — sm+: کنار فیلدها (چپ‌ترین) · موبایل: ردیف جدا زیر فیلدها، چپ‌چین */}
-              <Flex gap="4" justify={{ base: 'flex-end', sm: 'flex-start' }} w={{ base: 'full', sm: 'auto' }} flexShrink={0}>
+              <Flex gap="4" justify={{ base: 'end', sm: 'start' }} w={{ base: 'full', sm: 'auto' }} flexShrink={0}>
                 {/* برچسب مخفی هم‌ارتفاعِ Field.Label — فقط sm+ لازم است تا دکمه با ردیف input هم‌تراز شود */}
                 <Flex direction="column" gap="1.5">
                   <Text fontSize="sm" fontWeight="semibold" visibility="hidden" aria-hidden display={{ base: 'none', sm: 'block' }}>‌</Text>
@@ -213,7 +213,7 @@ export function VariantAccordion({ variant, index, otherTitles, onChange, onTogg
 
             {/* Values — راست‌چین (RTL) · ترتیب درج = ترتیب DOM (بدون reverse) */}
             {variant.values.length > 0 && (
-              <Flex gap="2" wrap="wrap" justify="flex-start" w="full">
+              <Flex gap="2" wrap="wrap" justify="start" w="full">
                 {variant.values.map((v) => (
                   <Badge key={v.id} colorPalette="gray" variant="subtle" size="md" rounded="l2" gap="1.5">
                     {v.label}

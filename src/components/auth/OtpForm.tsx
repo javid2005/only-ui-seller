@@ -71,13 +71,13 @@ export function OtpForm({ phone, submitLabel, editHref, onSubmit, onResend, load
   }
 
   return (
-    <Flex direction="column" gap="4" w="full" align="flex-end">
+    <Flex direction="column" gap="4" w="full" align="end">
       {/* راست‌ترین FIRST: متن توضیح (x=78) → دکمهٔ ویرایش LAST (x=0) */}
       <Flex
         direction={{ base: 'column', sm: 'row' }}
         gap="2"
         align="center"
-        justify="flex-end"
+        justify="end"
         w="full"
         wrap="wrap"
       >

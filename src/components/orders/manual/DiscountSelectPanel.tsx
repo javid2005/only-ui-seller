@@ -13,7 +13,7 @@ import { formatToman, type ManualDiscount } from './manualOrderData'
  *   ردیف اطلاعات: بج (x=287، راست‌ترین) → | → جزئیات → | → کد (x=6، چپ‌ترین)
  *
  * زیر sm: ItemControl ستونی می‌شود — گروهِ اندیکاتور+محتوا بالا (راست‌چین، طبق قانونِ ستونیِ
- * RTL: align="flex-start"=راست) و مبلغِ تخفیف زیرش، چپ‌چین (align="flex-end"=چپ) تا روی
+ * RTL: align="start"=راست) و مبلغِ تخفیف زیرش، چپ‌چین (align="end"=چپ) تا روی
  * صفحه‌های باریک به‌جای کشیده‌شدن در کل ارتفاعِ کارت، ردیفِ مستقلِ خودش را بگیرد.
  */
 function DiscountCard({ discount }: { discount: ManualDiscount }) {
@@ -42,10 +42,10 @@ function DiscountCard({ discount }: { discount: ManualDiscount }) {
         justifyContent="space-between"
         w="full"
       >
-        <Flex align="center" gap="4" w={{ base: 'full', sm: 'auto' }} alignSelf={{ base: 'flex-start', sm: 'center' }}>
+        <Flex align="center" gap="4" w={{ base: 'full', sm: 'auto' }} alignSelf={{ base: 'start', sm: 'center' }}>
           <RadioCard.ItemIndicator colorPalette="teal" flexShrink={0} />
 
-          <RadioCard.ItemContent gap="2" minW="0" alignItems="flex-start" flex="1">
+          <RadioCard.ItemContent gap="2" minW="0" alignItems="start" flex="1">
             <Flex align="center" gap="2">
               <Tag size={16} />
               <RadioCard.ItemText fontSize="sm" fontWeight="semibold" color="fg">{discount.title}</RadioCard.ItemText>
@@ -65,7 +65,7 @@ function DiscountCard({ discount }: { discount: ManualDiscount }) {
           fontWeight="semibold"
           color="fg.success"
           flexShrink={0}
-          alignSelf={{ base: 'flex-end', sm: 'center' }}
+          alignSelf={{ base: 'end', sm: 'center' }}
         >
           {formatToman(discount.amount)} ت
         </Text>

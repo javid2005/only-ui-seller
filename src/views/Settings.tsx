@@ -180,7 +180,7 @@ function StoreHeader() {
       </Box>
 
       {/* Data row: thumbnail | store info (+ switch on mobile) | switch (desktop) */}
-      <Flex gap={{ base: '3', sm: '6' }} alignItems="flex-start" px={{ base: '3', sm: '6' }} w="full">
+      <Flex gap={{ base: '3', sm: '6' }} alignItems="start" px={{ base: '3', sm: '6' }} w="full">
 
         {/* Thumbnail — FIRST in DOM = rightmost in RTL */}
         <Box
@@ -208,7 +208,7 @@ function StoreHeader() {
           flex="1"
           direction="column"
           gap="1"
-          alignItems="flex-start"
+          alignItems="start"
           pt={{ base: '10', sm: '14' }}
           minW="0"
         >
@@ -314,7 +314,7 @@ export function Settings() {
   const isCompact = useCompactMode()
 
   return (
-    <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+    <Flex direction="column" gap="4" alignItems="end" w="full">
 
       {/* Page header: breadcrumb + title */}
       <Header
@@ -344,7 +344,7 @@ export function Settings() {
           maxW="960px"
           w="full"
           mx="auto"
-          alignItems="flex-end"
+          alignItems="end"
         >
           {/* Store profile header */}
           <StoreHeader />
@@ -355,7 +355,7 @@ export function Settings() {
               key={section.title}
               direction="column"
               gap="6"
-              alignItems="flex-end"
+              alignItems="end"
               w="full"
               flexShrink={0}
             >

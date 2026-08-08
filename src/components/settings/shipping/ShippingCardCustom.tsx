@@ -105,7 +105,7 @@ export function ShippingCardCustom({
             <Flex
               key={i}
               direction={{ base: 'column', sm: 'row' }}
-              align={{ base: 'flex-start', sm: 'center' }}
+              align={{ base: 'start', sm: 'center' }}
               gap={{ base: '1', sm: '4' }}
               w="full"
             >
@@ -166,8 +166,8 @@ export function ShippingCardCustom({
           </Text>
         </Flex>
 
-        {/* Spacer + Ellipsis — LAST = leftmost (justify flex-end pushes icon to far left) */}
-        <Flex flex="1" minW="0" justify="flex-end" align="center">
+        {/* Spacer + Ellipsis — LAST = leftmost (justify end pushes icon to far left) */}
+        <Flex flex="1" minW="0" justify="end" align="center">
           <Menu.Root>
             <Menu.Trigger asChild>
               <IconButton

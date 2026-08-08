@@ -47,7 +47,7 @@ export function AbandonedCartDetailsDrawer({ cart, open, onClose }: AbandonedCar
               <>
                 <Drawer.Header
                   h="17"
-                  display="flex" alignItems="center" justifyContent="flex-start"
+                  display="flex" alignItems="center" justifyContent="start"
                   px="6" pt="6" pb="4"
                 >
                   <Text fontSize="lg" fontWeight="semibold" color="fg">جزئیات سبد {cart.id}</Text>
@@ -64,15 +64,15 @@ export function AbandonedCartDetailsDrawer({ cart, open, onClose }: AbandonedCar
                 </Drawer.CloseTrigger>
 
                 <Drawer.Body px="6" py="4" overflowY="auto">
-                  <Flex direction="column" gap="10" align="flex-start" w="full">
+                  <Flex direction="column" gap="10" align="start" w="full">
 
                     {/* مشتری + کارت اطلاعات */}
-                    <Flex direction="column" gap="4" align="flex-start" w="full">
-                      <HStack w="full" gap="2" justify="flex-start">
+                    <Flex direction="column" gap="4" align="start" w="full">
+                      <HStack w="full" gap="2" justify="start">
                         <Avatar.Root size="md" bg="brand.solid" color="brand.contrast" flexShrink={0}>
                           <Avatar.Fallback name={cart.customerName} />
                         </Avatar.Root>
-                        <Stack gap="1" align="flex-start">
+                        <Stack gap="1" align="start">
                           <Text fontSize="sm" fontWeight="semibold" color="fg">{cart.customerName}</Text>
                           <Text fontSize="xs" color="fg.muted">{cart.customerPhone}</Text>
                         </Stack>
@@ -97,16 +97,16 @@ export function AbandonedCartDetailsDrawer({ cart, open, onClose }: AbandonedCar
                     </Flex>
 
                     {/* اقلام سفارش */}
-                    <Flex direction="column" gap="4" align="flex-start" w="full">
+                    <Flex direction="column" gap="4" align="start" w="full">
                       <Text fontSize="md" fontWeight="semibold" color="fg.subtle">اقلام سفارش</Text>
                       <Flex direction="column" gap="2" w="full">
                         {cart.items.map((item, i) => (
                           <Box key={i} w="full">
-                            <HStack w="full" gap="4" justify="flex-start">
+                            <HStack w="full" gap="4" justify="start">
                               <Box boxSize="8" bg="bg.muted" borderWidth="1px" borderColor="border.muted" rounded="sm" overflow="hidden" flexShrink={0}>
                                 <Image src={item.image} alt={item.name} boxSize="full" objectFit="cover" />
                               </Box>
-                              <Stack flex="1" gap="1" align="flex-start" minW="0">
+                              <Stack flex="1" gap="1" align="start" minW="0">
                                 <Text fontSize="sm" fontWeight="semibold" color="fg" truncate>{item.name}</Text>
                                 <Badge size="xs" colorPalette="gray" variant="subtle">{toPersianDigits(item.qty)} عدد</Badge>
                               </Stack>

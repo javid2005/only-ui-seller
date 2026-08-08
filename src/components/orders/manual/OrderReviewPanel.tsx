@@ -8,7 +8,7 @@ import type { ManualCustomer, ManualProduct, SelectedProductLine, ShippingMethod
 /** برچسبِ زیربخش (مشتری/اقلام سفارش/روش ارسال) — Figma: fg.subtle، md، semibold، بدون divider */
 function SubLabel({ title }: { title: string }) {
   return (
-    <Text fontSize="md" fontWeight="semibold" color="fg.subtle" w="full" textAlign="right">
+    <Text fontSize="md" fontWeight="semibold" color="fg.subtle" w="full" textAlign="start">
       {title}
     </Text>
   )
@@ -44,22 +44,22 @@ export function OrderReviewPanel({ customer, lines, products, shippingMethod }: 
       />
 
       {/* مشتری — RTL: آواتار (راست) → نام/شماره (چپ)، هم‌الگو با CustomerCard.
-          align="flex-start" روی column flex در RTL = راست (نه flex-end — طبق قاعدهٔ پروژه). */}
-      <Flex direction="column" gap="2" w="full" align="flex-start">
+          align="start" روی column flex در RTL = راست (نه end — طبق قاعدهٔ پروژه). */}
+      <Flex direction="column" gap="2" w="full" align="start">
         <SubLabel title="مشتری" />
         <Flex align="center" gap="2">
           <Avatar.Root size="md" bg="brand.solid" color="brand.contrast" flexShrink={0}>
             <Avatar.Fallback name={customer.name} />
           </Avatar.Root>
-          <Flex direction="column" gap="1" align="flex-start">
-            <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="right">{customer.name}</Text>
-            <Text fontSize="xs" color="fg.muted" w="full" textAlign="right">{toPersianDigits(customer.phone)}</Text>
+          <Flex direction="column" gap="1" align="start">
+            <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="start">{customer.name}</Text>
+            <Text fontSize="xs" color="fg.muted" w="full" textAlign="start">{toPersianDigits(customer.phone)}</Text>
           </Flex>
         </Flex>
       </Flex>
 
       {/* اقلام سفارش */}
-      <Flex direction="column" gap="2" w="full" align="flex-start">
+      <Flex direction="column" gap="2" w="full" align="start">
         <SubLabel title="اقلام سفارش" />
         <Flex direction="column" gap="2" w="full">
           {lines.map((line) => {
@@ -71,14 +71,14 @@ export function OrderReviewPanel({ customer, lines, products, shippingMethod }: 
       </Flex>
 
       {/* روش ارسال — RTL: آیکن کامیون+عنوان (راست) → بج‌های فاصله/پیش‌کرایه (چپ)، طبق screenshot طرح */}
-      <Flex direction="column" gap="2" w="full" align="flex-start">
+      <Flex direction="column" gap="2" w="full" align="start">
         <SubLabel title="روش ارسال" />
         <Flex align="center" justify="space-between" w="full">
           <Flex align="center" gap="4">
             <Truck size={24} color="var(--chakra-colors-brand-solid)" />
-            <Flex direction="column" gap="1" align="flex-start">
-              <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="right">{shippingMethod.title}</Text>
-              <Text fontSize="xs" color="fg.muted" w="full" textAlign="right">{shippingMethod.duration}</Text>
+            <Flex direction="column" gap="1" align="start">
+              <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="start">{shippingMethod.title}</Text>
+              <Text fontSize="xs" color="fg.muted" w="full" textAlign="start">{shippingMethod.duration}</Text>
             </Flex>
           </Flex>
 

@@ -51,7 +51,7 @@ export function BulkSms() {
   const filtered = BULK_SMS_HISTORY.filter((item) => (tab === 'archived' ? item.archived : !item.archived))
 
   return (
-    <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+    <Flex direction="column" gap="4" alignItems="end" w="full">
       <Header
         title="ارسال پیامک انبوه"
         breadcrumbs={[
@@ -69,7 +69,7 @@ export function BulkSms() {
         <Flex direction="column" gap="10" alignItems="center" maxW="960px" w="full" mx="auto">
 
           {/* نمای کلی */}
-          <Flex direction="column" gap="6" alignItems="flex-end" w="full">
+          <Flex direction="column" gap="6" alignItems="end" w="full">
             <TitleBar
               title="نمای کلی"
               subtitle="ارسال پیامک تبلیغاتی، اطلاع‌رسانی یا کد تخفیف به مشتریان فروشگاه"
@@ -84,7 +84,7 @@ export function BulkSms() {
           </Flex>
 
           {/* تاریخچه ارسال ها */}
-          <Flex direction="column" gap="6" alignItems="flex-end" w="full">
+          <Flex direction="column" gap="6" alignItems="end" w="full">
             <TitleBar title="تاریخچه ارسال ها" size="xl" divider />
 
             <SegmentGroup.Root

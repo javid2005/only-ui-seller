@@ -57,7 +57,7 @@ export function ForgotNewPasswordView() {
           w="full"
         />
         {passwordError && (
-          <Field.ErrorText display="block" fontSize="xs" textAlign="right" w="full">{passwordError}</Field.ErrorText>
+          <Field.ErrorText display="block" fontSize="xs" textAlign="start" w="full">{passwordError}</Field.ErrorText>
         )}
       </Field.Root>
       <Field.Root invalid={!!confirmError} w="full">
@@ -69,9 +69,9 @@ export function ForgotNewPasswordView() {
           w="full"
         />
         {confirmError ? (
-          <Field.ErrorText display="block" fontSize="xs" textAlign="right" w="full">{confirmError}</Field.ErrorText>
+          <Field.ErrorText display="block" fontSize="xs" textAlign="start" w="full">{confirmError}</Field.ErrorText>
         ) : (
-          <Field.HelperText display="block" fontSize="xs" textAlign="right" w="full">
+          <Field.HelperText display="block" fontSize="xs" textAlign="start" w="full">
             رمز عبور باید حداقل ۶ کاراکتر باشد.
           </Field.HelperText>
         )}

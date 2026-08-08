@@ -31,7 +31,7 @@ export function PromotionSmsCard({ item }: PromotionSmsCardProps) {
         <BulkSmsRowActionsMenu item={item} size="sm" />
       </Flex>
 
-      <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" px="4" pb="4">
+      <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" px="4" pb="4">
         {item.message}
       </Text>
 

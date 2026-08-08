@@ -38,7 +38,7 @@ export function OrderSummaryCard() {
     >
       {/* عنوان — fg مشکی، کل کارت یکدست teal روشن (مطابق Figma) */}
       <Box px="6" pt="5" pb="4">
-        <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="right">
+        <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="start">
           خلاصه سفارش
         </Text>
       </Box>

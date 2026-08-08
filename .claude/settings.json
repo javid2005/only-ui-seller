@@ -78,7 +78,8 @@
       { "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/track_event.py\"" } ] }
     ],
     "Stop": [
-      { "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/track_event.py\"" } ] }
+      { "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/track_event.py\"" } ] },
+      { "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/rtl_gate.py\"" } ] }
     ],
     "Notification": [
       { "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/track_event.py\"" } ] }

@@ -20,9 +20,9 @@ function InfoCard({ label, children, action }: { label: string; children: React.
 
 function AddressRow({ label, value }: { label: string; value: string }) {
   return (
-    <Flex align="flex-start" justify="space-between" gap="4" w="full">
+    <Flex align="start" justify="space-between" gap="4" w="full">
       <Text fontSize="sm" color="fg.muted" flexShrink={0}>{label}</Text>
-      <Text fontSize="sm" fontWeight="medium" color="fg" textAlign="left">{value}</Text>
+      <Text fontSize="sm" fontWeight="medium" color="fg" textAlign="end">{value}</Text>
     </Flex>
   )
 }

@@ -93,7 +93,7 @@ export function TitleBar({
         <Flex
           flex="1"
           direction={{ base: stackMobile ? 'column' : 'row', sm: 'row' }}
-          align={{ base: stackMobile ? 'flex-start' : 'center', sm: 'center' }}
+          align={{ base: stackMobile ? 'start' : 'center', sm: 'center' }}
           gap={{ base: stackMobile ? '2' : '3', sm: '3' }}
           minW="0"
         >
@@ -111,11 +111,11 @@ export function TitleBar({
           )}
 
           {/* Content: title + badge + subtitle */}
-          <Flex flex="1" direction="column" gap="0.5" minW="0" w="full" alignItems="flex-start">
+          <Flex flex="1" direction="column" gap="0.5" minW="0" w="full" alignItems="start">
             {/* Title row — زیر sm (وقتی stackMobile) عمودی می‌شه: عنوان بالا، badge زیرش */}
             <Flex
               direction={{ base: stackMobile ? 'column' : 'row', sm: 'row' }}
-              align={{ base: stackMobile ? 'flex-start' : 'center', sm: 'center' }}
+              align={{ base: stackMobile ? 'start' : 'center', sm: 'center' }}
               gap={{ base: stackMobile ? '1.5' : '3', sm: '3' }}
               w="full"
             >

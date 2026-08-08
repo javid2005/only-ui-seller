@@ -168,7 +168,7 @@ export function ThemeSettings() {
                   md+: row (171px thumb beside info+buttons)               */}
               <Flex
                 direction="row"
-                align={{ base: 'flex-start', md: 'center' }}
+                align={{ base: 'start', md: 'center' }}
                 gap={{ base: '3', md: '2' }}
                 flex={{ md: '1' }}
                 minW="0"
@@ -195,14 +195,14 @@ export function ThemeSettings() {
                 <Flex
                   flex="1"
                   direction={{ base: 'column', md: 'row' }}
-                  align={{ base: 'flex-start', md: 'center' }}
+                  align={{ base: 'start', md: 'center' }}
                   justify={{ md: 'space-between' }}
                   px={{ md: '4' }}
                   gap={{ base: '2', md: '4' }}
                   minW="0"
                 >
                   {/* Theme info */}
-                  <Flex direction="column" gap="2" flex={{ md: '1' }} minW="0" align="flex-start">
+                  <Flex direction="column" gap="2" flex={{ md: '1' }} minW="0" align="start">
                     <Text fontSize="md" fontWeight="semibold" color="fg">
                       {selectedTheme.name}
                     </Text>

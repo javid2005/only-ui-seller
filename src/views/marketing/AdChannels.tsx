@@ -99,7 +99,7 @@ export function AdChannels() {
   }
 
   return (
-    <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+    <Flex direction="column" gap="4" alignItems="end" w="full">
       <Header
         title="کانال‌های تبلیغاتی"
         breadcrumbs={[{ label: 'داشبورد', href: '/' }, { label: 'کانال‌های تبلیغاتی' }]}
@@ -108,7 +108,7 @@ export function AdChannels() {
       {/* Panel spans full width — One Column Center: only the inner Flex is capped/centered
           at 960px (پترن پروژه: Reviews.tsx, ThemeSettings.tsx, SalesSettings.tsx, Badges.tsx) */}
       <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" p="6" w="full">
-        <Flex direction="column" gap="6" alignItems="flex-end" maxW="960px" w="full" mx="auto">
+        <Flex direction="column" gap="6" alignItems="end" maxW="960px" w="full" mx="auto">
           <TitleBar
             title="مدیریت کانال ها"
             subtitle="با فعال‌سازی هر کانال، دامنه دیده‌شدن محصولاتتان را گسترش دهید."
@@ -116,7 +116,7 @@ export function AdChannels() {
             divider
           />
 
-          <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+          <Flex direction="column" gap="4" alignItems="end" w="full">
             {channels.map((c) => (
               <AdChannelCard
                 key={c.id}

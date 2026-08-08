@@ -128,7 +128,7 @@ export function BannerCard({
           </Field.Label>
           <Input
             placeholder="https://example.com"
-            textAlign="left"
+            textAlign="end"
             dir="ltr"
             value={link}
             onChange={e => onLinkChange(e.target.value)}

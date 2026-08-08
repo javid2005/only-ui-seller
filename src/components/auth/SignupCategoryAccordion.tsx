@@ -39,7 +39,7 @@ export function SignupCategoryAccordion({
       >
         <img src={category.icon.src} alt="" width={32} height={32} style={{ flexShrink: 0 }} />
 
-        <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" truncate minW="0" flex="1">
+        <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" truncate minW="0" flex="1">
           {category.name}
         </Text>
 
@@ -82,10 +82,10 @@ export function SignupCategoryAccordion({
         <Collapsible.Content>
           <Box bg="bg.subtle" px="4" pb="4">
             <Separator borderColor="border" mb="3" />
-            <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="right" mb="2" w="full">
+            <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" mb="2" w="full">
               این دسته بندی شامل زیردسته های زیر می باشد:
             </Text>
-            <Wrap justify="flex-start" gap="2">
+            <Wrap justify="start" gap="2">
               {category.subcategories.map((sub) => (
                 <Badge key={sub} variant="outline" colorPalette="gray" size="lg" fontWeight="normal">
                   {sub}

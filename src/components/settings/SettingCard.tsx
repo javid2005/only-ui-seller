@@ -94,7 +94,7 @@ export function SettingCard({
         flex="1"
         direction="column"
         gap={{ base: '2', sm: '4' }}
-        alignItems="flex-start"
+        alignItems="start"
         minW="0"
         position="relative"
         zIndex={1}
@@ -103,7 +103,7 @@ export function SettingCard({
           fontSize={{ base: 'md', sm: 'lg' }}
           fontWeight="semibold"
           color={isDisabled ? 'fg.subtle' : 'fg'}
-          textAlign="right"
+          textAlign="start"
           overflow="hidden"
           textOverflow="ellipsis"
           whiteSpace="nowrap"
@@ -114,7 +114,7 @@ export function SettingCard({
         <Text
           fontSize="sm"
           color={isDisabled ? 'fg.subtle' : 'fg.muted'}
-          textAlign="right"
+          textAlign="start"
           w="full"
         >
           {description}

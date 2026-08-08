@@ -53,8 +53,8 @@ export function UserMenu({
                     : <Avatar.Fallback>{userName.charAt(0)}</Avatar.Fallback>
                   }
                 </Avatar.Root>
-                {/* align="flex-start" = RIGHT side in RTL ✓ */}
-                <Flex direction="column" align="flex-start" flex="1" gap="1" minW="0">
+                {/* align="start" = RIGHT side in RTL ✓ */}
+                <Flex direction="column" align="start" flex="1" gap="1" minW="0">
                   <Text fontSize="sm" fontWeight="semibold" color="fg" whiteSpace="nowrap">
                     {userName}
                   </Text>
@@ -121,7 +121,7 @@ export function UserMenu({
               </Box>
 
               {/* Label: right next to icon — no flex-1 so it hugs the icon ✓ */}
-              <Text fontSize="sm" color="fg" flex="1" textAlign="right">تم سایت</Text>
+              <Text fontSize="sm" color="fg" flex="1" textAlign="start">تم سایت</Text>
 
               {/* Switch visual: LAST = leftmost in RTL ✓
                   All colors are semantic tokens — no hardcoded values */}
@@ -136,7 +136,7 @@ export function UserMenu({
                 bg={isDark ? 'brand.solid' : 'bg.emphasized'}
                 borderRadius="full"
                 px="0.5"
-                justifyContent={isDark ? 'flex-end' : 'flex-start'}
+                justifyContent={isDark ? 'end' : 'start'}
                 transition="background 0.2s"
               >
                 <Box

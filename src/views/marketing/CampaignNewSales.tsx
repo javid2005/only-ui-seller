@@ -100,7 +100,7 @@ export function CampaignNewSales() {
   }
 
   return (
-    <Flex direction="column" gap="4" alignItems="flex-start" w="full">
+    <Flex direction="column" gap="4" alignItems="start" w="full">
       <Header
         title="ایجاد کمپین جدید"
         breadcrumbs={[
@@ -126,8 +126,8 @@ export function CampaignNewSales() {
         <Flex
           direction={{ base: 'column', sm: 'row' }}
           gap="4"
-          align="flex-start"
-          justify="flex-start"
+          align="start"
+          justify="start"
           w="full"
           maxW="670px"
           bg="bg.subtle"
@@ -140,20 +140,20 @@ export function CampaignNewSales() {
           <Flex bg={salesType.iconBg} color={salesType.iconColor} rounded="lg" p="2" flexShrink={0} align="center" justify="center">
             <Handshake size={24} />
           </Flex>
-          <Flex direction="column" gap="1" flex="1" minW="0" alignItems="flex-start">
-            <Flex gap="4" align="center" justify="flex-start" w="full">
+          <Flex direction="column" gap="1" flex="1" minW="0" alignItems="start">
+            <Flex gap="4" align="center" justify="start" w="full">
               <Text fontSize="md" fontWeight="semibold" color="fg">{salesType.title}</Text>
               <Badge colorPalette={salesType.badgeColor} variant="subtle" size="sm">{salesType.badgeLabel}</Badge>
             </Flex>
-            <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">{salesType.description}</Text>
+            <Text fontSize="sm" color="fg.muted" textAlign="start" w="full">{salesType.description}</Text>
           </Flex>
         </Flex>
 
         {/* بخش ۱ — اطلاعات پایه */}
-        <Flex direction="column" gap="6" alignItems="flex-start" w="full" maxW="670px">
+        <Flex direction="column" gap="6" alignItems="start" w="full" maxW="670px">
           <TitleBar title="اطلاعات پایه" subtitle="اطلاعات پایه کمپین را وارد کنید." size="lg" divider />
 
-          <Flex direction="column" gap="4" alignItems="flex-start" w="full">
+          <Flex direction="column" gap="4" alignItems="start" w="full">
             {/* محصول */}
             <Field.Root required w="full">
               <Field.Label fontSize="sm" fontWeight="semibold" color="fg">
@@ -179,11 +179,11 @@ export function CampaignNewSales() {
                     <Flex boxSize="12" flexShrink={0} bg="bg.muted" borderWidth="1px" borderColor="border.muted" rounded="md" align="center" justify="center">
                       <Package size={20} color="var(--chakra-colors-fg-subtle)" />
                     </Flex>
-                    <Flex direction="column" gap="2" flex="1" minW="0" alignItems="flex-start">
-                      <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="right" lineClamp={1}>
+                    <Flex direction="column" gap="2" flex="1" minW="0" alignItems="start">
+                      <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="start" lineClamp={1}>
                         {product.name}
                       </Text>
-                      <Flex gap="2" align="center" justify="flex-start">
+                      <Flex gap="2" align="center" justify="start">
                         <Text fontSize="xs" color="fg.muted">{product.sku}</Text>
                         <Text fontSize="xs" color="fg.muted">•</Text>
                         <Text fontSize="xs" color="fg.muted" whiteSpace="nowrap">
@@ -253,7 +253,7 @@ export function CampaignNewSales() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="مثال: کمپین تابستانه کفش ورزشی"
-                textAlign="right"
+                textAlign="start"
               />
             </Field.Root>
 
@@ -266,7 +266,7 @@ export function CampaignNewSales() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="توضیحات کمپین"
-                textAlign="right"
+                textAlign="start"
                 minH="30"
               />
               <Field.HelperText>
@@ -302,7 +302,7 @@ export function CampaignNewSales() {
         </Flex>
 
         {/* بخش ۲ — کارمزد فروش */}
-        <Flex direction="column" gap="6" alignItems="flex-start" w="full" maxW="670px">
+        <Flex direction="column" gap="6" alignItems="start" w="full" maxW="670px">
           <TitleBar
             title="کارمزد فروش"
             subtitle="با وارد کردن مقدار کارمزد پیش نمایش های مالی فعال بروزرسانی خواهند شد."
@@ -320,7 +320,7 @@ export function CampaignNewSales() {
         </Flex>
 
         {/* پیش نمایش مالی */}
-        <Flex direction="column" gap="2" alignItems="flex-start" w="full" maxW="670px">
+        <Flex direction="column" gap="2" alignItems="start" w="full" maxW="670px">
           <TitleBar title="پیش نمایش مالی" size="md" />
           <Flex direction={{ base: 'column', sm: 'row' }} gap="4" w="full">
             {/* جای قیمت محصول و سهم فروشنده به درخواست کاربر جابه‌جا شد (خلاف ترتیب اولیه Figma) —
@@ -332,7 +332,7 @@ export function CampaignNewSales() {
         </Flex>
 
         {/* بخش ۳ — بازه زمانی */}
-        <Flex direction="column" gap="6" alignItems="flex-start" w="full" maxW="670px">
+        <Flex direction="column" gap="6" alignItems="start" w="full" maxW="670px">
           <TitleBar title="بازه زمانی" subtitle="بازه زمانی فعال شدن کمپین را انتخاب نمایید." size="lg" divider />
           {/* تاریخ شروع FIRST = راست‌ترین — زیر sm: بالا (تاریخ پایان زیرش) */}
           <Flex direction={{ base: 'column', sm: 'row' }} gap="4" w="full">

@@ -54,8 +54,8 @@ export function BulkSmsHistoryTable({ items }: BulkSmsHistoryTableProps) {
               </Table.Cell>
 
               <Table.Cell>
-                {/* justify="flex-end" چون RTL: flex-start=راست، flex-end=چپ — می‌خواهیم آیکون‌ها به لبه چپ ستون بچسبند */}
-                <Flex gap="2" justify="flex-end">
+                {/* justify="end" چون RTL: start=راست، end=چپ — می‌خواهیم آیکون‌ها به لبه چپ ستون بچسبند */}
+                <Flex gap="2" justify="end">
                   {item.status === 'sent' && (
                     <IconButton
                       aria-label="ارسال مجدد" size="sm"

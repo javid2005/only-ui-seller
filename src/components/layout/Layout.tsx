@@ -44,7 +44,7 @@ export function Layout({ children }: { children: ReactNode }) {
         w="full"
         mx="auto"
         transition="max-width 0.2s ease"
-        alignItems="flex-start"
+        alignItems="start"
       >
 
         {/* Sidebar: FIRST → rightmost in RTL ✓ — hidden in compact/mobile */}

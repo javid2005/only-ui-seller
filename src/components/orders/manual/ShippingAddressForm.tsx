@@ -141,7 +141,7 @@ export function ShippingAddressForm({ value, onChange, attemptedSubmit = false }
               value={value.postal}
               onChange={(e) => patch('postal', e.target.value)}
               dir="ltr"
-              textAlign="right"
+              textAlign="start"
               type="tel"
             />
             {missing('postal') && <Field.ErrorText fontSize="xs">{REQUIRED_MSG}</Field.ErrorText>}

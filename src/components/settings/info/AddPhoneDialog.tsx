@@ -114,7 +114,7 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
                   value={number}
                   onChange={(e) => setNumber(e.target.value)}
                   dir="ltr"
-                  textAlign="right"
+                  textAlign="start"
                   type="tel"
                 />
               </Field.Root>

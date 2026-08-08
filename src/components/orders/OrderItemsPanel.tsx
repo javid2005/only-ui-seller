@@ -21,7 +21,7 @@ function ItemRow({ index, name, attrs, qty, total, unit }: {
       </Flex>
 
       {/* RTL چپ: قیمت کل + فی واحد */}
-      <Box textAlign="left" flexShrink={0}>
+      <Box textAlign="end" flexShrink={0}>
         <Text fontSize="sm" fontWeight="semibold" color="fg" whiteSpace="nowrap">{`${total} ${CURRENCY}`}</Text>
         <Text fontSize="xs" color="fg.muted" whiteSpace="nowrap">{`فی: ${unit} ${CURRENCY}`}</Text>
       </Box>

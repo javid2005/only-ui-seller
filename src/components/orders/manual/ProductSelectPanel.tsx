@@ -44,10 +44,10 @@ function ProductCard({ product, onAdd, disabled }: { product: ManualProduct; onA
 
         {/* عنوان + بج‌ها — SECOND */}
         <Flex direction="column" gap="2" flex="1" minW="0">
-          <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="right" lineClamp={1}>
+          <Text fontSize="sm" fontWeight="semibold" color="fg" w="full" textAlign="start" lineClamp={1}>
             {product.name}
           </Text>
-          <Flex align="center" justify="flex-start" gap="2" flexWrap="wrap" w="full">
+          <Flex align="center" justify="start" gap="2" flexWrap="wrap" w="full">
             <Text fontSize="xs" color="fg.muted" whiteSpace="nowrap">{product.sku}</Text>
             <Badge size="xs" colorPalette="purple" variant="subtle">{`موجودی: ${toPersianDigits(product.inventory)}`}</Badge>
             {product.hasVariety && (
@@ -57,12 +57,12 @@ function ProductCard({ product, onAdd, disabled }: { product: ManualProduct; onA
         </Flex>
       </Flex>
 
-      {/* قیمت + دکمهٔ افزودن — LAST = چپ‌ترین. ستونی در همه حالت‌ها؛ align="flex-end" در RTL
+      {/* قیمت + دکمهٔ افزودن — LAST = چپ‌ترین. ستونی در همه حالت‌ها؛ align="end" در RTL
           یعنی چپ (نه راست — طبق قاعدهٔ ستونِ RTL پروژه). روی موبایل (base) دکمه تمام‌عرض
           زیرِ ردیفِ قیمت می‌آید؛ روی sm+ دکمه به اندازهٔ محتوا (auto) مثل قبل */}
       <Flex
         direction="column"
-        align="flex-end"
+        align="end"
         gap={{ base: '3', sm: '1.5' }}
         flexShrink={0}
         w={{ base: 'full', sm: 'auto' }}
@@ -137,7 +137,7 @@ export function ProductSelectPanel({ products, remainingStock, onAdd }: ProductS
         divider
       />
 
-      <Flex gap="2" w="full" align="flex-start">
+      <Flex gap="2" w="full" align="start">
         <InputGroup flex="1" minW="200px" startElement={<Search size={16} color="var(--chakra-colors-fg-subtle)" />}>
           <Input
             placeholder="جستجوی نام یا SKU محصول..."

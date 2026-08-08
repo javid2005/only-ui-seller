@@ -174,9 +174,9 @@ export function ThemeCustomize() {
           )}
         </Box>
 
-        {/* Title + badge — align="flex-start" = physical RIGHT in RTL column flex */}
-        <Flex direction="column" gap="2" align="flex-start">
-          <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="right">
+        {/* Title + badge — align="start" = physical RIGHT in RTL column flex */}
+        <Flex direction="column" gap="2" align="start">
+          <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="start">
             {themeName}
           </Text>
           <Badge
@@ -210,7 +210,7 @@ export function ThemeCustomize() {
             value={id}
             disabled={disabled}
             w="full"
-            justifyContent="flex-start"
+            justifyContent="start"
             gap="2.5"
             px="4"
             h="10"
@@ -255,7 +255,7 @@ export function ThemeCustomize() {
         px={isCompact ? '4' : { base: '4', sm: '6' }}
         w="full"
       >
-        <Flex gap="10" align="flex-start">
+        <Flex gap="10" align="start">
 
           {/* ── FIRST = rightmost: Start panel (vertical tabs) — xl+ non-compact ── */}
           {!isCompact && (
@@ -265,7 +265,7 @@ export function ThemeCustomize() {
               flexShrink={0}
               position="sticky"
               top="20"
-              alignSelf="flex-start"
+              alignSelf="start"
             >
               <Flex direction="column" gap="10">
                 {ThemeMiniCard}
@@ -303,8 +303,8 @@ export function ThemeCustomize() {
                       )}
                     </Box>
                     {/* Content SECOND = leftmost in RTL ✓ */}
-                    <Flex direction="column" gap="2" flex="1" minW="0" align="flex-start">
-                      <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="right">
+                    <Flex direction="column" gap="2" flex="1" minW="0" align="start">
+                      <Text fontSize="md" fontWeight="semibold" color="fg" textAlign="start">
                         {themeName}
                       </Text>
                       <Badge
@@ -364,7 +364,7 @@ export function ThemeCustomize() {
             {/* ── Section: list + edit ─────────────────────────────────────────── */}
             <Flex
               gap="6"
-              align="flex-start"
+              align="start"
               direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
             >
 
@@ -511,7 +511,7 @@ export function ThemeCustomize() {
                     </Field.Label>
                     <Input
                       placeholder="https://example.com"
-                      textAlign="left"
+                      textAlign="end"
                       dir="ltr"
                       value={selectedSlide.link}
                       onChange={e => handleLinkChange(e.target.value)}
@@ -654,7 +654,7 @@ export function ThemeCustomize() {
                   </Field.Label>
                   {/* Row: Input FIRST = rightmost in RTL ✓ | Trigger SECOND = leftmost ✓ */}
                   <Flex align="center" gap="2" w="full">
-                    <ColorPicker.Input flex="1" dir="ltr" textAlign="right" />
+                    <ColorPicker.Input flex="1" dir="ltr" textAlign="start" />
                     <ColorPicker.Trigger
                       boxSize="10"
                       p="0"

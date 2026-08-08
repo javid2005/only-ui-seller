@@ -57,12 +57,12 @@ interface Party {
 /** ردیف داده داخل کارت گیرنده/فرستنده — RTL: آیکن اول (راست) سپس متن. */
 function DataRow({ icon, iconColor, children }: { icon: ReactNode; iconColor: string; children: ReactNode }) {
   return (
-    // RTL: default justify (flex-start) = راست. آیکن اول (راست‌ترین) سپس متن راست‌چین.
+    // RTL: default justify (start) = راست. آیکن اول (راست‌ترین) سپس متن راست‌چین.
     <Flex align="center" gap="2" w="full" minW="0">
       <Box flexShrink={0} color={iconColor} display="flex" alignItems="center">
         {icon}
       </Box>
-      <Text flex="1" minW="0" fontSize="sm" color="fg.muted" textAlign="right" truncate dir="auto">
+      <Text flex="1" minW="0" fontSize="sm" color="fg.muted" textAlign="start" truncate dir="auto">
         {children}
       </Text>
     </Flex>
@@ -81,7 +81,7 @@ function InfoCell({ label, value }: { label: string; value: string }) {
       className="lbl-cell"
       direction={isCompact ? 'row' : { base: 'row', sm: 'column' }}
       align={isCompact ? 'center' : { base: 'center', sm: 'stretch' }}
-      justify={isCompact ? 'space-between' : { base: 'space-between', sm: 'flex-start' }}
+      justify={isCompact ? 'space-between' : { base: 'space-between', sm: 'start' }}
       gap="2"
       minW="0"
       px="4"
@@ -89,7 +89,7 @@ function InfoCell({ label, value }: { label: string; value: string }) {
       bg="bg.muted"
     >
       {/* RTL: label اول = راست */}
-      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="right" flexShrink={0} truncate>
+      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" flexShrink={0} truncate>
         {label}
       </Text>
       {/* RTL: value آخر = چپ */}
@@ -115,7 +115,7 @@ function PartyCard({ title, party, highlight }: { title: string; party: Party; h
   return (
     <Flex direction="column" flex="1" minW="0">
       {/* Title-Bar */}
-      <Text fontSize="md" fontWeight="semibold" color="fg.muted" textAlign="right" pb="2">
+      <Text fontSize="md" fontWeight="semibold" color="fg.muted" textAlign="start" pb="2">
         {title}
       </Text>
 
@@ -132,7 +132,7 @@ function PartyCard({ title, party, highlight }: { title: string; party: Party; h
         bg={highlight ? 'brand.bg' : 'bg.subtle'}
         overflow="hidden"
       >
-        <Text fontSize="lg" fontWeight="semibold" color="fg" textAlign="right" dir="auto">
+        <Text fontSize="lg" fontWeight="semibold" color="fg" textAlign="start" dir="auto">
           {party.name}
         </Text>
 
@@ -163,7 +163,7 @@ function FooterStatCard({ label, children }: { label: string; children: ReactNod
       borderColor="border"
       overflow="hidden"
     >
-      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="right" w="full">
+      <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" w="full">
         {label}
       </Text>
       {children}
@@ -201,7 +201,7 @@ export function OrderPrintLabel() {
             .lbl-info   { grid-template-columns: repeat(4, 1fr) !important; }
             /* خانه‌های نوار اطلاعات: مقدار زیر عنوان (ستونی) و کامل، بدون truncate.
                (responsive چاکرا با @media screen تعریف شده و در print fallback به base=ردیفی می‌شود) */
-            .lbl-cell { flex-direction: column !important; align-items: stretch !important; justify-content: flex-start !important; }
+            .lbl-cell { flex-direction: column !important; align-items: stretch !important; justify-content: start !important; }
             .lbl-cell-val {
               text-align: right !important;
               white-space: normal !important;
@@ -269,7 +269,7 @@ export function OrderPrintLabel() {
         {/* ── Alert راهنما (چاپ نمی‌شود) ── */}
         <Alert.Root status="info" variant="surface" rounded="lg" px="3" py="3" gap="2">
           <Alert.Indicator />
-          <Alert.Title flex="1" fontSize="xs" fontWeight="medium" textAlign="right">
+          <Alert.Title flex="1" fontSize="xs" fontWeight="medium" textAlign="start">
             این برگه را پرینت بگیرید و روی بسته بچسبانید یا داخل آن قرار دهید.
           </Alert.Title>
         </Alert.Root>
@@ -293,13 +293,13 @@ export function OrderPrintLabel() {
 
               {/* RTL (justify-between، 3 بلوک): شماره سفارش راست · تاریخ وسط · logo-mark چپ */}
               <Flex direction="column" position="relative" zIndex={1}>
-                <Text fontSize="xs" fontWeight="medium" color="fg.subtle" textAlign="right">شماره سفارش:</Text>
-                <Text fontSize="md" fontWeight="semibold" color="fg.inverted" textAlign="right">{ORDER.code}</Text>
+                <Text fontSize="xs" fontWeight="medium" color="fg.subtle" textAlign="start">شماره سفارش:</Text>
+                <Text fontSize="md" fontWeight="semibold" color="fg.inverted" textAlign="start">{ORDER.code}</Text>
               </Flex>
 
               <Flex direction="column" position="relative" zIndex={1}>
-                <Text fontSize="xs" fontWeight="medium" color="fg.subtle" textAlign="right">تاریخ:</Text>
-                <Text fontSize="md" fontWeight="semibold" color="fg.inverted" textAlign="right">{LABEL.date}</Text>
+                <Text fontSize="xs" fontWeight="medium" color="fg.subtle" textAlign="start">تاریخ:</Text>
+                <Text fontSize="md" fontWeight="semibold" color="fg.inverted" textAlign="start">{LABEL.date}</Text>
               </Flex>
 
               <Box position="relative" zIndex={1} flexShrink={0}>
@@ -332,7 +332,7 @@ export function OrderPrintLabel() {
               <Flex
                 className="lbl-parties"
                 position="relative"
-                align={isCompact ? 'stretch' : { base: 'stretch', md: 'flex-start' }}
+                align={isCompact ? 'stretch' : { base: 'stretch', md: 'start' }}
                 direction={isCompact ? 'column' : { base: 'column', md: 'row' }}
                 gap="6"
                 w="full"
@@ -379,7 +379,7 @@ export function OrderPrintLabel() {
               >
                 {/* کد رهگیری پستی (راست) */}
                 <FooterStatCard label="کد رهگیری پستی">
-                  <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" dir="auto">
+                  <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" dir="auto">
                     {LABEL.tracking}
                   </Text>
                 </FooterStatCard>
@@ -387,7 +387,7 @@ export function OrderPrintLabel() {
                 {/* تعداد بسته (وسط) */}
                 <FooterStatCard label="تعداد بسته">
                   <Flex align="center" gap="2" w="full">
-                    <Text flex="1" minW="0" fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" dir="auto">
+                    <Text flex="1" minW="0" fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" dir="auto">
                       {LABEL.packages}
                     </Text>
                     <Badge colorPalette="gray" variant="subtle" size="sm" flexShrink={0}>
@@ -410,7 +410,7 @@ export function OrderPrintLabel() {
                   borderColor="border"
                   overflow="hidden"
                 >
-                  <Flex direction="column" gap="2" textAlign="right">
+                  <Flex direction="column" gap="2" textAlign="start">
                     <Text fontSize="xs" fontWeight="medium" color="fg.muted">QR کد سفارش</Text>
                     <Text fontSize="sm" fontWeight="semibold" color="fg" dir="auto">{LABEL.qr}</Text>
                   </Flex>
@@ -431,7 +431,7 @@ export function OrderPrintLabel() {
                 <Box flexShrink={0} color="fg.subtle" display="flex" alignItems="center">
                   <Info size={14} />
                 </Box>
-                <Text fontSize="xs" color="fg.subtle" textAlign="right" truncate>
+                <Text fontSize="xs" color="fg.subtle" textAlign="start" truncate>
                   در صورت بروز مشکل با شماره فروشنده تماس بگیرید
                 </Text>
               </Flex>

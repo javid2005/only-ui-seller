@@ -100,28 +100,28 @@ export function SignupDoneView() {
               gap="4"
               direction={{ base: 'column', sm: 'row' }}
               wrap="wrap"
-              align="flex-start"
-              justify="flex-start"
+              align="start"
+              justify="start"
               w="full"
             >
               {/* آیکون هدیه FIRST در DOM = راست‌ترین در row / بالا در column (طبق screenshot تازهٔ 154:2664).
-                  زیر sm: ستونی — آیکون بالا، نوشته‌ها زیرش (align="flex-start" هم در row (بالا) هم در column (راست) درسته، طبق قرارداد پروژه). */}
+                  زیر sm: ستونی — آیکون بالا، نوشته‌ها زیرش (align="start" هم در row (بالا) هم در column (راست) درسته، طبق قرارداد پروژه). */}
               <Box flexShrink={0} boxSize="40px" overflow="hidden">
                 <img src={planGiftSrc.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </Box>
-              <Flex direction="column" gap="2" align="flex-start" flex="1" minW="0" w="full">
-                <Text fontWeight="medium" fontSize="xl" lineHeight="1.5" color="purple.fg" textAlign="right" w="full">
+              <Flex direction="column" gap="2" align="start" flex="1" minW="0" w="full">
+                <Text fontWeight="medium" fontSize="xl" lineHeight="1.5" color="purple.fg" textAlign="start" w="full">
                   پلن رایگان ۱۴ روزه
                 </Text>
                 {/* راست‌ترین FIRST — «با ایجاد فروشگاه» → Badge → «برای شما فعال شد.» (ترتیب خام DOM فیگما آینه‌ای بود، طبق screenshot زوم‌شده تصحیح شد) */}
-                <Flex gap="2" align="center" justify="flex-start" w="full" wrap="wrap">
+                <Flex gap="2" align="center" justify="start" w="full" wrap="wrap">
                   <Text fontSize="sm" color="fg.muted">با ایجاد کسب و کار</Text>
                   <Badge variant="subtle" colorPalette="purple" size="sm" borderRadius="l2">
                     پلن رایگان ۱۴ روزه
                   </Badge>
                   <Text fontSize="sm" color="fg.muted">برای شما فعال شد.</Text>
                 </Flex>
-                <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">
+                <Text fontSize="sm" color="fg.muted" textAlign="start" w="full">
                   شما میتوانید تا تاریخ <Text as="span" fontWeight="bold" color="fg">{trialEndDate}</Text> از امکانات سایت بصورت رایگان استفاده نمایید.
                 </Text>
               </Flex>

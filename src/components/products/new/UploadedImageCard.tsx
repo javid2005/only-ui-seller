@@ -57,7 +57,7 @@ export function UploadedImageCard({
       bg="bg.panel"
       transition="background 0.15s, border-color 0.15s"
       _hover={{ borderColor: 'brand.border', bg: 'brand.bg' }}
-      align="flex-start"
+      align="start"
       w="full"
     >
       {/* FIRST = rightmost: Thumbnail */}
@@ -97,7 +97,7 @@ export function UploadedImageCard({
 
         {/* chipهای تنوع — راست‌چین، wrap (این پاس فقط نمایش) */}
         {variantTags.length > 0 && (
-          <Flex wrap="wrap" align="flex-start" gap="2" w="full">
+          <Flex wrap="wrap" align="start" gap="2" w="full">
             {variantTags.map((tag) => (
               <Badge
                 key={tag}
@@ -129,7 +129,7 @@ export function UploadedImageCard({
         <Flex
           gap="2"
           align="center"
-          justify="flex-end"
+          justify="end"
           w="full"
           mt="auto"
           display={actionsDisplay}

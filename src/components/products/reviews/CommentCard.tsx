@@ -75,7 +75,7 @@ export function CommentCard({
       <Flex direction="column" gap="4" p="4" align="stretch">
 
         {/* Header: details (راست) ←→ status badge (چپ) */}
-        <Flex gap="4" align="flex-start">
+        <Flex gap="4" align="start">
           {/* Details — flex 1، راست‌ترین */}
           <Flex flex="1" gap="2" align="center" minW="0">
             {/* Avatar FIRST = راست */}
@@ -83,7 +83,7 @@ export function CommentCard({
               <Avatar.Fallback name={author} />
             </Avatar.Root>
             {/* Stack — نام + meta، چپ‌چین رو پر می‌کند، راست‌چین متن */}
-            <Flex direction="column" gap="1" flex="1" minW="0" align="flex-start">
+            <Flex direction="column" gap="1" flex="1" minW="0" align="start">
               {/* name row: نام (راست) + خریدار تایید شده (چپ) */}
               <Flex gap="2" align="center" flexWrap="wrap">
                 <Text fontSize="sm" fontWeight="semibold" color="fg">{author}</Text>
@@ -120,17 +120,17 @@ export function CommentCard({
         {/* ── Body ── */}
         {filtered ? (
           /* archived: متن فیلترشده (راست) + مشاهده (چپ) */
-          <Flex gap="2" align="center" flexWrap="wrap" justify="flex-end">
-            <Text flex="1" fontSize="sm" color="fg.muted" textAlign="right">{FILTERED_TEXT}</Text>
+          <Flex gap="2" align="center" flexWrap="wrap" justify="end">
+            <Text flex="1" fontSize="sm" color="fg.muted" textAlign="start">{FILTERED_TEXT}</Text>
             <Button variant="ghost" size="xs" color="brand.fg" flexShrink={0}>مشاهده</Button>
           </Flex>
         ) : (
-          <Text fontSize="sm" color="fg.muted" textAlign="right">{text}</Text>
+          <Text fontSize="sm" color="fg.muted" textAlign="start">{text}</Text>
         )}
 
-        {/* تصاویر نظر — راست‌چین (RTL: flex-start = راست) */}
+        {/* تصاویر نظر — راست‌چین (RTL: start = راست) */}
         {!!images && images > 0 && (
-          <Flex gap="2" justify="flex-start">
+          <Flex gap="2" justify="start">
             {Array.from({ length: images }, (_, i) => <ThumbEmpty key={i} />)}
           </Flex>
         )}
@@ -144,7 +144,7 @@ export function CommentCard({
               placeholder="پاسخ شما..." size="sm" rows={2} resize="vertical"
             />
             {/* انصراف (راست) · ثبت پاسخ (چپ، primary) */}
-            <Flex gap="2" justify="flex-end">
+            <Flex gap="2" justify="end">
               <Button variant="ghost" size="xs" onClick={editing ? onCancelEdit : onCancelReply}>انصراف</Button>
               <Button
                 size="xs" bg="brand.solid" color="brand.contrast"
@@ -167,9 +167,9 @@ export function CommentCard({
             {/* محتوا راست (flex 1) · اکشن‌ها چپ، عمودی‌وسط */}
             <Flex gap="2" align="center">
               {/* محتوای پاسخ — FIRST = راست */}
-              <Flex direction="column" gap="1" flex="1" align="flex-start" minW="0">
+              <Flex direction="column" gap="1" flex="1" align="start" minW="0">
                 <Text fontSize="sm" fontWeight="semibold" color="brand.fg">پاسخ فروشنده</Text>
-                <Text fontSize="sm" color="fg.muted" textAlign="right">{vendorReply}</Text>
+                <Text fontSize="sm" color="fg.muted" textAlign="start">{vendorReply}</Text>
               </Flex>
               {/* edit/delete — LAST = چپ. ترتیب: ویرایش FIRST=راست، حذف LAST=چپ */}
               <Flex gap="2" align="center" flexShrink={0}>
@@ -192,8 +192,8 @@ export function CommentCard({
         align={{ base: 'stretch', sm: 'center' }}
         justify="space-between"
       >
-        {/* counts — راست (RTL flex-start). لایک=success، دیسلایک=error */}
-        <Flex gap="4" align="center" justify="flex-start">
+        {/* counts — راست (RTL start). لایک=success، دیسلایک=error */}
+        <Flex gap="4" align="center" justify="start">
           <ReactionCount icon={<ThumbsUp size={16} />} value={likes} color="fg.success" />
           <ReactionCount icon={<ThumbsDown size={16} />} value={dislikes} color="fg.error" />
         </Flex>

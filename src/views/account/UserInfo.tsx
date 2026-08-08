@@ -205,7 +205,7 @@ export function UserInfo() {
       <Box bg="bg.panel" borderWidth="1px" borderColor="border" borderRadius="2xl" p="6" overflow="hidden">
         <Flex
           gap="10"
-          align="flex-start"
+          align="start"
           direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
         >
 
@@ -240,7 +240,7 @@ export function UserInfo() {
             w="200px"
             position="sticky"
             top="4"
-            alignSelf="flex-start"
+            alignSelf="start"
           >
             <Tabs.Root
               variant="subtle"
@@ -255,7 +255,7 @@ export function UserInfo() {
                     key={tab.value}
                     value={tab.value}
                     w="full"
-                    justifyContent="flex-start"
+                    justifyContent="start"
                     fontSize="sm"
                   >
                     {tab.label}
@@ -282,7 +282,7 @@ export function UserInfo() {
                   divider
                 />
 
-                <Flex flexWrap="wrap" gap="4" align="flex-start">
+                <Flex flexWrap="wrap" gap="4" align="start">
 
                   {/* نام — FIRST = rightmost */}
                   <Box flex="1 0 0" minW={isCompact ? 'full' : { base: 'full', md: '380px' }}>
@@ -312,7 +312,7 @@ export function UserInfo() {
                     <Flex
                       gap="2"
                       direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}
-                      align={isCompact ? 'stretch' : { base: 'stretch', sm: 'flex-end' }}
+                      align={isCompact ? 'stretch' : { base: 'stretch', sm: 'end' }}
                     >
                       <Box flex="1" minW="0">
                         <BadgeInput
@@ -349,7 +349,7 @@ export function UserInfo() {
                     <Flex
                       gap="2"
                       direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}
-                      align={isCompact ? 'stretch' : { base: 'stretch', sm: 'flex-end' }}
+                      align={isCompact ? 'stretch' : { base: 'stretch', sm: 'end' }}
                     >
                       <Box flex="1" minW="0">
                         <BadgeInput
@@ -403,7 +403,7 @@ export function UserInfo() {
 
                 </Flex>
 
-                {/* Avatar — flex-start = RIGHT in RTL */}
+                {/* Avatar — start = RIGHT in RTL */}
                 <Flex align="center" gap="4">
                   {/* Avatar — FIRST = rightmost */}
                   <Avatar.Root size="xl" bg="gray.muted" flexShrink={0}>

@@ -141,7 +141,7 @@ export function DatePicker({ value, onChange, placeholder, disabled }: DatePicke
         cursor={disabled ? 'not-allowed' : 'pointer'}
         opacity={disabled ? 0.6 : 1}
       >
-        <Text flex="1" fontSize="sm" color={value ? 'fg' : 'fg.subtle'} textAlign="right">
+        <Text flex="1" fontSize="sm" color={value ? 'fg' : 'fg.subtle'} textAlign="start">
           {value ? formatJalaliDate(new Date(value)) : placeholder}
         </Text>
         <Calendar size={16} color="var(--chakra-colors-fg-muted)" style={{ flexShrink: 0 }} />

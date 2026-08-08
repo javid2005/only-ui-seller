@@ -40,7 +40,7 @@ export function OrderTable({ orders }: OrderTableProps) {
             >
               {/* شماره/نوع سفارش — orderNo (teal link) + type badge */}
               <Table.Cell>
-                <Flex direction="column" gap="1" align="flex-start">
+                <Flex direction="column" gap="1" align="start">
                   <Link href="#" fontSize="sm" fontWeight="semibold" color="teal.fg">
                     {o.orderNo}
                   </Link>
@@ -65,7 +65,7 @@ export function OrderTable({ orders }: OrderTableProps) {
 
               {/* مبلغ کل — قیمت(+badge دلاری) / تخفیف solid(+badge درصد) */}
               <Table.Cell>
-                <Flex direction="column" gap="0.5" align="flex-start">
+                <Flex direction="column" gap="0.5" align="start">
                   <Flex align="center" gap="2">
                     <Text fontSize="sm" fontWeight="semibold">{o.amount}</Text>
                     {o.amountBadge && (

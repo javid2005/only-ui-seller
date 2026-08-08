@@ -61,7 +61,7 @@ export function OrderCard({ order: o }: OrderCardProps) {
 
       {/* ── Footer: مبلغ + تخفیف (راست) … منوی ⋮ (چپ) ── */}
       <Flex w="full" align="center" gap="2">
-        <Flex direction="column" gap="0.5" flex="1" minW="0" align="flex-start">
+        <Flex direction="column" gap="0.5" flex="1" minW="0" align="start">
           {/* خط مبلغ: قیمت (راست) + badge دلاری (چپ) */}
           <Flex align="center" gap="2">
             <Text fontSize="sm" fontWeight="semibold" color="fg">{o.amount}</Text>

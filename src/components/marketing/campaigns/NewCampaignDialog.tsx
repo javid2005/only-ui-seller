@@ -47,10 +47,10 @@ export const CAMPAIGN_TYPE_OPTIONS: CampaignTypeOption[] = [
  *   Icon (راست‌ترین) → Content(عنوان+بج، توضیح) → ItemIndicator (چپ‌ترین)
  *   ردیف عنوان+بج: عنوان (راست‌تر) → بج (چپ‌تر)
  *
- * INCIDENT 2026-08-03: RadioCard.ItemContent (flexDirection=column) داشت alignItems="flex-end"
+ * INCIDENT 2026-08-03: RadioCard.ItemContent (flexDirection=column) داشت alignItems="end"
  * با نیت «راست‌چین کن» — ولی طبق قانون ستونیِ RTL پروژه (CLAUDE.md)، در column flex زیر dir=rtl
- * align="flex-end" یعنی چپ، نه راست (align="flex-start" یعنی راست). همون خطای justify=flex-end
- * قبلی (CampaignCard) اینجا با align تکرار شد. فیکس شد به alignItems="flex-start".
+ * align="end" یعنی چپ، نه راست (align="start" یعنی راست). همون خطای justify=end
+ * قبلی (CampaignCard) اینجا با align تکرار شد. فیکس شد به alignItems="start".
  */
 function CampaignTypeCard({ option }: { option: CampaignTypeOption }) {
   const Icon = option.icon
@@ -69,7 +69,7 @@ function CampaignTypeCard({ option }: { option: CampaignTypeOption }) {
       _checked={{ bg: 'brand.bg', borderColor: 'brand.focusRing' }}
     >
       <RadioCard.ItemHiddenInput />
-      <RadioCard.ItemControl gap="4" p="0" border="none" bg="transparent" boxShadow="none" w="full" alignItems="flex-start">
+      <RadioCard.ItemControl gap="4" p="0" border="none" bg="transparent" boxShadow="none" w="full" alignItems="start">
         {/* آیکون — FIRST = راست‌ترین */}
         <Box
           bg={option.iconBg} color={option.iconColor}
@@ -79,13 +79,13 @@ function CampaignTypeCard({ option }: { option: CampaignTypeOption }) {
           <Icon size={24} />
         </Box>
 
-        <RadioCard.ItemContent gap="1" minW="0" alignItems="flex-start" flex="1">
+        <RadioCard.ItemContent gap="1" minW="0" alignItems="start" flex="1">
           {/* زیر sm: بج wrap می‌شه زیر عنوان (ستونی) — عنوان تنگ کنار بج نمی‌شکنه.
               sm به بالا: کنار هم، هم‌ردیف (طبق طرح دسکتاپ) */}
           <Flex
             direction={{ base: 'column', sm: 'row' }}
-            align={{ base: 'flex-start', sm: 'center' }}
-            justify="flex-start"
+            align={{ base: 'start', sm: 'center' }}
+            justify="start"
             gap={{ base: '1.5', sm: '2' }}
             w="full"
           >
@@ -103,7 +103,7 @@ function CampaignTypeCard({ option }: { option: CampaignTypeOption }) {
             </RadioCard.ItemText>
             <Badge colorPalette={option.badgeColor} variant="subtle" size="sm">{option.badgeLabel}</Badge>
           </Flex>
-          <Text fontSize="xs" color="fg.muted" textAlign="right" w="full">{option.description}</Text>
+          <Text fontSize="xs" color="fg.muted" textAlign="start" w="full">{option.description}</Text>
         </RadioCard.ItemContent>
 
         {/* اندیکاتور — LAST = چپ‌ترین */}
@@ -147,8 +147,8 @@ export function NewCampaignDialog({ open, onClose, onConfirm }: NewCampaignDialo
             </Dialog.Header>
 
             <Dialog.Body pt="2" pb="6" px="6">
-              <Flex direction="column" gap="4" alignItems="flex-end" w="full">
-                <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">
+              <Flex direction="column" gap="4" alignItems="end" w="full">
+                <Text fontSize="sm" color="fg.muted" textAlign="start" w="full">
                   نوع کمپین پس از ایجاد قابل تغییر نیست.
                 </Text>
 
@@ -169,7 +169,7 @@ export function NewCampaignDialog({ open, onClose, onConfirm }: NewCampaignDialo
             {/* دو دکمه — چپ (طبق طرح Figma و قرارداد پروژه: primary LAST در DOM = چپ‌ترین).
                 DOM order: بستن(secondary, راست‌ترِ گروه) → تایید و ادامه(primary, چپ‌ترین) */}
             <Dialog.Footer pt="2" pb="4" px="6">
-              <Flex justify="flex-end" gap="3" w="full">
+              <Flex justify="end" gap="3" w="full">
                 <Button variant="outline" colorPalette="gray" onClick={onClose}>بستن</Button>
                 <Button
                   colorPalette="brand"

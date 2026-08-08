@@ -36,3 +36,6 @@ next-env.d.ts
 
 # CLAUDE.md backups (local only)
 CLAUDE.md.bak-*
+
+# dev-engine transient render dump (verify-render)
+.claude/context/render-snapshot.json

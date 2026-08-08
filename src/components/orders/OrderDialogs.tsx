@@ -273,7 +273,7 @@ export function EditReceiverDialog({ open, onClose, onSubmit, initial }: EditRec
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   dir="ltr"
-                  textAlign="right"
+                  textAlign="start"
                   type="tel"
                 />
               </Field.Root>
@@ -414,7 +414,7 @@ export function EditAddressDialog({ open, onClose, onSubmit, initial }: EditAddr
                   value={postal}
                   onChange={(e) => setPostal(e.target.value)}
                   dir="ltr"
-                  textAlign="right"
+                  textAlign="start"
                   type="tel"
                 />
                 <Field.HelperText fontSize="xs">
@@ -502,7 +502,7 @@ export function SelectSenderAddressDialog({ open, onClose, onSubmit, initialId }
               <Checkbox.Root
                 size="sm"
                 colorPalette="brand"
-                alignItems="flex-start"
+                alignItems="start"
                 checked={asDefault}
                 onCheckedChange={(e) => setAsDefault(!!e.checked)}
               >

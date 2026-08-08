@@ -22,8 +22,8 @@ function Row({ label, value, valueColor = 'fg', strong = false }: {
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
     <Box minW="0">
-      <Text fontSize="xs" color="fg.muted" mb="1" textAlign="right" truncate>{label}</Text>
-      <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" truncate>{value}</Text>
+      <Text fontSize="xs" color="fg.muted" mb="1" textAlign="start" truncate>{label}</Text>
+      <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" truncate>{value}</Text>
     </Box>
   )
 }

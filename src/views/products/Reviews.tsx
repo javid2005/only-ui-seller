@@ -113,7 +113,7 @@ export function Reviews() {
           <SegmentGroup.Root
             value={tab}
             onValueChange={(e) => { setTab((e.value ?? 'verified') as Tab); setReplyingId(null); setEditingId(null) }}
-            size="sm" alignSelf="flex-start"
+            size="sm" alignSelf="start"
           >
             <SegmentGroup.Indicator bg="bg.subtle" />
             <SegmentGroup.Item value="verified">

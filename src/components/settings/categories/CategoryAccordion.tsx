@@ -33,7 +33,7 @@ export interface CategoryAccordionProps {
 function SubCategoryItem({ label }: { label: string }) {
   return (
     <Flex
-      align="flex-start"
+      align="start"
       gap="2"
       bg="bg.muted"
       px="2"
@@ -128,7 +128,7 @@ export function CategoryAccordion({
 
           {/* SECOND: نام + badge — RTL: [icon | text | badge | ...buttons]
                Text FIRST = rightmost (کنار آیکن)، Badge SECOND = سمت چپ text */}
-          <Flex flex="1" minW="0" align="center" gap="2" justify="flex-start">
+          <Flex flex="1" minW="0" align="center" gap="2" justify="start">
             <Text
               fontSize="sm"
               fontWeight="semibold"
@@ -253,7 +253,7 @@ export function CategoryAccordion({
                 color="fg.muted"
                 lineHeight="1.333"
                 w="full"
-                textAlign="right"
+                textAlign="start"
               >
                 این دسته‌بندی شامل زیردسته‌های زیر می‌باشد:
               </Text>
@@ -272,7 +272,7 @@ export function CategoryAccordion({
                 <Text
                   fontSize="xs"
                   color="fg.subtle"
-                  textAlign="right"
+                  textAlign="start"
                   w="full"
                 >
                   زیردسته‌ای ثبت نشده است.

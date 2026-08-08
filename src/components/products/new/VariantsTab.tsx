@@ -54,7 +54,7 @@ function FiltersDialog({
         <Dialog.Positioner dir="rtl" py="6">
           <Dialog.Content maxW="384px" w="full" mx="4">
             <Dialog.Header pb="4" pt="6" px="6" position="relative">
-              <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="right" w="full">
+              <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="start" w="full">
                 فیلترها
               </Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="3" insetEnd="3">
@@ -307,7 +307,7 @@ export function VariantsTab({ form, onChange, onBack, onSave }: VariantsTabProps
 
               {/* Filter row — دسکتاپ: ردیف کامل · FIRST=راست: Selectها · LAST=چپ: حذف فیلترها
                   isCompact هم لحاظ می‌شود (نه فقط breakpoint) چون isCompact واقعیتِ viewport را عوض نمی‌کند */}
-              <Flex display={isCompact ? 'none' : { base: 'none', md: 'flex' }} gap="4" align="center" justify="flex-start" wrap="wrap" w="full">
+              <Flex display={isCompact ? 'none' : { base: 'none', md: 'flex' }} gap="4" align="center" justify="start" wrap="wrap" w="full">
                 {[...variants].reverse().map((v) => {
                   const idx = variants.indexOf(v)
                   const collection = createListCollection({
@@ -404,7 +404,7 @@ export function VariantsTab({ form, onChange, onBack, onSave }: VariantsTabProps
               </Flex>
 
               {/* Filter row — compact/موبایل: Selectها + دکمهٔ «فیلترها» (مودال) — Figma node 1446:86251 */}
-              <Flex display={isCompact ? 'flex' : { base: 'flex', md: 'none' }} gap="2" align="center" justify="flex-start" w="full">
+              <Flex display={isCompact ? 'flex' : { base: 'flex', md: 'none' }} gap="2" align="center" justify="start" w="full">
                 {[...variants].reverse().map((v) => {
                   const idx = variants.indexOf(v)
                   const collection = createListCollection({

@@ -27,7 +27,7 @@ export function FreeShipping() {
   const [checkedValue, setCheckedValue] = useState<string[]>([])
 
   return (
-    <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+    <Flex direction="column" gap="4" alignItems="end" w="full">
       <Header
         title="ارسال رایگان"
         breadcrumbs={[
@@ -38,7 +38,7 @@ export function FreeShipping() {
       />
 
       <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" p="6" w="full">
-        <Flex direction="column" gap="10" alignItems="flex-end" maxW="960px" w="full" mx="auto">
+        <Flex direction="column" gap="10" alignItems="end" maxW="960px" w="full" mx="auto">
           <Alert.Root status="info" variant="subtle" w="full">
             <Alert.Indicator />
             <Alert.Content>
@@ -48,7 +48,7 @@ export function FreeShipping() {
             </Alert.Content>
           </Alert.Root>
 
-          <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+          <Flex direction="column" gap="4" alignItems="end" w="full">
             <TitleBar
               title="تنظیمات ارسال"
               subtitle="تعریف شرط‌های مکمل برای کنترل بهتر ارسال رایگان"
@@ -62,7 +62,7 @@ export function FreeShipping() {
                   onChange={setMinItems}
                   placeholder="مثال: ۲"
                 />
-                <Text fontSize="xs" color="fg.muted" textAlign="right" mt="1.5">
+                <Text fontSize="xs" color="fg.muted" textAlign="start" mt="1.5">
                   ارسال رایگان فقط زمانی اعمال می‌شود که سبد حداقل این تعداد کالا داشته باشد
                 </Text>
               </Box>
@@ -73,14 +73,14 @@ export function FreeShipping() {
                   placeholder="مثال: ۵۰٬۰۰۰"
                   endElement={<Text fontSize="sm" color="fg.muted" px="2">تومان</Text>}
                 />
-                <Text fontSize="xs" color="fg.muted" textAlign="right" mt="1.5">
+                <Text fontSize="xs" color="fg.muted" textAlign="start" mt="1.5">
                   ارسال رایگان فقط برای سفارش‌هایی با این مبلغ یا بیشتر اعمال می‌شود
                 </Text>
               </Box>
             </Flex>
           </Flex>
 
-          <Flex direction="column" gap="6" alignItems="flex-end" w="full">
+          <Flex direction="column" gap="6" alignItems="end" w="full">
             <TitleBar
               title="محدوده جغرافیایی"
               subtitle="مشخص کنید ارسال رایگان برای کدام مناطق اعمال شود."
@@ -122,10 +122,10 @@ function ShippingScopeCard({ value, title, description }: { value: ShippingScope
       <RadioCard.ItemHiddenInput />
       {/* Content FIRST=راست‌ترین، RadioMark SECOND=چپ‌ترین — طبق طرح Left-Radio-Card
           (برعکسِ CampaignTypeCard که Indicator رو آخر می‌گذاشت؛ اون کارت آیکون هم داشت، این یکی نه) */}
-      <RadioCard.ItemControl gap="4" p="0" border="none" bg="transparent" boxShadow="none" w="full" alignItems="flex-start">
-        <RadioCard.ItemContent gap="1" minW="0" alignItems="flex-start" flex="1">
+      <RadioCard.ItemControl gap="4" p="0" border="none" bg="transparent" boxShadow="none" w="full" alignItems="start">
+        <RadioCard.ItemContent gap="1" minW="0" alignItems="start" flex="1">
           <RadioCard.ItemText fontSize="sm" fontWeight="semibold" color="fg">{title}</RadioCard.ItemText>
-          <Text fontSize="xs" color="fg.muted" textAlign="right" w="full">{description}</Text>
+          <Text fontSize="xs" color="fg.muted" textAlign="start" w="full">{description}</Text>
         </RadioCard.ItemContent>
         <RadioCard.ItemIndicator colorPalette="brand" flexShrink={0} />
       </RadioCard.ItemControl>

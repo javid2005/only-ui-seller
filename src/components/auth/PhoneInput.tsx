@@ -38,7 +38,7 @@ export function PhoneInput({ value, onChange, error, disabled, ...rest }: PhoneI
           {...rest}
         />
       </InputGroup>
-      {error && <Field.ErrorText display="block" fontSize="xs" textAlign="right" w="full">{error}</Field.ErrorText>}
+      {error && <Field.ErrorText display="block" fontSize="xs" textAlign="start" w="full">{error}</Field.ErrorText>}
     </Field.Root>
   )
 }

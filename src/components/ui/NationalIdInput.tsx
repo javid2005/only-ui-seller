@@ -29,7 +29,7 @@ export function NationalIdInput({ label, value, onChange, error, disabled, ...re
         disabled={disabled}
         {...rest}
       />
-      {error && <Field.ErrorText display="block" fontSize="xs" textAlign="right" w="full">{error}</Field.ErrorText>}
+      {error && <Field.ErrorText display="block" fontSize="xs" textAlign="start" w="full">{error}</Field.ErrorText>}
     </Field.Root>
   )
 }

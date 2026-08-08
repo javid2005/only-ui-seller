@@ -34,7 +34,7 @@ export function CampaignFeeInput({
   const isPercent = feeType === 'percent'
 
   return (
-    <Flex direction={{ base: 'column', sm: 'row' }} gap="4" align="flex-start" justify="flex-start" w="full">
+    <Flex direction={{ base: 'column', sm: 'row' }} gap="4" align="start" justify="start" w="full">
       {/* toggle — FIRST = راست‌ترین (زیر sm: بالا) */}
       <Field.Root flex="1" minW="0" w="full">
         <Field.Label fontSize="sm" fontWeight="semibold" color="fg">

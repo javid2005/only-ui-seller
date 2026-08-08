@@ -64,7 +64,7 @@ export function SenderCard({ value, title, address, isDefault }: SenderCardProps
         border="none"
         bg="transparent"
         boxShadow="none"
-        alignItems="flex-start"
+        alignItems="start"
         w="full"
       >
         {/* map-pin — FIRST = راست‌ترین */}
@@ -73,15 +73,15 @@ export function SenderCard({ value, title, address, isDefault }: SenderCardProps
         </Box>
 
         {/* محتوا — عنوان(+badge) و آدرس */}
-        <RadioCard.ItemContent flex="1" minW="0" gap="1" alignItems="flex-end">
+        <RadioCard.ItemContent flex="1" minW="0" gap="1" alignItems="end">
           {/* RTL: عنوان راست (اول)، badge چپ (آخر) */}
-          <Flex align="center" gap="2" w="full" justify="flex-end">
+          <Flex align="center" gap="2" w="full" justify="end">
             <RadioCard.ItemText fontSize="sm" fontWeight="semibold" color="fg">{title}</RadioCard.ItemText>
             {isDefault && (
               <Badge colorPalette="purple" variant="subtle" size="sm">پیش فرض</Badge>
             )}
           </Flex>
-          <RadioCard.ItemDescription fontSize="xs" color="fg.muted" w="full" textAlign="right" m="0">
+          <RadioCard.ItemDescription fontSize="xs" color="fg.muted" w="full" textAlign="start" m="0">
             {address}
           </RadioCard.ItemDescription>
         </RadioCard.ItemContent>

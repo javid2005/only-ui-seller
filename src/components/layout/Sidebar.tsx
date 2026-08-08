@@ -185,7 +185,7 @@ export function Sidebar() {
                     maxW="240px"
                     fontSize="xs"
                     lineHeight="1.7"
-                    textAlign="right"
+                    textAlign="start"
                   >
                     از این منو بین کسب‌وکارهای خود جابه‌جا می‌شوید. با زدن ستاره کنار هر کسب‌وکار،
                     آن را «پیش‌فرض» کنید تا در هر ورود — فارغ از اینکه آخرین بار کجا بودید — مستقیم
@@ -273,7 +273,7 @@ export function Sidebar() {
                 fontSize="xs"
                 fontWeight="medium"
                 color="fg.muted"
-                textAlign="right"
+                textAlign="start"
                 mb="0"
                 lineHeight="4"
               >

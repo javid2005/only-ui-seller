@@ -38,7 +38,7 @@ export interface AdChannelCardProps {
  * Three-tier responsive behavior (per user direction, beyond what either Figma frame shows):
  *   media≥lg   — icon beside content; action is a row-level sibling, hug width, leftmost.
  *   sm..lg     — icon beside content; action wraps inside Content as its last child, hug
- *                width, aligned left (Content's alignItems="flex-end" = left in column RTL).
+ *                width, aligned left (Content's alignItems="end" = left in column RTL).
  *   media<sm   — icon moves ABOVE content (column stack); action still last in Content,
  *                but full width.
  */
@@ -82,10 +82,10 @@ export function AdChannelCard({
       p="4"
       gap="6"
       // media<sm: column stack (icon ABOVE content); sm+: row (icon beside content).
-      // align="flex-start" covers both correctly — cross-axis flex-start is top in row
+      // align="start" covers both correctly — cross-axis start is top in row
       // mode, and right (RTL) in column mode, so no separate align switch is needed.
       direction={isCompact ? 'row' : { base: 'column', sm: 'row' }}
-      align="flex-start"
+      align="start"
       w="full"
       _hover={{ bg: 'brand.bg', borderColor: 'brand.focusRing' }}
     >
@@ -106,17 +106,17 @@ export function AdChannelCard({
 
       {/* Content — flex-1 in row mode; w="full" keeps it from shrinking to its own
           content width once the parent switches to column (media<sm) */}
-      <Flex direction="column" gap="4" flex="1" minW="0" w="full" alignItems="flex-end">
-        <Flex direction="column" gap="2" alignItems="flex-end" w="full">
-          <Flex align="center" justify="flex-start" gap="2" w="full">
+      <Flex direction="column" gap="4" flex="1" minW="0" w="full" alignItems="end">
+        <Flex direction="column" gap="2" alignItems="end" w="full">
+          <Flex align="center" justify="start" gap="2" w="full">
             {/* Title FIRST = rightmost (closer to icon), badge SECOND = leftmost.
-                justify="flex-start" (NOT flex-end) — under dir="rtl", flex-start resolves to
-                the right side; flex-end resolves to left. This row was previously flex-end,
+                justify="start" (NOT end) — under dir="rtl", start resolves to
+                the right side; end resolves to left. This row was previously end,
                 which shoved title+badge to the left, off the card's right edge. */}
             <Text fontSize="md" fontWeight="semibold" color="fg">{title}</Text>
             <Badge colorPalette={badgeColor} variant="subtle" size="md" flexShrink={0}>{badgeLabel}</Badge>
           </Flex>
-          <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">{description}</Text>
+          <Text fontSize="sm" color="fg.muted" textAlign="start" w="full">{description}</Text>
 
           {prerequisite && (
             <Alert.Root status="warning" variant="subtle" rounded="l3" p="3" w="full">
@@ -139,7 +139,7 @@ export function AdChannelCard({
 
         {/* media<lg — wrapped as last child of Content (below everything).
             width: full at media<sm (fill), hug at sm..lg (fit-content, aligned left via
-            Content's alignItems="flex-end" — column direction: flex-end = left under RTL). */}
+            Content's alignItems="end" — column direction: end = left under RTL). */}
         <Box
           display={isCompact ? 'block' : { base: 'block', lg: 'none' }}
           w={isCompact ? 'fit-content' : { base: 'full', sm: 'fit-content' }}

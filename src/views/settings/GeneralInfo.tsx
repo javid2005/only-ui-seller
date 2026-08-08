@@ -372,7 +372,7 @@ export function GeneralInfo() {
       >
         <Flex
           gap="10"
-          align="flex-start"
+          align="start"
           direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
         >
 
@@ -407,7 +407,7 @@ export function GeneralInfo() {
             w="200px"
             position="sticky"
             top="4"
-            alignSelf="flex-start"
+            alignSelf="start"
           >
             <Tabs.Root
               variant="subtle"
@@ -422,7 +422,7 @@ export function GeneralInfo() {
                     key={tab.value}
                     value={tab.value}
                     w="full"
-                    justifyContent="flex-start"
+                    justifyContent="start"
                     fontSize="sm"
                   >
                     {tab.label}

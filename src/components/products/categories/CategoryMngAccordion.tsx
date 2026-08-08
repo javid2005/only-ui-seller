@@ -59,7 +59,7 @@ export function CategoryMngAccordion({
         </Box>
 
         {/* نام دسته */}
-        <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right" truncate flex="1" minW="0">
+        <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" truncate flex="1" minW="0">
           {category.name}
         </Text>
 
@@ -106,7 +106,7 @@ export function CategoryMngAccordion({
         <Collapsible.Content>
           <Box bg="bg.subtle" px="4" pb="4" pt="0">
             <Separator borderColor="border" mb="3" />
-            <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="right" mb="2">
+            <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" mb="2">
               زیردسته‌ها:
             </Text>
 

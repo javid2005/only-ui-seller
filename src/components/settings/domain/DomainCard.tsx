@@ -191,7 +191,7 @@ export function DomainCard({ domain, onCancelRequest, onActivate, onDeactivate, 
           </Box>
         ) : (
           <Box bg="bg.subtle" borderWidth="1px" borderColor="border" rounded="lg" p="4" w="full">
-            <Flex direction="column" gap="4" alignItems="flex-start" w="full">
+            <Flex direction="column" gap="4" alignItems="start" w="full">
               <Text fontSize="sm" color="fg.muted">نیم سرورهای تنظیم شده روی دامنه در رجیسترر</Text>
               {/* NS1 first in DOM = rightmost in row layout, top in stacked layout —
                   matches the same reversal applied to DomainCheckResultDialog.tsx (evidence:

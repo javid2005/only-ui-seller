@@ -80,13 +80,13 @@ export function PromotionCard({
   )
 
   const titleBlock = (
-    <Flex direction="column" gap="2" flex="1" minW="0" alignItems="flex-end">
-      <Flex align="center" gap="2" w="full" justify="flex-start">
+    <Flex direction="column" gap="2" flex="1" minW="0" alignItems="end">
+      <Flex align="center" gap="2" w="full" justify="start">
         {/* عنوان FIRST = راست‌ترین (نزدیک آیکون)، برچسب دسته SECOND = چپ‌تر */}
-        <Text fontSize="md" fontWeight="semibold" color={disabled ? 'fg.subtle' : 'fg'} textAlign="right">{title}</Text>
+        <Text fontSize="md" fontWeight="semibold" color={disabled ? 'fg.subtle' : 'fg'} textAlign="start">{title}</Text>
         <Badge colorPalette="gray" variant="subtle" size="md" flexShrink={0} opacity={disabled ? 0.4 : 1}>{category}</Badge>
       </Flex>
-      <Text fontSize="sm" color="fg.muted" textAlign="right" w="full" opacity={disabled ? 0.4 : 1}>{description}</Text>
+      <Text fontSize="sm" color="fg.muted" textAlign="start" w="full" opacity={disabled ? 0.4 : 1}>{description}</Text>
     </Flex>
   )
 
@@ -125,10 +125,10 @@ export function PromotionCard({
       _hover={disabled ? undefined : { borderColor: 'brand.focusRing' }}
     >
       {/* دسکتاپ (md+، غیر-compact) — آیکون sibling کارت، Switch کنار عنوان */}
-      <Flex display={isCompact ? 'none' : { base: 'none', md: 'flex' }} gap="4" w="full" align="flex-start">
+      <Flex display={isCompact ? 'none' : { base: 'none', md: 'flex' }} gap="4" w="full" align="start">
         {iconBox}
-        <Flex direction="column" gap="4" flex="1" minW="0" alignItems="flex-end">
-          <Flex gap="4" w="full" align="flex-start">
+        <Flex direction="column" gap="4" flex="1" minW="0" alignItems="end">
+          <Flex gap="4" w="full" align="start">
             {titleBlock}
             {switchControl}
           </Flex>

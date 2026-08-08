@@ -34,7 +34,7 @@ export function OrderCompletePanel({ customerName, paymentLink, onCreateNew, onG
       rounded="2xl"
       px="6"
       py="20"
-      align="flex-end"
+      align="end"
     >
       <EmptyState.Root size="sm" w="full">
         <EmptyState.Content>
@@ -66,11 +66,11 @@ export function OrderCompletePanel({ customerName, paymentLink, onCreateNew, onG
         py="4"
       >
         {/* RTL: اولِ DOM = راست → دکمهٔ کپی راست، لینک چپ (طبق فیدبک کاربر). dir="ltr" چون URL
-            لاتین است؛ textAlign="left" هم‌جهت با dir برای align-left واقعی. */}
+            لاتین است؛ textAlign="end" هم‌جهت با dir برای align-left واقعی. */}
         <IconButton variant="ghost" colorPalette="brand" size="md" onClick={handleCopyLink} aria-label="کپی لینک">
           <Copy size={20} />
         </IconButton>
-        <Box flex="1" minW="0" dir="ltr" textAlign="left">
+        <Box flex="1" minW="0" dir="ltr" textAlign="end">
           <Text
             fontSize={isCompact ? 'md' : { base: 'md', md: 'lg' }}
             fontWeight="medium"

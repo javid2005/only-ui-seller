@@ -128,7 +128,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
       />
 
       {/* ═══ ردیف Badge راهنما — راست‌چین، wrap روی فضای کم ═════════════════════ */}
-      <Flex gap="2" wrap="wrap" justify="flex-start" w="full">
+      <Flex gap="2" wrap="wrap" justify="start" w="full">
         {INFO_BADGES.map(({ icon: BadgeIcon, label }) => (
           <Badge key={label} colorPalette="gray" variant="subtle" size="sm" rounded="l2" gap="1.5">
             {/* FIRST = rightmost: icon (leading) · متن سمت چپ */}

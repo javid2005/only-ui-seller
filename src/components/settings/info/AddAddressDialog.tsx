@@ -238,7 +238,7 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial, phones = []
                       value={postal}
                       onChange={(e) => setPostal(e.target.value)}
                       dir="ltr"
-                      textAlign="right"
+                      textAlign="start"
                       type="tel"
                     />
                     <Field.HelperText fontSize="xs">

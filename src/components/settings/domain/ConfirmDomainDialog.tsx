@@ -72,7 +72,7 @@ export function ConfirmDomainDialog({ open, variant, domainName, onConfirm, onCa
             </Dialog.Header>
 
             <Dialog.Body pt="2" pb="4" px="6">
-              <Text fontSize="sm" color="fg.muted" textAlign="right" w="full">
+              <Text fontSize="sm" color="fg.muted" textAlign="start" w="full">
                 {config?.messageBefore}
                 <Text as="span" fontWeight="bold" color="fg">{domainName}</Text>
                 {config?.messageAfter}

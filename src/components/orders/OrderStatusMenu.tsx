@@ -84,7 +84,7 @@ export function OrderStatusMenu({ status, onAction }: OrderStatusMenuProps) {
                 value={a.action}
                 _hover={{ bg: a.danger ? 'red.subtle' : 'bg.muted' }}
               >
-                <Text fontSize="sm" w="full" textAlign="right" color={a.danger ? 'fg.error' : 'fg'}>
+                <Text fontSize="sm" w="full" textAlign="start" color={a.danger ? 'fg.error' : 'fg'}>
                   {a.label}
                 </Text>
               </Menu.Item>

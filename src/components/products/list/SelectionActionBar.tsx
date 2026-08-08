@@ -76,7 +76,7 @@ export function SelectionActionBar({
                       <Flex color={a.danger ? 'fg.error' : 'fg.muted'} flexShrink={0}>
                         <Icon size={16} />
                       </Flex>
-                      <Text fontSize="sm" flex="1" textAlign="right" color={a.danger ? 'fg.error' : 'fg'}>
+                      <Text fontSize="sm" flex="1" textAlign="start" color={a.danger ? 'fg.error' : 'fg'}>
                         {a.label}
                       </Text>
                     </Flex>

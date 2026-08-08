@@ -205,7 +205,7 @@ export function ShippingSettings() {
         px={isCompact ? '4' : { base: '4', sm: '6' }}
         w="full"
       >
-        <Flex gap="10" align="flex-start">
+        <Flex gap="10" align="start">
 
           {/* FIRST = rightmost در RTL: sticky info panel — فقط xl+ و non-compact */}
           {!isCompact && (
@@ -215,7 +215,7 @@ export function ShippingSettings() {
               flexShrink={0}
               position="sticky"
               top="20"
-              alignSelf="flex-start"
+              alignSelf="start"
             >
               <InfoBox onOpen={() => setCalcOpen(true)} sidebar />
             </Box>

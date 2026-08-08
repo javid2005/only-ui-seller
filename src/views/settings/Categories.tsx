@@ -158,7 +158,7 @@ function InfoBox() {
       rounded="lg"
     >
       {/* راهنمای زیردسته‌ها */}
-      <Text fontSize="xs" color="fg" lineHeight="1.6" textAlign="right">
+      <Text fontSize="xs" color="fg" lineHeight="1.6" textAlign="start">
         برای مشاهده زیردسته‌ها روی علامت{' '}
         <Box as="span" display="inline-flex" verticalAlign="middle" color="fg" mx="0.5">
           <ChevronDown size={14} />
@@ -167,7 +167,7 @@ function InfoBox() {
       </Text>
 
       {/* راهنمای پیش‌فرض */}
-      <Text fontSize="xs" color="fg" lineHeight="1.6" textAlign="right">
+      <Text fontSize="xs" color="fg" lineHeight="1.6" textAlign="start">
         اولین دسته‌بندی انتخاب‌شده به عنوان{' '}
         <Box as="span" fontWeight="bold">دسته‌بندی پیش‌فرض</Box>
         {' '}در سایت نمایش داده می‌شود.
@@ -242,7 +242,7 @@ export function Categories() {
 
       {/* ─── Panel wrapper (Two Columns Right Center) ────────────────────── */}
       <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" pt={isCompact ? '4' : { base: '4', sm: '6' }} pb="6" px={isCompact ? '4' : { base: '4', sm: '6' }} w="full">
-        <Flex gap="10" align="flex-start">
+        <Flex gap="10" align="start">
 
           {/* FIRST = rightmost در RTL: sticky info panel — فقط lg+ و non-compact */}
           {!isCompact && (
@@ -252,7 +252,7 @@ export function Categories() {
               flexShrink={0}
               position="sticky"
               top="20"
-              alignSelf="flex-start"
+              alignSelf="start"
             >
               <InfoBox />
             </Box>
@@ -303,7 +303,7 @@ export function Categories() {
             </Flex>
 
             {/* Description */}
-            <Text fontSize="sm" color="fg.muted" textAlign="right">
+            <Text fontSize="sm" color="fg.muted" textAlign="start">
               دسته‌بندی(های) مورد نظر خود را به فروشگاه اضافه کنید.
             </Text>
 

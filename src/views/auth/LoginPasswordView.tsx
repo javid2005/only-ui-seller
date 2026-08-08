@@ -51,10 +51,10 @@ export function LoginPasswordView() {
             w="full"
           />
           {passwordError && (
-            <Field.ErrorText display="block" fontSize="xs" textAlign="right" w="full">{passwordError}</Field.ErrorText>
+            <Field.ErrorText display="block" fontSize="xs" textAlign="start" w="full">{passwordError}</Field.ErrorText>
           )}
         </Field.Root>
-        <Flex w="full" justify="flex-end">
+        <Flex w="full" justify="end">
           <Link asChild variant="plain" colorPalette="brand" fontSize="xs" fontWeight="medium" {...focusVisibleOnly}>
             <NextLink href={phone ? `/login/forgot?phone=${phone}` : '/login/forgot'}>
               رمز خود را فراموش کرده اید؟

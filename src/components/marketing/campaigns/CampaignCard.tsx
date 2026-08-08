@@ -19,8 +19,8 @@ export function CampaignCard({ campaign: c, onDelete }: CampaignCardProps) {
     <Box borderWidth="1px" borderColor="border" rounded="lg" overflow="hidden" bg="bg.panel" w="full">
       {/* header — عنوان+badge (راست، flex) ← منوی عملیات (چپ) */}
       <Flex justify="space-between" align="center" gap="2" px="4" pt="4" pb="4">
-        <Flex flex="1" minW="0" gap="2" wrap="wrap" justify="flex-start">
-          <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="right">{c.name}</Text>
+        <Flex flex="1" minW="0" gap="2" wrap="wrap" justify="start">
+          <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start">{c.name}</Text>
           <Badge size="xs" colorPalette={CAMPAIGN_TYPE_COLOR[c.type]} variant="subtle">{c.type}</Badge>
         </Flex>
 
@@ -34,10 +34,10 @@ export function CampaignCard({ campaign: c, onDelete }: CampaignCardProps) {
             <Menu.Positioner dir="rtl">
               <Menu.Content minW="160px" p="1">
                 <Menu.Item value="edit">
-                  <Text fontSize="sm" w="full" textAlign="right" color="fg">ویرایش</Text>
+                  <Text fontSize="sm" w="full" textAlign="start" color="fg">ویرایش</Text>
                 </Menu.Item>
                 <Menu.Item value="delete" _hover={{ bg: 'red.subtle' }} onClick={() => onDelete(c.id)}>
-                  <Text fontSize="sm" w="full" textAlign="right" color="fg.error">حذف</Text>
+                  <Text fontSize="sm" w="full" textAlign="start" color="fg.error">حذف</Text>
                 </Menu.Item>
               </Menu.Content>
             </Menu.Positioner>

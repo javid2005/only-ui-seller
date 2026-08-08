@@ -87,9 +87,9 @@ export function SignupCategoriesView() {
     >
       {/* هر خط: بولت اول در DOM = راست‌ترین (کنار شروع متن)، بعد متن (یک <Text> بلوکی با محتوای inline). */}
       <Flex direction="column" gap="1.5" w="full">
-        <Flex align="flex-start" gap="2" w="full">
+        <Flex align="start" gap="2" w="full">
           <Text as="span" fontSize="xs" color="fg.muted" flexShrink={0}>•</Text>
-          <Text fontSize="xs" color="fg.muted" textAlign="right" flex="1" minW="0">
+          <Text fontSize="xs" color="fg.muted" textAlign="start" flex="1" minW="0">
             برای افزودن دسته بندی روی{' '}
             <Box as="span" display="inline-block" verticalAlign="middle" color="fg.muted">
               <CirclePlus size={14} />
@@ -97,9 +97,9 @@ export function SignupCategoriesView() {
             کلیک کنید.
           </Text>
         </Flex>
-        <Flex align="flex-start" gap="2" w="full">
+        <Flex align="start" gap="2" w="full">
           <Text as="span" fontSize="xs" color="fg.muted" flexShrink={0}>•</Text>
-          <Text fontSize="xs" color="fg.muted" textAlign="right" flex="1" minW="0">
+          <Text fontSize="xs" color="fg.muted" textAlign="start" flex="1" minW="0">
             اولین دسته بندی انتخاب شده به عنوان <Text as="span" fontWeight="bold" color="fg">دسته بندی پیش فرض</Text> نمایش داده می شود.
           </Text>
         </Flex>

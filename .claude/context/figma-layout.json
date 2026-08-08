@@ -1,15 +1,10 @@
 {
   "AdChannelCard": {
-    "childOrder": [
-      "Flex",
-      "Flex",
-      "Box"
-    ],
     "layoutMode": "HORIZONTAL",
-    "textAlign": "end",
-    "_synced": "2026-08-02",
+    "textAlign": "start",
+    "_synced": "2026-08-08",
     "_source": "mcp",
-    "_note": "childOrder is degenerate — positions 1 and 2 are both generic <Flex> (icon box, content column), so this snapshot only catches a regression that swaps the action <Box> with either <Flex>, not an icon/content swap. Root cause: no named sub-components, just Chakra primitives. Real protection for icon-vs-content order still relies on the code comment + this JSON file's textAlign/RTL evidence, not on this childOrder check."
+    "_note": "textAlign از end به start اصلاح شد (2026-08-08). مقدار end در 2026-08-02 نوشته شده بود — قبل از فیکس normalizeAlign جهت‌کور در direction.ts، یعنی خودش artifact همان باگ بود (RIGHT→end بدون چک RTL). متن توضیح فارسی راست‌چین است = start در RTL. childOrder حذف شد (degenerate: Flex/Flex/Box)."
   },
   "AdChannels": {
     "childOrder": [
@@ -32,72 +27,39 @@
     "_note": "childOrder is degenerate — root has 2 generic <Flex> rows (header, footer), so this only catches a header/footer swap. NO `justify` field here on purpose: layout-diff checks every justify-bearing element against one flat value, and CampaignCard legitimately has two different correct values — outer header Flex justify=space-between (first child=TitleGroup at start/right, last child=MenuTrigger at end/left) and nested TitleGroup Flex justify=start (right-aligns title+badge within its own flex box). Any single value here false-positives on one of the two lines — verified 2026-08-03 (tried 'start', then 'space-between', both flagged one real line as wrong). This granularity gap is a known layout-diff limitation; protection for both justify values relies on the code comment only, not this snapshot. footer row internal order = [startDate(first=rightmost), endDate(middle), status(last=leftmost)] — reversed from raw Figma LTR canvas order (status, endDate, startDate) per rightmost-visual=first-DOM-child rule. INCIDENT 2026-08-03: nested TitleGroup was originally shipped with justify=end (LTR intuition) which resolves to LEFT under RTL — content hugged the left edge next to the menu button instead of the card's right edge. Fixed to justify=start. Never copy justify=flex-end assuming it means right under RTL."
   },
   "CampaignTable": {
-    "childOrder": [
-      "Table.ColumnHeader",
-      "Table.ColumnHeader",
-      "Table.ColumnHeader",
-      "Table.ColumnHeader",
-      "Table.ColumnHeader"
-    ],
     "layoutMode": "HORIZONTAL",
     "textAlign": "start",
-    "_synced": "2026-08-03",
+    "_synced": "2026-08-08",
     "_source": "mcp",
     "_note": "columns FIRST-to-LAST = name(rightmost) → startDate → endDate → status → actions(leftmost). Reversed from raw Figma LTR canvas column order (actions, status, endDate, startDate, name).",
     "justify": "start"
   },
   "CampaignFeeInput": {
-    "childOrder": [
-      "SegmentGroupToggle",
-      "AmountOrPercentInput"
-    ],
-    "justify": "end",
-    "_synced": "2026-08-03"
+    "_synced": "2026-08-08",
+    "_note": "justify حذف شد: هر دو فرزند Field.Root با flex=1 w=full کل عرض را پر می‌کنند، پس justify هیچ چیز قابل‌مشاهده‌ای assert نمی‌کرد. childOrder حذف شد: اسم‌های خیالی (SegmentGroupToggle/AmountOrPercentInput) با فرزندهای واقعی (Field.Root × 2) match نمی‌شدند و نام‌های یکسان هم degenerate اند. ترتیب واقعی در JSDoc کامپوننت."
   },
   "ProductPickerItem": {
-    "childOrder": [
-      "RadioMark",
-      "Image",
-      "Content",
-      "Price"
-    ],
-    "_synced": "2026-08-03"
+    "_synced": "2026-08-08"
   },
   "PromotionCard": {
-    "childOrder": [
-      "Flex",
-      "Flex"
-    ],
     "layoutMode": "HORIZONTAL",
     "textAlign": "start",
     "iconSide": "start",
     "_note": "root childOrder degenerate (icon box + content column both generic Flex) — real check relies on textAlign/iconSide. Icon FIRST=rightmost (metadata: card width 960, Content x=16-880, Image/icon x=896-944 — icon at higher x = rightmost). Within inner Top row: title+badge+desc block FIRST=rightmost (Content x=56-864), Switch SECOND=leftmost (SwitchBase x=0-40) — reversed from raw Figma LTR JSX order which lists SwitchBase before Content. Within title Wrapper: Title text FIRST=rightmost (x=702-808), category Badge SECOND=leftmost (x=573-694) — matches AdChannelCard convention (title closer to icon). Bottom row: Badges cluster FIRST=rightmost (x=516-864), action Button SECOND=leftmost (x=0-77).",
-    "_synced": "2026-08-04"
+    "_synced": "2026-08-08"
   },
   "DiscountSettingsDialog": {
-    "childOrder": [
-      "SegmentGroup.Item",
-      "SegmentGroup.Item"
-    ],
     "textAlign": "start",
     "_note": "SegmentGroup toggle: درصدی FIRST=راست‌ترین، مقداری SECOND=چپ‌ترین — از screenshot طرح (node 2700:43295/43551/43660/43661)، برعکسِ ترتیب CampaignFeeInput.tsx (کامپوننت دیگه، طرح دیگه). Dialog footer: انصراف FIRST=راست‌ترین، ذخیره(primary) LAST=چپ‌ترین — طبق قرارداد پروژه (ButtonFooter/NewCampaignDialog). Input addon ٪/تومان → endElement (چپ) نه startElement — طبق قرارداد InfoTab.tsx/CampaignFeeInput.tsx.",
-    "_synced": "2026-08-04"
+    "_synced": "2026-08-08"
   },
   "FreeShippingGeoSection": {
-    "childOrder": [
-      "Box",
-      "Box"
-    ],
     "_note": "root childOrder degenerate (هر دو Box) — واقعی: Treeview(LocationTreeView) FIRST=راست‌ترین، Selected(SelectedLocationsPanel) SECOND=چپ‌ترین. از متادیتای طرح node 2724:40293: Container 928px، Treeview فرزند x=472 (راست‌تر)، Selected فرزند x=0 (چپ‌تر) — reversed از JSX خام (LTR canvas). تأیید مستقل کاربر: «ستون سمت راست شامل chakra treeview است».",
-    "_synced": "2026-08-04"
+    "_synced": "2026-08-08"
   },
   "FreeShipping": {
-    "childOrder": [
-      "ShippingScopeCard",
-      "ShippingScopeCard"
-    ],
     "_note": "RadioCard scope toggle: کل‌کشور(value=all) FIRST=راست‌ترین، موقعیت‌جغرافیایی(value=geo) SECOND=چپ‌ترین — از متادیتای node 2724:40253 Wrapper (Left-Radio-Card اول x پایین‌تر=کل‌کشور در فایل all، دوم x بالاتر). داخل هر ItemControl: Content(عنوان+توضیح) FIRST=راست‌تر، ItemIndicator(radio dot) LAST=چپ‌تر — برعکسِ CampaignTypeCard (اون کارت icon هم داشت، سه‌جزیی بود؛ این دوجزیی، Indicator آخر).",
-    "_synced": "2026-08-04"
+    "_synced": "2026-08-08"
   },
   "AbandonedCartCard": {
     "textAlign": "start",
@@ -108,5 +70,87 @@
     "textAlign": "start",
     "iconSide": "end",
     "_synced": "2026-08-06"
+  },
+  "DiscountCodesTable": {
+    "textAlign": "start",
+    "iconSide": "start",
+    "_synced": "2026-08-08",
+    "layoutMode": "HORIZONTAL",
+    "containers": {
+      "titleCell": {
+        "nodeId": "2659:82005",
+        "align": "start",
+        "childOrder": [
+          "Text",
+          "Badge"
+        ]
+      },
+      "codeCell": {
+        "nodeId": "2778:87959",
+        "justify": "start",
+        "childOrder": [
+          "Text",
+          "IconButton"
+        ]
+      },
+      "amountCell": {
+        "nodeId": "2659:81994",
+        "align": "start",
+        "childOrder": [
+          "Badge",
+          "Text"
+        ]
+      },
+      "usageCell": {
+        "nodeId": "2659:82780",
+        "align": "start",
+        "childOrder": [
+          "Text",
+          "Progress.Root"
+        ]
+      },
+      "actionsCell": {
+        "nodeId": "2659:81946",
+        "justify": "end",
+        "_note": "justify=end از هندسه استخراج‌شدنی نیست: سلول فیگما (96px) دقیقاً اندازهٔ دو دکمه است، پس فضای خالی ندارد و justify اثری ندارد. در کد سلول عریض‌تر است و باید به لبهٔ چپ بچسبد — این یک استنتاج طراحی است، نه fact حساب‌شده. تنها مقدار دستی‌ماندهٔ این snapshot."
+      }
+    },
+    "_source": "mcp",
+    "_note": "childOrder سطح‌بالا حذف شد: فرزندهای واقعی root فقط Table.Root اند، اسم‌های ستونی هرگز match نمی‌کردند و چک بی‌صدا اجرا نمی‌شد. ترتیب ستون‌ها در JSDoc کامپوننت. INCIDENT 2026-08-08: چهار سلول با end (شهود LTR) ship شدند = چپ‌چین در RTL."
+  },
+  "DiscountCodeCard": {
+    "textAlign": "start",
+    "iconSide": "start",
+    "_synced": "2026-08-08",
+    "containers": {
+      "amountRow": {
+        "nodeId": "0:19",
+        "childOrder": [
+          "Text",
+          "Badge"
+        ]
+      },
+      "codeRow": {
+        "nodeId": "0:28",
+        "childOrder": [
+          "IconButton",
+          "Text"
+        ]
+      },
+      "usageRow": {
+        "nodeId": "0:38",
+        "childOrder": [
+          "Text",
+          "Progress.Root"
+        ]
+      }
+    },
+    "_source": "mcp",
+    "_note": "childOrder سطح‌بالا حذف شد (فرزندهای root همه generic Flex اند). INCIDENT 2026-08-08: قاعده sort-نزولی-روی-x فقط روی ردیف بیرونی اعمال شد؛ سه زوج داخلی آینه‌ای ship شدند — این سه container همان بازگشت را چک می‌کنند."
+  },
+  "DiscountCodeRowActionsMenu": {
+    "textAlign": "start",
+    "iconSide": "start",
+    "_synced": "2026-08-08"
   }
 }

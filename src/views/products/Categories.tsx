@@ -117,7 +117,7 @@ export function ProductCategories() {
         px={isCompact ? '4' : { base: '4', sm: '6' }}
         w="full"
       >
-        <Flex gap="10" align="flex-start">
+        <Flex gap="10" align="start">
 
           {/* FIRST = rightmost در RTL: ستون Start — Vertical tabs (lg+، non-compact) */}
           {!isCompact && (
@@ -127,7 +127,7 @@ export function ProductCategories() {
               flexShrink={0}
               position="sticky"
               top="20"
-              alignSelf="flex-start"
+              alignSelf="start"
             >
               <Flex direction="column" gap="2" pt="6">
                 {filtered.map((sec) => (
@@ -138,7 +138,7 @@ export function ProductCategories() {
                     h="10"
                     px="4"
                     w="full"
-                    justifyContent="flex-start"
+                    justifyContent="start"
                     fontSize="sm"
                     fontWeight={activeSection === sec.id ? 'semibold' : 'normal'}
                     color={activeSection === sec.id ? 'brand.fg' : 'fg.muted'}

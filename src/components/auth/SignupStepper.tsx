@@ -34,7 +34,7 @@ export function SignupStepper({ currentStep, mobile, basicInfoSummary, categoryS
       <Box display={{ base: 'none', md: 'block' }} w="full" h="full">
         <Flex direction="column" h="full" w="full">
           <Steps.Root step={currentStep} count={STEPS.length} orientation="vertical" colorPalette="green" size="sm" w="full" h="auto">
-            <Steps.List gap="2.5" alignItems="flex-end" w="full">
+            <Steps.List gap="2.5" alignItems="end" w="full">
               {STEPS.map((s, i) => (
                 // minH=112px = steps-size(32) + gutter*2(24) + حداقل 32px خط رابط (فرمول separator رسیپی Chakra) + 24px اضافه (به‌درخواست کاربر، فاصلهٔ بین step‌ها بیشتر) —
                 // اگه description چندخطی بشه و ارتفاع محتوا از این بیشتر بشه، طول خط رابط هم به همون نسبت زیاد می‌شه.
@@ -43,10 +43,10 @@ export function SignupStepper({ currentStep, mobile, basicInfoSummary, categoryS
                     <Steps.Status complete={<Check size={16} />} current={toPersianDigits(i + 1)} incomplete={toPersianDigits(i + 1)} />
                   </Steps.Indicator>
                   <Box display="flex" flexDirection="column" gap="1.5" flex="1" minW="0">
-                    <Steps.Title fontWeight="semibold" fontSize="sm" textAlign="right">{s.title}</Steps.Title>
+                    <Steps.Title fontWeight="semibold" fontSize="sm" textAlign="start">{s.title}</Steps.Title>
                     {(() => {
                       const summary = i === 0 ? (mobile ? [mobile] : undefined) : i === 1 ? basicInfoSummary : i === 2 ? categorySummary : i === 3 ? planSummary : undefined
-                      if (!summary?.length) return <Steps.Description fontSize="xs" textAlign="right">{s.description}</Steps.Description>
+                      if (!summary?.length) return <Steps.Description fontSize="xs" textAlign="start">{s.description}</Steps.Description>
                       return (
                         <Box fontSize="xs" color="fg.muted">
                           {summary.map((line, idx) => {
@@ -78,8 +78,8 @@ export function SignupStepper({ currentStep, mobile, basicInfoSummary, categoryS
           {/* gap=4 (16px) بین آیتم‌ها */}
           <Steps.List flexWrap="nowrap" gap="4" w="full">
             {STEPS.map((s, i) => (
-              // alignItems="flex-start" = سمت راست در RTL برای ستون flex (طبق قرارداد تأیید‌شدهٔ پروژه — flex-end این‌جا چپ می‌شد)
-              <Steps.Item key={i} index={i} flexDirection="column" alignItems="flex-start" gap="2" flex="1" minW="120px">
+              // alignItems="start" = سمت راست در RTL برای ستون flex (طبق قرارداد تأیید‌شدهٔ پروژه — end این‌جا چپ می‌شد)
+              <Steps.Item key={i} index={i} flexDirection="column" alignItems="start" gap="2" flex="1" minW="120px">
                 <Flex align="center" w="full">
                   <Steps.Indicator flexShrink={0}>
                     <Steps.Status complete={<Check size={16} />} current={toPersianDigits(i + 1)} incomplete={toPersianDigits(i + 1)} />
@@ -87,7 +87,7 @@ export function SignupStepper({ currentStep, mobile, basicInfoSummary, categoryS
                   {/* minW=8 (32px) = حداقل طول خط رابط بین دو step */}
                   <Steps.Separator flex="1" minW="8" />
                 </Flex>
-                <Steps.Title fontWeight="semibold" fontSize="sm" textAlign="right" whiteSpace="nowrap" minW="max-content">{s.title}</Steps.Title>
+                <Steps.Title fontWeight="semibold" fontSize="sm" textAlign="start" whiteSpace="nowrap" minW="max-content">{s.title}</Steps.Title>
               </Steps.Item>
             ))}
           </Steps.List>

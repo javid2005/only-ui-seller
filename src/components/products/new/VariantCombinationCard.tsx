@@ -81,9 +81,9 @@ export function VariantCombinationCard({ combo, onChange }: VariantCombinationCa
         gap="2"
       >
         {/* موبایل (<sm): ردیف badgeها زیر SKU · sm+: همه در یک ردیف */}
-        <Flex direction={{ base: 'column', sm: 'row' }} align={{ base: 'flex-end', sm: 'center' }} gap="2">
+        <Flex direction={{ base: 'column', sm: 'row' }} align={{ base: 'end', sm: 'center' }} gap="2">
           <Text fontSize="sm" fontWeight="semibold" color="fg.muted" whiteSpace="nowrap">{combo.sku}</Text>
-          <Flex gap="2" wrap="wrap" justify="flex-start">
+          <Flex gap="2" wrap="wrap" justify="start">
             {orderedValues.map((label, i) => (
               <Badge key={i} colorPalette="gray" variant="subtle" size="sm" rounded="l2">{label}</Badge>
             ))}
@@ -118,7 +118,7 @@ export function VariantCombinationCard({ combo, onChange }: VariantCombinationCa
       </Flex>
 
       {/* Fields — FIRST=راست: موجودی · قیمت · [تخفیف · قیمت بعد از تخفیف]=چپ */}
-      <Flex gap="4" align="flex-end" px="4" pb="4" pt="4" w="full" wrap="wrap">
+      <Flex gap="4" align="end" px="4" pb="4" pt="4" w="full" wrap="wrap">
         <Field.Root flex="1" minW="140px" required>
           <Field.Label fontSize="sm" fontWeight="semibold">موجودی</Field.Label>
           <NumberField

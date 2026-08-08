@@ -24,11 +24,11 @@ interface HeaderProps {
 export function Header({ title, breadcrumbs, badge, welcome, cta }: HeaderProps) {
   return (
     /**
-     * RTL outer row — flex-start = RIGHT in RTL
+     * RTL outer row — start = RIGHT in RTL
      *   FIRST child = Content (breadcrumb + title) → rightmost ✓
      *   LAST  child = CTA                          → leftmost  ✓
      */
-    <Flex align="flex-start" gap="4" w="full" flexShrink={0}>
+    <Flex align="start" gap="4" w="full" flexShrink={0}>
 
       {/* ── Content: FIRST → rightmost in RTL ✓ ──────────── */}
       <Flex
@@ -36,7 +36,7 @@ export function Header({ title, breadcrumbs, badge, welcome, cta }: HeaderProps)
         gap="2"          /* 8px — matches Figma spacing/2 */
         flex="1"
         minW="0"
-        align="flex-start"  /* flex-start = RIGHT side in RTL ✓ */
+        align="start"  /* start = RIGHT side in RTL ✓ */
       >
 
         {/* Breadcrumb — وقتی جا کم بیاید wrap می‌شود (نه overflow/scroll).
@@ -104,7 +104,7 @@ export function Header({ title, breadcrumbs, badge, welcome, cta }: HeaderProps)
 
       {/* ── CTA: LAST → leftmost in RTL ✓ ──────────────── */}
       {cta && (
-        <Box flexShrink={0} alignSelf="flex-start">
+        <Box flexShrink={0} alignSelf="start">
           {cta}
         </Box>
       )}

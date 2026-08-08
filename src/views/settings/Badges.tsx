@@ -80,7 +80,7 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
         {/* RTL: title group FIRST = rightmost | link LAST = leftmost (below on < sm) */}
         <Flex
           direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}
-          align={isCompact ? 'flex-start' : { base: 'flex-start', sm: 'center' }}
+          align={isCompact ? 'start' : { base: 'start', sm: 'center' }}
           gap="3"
           w="full"
           pb="3"
@@ -130,7 +130,7 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
             _hover={{ opacity: 0.8 }}
             textDecoration="none"
             flexShrink={0}
-            alignSelf="flex-start"
+            alignSelf="start"
             ms={isCompact ? '11' : { base: '11', sm: '0' }}
           >
             {/* RTL: text FIRST = rightmost, icon LAST = leftmost */}
@@ -150,7 +150,7 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
           rounded="lg"
           p="3"
           gap="2"
-          align="flex-start"
+          align="start"
         >
           {/* Inset border */}
           <Box
@@ -200,10 +200,10 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
       >
 
         {/* Image placeholder — rightmost (FIRST in DOM) */}
-        {/* In mobile column: alignSelf=flex-start = RIGHT side in RTL */}
+        {/* In mobile column: alignSelf=start = RIGHT side in RTL */}
         <Box
           boxSize={isCompact ? '64px' : { base: '64px', md: '102px' }}
-          alignSelf={isCompact ? 'flex-start' : { base: 'flex-start', md: 'auto' }}
+          alignSelf={isCompact ? 'start' : { base: 'start', md: 'auto' }}
           bg="bg.muted"
           borderWidth="2px"
           borderStyle="dashed"
@@ -228,7 +228,7 @@ function BadgeSectionCard({ config, value, onChange, isCompact }: BadgeSectionCa
           {/* Input + Button — row on sm+, column on <sm */}
           <Flex
             direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}
-            align={isCompact ? 'stretch' : { base: 'stretch', sm: 'flex-end' }}
+            align={isCompact ? 'stretch' : { base: 'stretch', sm: 'end' }}
             gap="2"
             w="full"
           >
@@ -319,7 +319,7 @@ export function Badges() {
             rounded="lg"
             p="3"
             gap="2"
-            align="flex-start"
+            align="start"
           >
             {/* Inset border */}
             <Box

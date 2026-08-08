@@ -133,7 +133,7 @@ export function AbandonedCarts() {
   )
 
   return (
-    <Flex direction="column" gap="4" alignItems="flex-end" w="full">
+    <Flex direction="column" gap="4" alignItems="end" w="full">
       <Header
         title="سبدهای خرید رها شده"
         breadcrumbs={[
@@ -147,10 +147,10 @@ export function AbandonedCarts() {
         bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl"
         p={{ base: '4', md: isCompact ? '4' : '6' }} w="full"
       >
-        <Flex direction="column" gap="6" alignItems="flex-end" maxW="960px" w="full" mx="auto">
+        <Flex direction="column" gap="6" alignItems="end" maxW="960px" w="full" mx="auto">
 
           {/* نمای کلی */}
-          <Flex direction="column" gap="6" alignItems="flex-end" w="full">
+          <Flex direction="column" gap="6" alignItems="end" w="full">
             <TitleBar
               title="مدیریت سبدها"
               subtitle="کاربرانی که تا آستانه خرید پیش رفته‌اند اما سفارش نهایی ثبت نکرده‌اند."

@@ -34,15 +34,15 @@ function ShippingCard({ method }: { method: ShippingMethod }) {
         border="none"
         bg="transparent"
         boxShadow="none"
-        alignItems="flex-start"
+        alignItems="start"
         justifyContent="space-between"
         w="full"
       >
-        <RadioCard.ItemContent gap="2" minW="0" alignItems="flex-start" flex="1">
-          <RadioCard.ItemText fontSize="md" fontWeight="semibold" color="fg" w="full" textAlign="right">
+        <RadioCard.ItemContent gap="2" minW="0" alignItems="start" flex="1">
+          <RadioCard.ItemText fontSize="md" fontWeight="semibold" color="fg" w="full" textAlign="start">
             {method.title}
           </RadioCard.ItemText>
-          <Text fontSize="sm" color="fg.muted" w="full" textAlign="right">
+          <Text fontSize="sm" color="fg.muted" w="full" textAlign="start">
             {method.duration}
           </Text>
           <Flex align="center" gap="2">

@@ -67,7 +67,7 @@ export function AddDomainDialog({ open, onClose, onCheck }: AddDomainDialogProps
                   </Box>
                 </Box>
 
-                <Box display="flex" flexDirection="column" gap="1.5" alignItems="flex-end" w="full">
+                <Box display="flex" flexDirection="column" gap="1.5" alignItems="end" w="full">
                   <Input
                     dir="ltr"
                     placeholder="example.com"
@@ -76,7 +76,7 @@ export function AddDomainDialog({ open, onClose, onCheck }: AddDomainDialogProps
                     onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
                     size="lg"
                   />
-                  <Text fontSize="xs" color={error ? 'red.fg' : 'fg.muted'} textAlign="right" w="full">
+                  <Text fontSize="xs" color={error ? 'red.fg' : 'fg.muted'} textAlign="start" w="full">
                     {error || 'فقط دامنه ریشه قابل اتصال است (بدون www یا ساب‌دامنه)'}
                   </Text>
                 </Box>
