@@ -65,10 +65,12 @@ Figma tool fail شد؟
 | Tier | چیه | کار | screenshot؟ |
 |------|-----|-----|------------|
 | **0 — trivial** | متن/label، rename، comment، config | فقط Edit | ❌ |
-| **1 — code/style** | prop، token swap، spacing، bugfix، refactor، ریسپانسیو روی component موجود — **بدون surface نو از Figma** | Edit + `pnpm type-check` | ❌ |
-| **2 — Figma→code نو** | frame/page/component نو از Figma، یا تغییری که باید pixel با Figma spec بخوره | کل Protocol پایین | ✅ |
+| **1 — code/style** | prop، token swap، spacing، bugfix، refactor، ریسپانسیو روی component موجود — **بدون surface نو از Figma** | Edit + `npx tsc --noEmit` | فقط اگر چیدمان عوض شد |
+| **2 — Figma→code نو** | frame/page/component نو از Figma، یا تغییری که باید pixel با Figma spec بخوره | کل Protocol پایین | ✅ اجباری |
 
-- **screenshot = opt-in.** default نزن. فقط **Tier 2** یا وقتی کاربر صریح گفت «compare / pixel / screenshot».
+- **screenshot در Tier 2 اجباری است، نه opt-in، و بدون پرسیدن انجام می‌شود** (تغییر روش،
+  کاربر، 1404/05/09 — قاعدهٔ قبلی «همیشه اول بپرس» حذف شد چون همان یک پرسش که «نه» جواب
+  گرفت، باعث ship شدن ۷ نقص شد). فقط اگر کاربر صریح گفت لازم نیست، رد شو.
 - **MCP Figma fetch فقط Tier 2.** Tier 0/1 از local cache، صفر MCP call.
 - **شک بین دو tier؟ → پایین‌تر رو بگیر**، لازم شد escalate کن. سرعت اول.
 
@@ -105,7 +107,7 @@ step 4: فقط Vitrina-specific adaptation اضافه کن (RTL، icon، token)
 **⚠️ Figma DOM order ≠ RTL DOM order** → قاعده، جدول الگوها و استثنای namespace componentها
 یک‌جا در «RTL — مرجع واحد» (پایین‌تر). تکرارش نکن؛ همان یک مرجع را بخوان.
 نکتهٔ مخصوصِ این مرحله: `get_design_context` فرزندها را چپ→راست لیست می‌کند، پس
-**هرگز** ترتیب خروجی‌اش را برای یک container افقی verbatim کپی نکن — با x مرتب کن.
+**هرگز** ترتیب خروجی‌اش را برای یک container افقی verbatim کپی نکن — از screenshot بخوان.
 
 **Component descriptions = implementation checklist (اجباری):**
 ```
@@ -146,24 +148,11 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 - [ ] Component Resolution رعایت شد (Local→DS MCP→Build) — کدوم مسیر؟
 - [ ] صفر hardcode (رنگ/spacing/font) — همه token
-- [ ] `dev-engine .` سبز از rule های `one-align-idiom` / `dom-order` / `layout-diff` — نه با چشم. مرجع: «RTL — مرجع واحد»
-- [ ] RTL DOM order — **با evidence، نه checkbox خالی:** برای هر container افقیِ ساخته‌شده
-  یک خط گزارش: `container → اولین DOM child → راست‌ترین المان در Figma` — تیک بدون این جدول = ⚠️
-  هر container ای که چیدمانش حساس است باید `{/* @layout <name> */}` + `containers` در snapshot بگیرد،
-  وگرنه هیچ چکی از آن محافظت نمی‌کند و درس فقط در یک کامنت می‌ماند
 - [ ] type-check سبز (`npx tsc --noEmit` یا `pnpm build` — اسکریپت `type-check` وجود نداره)
-- [ ] Visual verification vs Figma — **opt-in، هیچ‌وقت خودکار نه.**
-  > **قانون اجباری (کاربر، ۱۴۰۴):** هرگز خودبه‌خود preview/screenshot نگیر. **همیشه اول بپرس:**
-  > «preview بگیرم و pixel-perfect با طرح چک کنم؟» — فقط اگه کاربر گفت «بله»، آن‌وقت:
-  > ```
-  > 1. preview_start (اگه server نیست)
-  > 2. preview_resize(1920) → screenshot → compare با Figma desktop frame
-  > 3. preview_resize(360)  → screenshot → compare با Figma mobile frame
-  > 4. مغایرت‌ها list → fix → re-screenshot تا match
-  > ```
-  > type-check سبز + RTL DOM order = کافی برای بستن task. verify بصری جداست و فقط با تأیید کاربر.
+- [ ] **مقایسهٔ preview با طرح** (اجباری برای Tier 2 — روش اصلیِ تشخیص چیدمان، پایین ↓)
+- [ ] `dev-engine .` بدون error — مرجع: «RTL — مرجع واحد»
 
-مرجع عمیق: `dev-knowledge/universal/figma-to-code.md` · pipeline قدم‌به‌قدم: skill `figma-implement-design`
+مرجع عمیق: `dev-knowledge/universal/figma-to-code.md`
 
 ---
 
@@ -184,50 +173,50 @@ node ~/Documents/GitHub/Tools/dev-agents/packages/dev-engine/dist/cli.js <args>
 > چون لینک نبود، یه session کامل بدون هیچ چکی کد زد و بعداً معلوم شد pipeline اجرا نشده.
 > **قانون: step اجرا نشد → یا درستش کن، یا به کاربر بگو. هیچ‌وقت بی‌صدا رد نشو.**
 
-**⚠️ gotcha حیاتی:** آرگومان `path` هم‌زمان هم root اسکن فایل‌هاست هم root حل‌کردن cache/config
-(`.dev-engine.json`, `.claude/context/figma-layout.json`, ...). اگه یه subdirectory بدی
-(مثل `src/components/marketing`) نه repo root، این cacheها silently پیدا نمی‌شن (چون دنبالشون
-تو `src/components/marketing/.claude/context/...` می‌گرده) و ماژول‌هایی مثل `layout-diff` بدون
-هیچ خطایی «۰ issue» گزارش می‌دن — یعنی گزارش clean که در واقع یعنی «هیچی چک نشد»، نه «چک شد و
-تمیز بود». **همیشه از repo root با `path="."` اجرا کن**، حتی اگه فقط می‌خوای یه subfolder رو بررسی کنی.
+**⚠️ gotcha:** آرگومان `path` هم‌زمان هم root اسکن فایل‌هاست هم root حل‌کردن config
+(`.dev-engine.json`, `.claude/context/figma-resolve.json`). اگه یه subdirectory بدی نه repo
+root، configها silently پیدا نمی‌شن. **همیشه از repo root با `path="."` اجرا کن.**
 
-سابقه: 1404 — یه session کامل `node cli.js src/components/marketing --fix` زد و «۰ issue» گزارش
-داد؛ بعداً معلوم شد چون root غلط بود، `layout-diff` اصلاً cache رو لود نکرده بود. با یه decoy file
-تست شد که از repo root (`path="."`) واقعاً mismatch رو می‌گیره.
+**چه چیزی را همچنان می‌گیرد:** `one-align-idiom` (مقدار فیزیکی چیدمان) · `dom-order` (آیکن
+بعد از متن) · `icon-direction` · `persian-numerals` · hardcode رنگ/spacing.
+**چه چیزی را نمی‌گیرد:** اینکه `start` درست است یا `end`، و اینکه ساختار با طرح می‌خواند
+یا نه → آن دو فقط با مقایسهٔ preview (بخش «تطابق با طرح فیگما»).
 
 ---
 
-### تطابق با طرح فیگما — دو لایه (اجباری برای Tier 2)
+### تطابق با طرح فیگما — از روی preview (اجباری برای Tier 2)
 
-هیچ‌کدوم از این دو خودکار نیستن؛ **سوختشون رو باید بنویسی وگرنه بی‌صدا no-op می‌شن.**
-
-| لایه | چی می‌سنجه | سوخت |
-|------|-----------|------|
-| `layout-diff` (ماژول) | **متن کد** vs طرح — childOrder، textAlign، justify/align، سمت و رنگ آیکون. `justify`/`align` سطح‌بالا فقط **root** را می‌سنجند؛ containerهای داخلی → `containers` + marker | `.claude/context/figma-layout.json` |
-| `verify-render` (subcommand) | **پیکسل رندرشده** vs طرح — ردیف آینه‌ای، textAlign محاسبه‌شده، رنگ resolve‌شده | دامپ DOM از preview |
-
-> ⚠️ **snapshot خالی/کهنه دیگر بی‌صدا نیست:** `snapshot-incomplete` (layoutMode افقی بدون
-> facts محور)، `snapshot-stale` (childOrder ای که با هیچ فرزند واقعی match نمی‌کند)،
-> `container-marker-missing` و `container-snapshot-missing` همه warning می‌دهند.
-> پس «۰ issue» حالا واقعاً یعنی «چک شد»، نه «هیچی چک نشد».
-> **هرگز `childOrder` با اسم خیالی یا نام‌های یکسان (`[Flex, Flex]`) ننویس** — صفر قدرت تشخیص
-> دارد و فقط توهم پوشش می‌سازد. ۸ مورد از این نوع در 1404/05/17 حذف شدند.
+**تنها روش معتبر مقایسهٔ چیدمان: screenshot طرح کنار screenshot preview + اندازه‌گیری DOM.**
+هیچ استنتاج ذهنی، هیچ محاسبهٔ x دستی، هیچ snapshot متنی.
 
 ```bash
-dev-engine layout-sync .                  # ۰ یعنی هیچی چک نمی‌شه
-dev-engine layout-sync . --set AdChannelCard --data '{"textAlign":"start","iconColor":"fg.muted"}'
-dev-engine layout-sync . --set X --data '{"childOrder":null}'   # null = حذف (merge است نه replace)
-dev-engine verify-render --snippet        # اسنیپت → کنسول preview → render-snapshot.json
-dev-engine verify-render .
+# ۱. طرح را بگیر و لازم بود crop کن (تصویر خام معمولاً بلندتر از آن است که خوانا باشد)
+#    get_screenshot(nodeId, fileKey, maxDimension=2683) → curl → python3 -c "PIL … .crop(box)"
+# ۲. preview را بالا بیاور: preview_start({name:"vitrina-dev"}) → پورت 5174
+#    ⚠️ navigate گاهی path را می‌خورد؛ مطمئن‌ترین راه:
+#       javascript_tool: window.location.assign('http://localhost:5174/<path>')
+# ۳. screenshot preview بگیر (عرض ≤1024 بده وگرنه خروجی به 800px اسکیل و ناخوانا می‌شود)
+# ۴. عدد بگیر، به چشم اکتفا نکن ↓
 ```
 
-**⚠️ قرارداد semantic:** مقادیر `start`/`end` ان (RTL: `start`=راست). canvas فیگما همیشه LTR
-رندر می‌شه، پس متنی که تو فیگما راست‌چین می‌بینی در این پروژه یعنی `start`. نگاشت مستقیم
-`textAlignHorizontal: RIGHT` به `"end"` کل قضاوت رو معکوس می‌کنه. `--set` مقدار فیزیکی رو رد می‌کنه.
+**اندازه‌گیری DOM — گام ۴، حیاتی:** چشم روی «۵۷۰ یا ۵۸؟» گول می‌خورد، عدد نه. با
+`javascript_tool` مرزهای عناصر کلیدی و مرز پنل والد را بگیر و مقایسه کن:
 
-> سابقه: 1404 — تابع `normalizeAlign` جهت‌کور بود (`right`→`end` بدون توجه به RTL)، پس
-> هر قضاوت textAlign در این پروژه برعکس می‌شد: هم کد غلط «تمیز» گزارش می‌شد، هم کد درست
-> error می‌گرفت با auto-fix ای که متن رو به سمت اشتباه می‌برد. فیکس شد در `src/direction.ts`.
+```js
+const box = (n) => `l=${Math.round(n.getBoundingClientRect().left)} r=${Math.round(n.getBoundingClientRect().right)}`
+// راست‌چین درست = r عنصر == r پنل  ·  چپ‌چین = l عنصر == l پنل
+```
+
+> ⚠️ عنصری که `w="full"` دارد جابه‌جا نمی‌شود؛ فقط عناصر کوتاه (برچسب، دکمه، فیلد با maxW)
+> باگ جهت را نشان می‌دهند. پس **حتماً یک برچسب کوتاه را هم بسنج**، نه فقط ردیف‌های full-width.
+
+**سابقهٔ همین کلاس باگ (1404/05/09، درسی که این بخش را ساخت):** پنج مورد جهت‌معکوس
+(`«انتخاب شده»`، فیلد شرط سبد خرید، فیلد حداقل مبلغ سفارش) + دو نقص ساختاری (نبودِ کامل
+دکمه‌های حذف، تختِ‌شدن گروه‌های سلسله‌مراتبی) در `DiscountCodeNew` ship شدند در حالی که
+`dev-engine`، `layout-diff` و type-check **همه سبز بودند**. دلیل ریشه‌ای: آن ابزارها می‌سنجند
+«کد با آنچه *من گفتم* درست است می‌خواند؟» — وقتی خودِ فهم من معکوس باشد همه سبز می‌مانند.
+فقط مقایسه با **خود طرح** آن را می‌گیرد. سیستم snapshot متنی (`layout-diff`/`verify-render`/
+`layout-sync`/`figma-layout.json`/anchorهای `data-layout`) به همین دلیل در 1404/05/09 حذف شد.
 
 ---
 
@@ -247,8 +236,8 @@ dev-engine verify-render .
 | Signup progress | `getSignupProgress`/`saveSignupStep` در `auth.ts` با `localStorage` mock می‌شه | با همون شماره، کاربر به آخرین مرحلهٔ ذخیره‌شدهٔ signup برمی‌گرده (بعد از OTP verify) |
 | OTP verify | `verifyOtp` در `auth.ts`: کد `۰۰۰۰۰` رد می‌شه، هر کد ۵رقمی دیگه تایید می‌شه | مسیر «کد اشتباه» تست‌پذیر باشه — همهٔ نقاط PinInput (`OtpForm`, `OtpDialog`, `AuthQrDialog` در `TwoFactorSection.tsx`) هم روی همین قرارداد auto-submit/auto-error دارن |
 | Jalali DatePicker | `src/components/ui/DatePicker.tsx` — دستی با `Intl.DateTimeFormat('...-ca-persian-nu-latn')`، صفر کتابخانهٔ خارجی | هیچ پکیج jalali/date در پروژه نبود؛ ICU خودش leap-year/طول ماه رو حساب می‌کنه، پس نیازی به پیاده‌سازی الگوریتم تقویم یا اضافه‌کردن dependency نیست |
-| چیدمان RTL | یک idiom (`start`/`end`) + سمت از **هندسهٔ فیگما حساب** می‌شود (`layout-derive`)، نه از خروجی کد فیگما و نه با قضاوت دستی | سه incident (1404/05/12 ×۲، 05/17) همه از تایپ دستیِ `flex-end` آمدند. جزئیات: «RTL — مرجع واحد» |
-| گیت چیدمان | hook `Stop` → `.claude/hooks/rtl_gate.py` (`dev-engine --changed`، ~۰.۳s) | چک از قبل وجود داشت ولی اجرا نمی‌شد. hook تنها لایه‌ای است که نمی‌شود ردش کرد |
+| چیدمان RTL | یک idiom (`start`/`end`) + سمت از **مقایسهٔ screenshot طرح با preview** تأیید می‌شود، نه از خروجی کد فیگما و نه با استدلال ذهنی | چهار incident (1404/05/12 ×۲، 05/17، 05/09) همه از قضاوت دستی آمدند؛ لایه‌های متنی هر بار سبز بودند. جزئیات: «RTL — مرجع واحد» |
+| گیت چیدمان | hook `Stop` → `.claude/hooks/rtl_gate.py` (`dev-engine --changed`، ~۰.۳s) | فقط مقادیر فیزیکی (`flex-end`, `mr`, …) را می‌گیرد — ارزان و بی‌دردسر، ولی جهتِ درست را تشخیص نمی‌دهد |
 
 ### Next.js — App Router conventions (اجباری)
 
@@ -320,9 +309,9 @@ start = راست        end = چپ
 
 **⚠️ بازگشتی است.** برای *هر* container افقی جدا اعمالش کن — نه فقط ردیف بیرونی:
 ```
-1. مختصات x فرزندها را از get_metadata (یا screenshot) بگیر
-2. نزولی بر x sort کن → راست‌ترین = اولین فرزند JSX
-3. تکرار کن برای هر container افقیِ داخلِ آن
+1. به screenshot طرح نگاه کن → راست‌ترین المان = اولین فرزند JSX
+2. تکرار کن برای هر container افقیِ داخلِ آن
+3. آخرش با screenshot preview مقایسه کن (بخش «تطابق با طرح فیگما»)
 ```
 خروجی کد Figma فقط مرجع style/token است، نه ساختار ردیف‌های افقی — canvas فیگما
 همیشه LTR است، پس کپی verbatim ترتیبش = layout آینه‌ای.
@@ -341,79 +330,42 @@ start = راست        end = چپ
 - `Tabs.Trigger` عمودی: `justifyContent="start"` → متن راست.
 - theme `order:-1` روی `[data-scope="switch"][data-part="control"]` = CSS fallback؛ DOM order درست باز هم اجباری.
 
-### چطور مکانیکی چک می‌شود (نه با چشم و نه با کامنت)
+### چطور چک می‌شود
 
 | لایه | چه چیزی را می‌گیرد | چطور فعال می‌شود |
 |------|--------------------|------------------|
-| **hook `rtl_gate`** | هر error چیدمانی، **قبل از بسته‌شدن turn** | خودکار (`Stop` در `.claude/settings.json`) |
-| `one-align-idiom` | هر `flex-*` یا مقدار فیزیکی | خودکار، بدون setup |
+| **مقایسهٔ preview با طرح** | **جهت و ساختار** — تنها چیزی که واقعاً کار می‌کند | دستی، هر Tier 2 · روش: بخش «تطابق با طرح فیگما» |
+| **hook `rtl_gate`** | error چیدمانی، **قبل از بسته‌شدن turn** | خودکار (`Stop` در `.claude/settings.json`)، ~۰.۳s |
+| `one-align-idiom` | هر `flex-*` یا مقدار فیزیکی (`mr`/`left`/`textAlign="right"`) | خودکار، بدون setup |
 | `dom-order` | آیکن بعد از متن در Button | خودکار |
-| `layout-diff` + `containers` | ترتیب/چیدمانِ یک container مشخص vs طرح — **متن کد** | anchor + `containers` در snapshot |
-| `verify-render` | همان، ولی **پیکسل اندازه‌گیری‌شده** | همان anchor + دامپ DOM از preview |
 
-### ⛔ قانون طلایی: سمت را حساب کن، قضاوت نکن
+`one-align-idiom` فقط می‌گوید «فیزیکی ننویس» — **نمی‌گوید `start` درست است یا `end`.**
+آن یکی را فقط preview جواب می‌دهد.
 
-**alignment و ترتیب هرگز از خروجی کد Figma و هرگز از کلمات خوانده نشود.**
+### ⛔ قانون طلایی: سمت را ببین، حدس نزن
+
+**alignment و ترتیب هرگز از خروجی کد Figma و هرگز از استدلال ذهنی گرفته نشود.**
 خروجی `get_design_context` کد آمادهٔ Tailwind/JSX می‌دهد که با فرض **LTR** تولید شده —
 `justify-end` و ترتیب فرزندهایش زیر `dir=rtl` برعکس resolve می‌شوند. آن یک ترجمهٔ غلط است، نه داده.
 
-**مسیر اجباری:**
-```bash
-# ۱. متادیتای فریم را بگیر (get_metadata) و در فایل بریز — یک call کل فریم را می‌دهد
-# ۲. nodeId هر container را در snapshot ثبت کن
-dev-engine layout-sync . --set DiscountCodesTable \
-  --data '{"containers":{"titleCell":{"nodeId":"2659:82005"}}}'
-# ۳. سمت و ترتیب را ماشین حساب کند — دست تو `start`/`end` تایپ نمی‌کند
-dev-engine layout-derive . --metadata dump.xml --write
-```
+**مسیر درست: screenshot طرح ← کد بزن ← screenshot preview ← مقایسه ← فیکس.**
+هزینه‌اش ~۳۰ ثانیه است و برخلاف هر لایهٔ دیگری، وقتی فهمِ خودت معکوس باشد هم می‌گیردش.
 
-`layout-derive` از `x + width` در برابر لبهٔ والد سمت را **حساب** می‌کند و اگر مقدار
-دستیِ قبلی با هندسه نخواند، صریح می‌گوید «همان کلاس باگ». سه incident همه از تایپ‌کردن
-دستیِ همین دو کلمه آمدند.
-
-نکات پیاده‌سازی که در همان سه incident گم شده بودند:
-- **جهت container با همپوشانی `y` تعیین می‌شود، نه با تفاوت `x`** — یک ستونِ راست‌چین
-  دقیقاً همان حالتی است که فرزندها x متفاوت دارند.
-- **فقط محور inline ثبت می‌شود.** تلهٔ RTL منحصراً روی inline است (راست↔چپ)؛ محور
-  block (بالا/پایین) ترجمه ندارد و اغلب والد انجامش می‌دهد (`Table.Cell` عمودی
-  وسط‌چین می‌کند) — ثبتش فقط خطای کاذب می‌سازد.
+نکاتی که در incidentهای واقعی گم شده بودند:
+- **عنصر `w="full"` باگ جهت را پنهان می‌کند** — چون جابه‌جا نمی‌شود. حتماً یک برچسب/دکمهٔ
+  کوتاه را هم بسنج. (باگ «انتخاب شده» دقیقاً از همین‌جا از چشم من رد شد: ردیف چیپ‌ها
+  full-width بود و درست دیده می‌شد، فقط آن یک برچسب کوتاه چپ افتاده بود.)
 - **هر container جدا.** جدول دسکتاپ و کارت موبایلِ همان داده می‌توانند یک زوج را
   **برعکس هم** بچینند (در Discount: جدول متن‌راست، کارت آیکون‌راست). هیچ استنتاجی
   از یک container به دیگری مجاز نیست.
+- **ساختار را هم مقایسه کن، نه فقط جهت را.** در همان incident، «دسته‌بندی» و «موقعیت
+  جغرافیایی» در طرح سلسله‌مراتبی بودند (والد + زیرچیپ) ولی تخت پیاده شده بودند، و ۷ دکمهٔ
+  حذف اصلاً وجود نداشتند — هیچ‌کدام باگ جهت نبود و هیچ ابزار متنی‌ای نمی‌گرفتشان.
 
-**anchor واحد — `data-layout="Component.containerName"`:**
-```tsx
-<Flex data-layout="DiscountCodesTable.actionsCell" gap="2" justify="end"> … </Flex>
-```
-
-**چرا prop و نه کامنت:** anchor باید در **هر دو** لایه پیدا شود. `layout-diff` متن کد را
-می‌خواند ولی `verify-render` دامپ DOM را — و کامنت در DOM وجود ندارد. `data-layout` هم
-regex-پذیر است هم query-پذیر: یک مکانیزم، دو لایه، یک زبان. (روی کامپوننت‌های چاکرا
-type-check می‌شود و برخلاف `{/* */}` داخل شاخهٔ ternary هم parse می‌شود.)
-
-`containers` هم `justify`/`align`/`textAlign` می‌گیرد هم `childOrder` — پس ترتیبِ زوج‌های
-*داخلی* هم قابل‌چک است، همان جایی که باگ‌های واقعی می‌نشینند.
-
-**گرفتن دامپ پیکسلی:**
-```bash
-dev-engine verify-render --snippet     # اسنیپت → کنسول preview
-# خروجی → .claude/context/render-snapshot.json
-dev-engine verify-render .
-```
-> در هر عرض فقط containerهای *مرئی* سنجیده می‌شوند (پنهان‌ها x=0 می‌دهند و skip می‌شوند)،
-> پس برای پوشش کامل دو بار بگیر: یک‌بار ۱۹۲۰ (جدول) و یک‌بار ۳۶۰ (کارت موبایل).
-
-**سکوت در هیچ سمتی مجاز نیست:** `container-snapshot-missing` (anchor بی‌facts) ·
-`container-anchor-missing` (facts بی‌anchor) · `container-name-mismatch` (prefix غلط) ·
-`snapshot-stale` (childOrder ای که با فرزند واقعی match نمی‌کند) · و در `verify-render`
-گزارشِ هدف‌هایی که در دامپ بودند ولی snapshot نداشتند. برای پس‌گرفتن یک fact غلط:
-`--data '{"childOrder":null}'` (چون `--set` merge می‌کند، نه replace).
-
-> **سابقهٔ این کلاس باگ — سه بار، همه با کامنت «فیکس» شدند و هیچ‌کدام جلوی بعدی را نگرفت:**
-> `CampaignCard` (1404/05/12، justify=end روی TitleGroup) · `NewCampaignDialog` (همان روز،
-> alignItems=end روی RadioCard) · `DiscountCodesTable`+`DiscountCodeCard` (1404/05/17، چهار
-> سلول با end + سه زوج داخلیِ آینه‌ای). درسِ عملی: **fix باید rule یا marker شود، نه کامنت.**
-> کامنت جلوی نویسندهٔ بعدی را نمی‌گیرد؛ `--fix` می‌گیرد.
+> **سابقهٔ این کلاس باگ — چهار بار:** `CampaignCard` (1404/05/12) · `NewCampaignDialog`
+> (همان روز) · `DiscountCodesTable`+`DiscountCodeCard` (1404/05/17) · `DiscountCodeNew`
+> (1404/05/09، بعدِ «فیکس»های قبلی). سه‌تای اول با کامنت و بعد با snapshot متنی «فیکس»
+> شدند و هیچ‌کدام جلوی بعدی را نگرفت. چهارمی با **مقایسهٔ preview** در چند دقیقه پیدا شد.
 
 ### RTL in Portal components (Menu, Drawer, Popover, Tooltip)
 

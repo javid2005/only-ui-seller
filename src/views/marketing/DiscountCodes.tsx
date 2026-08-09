@@ -2,6 +2,7 @@
 
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { Plus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Header, HeaderCTA } from '@/components/layout/Header'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { DISCOUNT_CODES } from '@/components/marketing/promotions/discountCodesData'
@@ -13,6 +14,7 @@ import { DiscountCodeCard } from '@/components/marketing/promotions/DiscountCode
  * دسکتاپ: node 2659:81934 · موبایل/ریسپانسیو: node 3033:64241 · کارت لوکال: instance 3122:71946
  */
 export function DiscountCodes() {
+  const router = useRouter()
   const isCompact = useCompactMode()
 
   return (
@@ -24,7 +26,13 @@ export function DiscountCodes() {
           { label: 'پروموشن ها', href: '/promotions/ads' },
           { label: 'کدهای تخفیف' },
         ]}
-        cta={<HeaderCTA label="افزودن کد تخفیف" icon={<Plus size={16} />} />}
+        cta={(
+          <HeaderCTA
+            label="کد تخفیف جدید"
+            icon={<Plus size={16} />}
+            onClick={() => router.push('/promotions/codes/new')}
+          />
+        )}
       />
 
       <Box

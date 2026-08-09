@@ -25,7 +25,10 @@ import json
 import subprocess
 import sys
 
-MODULES = "layout-diff,css-logical-props,dom-order,icon-direction"
+# layout-diff از 1404/05/09 حذف شد (سیستم snapshot متنی) — مقایسهٔ چیدمان با طرح
+# حالا از روی preview انجام می‌شود، نه از روی figma-layout.json. جزئیات در CLAUDE.md
+# بخش «تطابق با طرح فیگما». این گیت فقط مقادیر فیزیکیِ چیدمان را می‌گیرد.
+MODULES = "css-logical-props,dom-order,icon-direction"
 
 
 def main() -> int:

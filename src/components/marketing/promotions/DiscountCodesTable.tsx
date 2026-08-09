@@ -48,7 +48,7 @@ export function DiscountCodesTable({ items }: DiscountCodesTableProps) {
           {items.map((item) => (
             <Table.Row key={item.id} h="20" borderBottomWidth="1px" borderColor="border">
               <Table.Cell>
-                <Flex data-layout="DiscountCodesTable.titleCell" direction="column" gap="1" align="start">
+                <Flex direction="column" gap="1" align="start">
                   <Text fontSize="sm" fontWeight="semibold" color="fg">{item.title}</Text>
                   <Badge size="xs" colorPalette={DISCOUNT_TYPE_COLOR[item.type]} variant="subtle">
                     {DISCOUNT_TYPE_LABEL[item.type]}{/* dev-engine-ignore — لیبل فارسی از پیش تعیین‌شده، عدد نیست */}
@@ -57,7 +57,7 @@ export function DiscountCodesTable({ items }: DiscountCodesTableProps) {
               </Table.Cell>
 
               <Table.Cell>
-                <Flex data-layout="DiscountCodesTable.codeCell" align="center" gap="2" justify="start">
+                <Flex align="center" gap="2" justify="start">
                   <Text fontSize="sm" color="fg">{item.code}</Text>
                   <IconButton
                     aria-label={`کپی کد ${item.code}`} variant="ghost" size="2xs" color="fg.muted"
@@ -70,7 +70,7 @@ export function DiscountCodesTable({ items }: DiscountCodesTableProps) {
 
               <Table.Cell>
                 {item.type === 'percentage' ? (
-                  <Flex data-layout="DiscountCodesTable.amountCell" direction="column" gap="1" align="start">
+                  <Flex direction="column" gap="1" align="start">
                     <Badge size="xs" colorPalette="orange" variant="solid">{item.amountValue}{/* dev-engine-ignore */}</Badge>
                     <Text fontSize="xs" color="fg.muted">{item.amountCap}{/* dev-engine-ignore */}</Text>
                   </Flex>
@@ -83,7 +83,7 @@ export function DiscountCodesTable({ items }: DiscountCodesTableProps) {
                 {item.usage.limit === null ? (
                   <Text fontSize="sm" color="fg">{toPersianDigits(item.usage.used)}</Text>
                 ) : (
-                  <Flex data-layout="DiscountCodesTable.usageCell" direction="column" gap="2" align="start" w="full">
+                  <Flex direction="column" gap="2" align="start" w="full">
                     <Text fontSize="sm" color="fg">
                       {toPersianDigits(item.usage.limit)} / {toPersianDigits(item.usage.used)}
                     </Text>
@@ -110,7 +110,7 @@ export function DiscountCodesTable({ items }: DiscountCodesTableProps) {
 
               <Table.Cell>
                 {/* تنها ستونی که واقعاً end می‌خواد: آیکون‌ها به لبهٔ چپ (RTL: end=چپ). بقیهٔ سلول‌ها start. */}
-                <Flex data-layout="DiscountCodesTable.actionsCell" gap="2" justify="end">
+                <Flex gap="2" justify="end">
                   <IconButton
                     aria-label={`ویرایش ${item.title}`} size="sm"
                     bg="gray.subtle" color="fg.muted" _hover={{ bg: 'gray.muted' }}
