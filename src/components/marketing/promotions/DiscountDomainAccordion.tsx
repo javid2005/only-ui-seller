@@ -144,21 +144,23 @@ export interface DiscountDomainGroup {
 
 /**
  * محتوای یک دامنهٔ لیستی — به‌ازای هر گروه: TitleBar (عنوان راست، IconButton سطل‌زباله چپ)
- * + ردیف چیپ‌های قابل‌حذف. در پایان Separator + دکمهٔ «افزودن …» (فعلاً غیرفعال؛ دیالوگ
- * مخصوص هر دامنه بعداً wire می‌شود — تصمیم کاربر).
+ * + ردیف چیپ‌های قابل‌حذف. در پایان Separator + دکمهٔ «افزودن …» — فقط وقتی `onAdd` داده
+ * شده فعال است (دیالوگ آن دامنه ساخته شده)؛ بدون `onAdd` غیرفعال می‌ماند (دیالوگ‌های بقیهٔ
+ * دامنه‌ها هنوز wire نشده‌اند — تصمیم کاربر).
  *
  * جهت: کل ستون `alignItems="start"` = راست در RTL. (قبلاً `end` بود → «انتخاب شده» چپ
  * می‌افتاد؛ با مقایسهٔ preview و طرح در 1404/05/09 کشف شد — چشمی درست به‌نظر می‌رسید چون
  * چیپ‌ها w="full" داشتند و فقط همین یک برچسبِ کوتاه جابه‌جا می‌شد.)
  */
 export function DiscountDomainListContent({
-  groups, emptyText, addLabel, onRemoveItem, onRemoveGroup,
+  groups, emptyText, addLabel, onRemoveItem, onRemoveGroup, onAdd,
 }: {
   groups: DiscountDomainGroup[]
   emptyText: string
   addLabel: string
   onRemoveItem: (groupId: string, item: string) => void
   onRemoveGroup: (groupId: string) => void
+  onAdd?: () => void
 }) {
   const isEmpty = groups.every((g) => g.items.length === 0)
 
@@ -212,7 +214,7 @@ export function DiscountDomainListContent({
 
       {/* دکمهٔ افزودن هم‌سمتِ چک‌باکس/عنوانه (راست) — justify="start"=راست، نه end */}
       <Flex justify="start" w="full">
-        <Button variant="outline" colorPalette="brand" size="sm" disabled>
+        <Button variant="outline" colorPalette="brand" size="sm" disabled={!onAdd} onClick={onAdd}>
           <Plus size={16} />
           {addLabel}
         </Button>

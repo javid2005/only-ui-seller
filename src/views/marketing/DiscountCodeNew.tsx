@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   Alert, Box, Field, Flex, Grid, Input, RadioCard, SegmentGroup, Separator, Text,
 } from '@chakra-ui/react'
@@ -14,6 +14,14 @@ import { NumberField } from '@/components/ui/NumberField'
 import { DatePicker } from '@/components/ui/DatePicker'
 import { DiscountDomainAccordion, DiscountDomainListContent } from '@/components/marketing/promotions/DiscountDomainAccordion'
 import type { DiscountDomainGroup } from '@/components/marketing/promotions/DiscountDomainAccordion'
+import { DiscountProductPickerDialog } from '@/components/marketing/promotions/DiscountProductPickerDialog'
+import { CAMPAIGN_PRODUCTS, type CampaignProduct } from '@/components/marketing/campaigns/data'
+import { DiscountCategoryPickerDialog } from '@/components/marketing/promotions/DiscountCategoryPickerDialog'
+import { buildCategoryGroups, groupsToCheckedValue } from '@/components/marketing/promotions/categories'
+import { DiscountLocationPickerDialog } from '@/components/marketing/promotions/DiscountLocationPickerDialog'
+import { buildLocationGroups, locationGroupsToCheckedValue } from '@/components/marketing/promotions/locations'
+import { DiscountCustomerPickerDialog } from '@/components/marketing/promotions/DiscountCustomerPickerDialog'
+import { MANUAL_CUSTOMERS, type ManualCustomer } from '@/components/orders/manual/manualOrderData'
 import { toPersianDigits } from '@/utils/numbers'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 
@@ -72,16 +80,23 @@ const DOMAIN_LABELS: Record<DomainKey, string> = {
  * دامنهٔ اعمال تخفیف — تب «انتخاب دامنه اعمال» (Figma «Discount / Domain Empty» node
  * 5171:80420 + «Discount / Domain Selected» node 5171:81668 + لوکال کامپوننت
  * «DiscountDomain-Accordion» node 5171:81109 → `DiscountDomainAccordion.tsx`):
- *   - چک‌باکس آکاردئون → انتخاب + باز شدن دامنه (auto-open)
- *   - بدون داده → متن EmptyState · با داده → بج تعداد + chevron (چه باز چه بسته)
+ *   - چک‌باکس یک دامنهٔ دیالوگ‌دار (محصول/دسته‌بندی/مشتری/موقعیت) وقتی بدون‌دیتاست →
+ *     به‌جای auto-open آکاردئونِ خالی، مستقیم دیالوگ انتخابش باز می‌شود (تصمیم کاربر
+ *     1404/05/۱۰: «هیچ‌وقت دامنهٔ انتخاب‌شدهٔ بدون‌داده نداشته باشیم»؛ پیاده‌سازی:
+ *     `handleToggleProducts/Categories/Customers/Locations` در پایین). `domains` عمداً تا
+ *     لحظهٔ تاییدِ دیالوگ دست‌نخورده می‌ماند — اگر کاربر چیزی انتخاب نکرد/انصراف داد، هیچ
+ *     چیزی تغییر نمی‌کند (نه چک‌باکس یک لحظه تیک می‌خورد نه آکاردئون باز می‌شود).
+ *   - چک‌باکس دامنهٔ دارای‌دیتا (چه انتخاب‌شده چه قبلاً deselect‌شده) → toggle سادهٔ
+ *     `selected`/`open`؛ خودِ دیتا (`productGroups`/...) هرگز با این toggle پاک نمی‌شود —
+ *     deselect فقط پنهانش می‌کند، reselect دوباره نشانش می‌دهد.
+ *   - تاییدِ هر دیالوگ با ۰ آیتم (چه اولین انتخاب چه ویرایش بعدیِ یک دامنهٔ پرداده) دامنه را
+ *     صریحاً unselected/بسته می‌کند (`handleConfirm*`) — همان قانون از مسیر معکوس هم برقرار می‌ماند.
+ *   - بدون داده (و بسته) → دامنه اصلاً selected نیست، دیده نمی‌شود · با داده → بج تعداد + chevron
  *   - chevron همیشه در open نمایش داده می‌شود (تأیید کاربر — طرح خودِ حالت open+بدون‌داده
  *     هم chevron-up نشون می‌داد، برخلاف توضیح اولیهٔ «فقط دامنهٔ دارای‌داده»)
- *   - دکمهٔ «افزودن …» فعلاً غیرفعال — دیالوگ مخصوص هر دامنه بعداً جدا wire می‌شود (تصمیم کاربر)
- *   - «شرط سبد خرید» تنها دامنهٔ استثناست: به‌جای EmptyState+چیپ، مستقیم NumberField
- *     («حداقل تعداد اقلام سبد خرید») — عیناً طبق طرح (node 5171:81702)
- *   - متن EmptyState دامنه‌های دسته‌بندی/مشتری/موقعیت روی طرح هرگز open+خالی نشون داده نشده
- *     بود؛ طبق الگوی «محصولات خاص» (تنها نمونهٔ واقعی از Figma: «تاکنون محصولی انتخاب
- *     نکرده‌اید.») تعمیم داده شد، نه از Figma کپی — اگر متن دقیق‌تری خواستید جایگزین کنید.
+ *   - «شرط سبد خرید» تنها دامنهٔ استثناست: دیالوگ ندارد (به‌جای EmptyState+چیپ، مستقیم
+ *     NumberField «حداقل تعداد اقلام سبد خرید» — عیناً طبق طرح node 5171:81702)، پس
+ *     چک‌باکسش همیشه toggle سادهٔ `toggleDomainSelected('cart')` می‌ماند.
  *   - دکمهٔ دامنهٔ «موقعیت جغرافیایی» در طرح Selected (node 5171:81701) به‌اشتباه/کپی‌پیست
  *     برچسب «افزودن محصول» داشت (مغایر با الگوی افزودن+نامِ‌دامنهٔ سایر دکمه‌ها) — به‌جاش
  *     «افزودن موقعیت» گذاشته شد؛ اگر عمدی بود به من بگو تا برگردونم.
@@ -125,10 +140,12 @@ export function DiscountCodeNew() {
   const [productGroups, setProductGroups] = useState<DiscountDomainGroup[]>([
     { id: 'selected', title: 'انتخاب شده', items: ['هواوی پیکس ۷۰ پرو', 'گلکسی S24 اولترا', 'آیفون ۱۵ پرو مکس', 'شیائومی ۱۴ پرو'] },
   ])
+  // آی‌دی و نام‌ها از catalog واقعی signupCategoriesData.ts (همون منبعِ categories.ts) —
+  // تا pre-check دوبارهٔ دیالوگ (groupsToCheckedValue) بدون افتادن آیتم انجام بشه.
   const [categoryGroups, setCategoryGroups] = useState<DiscountDomainGroup[]>([
-    { id: 'digital', title: 'کالای دیجیتال و لوازم الکترونیکی', items: ['ماشین‌های اداری', 'ساعت هوشمند', 'قطعات کامپیوتر', 'تجهیزات گیمینگ', 'دوربین', 'لپ‌تاپ'] },
-    { id: 'bags', title: 'کیف و کفش', items: ['همه زیر دسته ها'] },
-    { id: 'gold', title: 'طلا و جواهرات', items: ['طلا', 'نقره', 'جواهرات و سنگ‌های گران‌بها'] },
+    { id: 'digital', title: 'کالای دیجیتال و لوازم الکترونیکی', items: ['موبایل و تبلت', 'لپ‌تاپ'] },
+    { id: 'shoe-bag', title: 'کیف و کفش', items: ['همه زیر دسته ها'] },
+    { id: 'jewellery', title: 'طلا و جواهرات', items: ['طلا', 'نقره'] },
   ])
   const [customerGroups, setCustomerGroups] = useState<DiscountDomainGroup[]>([
     { id: 'selected', title: 'انتخاب شده', items: ['مینا رضایی', 'علی اکبری', 'سارا حسینی', 'آرش نیکو', 'کامران امینی'] },
@@ -140,6 +157,64 @@ export function DiscountCodeNew() {
   ])
   const [minCartItems, setMinCartItems] = useState('3')
 
+  const [productDialogOpen, setProductDialogOpen] = useState(false)
+  // چیپ‌های دامنهٔ محصولات فقط نام محصول را نگه می‌دارند (مثل بقیهٔ دامنه‌ها) — برای
+  // pre-check دوبارهٔ دیالوگ، نام‌ها را به id واقعی محصول در catalog مپ می‌کنیم.
+  const selectedProductIds = useMemo(
+    () =>
+      productGroups
+        .flatMap((g) => g.items)
+        .map((name) => CAMPAIGN_PRODUCTS.find((p) => p.name === name)?.id)
+        .filter((id): id is string => Boolean(id)),
+    [productGroups],
+  )
+  const handleConfirmProducts = (products: CampaignProduct[]) => {
+    const hasItems = products.length > 0
+    setProductGroups(hasItems ? [{ id: 'selected', title: 'انتخاب شده', items: products.map((p) => p.name) }] : [])
+    // تایید با ۰ آیتم (چه اولین انتخاب چه ویرایش بعدی) = دامنه دوباره unselected/بسته می‌شود —
+    // هیچ‌وقت نباید «انتخاب‌شده بدون داده» بمانیم.
+    setDomains((prev) => ({ ...prev, products: { selected: hasItems, open: hasItems } }))
+    setProductDialogOpen(false)
+  }
+
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
+  const selectedCategoryCheckedValue = useMemo(() => groupsToCheckedValue(categoryGroups), [categoryGroups])
+  const handleConfirmCategories = (checkedValue: string[]) => {
+    const groups = buildCategoryGroups(checkedValue)
+    const hasItems = groups.length > 0
+    setCategoryGroups(groups)
+    setDomains((prev) => ({ ...prev, categories: { selected: hasItems, open: hasItems } }))
+    setCategoryDialogOpen(false)
+  }
+
+  const [locationDialogOpen, setLocationDialogOpen] = useState(false)
+  const selectedLocationCheckedValue = useMemo(() => locationGroupsToCheckedValue(locationGroups), [locationGroups])
+  const handleConfirmLocations = (checkedValue: string[]) => {
+    const groups = buildLocationGroups(checkedValue)
+    const hasItems = groups.length > 0
+    setLocationGroups(groups)
+    setDomains((prev) => ({ ...prev, locations: { selected: hasItems, open: hasItems } }))
+    setLocationDialogOpen(false)
+  }
+
+  const [customerDialogOpen, setCustomerDialogOpen] = useState(false)
+  // چیپ‌های دامنهٔ مشتریان فقط نام را نگه می‌دارند (مثل محصولات) — برای pre-check دوبارهٔ
+  // دیالوگ، نام‌ها را به id واقعی مشتری در catalog مپ می‌کنیم.
+  const selectedCustomerIds = useMemo(
+    () =>
+      customerGroups
+        .flatMap((g) => g.items)
+        .map((name) => MANUAL_CUSTOMERS.find((c) => c.name === name)?.id)
+        .filter((id): id is string => Boolean(id)),
+    [customerGroups],
+  )
+  const handleConfirmCustomers = (customers: ManualCustomer[]) => {
+    const hasItems = customers.length > 0
+    setCustomerGroups(hasItems ? [{ id: 'selected', title: 'انتخاب شده', items: customers.map((c) => c.name) }] : [])
+    setDomains((prev) => ({ ...prev, customers: { selected: hasItems, open: hasItems } }))
+    setCustomerDialogOpen(false)
+  }
+
   const toggleDomainSelected = (key: DomainKey) => {
     setDomains((prev) => {
       const nextSelected = !prev[key].selected
@@ -150,19 +225,42 @@ export function DiscountCodeNew() {
     setDomains((prev) => ({ ...prev, [key]: { ...prev[key], open: !prev[key].open } }))
   }
 
-  // حذف یک چیپ → اگر گروه خالی شد خودِ گروه هم می‌رود (عنوانِ بی‌چیپ بی‌معناست)
+  // چک‌باکس یک دامنهٔ دیالوگ‌دار (محصول/دسته‌بندی/مشتری/موقعیت) که هنوز انتخاب نشده و
+  // داده‌ای هم ندارد → به‌جای باز کردن آکاردئون خالی، مستقیم دیالوگ انتخاب باز می‌شود؛
+  // `domains` عمداً دست‌نخورده می‌ماند تا تاییدِ دیالوگ (handleConfirm*) — اگر کاربر چیزی
+  // انتخاب نکرد/انصراف داد، دامنه دقیقاً همان unselected باقی می‌ماند (نه یک لحظه چک‌شده و
+  // برگشته). دامنهٔ دارای‌داده (چه انتخاب‌شده چه قبلاً deselect‌شده با دیتای نگه‌داشته‌شده)
+  // toggle معمولی می‌گیرد — دیتا با deselect پاک نمی‌شود، این تابع اصلاً آن را لمس نمی‌کند.
+  const handleToggleProducts = () =>
+    !domains.products.selected && !hasGroupData(productGroups) ? setProductDialogOpen(true) : toggleDomainSelected('products')
+  const handleToggleCategories = () =>
+    !domains.categories.selected && !hasGroupData(categoryGroups) ? setCategoryDialogOpen(true) : toggleDomainSelected('categories')
+  const handleToggleCustomers = () =>
+    !domains.customers.selected && !hasGroupData(customerGroups) ? setCustomerDialogOpen(true) : toggleDomainSelected('customers')
+  const handleToggleLocations = () =>
+    !domains.locations.selected && !hasGroupData(locationGroups) ? setLocationDialogOpen(true) : toggleDomainSelected('locations')
+
+  // حذف یک چیپ → اگر گروه خالی شد خودِ گروه هم می‌رود (عنوانِ بی‌چیپ بی‌معناست). حذف مستقیم
+  // (نه فقط از مسیر دیالوگ) هم می‌تواند دامنه را کاملاً خالی کند — پس همینجا هم همان قانون
+  // «هیچ‌وقت انتخاب‌شدهٔ بدون‌داده» را با unselect/بستن خودکار دامنه برقرار نگه می‌داریم.
+  // groups باید همیشه مقدار جاری‌ترین رندر باشد (از closure کامپوننت، نه prev داخل setState)
+  // چون setDomains جدا و بیرون از updater صدا زده می‌شود.
   const makeRemoveItem =
-    (setter: React.Dispatch<React.SetStateAction<DiscountDomainGroup[]>>) =>
-    (groupId: string, item: string) =>
-      setter((prev) =>
-        prev
-          .map((g) => (g.id === groupId ? { ...g, items: g.items.filter((i) => i !== item) } : g))
-          .filter((g) => g.items.length > 0),
-      )
+    (key: DomainKey, groups: DiscountDomainGroup[], setter: React.Dispatch<React.SetStateAction<DiscountDomainGroup[]>>) =>
+    (groupId: string, item: string) => {
+      const next = groups
+        .map((g) => (g.id === groupId ? { ...g, items: g.items.filter((i) => i !== item) } : g))
+        .filter((g) => g.items.length > 0)
+      setter(next)
+      if (next.length === 0) setDomains((prev) => ({ ...prev, [key]: { selected: false, open: false } }))
+    }
   const makeRemoveGroup =
-    (setter: React.Dispatch<React.SetStateAction<DiscountDomainGroup[]>>) =>
-    (groupId: string) =>
-      setter((prev) => prev.filter((g) => g.id !== groupId))
+    (key: DomainKey, groups: DiscountDomainGroup[], setter: React.Dispatch<React.SetStateAction<DiscountDomainGroup[]>>) =>
+    (groupId: string) => {
+      const next = groups.filter((g) => g.id !== groupId)
+      setter(next)
+      if (next.length === 0) setDomains((prev) => ({ ...prev, [key]: { selected: false, open: false } }))
+    }
 
   const rowDirection = isCompact ? 'column' : { base: 'column', sm: 'row' }
 
@@ -374,15 +472,16 @@ export function DiscountCodeNew() {
                   open={domains.products.open}
                   hasData={hasGroupData(productGroups)}
                   badgeText={`${toPersianDigits(countGroupItems(productGroups))} محصول`}
-                  onToggleSelected={() => toggleDomainSelected('products')}
+                  onToggleSelected={handleToggleProducts}
                   onToggleOpen={() => toggleDomainOpen('products')}
                 >
                   <DiscountDomainListContent
                     groups={productGroups}
                     emptyText="تاکنون محصولی انتخاب نکرده‌اید."
                     addLabel="افزودن محصول"
-                    onRemoveItem={makeRemoveItem(setProductGroups)}
-                    onRemoveGroup={makeRemoveGroup(setProductGroups)}
+                    onRemoveItem={makeRemoveItem('products', productGroups, setProductGroups)}
+                    onRemoveGroup={makeRemoveGroup('products', productGroups, setProductGroups)}
+                    onAdd={() => setProductDialogOpen(true)}
                   />
                 </DiscountDomainAccordion>
 
@@ -393,15 +492,16 @@ export function DiscountCodeNew() {
                   open={domains.categories.open}
                   hasData={hasGroupData(categoryGroups)}
                   badgeText={`${toPersianDigits(categoryGroups.length)} دسته بندی`}
-                  onToggleSelected={() => toggleDomainSelected('categories')}
+                  onToggleSelected={handleToggleCategories}
                   onToggleOpen={() => toggleDomainOpen('categories')}
                 >
                   <DiscountDomainListContent
                     groups={categoryGroups}
                     emptyText="تاکنون دسته‌بندی‌ای انتخاب نکرده‌اید."
                     addLabel="افزودن دسته بندی"
-                    onRemoveItem={makeRemoveItem(setCategoryGroups)}
-                    onRemoveGroup={makeRemoveGroup(setCategoryGroups)}
+                    onRemoveItem={makeRemoveItem('categories', categoryGroups, setCategoryGroups)}
+                    onRemoveGroup={makeRemoveGroup('categories', categoryGroups, setCategoryGroups)}
+                    onAdd={() => setCategoryDialogOpen(true)}
                   />
                 </DiscountDomainAccordion>
 
@@ -411,15 +511,16 @@ export function DiscountCodeNew() {
                   open={domains.customers.open}
                   hasData={hasGroupData(customerGroups)}
                   badgeText={`${toPersianDigits(countGroupItems(customerGroups))} مشتری`}
-                  onToggleSelected={() => toggleDomainSelected('customers')}
+                  onToggleSelected={handleToggleCustomers}
                   onToggleOpen={() => toggleDomainOpen('customers')}
                 >
                   <DiscountDomainListContent
                     groups={customerGroups}
                     emptyText="تاکنون مشتری‌ای انتخاب نکرده‌اید."
                     addLabel="افزودن مشتری"
-                    onRemoveItem={makeRemoveItem(setCustomerGroups)}
-                    onRemoveGroup={makeRemoveGroup(setCustomerGroups)}
+                    onRemoveItem={makeRemoveItem('customers', customerGroups, setCustomerGroups)}
+                    onRemoveGroup={makeRemoveGroup('customers', customerGroups, setCustomerGroups)}
+                    onAdd={() => setCustomerDialogOpen(true)}
                   />
                 </DiscountDomainAccordion>
 
@@ -429,15 +530,16 @@ export function DiscountCodeNew() {
                   open={domains.locations.open}
                   hasData={hasGroupData(locationGroups)}
                   badgeText={`${toPersianDigits(countGroupItems(locationGroups))} شهر`}
-                  onToggleSelected={() => toggleDomainSelected('locations')}
+                  onToggleSelected={handleToggleLocations}
                   onToggleOpen={() => toggleDomainOpen('locations')}
                 >
                   <DiscountDomainListContent
                     groups={locationGroups}
                     emptyText="تاکنون موقعیتی انتخاب نکرده‌اید."
                     addLabel="افزودن موقعیت"
-                    onRemoveItem={makeRemoveItem(setLocationGroups)}
-                    onRemoveGroup={makeRemoveGroup(setLocationGroups)}
+                    onRemoveItem={makeRemoveItem('locations', locationGroups, setLocationGroups)}
+                    onRemoveGroup={makeRemoveGroup('locations', locationGroups, setLocationGroups)}
+                    onAdd={() => setLocationDialogOpen(true)}
                   />
                 </DiscountDomainAccordion>
 
@@ -470,6 +572,34 @@ export function DiscountCodeNew() {
           />
         </Flex>
       </Box>
+
+      <DiscountProductPickerDialog
+        open={productDialogOpen}
+        onClose={() => setProductDialogOpen(false)}
+        selectedProductIds={selectedProductIds}
+        onConfirm={handleConfirmProducts}
+      />
+
+      <DiscountCategoryPickerDialog
+        open={categoryDialogOpen}
+        onClose={() => setCategoryDialogOpen(false)}
+        checkedValue={selectedCategoryCheckedValue}
+        onConfirm={handleConfirmCategories}
+      />
+
+      <DiscountLocationPickerDialog
+        open={locationDialogOpen}
+        onClose={() => setLocationDialogOpen(false)}
+        checkedValue={selectedLocationCheckedValue}
+        onConfirm={handleConfirmLocations}
+      />
+
+      <DiscountCustomerPickerDialog
+        open={customerDialogOpen}
+        onClose={() => setCustomerDialogOpen(false)}
+        selectedCustomerIds={selectedCustomerIds}
+        onConfirm={handleConfirmCustomers}
+      />
     </Flex>
   )
 }
@@ -513,6 +643,9 @@ function DiscountTypeCard({ value, title, description }: { value: DiscountType; 
  * داخل segment: خودکار(راست/FIRST) → دستی(چپ) — geometry: 2659:83955
  * زیر sm ستونی می‌شود (نحوهٔ ایجاد بالا → کد تخفیف پایین، طبق DOM order بالا — کاربر
  * تأیید کرد که زیر sm باید stack بشه، نسخهٔ اول همیشه-row اشتباه بود).
+ * متن راهنما («کد باید یکتا باشد» / «کد خودکار تولید می‌شود») مال فیلد «کد تخفیف» است، نه
+ * کل ردیف — قبلاً یک Text مشترک زیر هر دو فیلد بود که غلط بود؛ کاربر گزارش کرد و به
+ * `Field.HelperText` داخل همان Field.Root منتقل شد (الگوی بقیهٔ فیلدهای این صفحه).
  */
 function CreationModeSection({
   mode, onModeChange, manualCode, onManualCodeChange, rowDirection,
@@ -525,43 +658,40 @@ function CreationModeSection({
 }) {
   const isManual = mode === 'manual'
   return (
-    <Flex direction="column" gap="1.5" alignItems="end" w="full">
-      <Flex gap="4" alignItems="start" w="full" direction={rowDirection as any}>
-        <Field.Root flex="1" minW="0">
-          <Field.Label fontSize="sm" fontWeight="semibold" color="fg">نحوه ایجاد کد تخفیف</Field.Label>
-          <SegmentGroup.Root
-            value={mode}
-            onValueChange={(e) => onModeChange((e.value ?? 'auto') as CreationMode)}
-            w="full"
-          >
-            <SegmentGroup.Indicator bg="bg.panel" />
-            <SegmentGroup.Item value="auto" flex="1" justifyContent="center">
-              <SegmentGroup.ItemText>خودکار</SegmentGroup.ItemText>
-              <SegmentGroup.ItemHiddenInput />
-            </SegmentGroup.Item>
-            <SegmentGroup.Item value="manual" flex="1" justifyContent="center">
-              <SegmentGroup.ItemText>دستی</SegmentGroup.ItemText>
-              <SegmentGroup.ItemHiddenInput />
-            </SegmentGroup.Item>
-          </SegmentGroup.Root>
-        </Field.Root>
+    <Flex gap="4" alignItems="start" w="full" direction={rowDirection as any}>
+      <Field.Root flex="1" minW="0">
+        <Field.Label fontSize="sm" fontWeight="semibold" color="fg">نحوه ایجاد کد تخفیف</Field.Label>
+        <SegmentGroup.Root
+          value={mode}
+          onValueChange={(e) => onModeChange((e.value ?? 'auto') as CreationMode)}
+          w="full"
+        >
+          <SegmentGroup.Indicator bg="bg.panel" />
+          <SegmentGroup.Item value="auto" flex="1" justifyContent="center">
+            <SegmentGroup.ItemText>خودکار</SegmentGroup.ItemText>
+            <SegmentGroup.ItemHiddenInput />
+          </SegmentGroup.Item>
+          <SegmentGroup.Item value="manual" flex="1" justifyContent="center">
+            <SegmentGroup.ItemText>دستی</SegmentGroup.ItemText>
+            <SegmentGroup.ItemHiddenInput />
+          </SegmentGroup.Item>
+        </SegmentGroup.Root>
+      </Field.Root>
 
-        <Field.Root flex="1" minW="0" opacity={isManual ? 1 : 0.5}>
-          <Field.Label fontSize="sm" fontWeight="semibold" color="fg">کد تخفیف</Field.Label>
-          <Input
-            value={isManual ? manualCode : ''}
-            onChange={(e) => onManualCodeChange(e.target.value)}
-            placeholder={isManual ? 'مثال: SUMMER20' : 'ایجاد کد بصورت خودکار'}
-            textAlign="start"
-            bg="bg.panel"
-            disabled={!isManual}
-          />
-        </Field.Root>
-      </Flex>
-
-      <Text fontSize="xs" color="fg.muted" textAlign="start" w="full">
-        {isManual ? 'کد باید در سطح فروشگاه یکتا باشد' : 'کد به صورت خودکار توسط سیستم تولید می‌شود'}
-      </Text>
+      <Field.Root flex="1" minW="0" opacity={isManual ? 1 : 0.5}>
+        <Field.Label fontSize="sm" fontWeight="semibold" color="fg">کد تخفیف</Field.Label>
+        <Input
+          value={isManual ? manualCode : ''}
+          onChange={(e) => onManualCodeChange(e.target.value)}
+          placeholder={isManual ? 'مثال: SUMMER20' : 'ایجاد کد بصورت خودکار'}
+          textAlign="start"
+          bg="bg.panel"
+          disabled={!isManual}
+        />
+        <Field.HelperText>
+          {isManual ? 'کد باید در سطح فروشگاه یکتا باشد' : 'کد به صورت خودکار توسط سیستم تولید می‌شود'}
+        </Field.HelperText>
+      </Field.Root>
     </Flex>
   )
 }

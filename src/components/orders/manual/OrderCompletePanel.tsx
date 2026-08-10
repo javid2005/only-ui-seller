@@ -66,11 +66,13 @@ export function OrderCompletePanel({ customerName, paymentLink, onCreateNew, onG
         py="4"
       >
         {/* RTL: اولِ DOM = راست → دکمهٔ کپی راست، لینک چپ (طبق فیدبک کاربر). dir="ltr" چون URL
-            لاتین است؛ textAlign="end" هم‌جهت با dir برای align-left واقعی. */}
+            لاتین است؛ textAlign="start" (نه end) چون در dir="ltr" همین start فیزیکاً چپ می‌شود —
+            end در این کانتکست راست بود و متن به‌جای چسبیدن به لبهٔ چپ، وسط/راستِ باکس می‌افتاد
+            (گزارش کاربر با screenshot). */}
         <IconButton variant="ghost" colorPalette="brand" size="md" onClick={handleCopyLink} aria-label="کپی لینک">
           <Copy size={20} />
         </IconButton>
-        <Box flex="1" minW="0" dir="ltr" textAlign="end">
+        <Box flex="1" minW="0" dir="ltr" textAlign="start">
           <Text
             fontSize={isCompact ? 'md' : { base: 'md', md: 'lg' }}
             fontWeight="medium"
