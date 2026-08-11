@@ -1,45 +1,42 @@
 import {
   Button, CloseButton, Dialog, Flex, Portal,
-  Select, Switch, Text, type ListCollection,
+  Switch, Text,
 } from '@chakra-ui/react'
 import {
   catCollection, statusCollection, currencyCollection, sortCollection,
-  type FilterOption,
 } from './data'
-
-function ModalSelect({ collection, defaultValue }: { collection: ListCollection<FilterOption>; defaultValue: string }) {
-  return (
-    <Select.Root collection={collection} defaultValue={[defaultValue]} size="md" w="full">
-      <Select.HiddenSelect />
-      <Select.Control>
-        <Select.Trigger>
-          <Select.ValueText />
-        </Select.Trigger>
-        <Select.IndicatorGroup>
-          <Select.Indicator />
-        </Select.IndicatorGroup>
-      </Select.Control>
-      <Select.Positioner>
-        <Select.Content minW="max-content" maxW="360px">
-          {collection.items.map((it) => (
-            <Select.Item key={it.value} item={it}>
-              <Select.ItemText whiteSpace="nowrap">{it.label}</Select.ItemText>
-              <Select.ItemIndicator />
-            </Select.Item>
-          ))}
-        </Select.Content>
-      </Select.Positioner>
-    </Select.Root>
-  )
-}
+import { FilterSelect } from './FilterSelect'
 
 interface FilterModalProps {
   open: boolean
   onClose: () => void
+  /** ── controlled state (اختیاری — ProductList2 برای بج‌های فیلتر پاس می‌ده) ── */
+  category?: string
+  onCategoryChange?: (v: string) => void
+  status?: string
+  onStatusChange?: (v: string) => void
+  currency?: string
+  onCurrencyChange?: (v: string) => void
+  sort?: string
+  onSortChange?: (v: string) => void
+  unlimitedStock?: boolean
+  onUnlimitedStockChange?: (v: boolean) => void
+  discountOnly?: boolean
+  onDiscountOnlyChange?: (v: boolean) => void
+  onClearAll?: () => void
 }
 
-/** مودال فیلترها — فقط در حالت mobile/compact باز می‌شود. */
-export function FilterModal({ open, onClose }: FilterModalProps) {
+/** مودال فیلترها — در ProductList فقط در حالت mobile/compact باز می‌شود؛ در ProductList2 با دکمهٔ فیلتر در همه‌جا. */
+export function FilterModal({
+  open, onClose,
+  category, onCategoryChange,
+  status, onStatusChange,
+  currency, onCurrencyChange,
+  sort, onSortChange,
+  unlimitedStock, onUnlimitedStockChange,
+  discountOnly, onDiscountOnlyChange,
+  onClearAll,
+}: FilterModalProps) {
   return (
     <Dialog.Root open={open} onOpenChange={(e) => { if (!e.open) onClose() }} placement="center">
       <Portal>
@@ -55,14 +52,17 @@ export function FilterModal({ open, onClose }: FilterModalProps) {
             </Dialog.Header>
 
             <Dialog.Body px="6" pt="2" pb="4" display="flex" flexDirection="column" gap="4">
-              <ModalSelect collection={catCollection}      defaultValue="all" />
-              <ModalSelect collection={statusCollection}   defaultValue="all" />
-              <ModalSelect collection={currencyCollection} defaultValue="all" />
-              <ModalSelect collection={sortCollection}     defaultValue="newest" />
+              <FilterSelect collection={catCollection} value={category} defaultValue="all" onValueChange={onCategoryChange} w="full" />
+              <FilterSelect collection={statusCollection} value={status} defaultValue="all" onValueChange={onStatusChange} w="full" />
+              <FilterSelect collection={currencyCollection} value={currency} defaultValue="all" onValueChange={onCurrencyChange} w="full" />
+              <FilterSelect collection={sortCollection} value={sort} defaultValue="newest" onValueChange={onSortChange} w="full" />
 
               {/* Switch FIRST = راست · label LAST = چپ */}
               <Flex align="center" gap="2.5" w="full">
-                <Switch.Root size="sm" colorPalette="teal" flexShrink={0}>
+                <Switch.Root
+                  size="sm" colorPalette="teal" flexShrink={0}
+                  checked={unlimitedStock} onCheckedChange={(e) => onUnlimitedStockChange?.(e.checked)}
+                >
                   <Switch.HiddenInput />
                   <Switch.Control><Switch.Thumb /></Switch.Control>
                 </Switch.Root>
@@ -70,7 +70,10 @@ export function FilterModal({ open, onClose }: FilterModalProps) {
               </Flex>
               <Flex align="center" gap="2.5" w="full">
                 {/* dev-engine-ignore: Switch IS first child — RTL correct */}
-                <Switch.Root size="sm" colorPalette="teal" flexShrink={0}>
+                <Switch.Root
+                  size="sm" colorPalette="teal" flexShrink={0}
+                  checked={discountOnly} onCheckedChange={(e) => onDiscountOnlyChange?.(e.checked)}
+                >
                   <Switch.HiddenInput />
                   <Switch.Control><Switch.Thumb /></Switch.Control>
                 </Switch.Root>
@@ -80,7 +83,7 @@ export function FilterModal({ open, onClose }: FilterModalProps) {
 
             {/* Footer — حذف فیلترها (راست) · لغو + فیلترکن (چپ) */}
             <Dialog.Footer px="6" pb="6" pt="2" justifyContent="space-between">
-              <Button variant="ghost" size="sm" colorPalette="red" color="fg.error">
+              <Button variant="ghost" size="sm" colorPalette="red" color="fg.error" onClick={onClearAll}>
                 حذف فیلترها
               </Button>
               <Flex gap="2">

@@ -67,6 +67,9 @@ import { defineConfig } from '@chakra-ui/react'
  * ── EXTRA "bg" VARIANT (custom — Chakra's default palettes don't ship one) ──
  *   purple.bg          → purple.50 / purple.950  (extra-light tint bg)
  *   blue.bg            → blue.50   / blue.950    (extra-light tint bg)
+ *   red.bg             → red.50    / red.950     (extra-light tint bg)
+ *   orange.bg          → orange.50 / orange.950  (extra-light tint bg)
+ *   green.bg           → green.50  / green.950   (extra-light tint bg)
  *
  * ── PALETTE TOKENS (raw colors) ─────────────────────────────
  *   transparent | current | black | white
@@ -161,6 +164,15 @@ export const vitrinaTokens = defineConfig({
         },
         blue: {
           bg: { value: { _light: '{colors.blue.50}', _dark: '{colors.blue.950}' } },
+        },
+        red: {
+          bg: { value: { _light: '{colors.red.50}', _dark: '{colors.red.950}' } },
+        },
+        orange: {
+          bg: { value: { _light: '{colors.orange.50}', _dark: '{colors.orange.950}' } },
+        },
+        green: {
+          bg: { value: { _light: '{colors.green.50}', _dark: '{colors.green.950}' } },
         },
       },
     },

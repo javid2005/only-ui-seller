@@ -2,8 +2,7 @@ import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Badge, Box, Flex, IconButton, Input, InputGroup,
-  SegmentGroup, Select, Spacer, Stat, Switch, Text,
-  type ListCollection,
+  SegmentGroup, Spacer, Stat, Switch, Text,
 } from '@chakra-ui/react'
 import { LayoutGrid, List, ListFilter, Plus, Search } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
@@ -11,8 +10,8 @@ import { Header, HeaderCTA } from '@/components/layout/Header'
 import { toLatinDigits, toPersianDigits } from '@/utils/numbers'
 import {
   PRODUCTS, catCollection, statusCollection, currencyCollection, sortCollection,
-  type FilterOption,
 } from '@/components/products/list/data'
+import { FilterSelect } from '@/components/products/list/FilterSelect'
 import { ProductTable } from '@/components/products/list/ProductTable'
 import { ProductGrid } from '@/components/products/list/ProductGrid'
 import { SelectionActionBar } from '@/components/products/list/SelectionActionBar'
@@ -20,41 +19,6 @@ import { FilterModal } from '@/components/products/list/FilterModal'
 import { ListPagination } from '@/components/ui/ListPagination'
 
 const PAGE_SIZE = 10
-
-// Select (نه NativeSelect — قانون پروژه). collectionها از data.ts (single source).
-function FilterSelect({
-  collection, defaultValue, minW, maxW,
-}: {
-  collection: ListCollection<FilterOption>
-  defaultValue: string
-  minW: string
-  maxW: string
-}) {
-  return (
-    <Select.Root collection={collection} defaultValue={[defaultValue]} size="sm" flex="1 0 0" minW={minW} maxW={maxW}>
-      <Select.HiddenSelect />
-      <Select.Control>
-        <Select.Trigger>
-          <Select.ValueText />
-        </Select.Trigger>
-        <Select.IndicatorGroup>
-          <Select.Indicator />
-        </Select.IndicatorGroup>
-      </Select.Control>
-      <Select.Positioner>
-        {/* عرض منو > عرض trigger تا متن‌ها تک‌خطی بمونن */}
-        <Select.Content minW="max-content" maxW="360px">
-          {collection.items.map((it) => (
-            <Select.Item key={it.value} item={it}>
-              <Select.ItemText whiteSpace="nowrap">{it.label}</Select.ItemText>
-              <Select.ItemIndicator />
-            </Select.Item>
-          ))}
-        </Select.Content>
-      </Select.Positioner>
-    </Select.Root>
-  )
-}
 
 interface StatItem {
   label: string
