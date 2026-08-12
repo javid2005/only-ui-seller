@@ -16,12 +16,14 @@ interface FilterResultBadgesProps {
  * ردیف بج‌های فیلتر اعمال‌شده — زیر ردیف فیلترها، فقط وقتی ≥۱ فیلتر/جستجو فعاله نشون داده می‌شه.
  * RTL DOM order (اولین=راست‌ترین، تأیید شده با screenshot مجزای Figma node 5198:88601):
  * برچسب «فیلترها:» → بج‌ها (داخل هر بج: متن FIRST=راست، × بعدش=چپ) → دکمهٔ «حذف فیلترها» (چپ‌ترین).
+ * RTL justify: کل ردیف باید چسبیده به لبهٔ راست صفحه باشه (justify="start") نه چپ —
+ * تأیید شده با اندازه‌گیری DOM روی preview (قبلاً justify="end" بود، محتوا رو به لبهٔ چپ می‌چسبوند).
  */
 export function FilterResultBadges({ filters, onRemove, onClearAll }: FilterResultBadgesProps) {
   if (filters.length === 0) return null
 
   return (
-    <Flex align="center" justify="end" gap="2" flexWrap="wrap">
+    <Flex align="center" justify="start" gap="2" flexWrap="wrap">
       <Text fontSize="sm" color="fg" flexShrink={0}>فیلترها:</Text>
 
       {filters.map((f) => (

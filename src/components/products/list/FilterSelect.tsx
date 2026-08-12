@@ -8,14 +8,14 @@ interface FilterSelectProps {
   maxW?: string
   /** ستون عمودی (FilterModal) — عرض کامل، بدون flex-grow */
   w?: string
-  /** حالت uncontrolled (ProductList قدیمی — بدون data-binding واقعی) */
+  /** حالت uncontrolled (بدون data-binding واقعی) */
   defaultValue?: string
-  /** حالت controlled (ProductList2 — state واقعی برای بج‌های فیلتر) */
+  /** حالت controlled (state واقعی برای بج‌های فیلتر) */
   value?: string
   onValueChange?: (value: string) => void
 }
 
-/** Select فیلتر مشترک — استفاده در ProductList و ProductList2 (Select فقط، NativeSelect ممنوع). */
+/** Select فیلتر مشترک — استفاده در FilterBar/FilterModal (Select فقط، NativeSelect ممنوع). */
 export function FilterSelect({ collection, minW, maxW, w, defaultValue, value, onValueChange }: FilterSelectProps) {
   const bindingProps = value !== undefined
     ? { value: [value], onValueChange: (e: { value: string[] }) => onValueChange?.(e.value[0]) }

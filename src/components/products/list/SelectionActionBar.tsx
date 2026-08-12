@@ -1,15 +1,13 @@
-import { Badge, Button, Flex, IconButton, Menu, Portal, Text } from '@chakra-ui/react'
-import { Archive, Download, MoreVertical, SquareCheckBig, Trash2, X } from 'lucide-react'
+import { ActionBar, Button, IconButton, Portal } from '@chakra-ui/react'
+import { SquareCheckBig, Trash2, X } from 'lucide-react'
+import { Fragment } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import { toPersianDigits } from '@/utils/numbers'
 
 interface SelectionActionBarProps {
   count: number
-  isCompact?: boolean
   onCancel: () => void
   onPublish?: () => void
-  onArchive?: () => void
-  onDownload?: () => void
   onDelete?: () => void
 }
 
@@ -18,99 +16,89 @@ interface ActionDef {
   label: string
   icon: LucideIcon
   onClick?: () => void
-  /** bg/color برای دکمه desktop */
-  palette: string
   danger?: boolean
 }
 
 /**
- * نوار عملیات گروهی — وقتی ≥۱ آیتم انتخاب شد زیر فیلترها میاد.
- * RTL: شمارنده FIRST = راست‌ترین.
- * - desktop: گروه دکمه‌ها چپ‌ترین (انتشار · آرشیو · دانلود · حذف · انصراف)
- * - mobile/compact: همه دکمه‌ها در یک منوی ⋮ جمع می‌شن
+ * نوار عملیات گروهی — Chakra ActionBar (chakra-ui.com/docs/components/action-bar)، طبق
+ * Figma node 5232:84929. با انتخاب ≥۱ آیتم از bottom-center صفحه بالا میاد (اسلاید —
+ * مکانیزم خودِ ActionBar.Positioner، چیزی دستی پیاده نشده). جایگزین ردیف قدیمیِ بالای
+ * جدول/کارت (نسخهٔ قدیمی‌تر با ردیف ثابت بالای صفحه بود، حذف شد).
+ *
+ * RTL DOM order (اولین=راست‌ترین، از متادیتای Figma — canvas LTR: X چپ‌ترین، حذف، انتشار،
+ * جداکننده، «N انتخاب شده» راست‌ترین):
+ * SelectionTrigger(شمارنده) → Separator → دکمه‌های عملیات → CloseTrigger(چپ‌ترین)
+ * داخل هر دکمه: آیکون FIRST=راست، متن بعدش=چپ (از کد Figma: متن اول در LTR=چپ، آیکون
+ * دوم=راست؛ هم‌راستا با الگوی قبلیِ همین پروژه در SelectionActionBar قدیم).
+ *
+ * media<sm (مستقیم از کاربر): دکمه‌های عملیات به IconButton بدون متن تبدیل می‌شن — دو نسخه
+ * (IconButton/Button) هم‌زمان رندر و با display سوییچ می‌شن، چون ساختارشون فرق داره.
+ * دکمه‌ها فقط ۲ تا طبق طرح: انتشار + حذف (+ close trigger).
+ *
+ * ⚠️ عمداً onOpenChange نداره: Popover زیرینِ ActionBar به‌صورت پیش‌فرض روی
+ * closeInteractOutside بسته می‌شه، و اگه onOpenChange رو به onCancel وصل کنیم، کلیک روی
+ * چک‌باکسِ آیتم بعدی (که «بیرون» پاپاور حساب می‌شه) بلافاصله انتخاب رو پاک می‌کنه — دقیقاً
+ * باگی که «فقط یک آیتم انتخاب می‌شه» رو ایجاد کرده بود. open فقط از count>0 میاد؛ بستن
+ * واقعی فقط از کلیک صریح روی CloseTrigger.
  */
 export function SelectionActionBar({
-  count, isCompact, onCancel, onPublish, onArchive, onDownload, onDelete,
+  count, onCancel, onPublish, onDelete,
 }: SelectionActionBarProps) {
-  // ترتیب راست→چپ در RTL: انتشار اول (راست‌ترین گروه) … انصراف آخر (چپ‌ترین)
   const actions: ActionDef[] = [
-    { key: 'publish',  label: 'انتشار',    icon: SquareCheckBig, onClick: onPublish,  palette: 'teal' },
-    { key: 'archive',  label: 'آرشیو',     icon: Archive,        onClick: onArchive,  palette: 'gray' },
-    { key: 'download', label: 'دانلود xls', icon: Download,       onClick: onDownload, palette: 'gray' },
-    { key: 'delete',   label: 'حذف',       icon: Trash2,         onClick: onDelete,   palette: 'red', danger: true },
-    { key: 'cancel',   label: 'انصراف',    icon: X,              onClick: onCancel,   palette: 'gray' },
+    { key: 'publish', label: 'انتشار', icon: SquareCheckBig, onClick: onPublish },
+    { key: 'delete', label: 'حذف', icon: Trash2, onClick: onDelete, danger: true },
   ]
 
   return (
-    <Flex align="center" justify="space-between" gap="3" flexWrap="wrap" mb="5">
-      {/* شمارنده — راست‌ترین */}
-      <Flex align="center" gap="2" flexShrink={0}>
-        <Badge colorPalette="green" variant="subtle" size="md">{toPersianDigits(count)}</Badge> {/* dev-engine-ignore */}
-        <Text fontSize="sm" color="fg">محصول انتخاب شده</Text>
-      </Flex>
+    <ActionBar.Root open={count > 0}>
+      <Portal>
+        <ActionBar.Positioner dir="rtl">
+          <ActionBar.Content>
+            <ActionBar.SelectionTrigger>
+              {toPersianDigits(count)} انتخاب شده
+            </ActionBar.SelectionTrigger>
+            <ActionBar.Separator />
 
-      {/* ── ellipsis menu: base → lg، یا وقتی isCompact ── */}
-      <Menu.Root positioning={{ placement: 'bottom-end' }}>
-        <Menu.Trigger asChild>
-          <IconButton
-            variant="outline" size="sm" aria-label="عملیات گروهی" flexShrink={0}
-            display={{ base: 'inline-flex', lg: isCompact ? 'inline-flex' : 'none' }}
-          >
-            <MoreVertical size={16} />
-          </IconButton>
-        </Menu.Trigger>
-        <Portal>
-          <Menu.Positioner dir="rtl">
-            <Menu.Content minW="180px" p="1">
-              {actions.map((a) => {
-                const Icon = a.icon
-                return (
-                  <Menu.Item
-                    key={a.key}
-                    value={a.key}
-                    onClick={a.onClick}
+            {actions.map((a) => {
+              const Icon = a.icon
+              return (
+                <Fragment key={a.key}>
+                  {/* media<sm — icon-only */}
+                  <IconButton
+                    display={{ base: 'inline-flex', sm: 'none' }}
+                    variant="outline" size="sm"
+                    borderColor={a.danger ? 'red.solid' : 'border'}
+                    color={a.danger ? 'red.fg' : 'fg'}
                     _hover={{ bg: a.danger ? 'red.subtle' : 'bg.muted' }}
+                    aria-label={a.label}
+                    onClick={a.onClick}
                   >
-                    {/* RTL: icon FIRST = راست */}
-                    <Flex w="full" align="center" gap="2">
-                      <Flex color={a.danger ? 'fg.error' : 'fg.muted'} flexShrink={0}>
-                        <Icon size={16} />
-                      </Flex>
-                      <Text fontSize="sm" flex="1" textAlign="start" color={a.danger ? 'fg.error' : 'fg'}>
-                        {a.label}
-                      </Text>
-                    </Flex>
-                  </Menu.Item>
-                )
-              })}
-            </Menu.Content>
-          </Menu.Positioner>
-        </Portal>
-      </Menu.Root>
+                    <Icon size={16} />
+                  </IconButton>
+                  {/* sm+ — آیکون + متن */}
+                  <Button
+                    display={{ base: 'none', sm: 'inline-flex' }}
+                    variant="outline" size="sm"
+                    borderColor={a.danger ? 'red.solid' : 'border'}
+                    color={a.danger ? 'red.fg' : 'fg'}
+                    _hover={{ bg: a.danger ? 'red.subtle' : 'bg.muted' }}
+                    onClick={a.onClick}
+                  >
+                    <Icon size={16} />
+                    {a.label}
+                  </Button>
+                </Fragment>
+              )
+            })}
 
-      {/* ── desktop inline buttons: lg+ وقتی !isCompact ── */}
-      <Flex
-        gap="2" align="center" flexWrap="wrap"
-        display={{ base: 'none', lg: isCompact ? 'none' : 'flex' }}
-      >
-        {actions.map((a) => {
-          const Icon = a.icon
-          return (
-            <Button
-              key={a.key}
-              size="sm"
-              bg={`${a.palette}.subtle`}
-              color={`${a.palette}.fg`}
-              _hover={{ bg: `${a.palette}.muted` }}
-              onClick={a.onClick}
-            >
-              {/* RTL: icon FIRST = راست */}
-              {a.key !== 'cancel' && <Icon size={16} />}
-              {a.label}
-            </Button>
-          )
-        })}
-      </Flex>
-    </Flex>
+            <ActionBar.CloseTrigger asChild>
+              <IconButton variant="ghost" size="sm" aria-label="انصراف" onClick={onCancel}>
+                <X size={16} />
+              </IconButton>
+            </ActionBar.CloseTrigger>
+          </ActionBar.Content>
+        </ActionBar.Positioner>
+      </Portal>
+    </ActionBar.Root>
   )
 }

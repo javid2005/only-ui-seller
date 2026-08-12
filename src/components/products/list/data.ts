@@ -1,5 +1,6 @@
 // Single source of truth برای جدول محصولات — اگه جای دیگه استفاده شد، فقط همین‌جا عوض می‌شه.
 import { createListCollection } from '@chakra-ui/react'
+import { toPersianDigits } from '@/utils/numbers'
 import img1 from '@/assets/Products/Image-1.png'
 import img2 from '@/assets/Products/Image-2.png'
 import img3 from '@/assets/Products/Image-3.png'
@@ -28,6 +29,8 @@ export interface Product {
   discount?: string
   currency: 'تومان' | '$'
   inventory: number
+  /** موجودی نامحدود — وقتی true، ستون موجودی به‌جای عدد، بج «نامحدود» نشون می‌ده */
+  unlimitedStock?: boolean
   status: Status
   lastEdit: string
 }
@@ -40,16 +43,25 @@ export const STATUS_COLOR: Record<Status, string> = {
   'آرشیو شده': 'blue',
 }
 
+/** رنگ/متن بج موجودی — طبق طرح لیست محصولات (screenshot مجزای Figma، ستون موجودی): ناموجود=قرمز،
+ * نامحدود=بنفش، کمتر از ۵ عدد=زرد، بقیه=خنثی (بدون colorPalette). مشترک بین جدول و کارت. */
+export function inventoryBadge(p: Product): { label: string; colorPalette?: string } {
+  if (p.unlimitedStock) return { label: 'نامحدود', colorPalette: 'purple' }
+  if (p.inventory === 0) return { label: 'ناموجود', colorPalette: 'red' }
+  if (p.inventory < 5) return { label: `${toPersianDigits(p.inventory)} عدد`, colorPalette: 'yellow' }
+  return { label: `${toPersianDigits(p.inventory)} عدد` }
+}
+
 export const PRODUCTS: Product[] = [
   { id: 'p1',  name: 'پیراهن مردانه آکسفورد سرمه‌ای',  sku: 'SKU-10089', image: img1.src,  category: 'پوشاک',     features: ['ویژه', 'پرفروش'],               priceMain: '۴۵٬۰۰۰٬۰۰۰', priceOriginal: '۵۲٬۰۰۰٬۰۰۰', discount: '۱۳٪', currency: 'تومان', inventory: 25, status: 'منتشرشده',  lastEdit: '۱۴۰۴/۰۱/۲۰' },
   { id: 'p2',  name: 'هدفون بی‌سیم سونی WH-1000XM5',    sku: 'SKU-10090', image: img2.src,  category: 'الکترونیک', features: ['ارسال رایگان', 'ویژه', 'جدید'], priceMain: '$ ۱۸۰', currency: '$',     inventory: 0,  status: 'ناموجود',   lastEdit: '۱۴۰۴/۰۲/۱۵' },
   { id: 'p3',  name: 'کفش ورزشی نایک ایر مکس',          sku: 'SKU-10091', image: img3.src,  category: 'پوشاک',     features: ['پرفروش'],                       priceMain: '۳۲٬۰۰۰٬۰۰۰', priceOriginal: '۳۴٬۵۰۰٬۰۰۰', discount: '۷٪',  currency: 'تومان', inventory: 40, status: 'پیش‌نویس',  lastEdit: '۱۴۰۴/۰۳/۱۰' },
   { id: 'p4',  name: 'ساعت هوشمند اپل واچ سری ۹',       sku: 'SKU-10092', image: img4.src,  category: 'الکترونیک', features: ['ویژه', 'پرفروش'],               priceMain: '۲۸٬۰۰۰٬۰۰۰', currency: 'تومان', inventory: 17, status: 'پیش‌نویس',  lastEdit: '۱۴۰۴/۰۴/۰۵' },
   { id: 'p5',  name: 'دوربین کانن EOS R50',              sku: 'SKU-10093', image: img5.src,  category: 'الکترونیک', features: ['ارسال رایگان', 'ویژه', 'جدید'], priceMain: 'از $ ۱۲۰', priceOriginal: 'از ۱۷٬۵۰۰٬۰۰۰ ت', discount: '۱۵٪', currency: '$', inventory: 12, status: 'منتشرشده', lastEdit: '۱۴۰۴/۰۵/۲۵' },
-  { id: 'p6',  name: 'بلوتوث اسپیکر جی‌بی‌ال چارج ۵',  sku: 'SKU-10094', image: img6.src,  category: 'الکترونیک', features: ['ارسال رایگان', 'پرفروش', 'جدید'], priceMain: '$ ۱۳۵', priceOriginal: '$ ۱۴۰', discount: '۳٪', currency: '$', inventory: 68, status: 'منتشرشده',  lastEdit: '۱۴۰۴/۰۶/۳۰' },
+  { id: 'p6',  name: 'بلوتوث اسپیکر جی‌بی‌ال چارج ۵',  sku: 'SKU-10094', image: img6.src,  category: 'الکترونیک', features: ['ارسال رایگان', 'پرفروش', 'جدید'], priceMain: '$ ۱۳۵', priceOriginal: '$ ۱۴۰', discount: '۳٪', currency: '$', inventory: 68, unlimitedStock: true, status: 'منتشرشده',  lastEdit: '۱۴۰۴/۰۶/۳۰' },
   { id: 'p7',  name: 'کوله‌پشتی لپ‌تاپ سامسونیت',       sku: 'SKU-10095', image: img7.src,  category: 'پوشاک',     features: ['ویژه', 'پرفروش'],               priceMain: '۸۹٬۰۰۰٬۰۰۰', priceOriginal: '۱۰۵٬۰۰۰٬۰۰۰', discount: '۲۰٪', currency: 'تومان', inventory: 15, status: 'منتشرشده', lastEdit: '۱۴۰۴/۰۷/۱۵' },
   { id: 'p8',  name: 'تلویزیون ال‌جی OLED evo C3',       sku: 'SKU-10096', image: img8.src,  category: 'الکترونیک', features: ['پرفروش'],                       priceMain: 'از ۳۸٬۰۰۰٬۰۰۰', currency: 'تومان', inventory: 0,  status: 'آرشیو شده', lastEdit: '۱۴۰۴/۰۸/۲۵' },
-  { id: 'p9',  name: 'پنکه هوشمند دایسون پیوریفایر',    sku: 'SKU-10097', image: img9.src,  category: 'الکترونیک', features: ['ارسال رایگان', 'ویژه', 'جدید'], priceMain: '$ ۸۰',  priceOriginal: '$ ۹۵', discount: '۱۶٪', currency: '$', inventory: 6, status: 'در انتظار', lastEdit: '۱۴۰۴/۰۹/۱۰' },
+  { id: 'p9',  name: 'پنکه هوشمند دایسون پیوریفایر',    sku: 'SKU-10097', image: img9.src,  category: 'الکترونیک', features: ['ارسال رایگان', 'ویژه', 'جدید'], priceMain: '$ ۸۰',  priceOriginal: '$ ۹۵', discount: '۱۶٪', currency: '$', inventory: 3, status: 'در انتظار', lastEdit: '۱۴۰۴/۰۹/۱۰' },
   { id: 'p10', name: 'میز ایستاده برقی فلکسی‌اسپات E7',  sku: 'SKU-10098', image: img10.src, category: 'الکترونیک', features: ['ویژه', 'پرفروش'],               priceMain: '۳۵٬۰۰۰٬۰۰۰', currency: 'تومان', inventory: 14, status: 'منتشرشده', lastEdit: '۱۴۰۴/۱۰/۲۰' },
 ]
 
@@ -58,7 +70,7 @@ export type FilterOption = { label: string; value: string }
 
 export const catCollection = createListCollection<FilterOption>({
   items: [
-    { label: 'همه دسته‌بندی‌ها', value: 'all' },
+    { label: 'همه', value: 'all' },
     { label: 'کالای دیجیتال و لوازم الکترونیکی', value: 'digital' },
     { label: 'مد و پوشاک', value: 'fashion' },
     { label: 'کیف و کفش', value: 'bags-shoes' },
@@ -72,7 +84,7 @@ export const catCollection = createListCollection<FilterOption>({
 
 export const statusCollection = createListCollection<FilterOption>({
   items: [
-    { label: 'همه وضعیت‌ها', value: 'all' },
+    { label: 'همه', value: 'all' },
     { label: 'منتشر شده', value: 'published' },
     { label: 'غیرفعال', value: 'inactive' },
     { label: 'پیش نویس', value: 'draft' },
@@ -82,9 +94,20 @@ export const statusCollection = createListCollection<FilterOption>({
 
 export const currencyCollection = createListCollection<FilterOption>({
   items: [
-    { label: 'همه ارزها', value: 'all' },
+    { label: 'همه', value: 'all' },
     { label: 'تومان', value: 'toman' },
     { label: 'دلار', value: 'usd' },
+  ],
+})
+
+/** فیلتر موجودی — دیالوگ «فیلترها»، جایگزین سوییچ قدیمیِ «موجودی نامحدود» */
+export const stockCollection = createListCollection<FilterOption>({
+  items: [
+    { label: 'همه', value: 'all' },
+    { label: 'موجود', value: 'in-stock' },
+    { label: 'ناموجود', value: 'out-of-stock' },
+    { label: 'درحال اتمام', value: 'low-stock' },
+    { label: 'نامحدود', value: 'unlimited' },
   ],
 })
 
@@ -114,5 +137,17 @@ export const ROW_ACTIONS: RowAction[] = [
   { value: 'preview', label: 'پیش نمایش' },
   { value: 'sale', label: 'فروش ویژه' },
   { value: 'archive', label: 'آرشیو' },
+  { value: 'delete', label: 'حذف', danger: true },
+]
+
+/**
+ * منوی ellipsis کارت موبایل (Figma node 3626:71981) — همون ۴ اکشنِ
+ * RowActionButtons دسکتاپ (ویرایش/پیش‌نمایش/کپی/حذف)، با همون ترتیب؛ زیرمجموعهٔ
+ * ROW_ACTIONS نیست چون هم ترتیبش فرق داره (پیش‌نمایش قبل از کپی) هم ۲ آیتم کمتر داره.
+ */
+export const CARD_ROW_ACTIONS: RowAction[] = [
+  { value: 'edit', label: 'ویرایش' },
+  { value: 'preview', label: 'پیش نمایش' },
+  { value: 'copy', label: 'کپی محصول' },
   { value: 'delete', label: 'حذف', danger: true },
 ]

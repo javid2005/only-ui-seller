@@ -1,12 +1,13 @@
 import { IconButton, Menu, Portal, Text } from '@chakra-ui/react'
 import { MoreVertical } from 'lucide-react'
-import { ROW_ACTIONS } from './data'
+import { ROW_ACTIONS, type RowAction } from './data'
 
 /**
  * منوی عملیات یک محصول (ellipsis) — مشترک بین جدول و کارت.
- * Chakra Menu، RTL (Positioner dir="rtl").
+ * Chakra Menu، RTL (Positioner dir="rtl"). پیش‌فرض ۶ اکشنِ ROW_ACTIONS؛ caller می‌تونه با
+ * `actions` لیست دیگه‌ای بده (مثلاً CARD_ROW_ACTIONS برای کارت موبایل).
  */
-export function RowActionsMenu({ size = 'sm' }: { size?: 'xs' | 'sm' | 'md' }) {
+export function RowActionsMenu({ size = 'sm', actions = ROW_ACTIONS }: { size?: 'xs' | 'sm' | 'md'; actions?: RowAction[] }) {
   return (
     <Menu.Root positioning={{ placement: 'bottom-end' }}>
       <Menu.Trigger asChild>
@@ -17,7 +18,7 @@ export function RowActionsMenu({ size = 'sm' }: { size?: 'xs' | 'sm' | 'md' }) {
       <Portal>
         <Menu.Positioner dir="rtl">
           <Menu.Content minW="180px" p="1">
-            {ROW_ACTIONS.map((a) => (
+            {actions.map((a) => (
               <Menu.Item
                 key={a.value}
                 value={a.value}

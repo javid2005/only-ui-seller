@@ -31,7 +31,7 @@ const NAV_GROUPS: NavGroup[] = [
         icon: Boxes,
         path: '/products',
         subItems: [
-          { label: 'لیست محصولات', path: '/products/list2' },
+          { label: 'لیست محصولات', path: '/products/list' },
           { label: 'دسته بندی محصولات', path: '/products/categories' },
           { label: 'نظرات کاربران', path: '/products/reviews' },
         ],

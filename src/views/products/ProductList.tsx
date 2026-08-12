@@ -1,79 +1,94 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  Badge, Box, Flex, IconButton, Input, InputGroup,
-  SegmentGroup, Spacer, Stat, Switch, Text,
-} from '@chakra-ui/react'
-import { LayoutGrid, List, ListFilter, Plus, Search } from 'lucide-react'
+import { Box, Flex, Text } from '@chakra-ui/react'
+import { CircleCheckBig, CircleX, Pencil, Phone, Plus, TriangleAlert, Upload } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header, HeaderCTA } from '@/components/layout/Header'
 import { toLatinDigits, toPersianDigits } from '@/utils/numbers'
 import {
-  PRODUCTS, catCollection, statusCollection, currencyCollection, sortCollection,
+  PRODUCTS, catCollection, statusCollection, currencyCollection, sortCollection, stockCollection,
 } from '@/components/products/list/data'
-import { FilterSelect } from '@/components/products/list/FilterSelect'
-import { ProductTable } from '@/components/products/list/ProductTable'
-import { ProductGrid } from '@/components/products/list/ProductGrid'
-import { SelectionActionBar } from '@/components/products/list/SelectionActionBar'
 import { FilterModal } from '@/components/products/list/FilterModal'
 import { ListPagination } from '@/components/ui/ListPagination'
+import { PageSizeMenu } from '@/components/ui/PageSizeMenu'
+import { KpiRow, type KpiItem } from '@/components/products/list/KpiRow'
+import { FilterBar } from '@/components/products/list/FilterBar'
+import { FilterResultBadges, type ActiveFilter } from '@/components/products/list/FilterResultBadges'
+import { ProductTable } from '@/components/products/list/ProductTable'
+import { MobileProductCard } from '@/components/products/list/MobileProductCard'
+import { SelectionActionBar } from '@/components/products/list/SelectionActionBar'
 
-const PAGE_SIZE = 10
+/** آستانهٔ «درحال اتمام» — موجودی بیشتر از صفر ولی کمتر یا مساوی این عدد */
+const LOW_STOCK_THRESHOLD = 15
 
-interface StatItem {
-  label: string
-  value: number
-  color: string
-  badge?: string
+const FILTER_DEFAULTS = {
+  category: 'all',
+  status: 'all',
+  currency: 'all',
+  sort: 'newest',
+  stock: 'all',
+  minPrice: '',
+  maxPrice: '',
 }
 
-function StatCard({ stat, showBar }: { stat: StatItem; showBar: boolean }) {
-  const ratio = Math.min(stat.value / PRODUCTS.length, 1)
-  return (
-    <Stat.Root
-      flex="1 0 0" minW={{ base: '140px', sm: '180px' }}
-      bg="bg.panel" borderWidth="1px" borderColor="border" rounded="md" p="4" gap="2"
-    >
-      <Stat.Label color="fg.muted" fontSize="sm">{stat.label}</Stat.Label>
-      <Flex align="center" gap="3">
-        <Stat.ValueText fontSize="2xl" fontWeight="semibold" letterSpacing="tight">
-          {toPersianDigits(stat.value)}
-        </Stat.ValueText>
-        {stat.badge && (
-          <Badge colorPalette="green" variant="subtle" size="sm">
-            <Stat.UpIndicator />
-            {stat.badge}
-          </Badge>
-        )}
-      </Flex>
-      {showBar && (
-        <Box mt="1" h="1.5" w="full" bg="bg.muted" rounded="full" overflow="hidden">
-          <Box h="full" w={`${Math.round(ratio * 100)}%`} bg={`${stat.color}.solid`} rounded="full" />
-        </Box>
-      )}
-    </Stat.Root>
-  )
-}
-
+/**
+ * صفحهٔ لیست محصولات — Figma node 1133:12237.
+ *
+ * ⚠️ محدودیت شناخته‌شده: چون value selectها (مثلاً catCollection:
+ * 'digital'/'fashion') با فیلد واقعی PRODUCTS (مثلاً category: 'الکترونیک'/'پوشاک') یک
+ * دیکشنری ترجمه ندارن، فیلتر واقعیِ نتایج فقط با «جستجو» + «فیلتر KPI» (کلیک روی دکمهٔ
+ * فیلتر کارت‌های بالای صفحه — matchesKpiFilter) انجام می‌شه؛ بقیهٔ فیلترها (دسته‌بندی/وضعیت/
+ * ارز/موجودی/بازهٔ قیمت/سوییچ‌ها) state واقعی دارن و بج نشون می‌دن ولی روی `filtered` اثر
+ * نمی‌ذارن — تا وصل‌شدن به API واقعی. «ترتیب نمایش» فقط در FilterBar هست، دیگه در
+ * FilterModal تکراری نیست (طبق طرح جدید دیالوگ).
+ *
+ * media<lg → نمای card (`MobileProductCard`، Figma node 5204:78695) به‌جای جدول؛ سوییچ با
+ * CSS responsive (نه فقط isCompact) تا هم شبیه‌سازی compact و هم موبایل واقعی درست کار کنه —
+ * الگوی `isCompact ? mobileVal : {base:mobileVal, md:desktopVal}` طبق قرارداد پروژه.
+ */
 export function ProductList() {
   const router = useRouter()
   const isCompact = useCompactMode()
+
   const [search, setSearch] = useState('')
-  const [view, setView] = useState('list')
+  const [category, setCategory] = useState(FILTER_DEFAULTS.category)
+  const [featuredOnly, setFeaturedOnly] = useState(false)
+  const [status, setStatus] = useState(FILTER_DEFAULTS.status)
+  const [currency, setCurrency] = useState(FILTER_DEFAULTS.currency)
+  const [sort, setSort] = useState(FILTER_DEFAULTS.sort)
+  const [stock, setStock] = useState(FILTER_DEFAULTS.stock)
+  const [minPrice, setMinPrice] = useState(FILTER_DEFAULTS.minPrice)
+  const [maxPrice, setMaxPrice] = useState(FILTER_DEFAULTS.maxPrice)
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const [selection, setSelection] = useState<string[]>([])
   const [filterOpen, setFilterOpen] = useState(false)
+  /** کلیک روی دکمهٔ فیلتر یک کارت KPI — key همون KpiItem.key هست، null = فیلتری فعال نیست */
+  const [kpiFilter, setKpiFilter] = useState<string | null>(null)
 
-  // ── Search (#8) — name یا SKU، اعداد فارسی→لاتین نرمالایز ──
+  // ── فیلتر KPI — هر key معادل همون شرطیه که مقدار کارت رو محاسبه کرده (پایین، kpiItems) ──
+  const matchesKpiFilter = (p: (typeof PRODUCTS)[number]) => {
+    switch (kpiFilter) {
+      case 'inStock': return p.inventory > 0
+      case 'lowStock': return p.inventory > 0 && p.inventory <= LOW_STOCK_THRESHOLD
+      case 'outOfStock': return p.status === 'ناموجود'
+      case 'published': return p.status === 'منتشرشده'
+      case 'draft': return p.status === 'پیش‌نویس'
+      case 'registered': // «ثبت شده» = همهٔ محصولات، شرط فیلترکننده‌ای نداره
+      case null: default: return true
+    }
+  }
+
+  // ── Search — name یا SKU، اعداد فارسی→لاتین نرمالایز — + فیلتر KPI فعال ──
   const filtered = useMemo(() => {
     const q = toLatinDigits(search.trim()).toLowerCase()
-    if (!q) return PRODUCTS
-    return PRODUCTS.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        toLatinDigits(p.sku).toLowerCase().includes(q),
-    )
-  }, [search])
+    return PRODUCTS.filter((p) => {
+      if (!matchesKpiFilter(p)) return false
+      if (!q) return true
+      return p.name.toLowerCase().includes(q) || toLatinDigits(p.sku).toLowerCase().includes(q)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, kpiFilter])
 
   const allSelected = filtered.length > 0 && filtered.every((p) => selection.includes(p.id))
   const indeterminate = selection.length > 0 && !allSelected
@@ -81,41 +96,88 @@ export function ProductList() {
   const toggleOne = (id: string) =>
     setSelection((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
 
-  // ── Stats (از کل PRODUCTS) — RTL: کل محصولات راست‌ترین، قیمت دلاری چپ‌ترین ──
-  const stats: StatItem[] = [
-    { label: 'کل محصولات', value: PRODUCTS.length, color: 'teal' },
-    { label: 'منتشرشده', value: PRODUCTS.filter((p) => p.status === 'منتشرشده').length, color: 'green' },
-    { label: 'پیش‌نویس', value: PRODUCTS.filter((p) => p.status === 'پیش‌نویس').length, color: 'gray' },
-    { label: 'ناموجود', value: PRODUCTS.filter((p) => p.status === 'ناموجود').length, color: 'red' },
-    { label: 'قیمت دلاری', value: PRODUCTS.filter((p) => p.currency === '$').length, color: 'blue', badge: `${toPersianDigits('۱۶۱٬۲۰۰')} ت` },
+  const clearAllFilters = () => {
+    setSearch('')
+    setCategory(FILTER_DEFAULTS.category)
+    setFeaturedOnly(false)
+    setStatus(FILTER_DEFAULTS.status)
+    setCurrency(FILTER_DEFAULTS.currency)
+    setSort(FILTER_DEFAULTS.sort)
+    setStock(FILTER_DEFAULTS.stock)
+    setMinPrice(FILTER_DEFAULTS.minPrice)
+    setMaxPrice(FILTER_DEFAULTS.maxPrice)
+    setKpiFilter(null)
+  }
+
+  /** کلیک روی دکمهٔ فیلتر یک کارت KPI — دوباره کلیک روی کارت فعال = پاک‌کردن فیلتر (toggle) */
+  const handleKpiFilterClick = (key: string) => {
+    setKpiFilter((prev) => (prev === key ? null : key))
+  }
+
+  // ── KPI — از PRODUCTS محاسبه می‌شه. RTL: ثبت‌شده راست‌ترین، پیش‌نویس چپ‌ترین ──
+  const kpiItems: KpiItem[] = [
+    { key: 'registered', label: 'ثبت شده', value: PRODUCTS.length, icon: CircleCheckBig, palette: 'blue' },
+    { key: 'inStock', label: 'موجود', value: PRODUCTS.filter((p) => p.inventory > 0).length, icon: Phone, palette: 'green' },
+    { key: 'lowStock', label: 'درحال اتمام', value: PRODUCTS.filter((p) => p.inventory > 0 && p.inventory <= LOW_STOCK_THRESHOLD).length, icon: TriangleAlert, palette: 'orange' },
+    { key: 'outOfStock', label: 'ناموجود', value: PRODUCTS.filter((p) => p.status === 'ناموجود').length, icon: CircleX, palette: 'red' },
+    { key: 'published', label: 'منتشر شده', value: PRODUCTS.filter((p) => p.status === 'منتشرشده').length, icon: Upload, palette: 'brand' },
+    { key: 'draft', label: 'پیش‌نویس', value: PRODUCTS.filter((p) => p.status === 'پیش‌نویس').length, icon: Pencil, palette: 'neutral' },
   ]
 
-  // viewToggle — در هر دو bar استفاده می‌شه (CSS display هر بار فقط یکی نشون می‌ده)
-  const makeViewToggle = () => (
-    <SegmentGroup.Root value={view} onValueChange={(e) => setView(e.value ?? 'list')} size="sm" flexShrink={0}>
-      <SegmentGroup.Indicator bg="bg.panel" />
-      <SegmentGroup.Item value="list">
-        <SegmentGroup.ItemText><List size={15} /></SegmentGroup.ItemText>
-        <SegmentGroup.ItemHiddenInput />
-      </SegmentGroup.Item>
-      <SegmentGroup.Item value="grid">
-        <SegmentGroup.ItemText><LayoutGrid size={15} /></SegmentGroup.ItemText>
-        <SegmentGroup.ItemHiddenInput />
-      </SegmentGroup.Item>
-    </SegmentGroup.Root>
-  )
+  // ── بج‌های فیلتر اعمال‌شده — فقط مقادیر غیر پیش‌فرض ──
+  const activeFilters: ActiveFilter[] = useMemo(() => {
+    const list: ActiveFilter[] = []
+    if (search.trim()) list.push({ key: 'search', label: `جستجو: «${search.trim()}»` })
+    if (category !== FILTER_DEFAULTS.category) {
+      list.push({ key: 'category', label: catCollection.items.find((i) => i.value === category)?.label ?? category })
+    }
+    if (featuredOnly) list.push({ key: 'featuredOnly', label: 'محصولات ویژه' })
+    if (status !== FILTER_DEFAULTS.status) {
+      list.push({ key: 'status', label: statusCollection.items.find((i) => i.value === status)?.label ?? status })
+    }
+    if (currency !== FILTER_DEFAULTS.currency) {
+      list.push({ key: 'currency', label: currencyCollection.items.find((i) => i.value === currency)?.label ?? currency })
+    }
+    if (sort !== FILTER_DEFAULTS.sort) {
+      list.push({ key: 'sort', label: sortCollection.items.find((i) => i.value === sort)?.label ?? sort })
+    }
+    if (stock !== FILTER_DEFAULTS.stock) {
+      list.push({ key: 'stock', label: stockCollection.items.find((i) => i.value === stock)?.label ?? stock })
+    }
+    if (minPrice || maxPrice) {
+      const from = minPrice ? `از ${toPersianDigits(minPrice)}` : ''
+      const to = maxPrice ? `تا ${toPersianDigits(maxPrice)}` : ''
+      list.push({ key: 'priceRange', label: `${[from, to].filter(Boolean).join(' ')} تومان` })
+    }
+    if (kpiFilter) {
+      list.push({ key: 'kpiFilter', label: kpiItems.find((i) => i.key === kpiFilter)?.label ?? kpiFilter })
+    }
+    return list
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, category, featuredOnly, status, currency, sort, stock, minPrice, maxPrice, kpiFilter])
 
-  // searchInput — inline در هر bar (flex/maxW متفاوته)
-  const makeSearch = (flex: string, maxW: string) => (
-    <InputGroup startElement={<Search size={14} color="var(--chakra-colors-fg-subtle)" />} flex={flex} maxW={maxW}>
-      <Input
-        placeholder="جستجو در نام یا SKU ..."
-        size="sm"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-    </InputGroup>
-  )
+  const removeFilter = (key: string) => {
+    switch (key) {
+      case 'search': setSearch(''); break
+      case 'category': setCategory(FILTER_DEFAULTS.category); break
+      case 'featuredOnly': setFeaturedOnly(false); break
+      case 'status': setStatus(FILTER_DEFAULTS.status); break
+      case 'currency': setCurrency(FILTER_DEFAULTS.currency); break
+      case 'sort': setSort(FILTER_DEFAULTS.sort); break
+      case 'stock': setStock(FILTER_DEFAULTS.stock); break
+      case 'priceRange': setMinPrice(FILTER_DEFAULTS.minPrice); setMaxPrice(FILTER_DEFAULTS.maxPrice); break
+      case 'kpiFilter': setKpiFilter(null); break
+    }
+  }
+
+  // ── نمایش X تا Y از Z محصول ──
+  const rangeStart = filtered.length === 0 ? 0 : (page - 1) * pageSize + 1
+  const rangeEnd = Math.min(page * pageSize, filtered.length)
+
+  const handlePageSizeChange = (v: number) => {
+    setPageSize(v)
+    setPage(1)
+  }
 
   return (
     <Flex direction="column" gap="4">
@@ -126,72 +188,30 @@ export function ProductList() {
         cta={<HeaderCTA label="افزودن محصول" icon={<Plus size={16} />} onClick={() => router.push('/products/new')} />}
       />
 
-      {/* ── Stats ── */}
-      <Flex gap="4" flexWrap="wrap">
-        {stats.map((s) => (
-          <StatCard key={s.label} stat={s} showBar={isCompact} />
-        ))}
-      </Flex>
+      {/* ── KPI ── */}
+      <KpiRow items={kpiItems} activeKey={kpiFilter} onFilterClick={handleKpiFilterClick} isCompact={isCompact} />
 
       {/* ── Content Panel ── */}
-      {/* padding: mobile همیشه 4، desktop از isCompact ── */}
       <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" p={{ base: '4', md: isCompact ? '4' : '6' }}>
 
-        {/* ── Filter Bar ──
-            دو bar — CSS display یکی رو مخفی می‌کنه:
-            compact bar: base=flex، md=flex اگه isCompact، وگرنه none
-            desktop bar: base=none، md=flex اگه !isCompact، وگرنه none      ── */}
-
-        {/* compact bar: search + filter-icon (→modal) + view toggle */}
-        <Flex
-          display={{ base: 'flex', md: isCompact ? 'flex' : 'none' }}
-          gap="2" align="center" mb="5"
-        >
-          {makeSearch('1', 'full')}
-          <IconButton variant="outline" size="sm" aria-label="فیلترها" onClick={() => setFilterOpen(true)} flexShrink={0}>
-            <ListFilter size={16} />
-          </IconButton>
-          {makeViewToggle()}
+        <Flex direction="column" gap="3" mb="5">
+          <FilterBar
+            search={search} onSearchChange={setSearch}
+            category={category} onCategoryChange={setCategory}
+            featuredOnly={featuredOnly} onFeaturedOnlyChange={setFeaturedOnly}
+            sort={sort} onSortChange={setSort}
+            onOpenFilters={() => setFilterOpen(true)}
+            isCompact={isCompact}
+          />
+          <FilterResultBadges filters={activeFilters} onRemove={removeFilter} onClearAll={clearAllFilters} />
         </Flex>
 
-        {/* desktop bar: search + selects + switches + spacer + view toggle */}
-        <Flex
-          display={{ base: 'none', md: isCompact ? 'none' : 'flex' }}
-          gap="3" align="center" mb="5" overflowX="auto"
-        >
-          {makeSearch('1 0 200px', '280px')}
-          <FilterSelect collection={catCollection}      defaultValue="all"    minW="120px" maxW="160px" />
-          <FilterSelect collection={statusCollection}   defaultValue="all"    minW="120px" maxW="160px" />
-          <FilterSelect collection={currencyCollection} defaultValue="all"    minW="100px" maxW="140px" />
-          <FilterSelect collection={sortCollection}     defaultValue="newest" minW="130px" maxW="170px" />
+        {/* ── Selection Action Bar — Chakra ActionBar، همیشه mount (برای انیمیشن ورود/خروج)،
+            open={count>0} خودش نمایش/انیمیشن رو کنترل می‌کنه (نه conditional render) ── */}
+        <SelectionActionBar count={selection.length} onCancel={() => setSelection([])} />
 
-          <Flex align="center" gap="2" flexShrink={0}>
-            <Switch.Root size="sm" colorPalette="teal">
-              <Switch.HiddenInput />
-              <Switch.Control><Switch.Thumb /></Switch.Control>
-            </Switch.Root>
-            <Text fontSize="xs" whiteSpace="nowrap">تخفیف دارد</Text>
-          </Flex>
-          <Flex align="center" gap="2" flexShrink={0}>
-            {/* dev-engine-ignore: Switch IS first child — RTL correct */}
-            <Switch.Root size="sm" colorPalette="teal">
-              <Switch.HiddenInput />
-              <Switch.Control><Switch.Thumb /></Switch.Control>
-            </Switch.Root>
-            <Text fontSize="xs" whiteSpace="nowrap">موجودی نامحدود</Text>
-          </Flex>
-
-          <Spacer />
-          {makeViewToggle()}
-        </Flex>
-
-        {/* ── Selection Action Bar (#4) — وقتی ≥۱ انتخاب شد ── */}
-        {selection.length > 0 && (
-          <SelectionActionBar count={selection.length} isCompact={isCompact} onCancel={() => setSelection([])} />
-        )}
-
-        {/* ── List view (جدول) / Card view (grid) — با SegmentGroup سوییچ ── */}
-        {view === 'list' ? (
+        {/* ── جدول — فقط lg+ (سوییچ CSS responsive، نه فقط isCompact) ── */}
+        <Box display={isCompact ? 'none' : { base: 'none', lg: 'block' }}>
           <ProductTable
             products={filtered}
             selection={selection}
@@ -200,23 +220,47 @@ export function ProductList() {
             onToggleAll={toggleAll}
             onToggleOne={toggleOne}
           />
-        ) : (
-          <ProductGrid products={filtered} selection={selection} onToggleOne={toggleOne} />
-        )}
+        </Box>
+
+        {/* ── نمای کارت — media<lg (Figma node 5204:78695) ── */}
+        <Flex direction="column" gap="4" display={isCompact ? 'flex' : { base: 'flex', lg: 'none' }}>
+          {filtered.map((p) => (
+            <MobileProductCard
+              key={p.id}
+              product={p}
+              isSelected={selection.includes(p.id)}
+              onToggle={() => toggleOne(p.id)}
+            />
+          ))}
+        </Flex>
 
         {/* ── Pagination ── */}
         <Flex align="center" justify="space-between" mt="5" flexWrap="wrap" gap="3">
-          {/* RTL: متن شمارش راست (اول DOM)، pagination چپ — مطابق Figma */}
-          <Text fontSize="sm" color="fg.muted">
-            نمایش {toPersianDigits(filtered.length)} محصول از {toPersianDigits(PRODUCTS.length)} مورد
-          </Text>
+          {/* RTL: متن راست‌ترین (اول DOM)، بعدش انتخاب تعداد ردیف، pagination چپ‌ترین — مطابق Figma */}
+          <Flex align="center" gap="3" flexWrap="wrap">
+            <Text fontSize="sm" color="fg.muted">
+              نمایش {toPersianDigits(rangeStart)} تا {toPersianDigits(rangeEnd)} از {toPersianDigits(filtered.length)} محصول
+            </Text>
+            <PageSizeMenu value={pageSize} onValueChange={handlePageSizeChange} />
+          </Flex>
 
-          <ListPagination count={filtered.length} pageSize={PAGE_SIZE} page={page} onPageChange={setPage} />
+          <ListPagination count={filtered.length} pageSize={pageSize} page={page} onPageChange={setPage} />
         </Flex>
       </Box>
 
-      {/* ── Mobile Filter Modal (#6) ── */}
-      <FilterModal open={filterOpen} onClose={() => setFilterOpen(false)} />
+      {/* ── Filter Dialog — دکمهٔ فیلتر در FilterBar بازش می‌کنه ── */}
+      <FilterModal
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        category={category} onCategoryChange={setCategory}
+        status={status} onStatusChange={setStatus}
+        currency={currency} onCurrencyChange={setCurrency}
+        stock={stock} onStockChange={setStock}
+        minPrice={minPrice} onMinPriceChange={setMinPrice}
+        maxPrice={maxPrice} onMaxPriceChange={setMaxPrice}
+        discountOnly={featuredOnly} onDiscountOnlyChange={setFeaturedOnly}
+        onClearAll={clearAllFilters}
+      />
     </Flex>
   )
 }

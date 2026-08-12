@@ -1,18 +1,17 @@
 # Vitrina — Handoff
-> 2026-08-11
+> 2026-08-12
 
 ## الان
-صفحهٔ جدید `/products/list2` ساخته شد (طرح بازطراحی‌شدهٔ لیست محصولات از Figma) — KPI
-آیکون‌دار، ردیف فیلتر ساده‌شده + دیالوگ فیلترها، ردیف بج فیلتر فعال، جدول بدون ستون
-ویژگی‌ها با ۴ دکمهٔ عملیات صریح. صفحهٔ قدیم `/products/list` دست‌نخورده مونده (بدون لینک
-Sidebar، فقط با URL). کاربر بعد از تحویل اول، ۳ باگ DOM-order واقعی پیدا کرد (آیکون/متن
-در کارت KPI، بج فیلتر، بج تخفیف قیمت — هر سه برعکس) که مقایسهٔ preview با screenshot
-کامپوزیت کل‌صفحه نگرفته بودش؛ با `get_screenshot` مجزا روی هر node کوچیک پیدا و فیکس شد.
-CLAUDE.md با این incident و قانون جدید («screenshot کامپوزیت برای المان زیر ۵۰px کافی
-نیست») آپدیت شد. جزئیات کامل: بخش «RTL — مرجع واحد» → سابقهٔ کلاس باگ (پنجمین مورد).
+صفحهٔ بازطراحی‌شدهٔ `list2` داخل `/products/list` merge شد — فایل‌های `list2/*`
+rename شدن به `products/list/*` (FilterBar, FilterResultBadges, KpiRow, RowActionButtons)،
+`ProductList2.tsx`/`ProductTable2.tsx`/`app/products/list2/page.tsx` و کامپوننت‌های قدیمیِ
+`ProductCard`/`ProductGrid`/`SelectionActionBar` حذف شدن، `ProductList.tsx` و
+`ProductTable.tsx` merge شدن، و `MobileProductCard.tsx` + `PageSizeMenu.tsx` جدید اضافه
+شدن. این merge هنوز commit نشده. README جدول صفحات sync شد (ردیف `list2` حذف، توضیح
+`list` آپدیت شد).
 
 ## بعدی
-کاربر خودش صفحه رو چک می‌کنه؛ منتظر تأیید یا باگ بعدی.
+commit کردن وضعیت فعلی (merge کامل شده، آماده برای commit).
 
 ## باگ‌های open
-(هیچ‌کدام باز نمانده — هر ۳ مورد کشف‌شده این session فیکس و با اندازه‌گیری DOM تأیید شدند.)
+(چیزی گزارش نشده)
