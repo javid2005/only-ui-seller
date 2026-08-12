@@ -6,10 +6,13 @@ import { ROW_ACTIONS, type RowAction } from './data'
  * منوی عملیات یک محصول (ellipsis) — مشترک بین جدول و کارت.
  * Chakra Menu، RTL (Positioner dir="rtl"). پیش‌فرض ۶ اکشنِ ROW_ACTIONS؛ caller می‌تونه با
  * `actions` لیست دیگه‌ای بده (مثلاً CARD_ROW_ACTIONS برای کارت موبایل).
+ * `onAction` اختیاریه — با value همون آیتم انتخاب‌شده صدا زده می‌شه (مثلاً 'copy'/'delete').
  */
-export function RowActionsMenu({ size = 'sm', actions = ROW_ACTIONS }: { size?: 'xs' | 'sm' | 'md'; actions?: RowAction[] }) {
+export function RowActionsMenu({
+  size = 'sm', actions = ROW_ACTIONS, onAction,
+}: { size?: 'xs' | 'sm' | 'md'; actions?: RowAction[]; onAction?: (value: string) => void }) {
   return (
-    <Menu.Root positioning={{ placement: 'bottom-end' }}>
+    <Menu.Root positioning={{ placement: 'bottom-end' }} onSelect={(d) => onAction?.(d.value)}>
       <Menu.Trigger asChild>
         <IconButton variant="ghost" size={size} aria-label="عملیات" color="fg.muted">
           <MoreVertical size={16} />

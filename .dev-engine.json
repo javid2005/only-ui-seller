@@ -3,6 +3,7 @@
   "locale": "fa-IR",
   "calendar": "jalali",
   "ds": "chakra-v3",
+  "ds_contract": 1,
   "icon_lib": "lucide",
   "figma_source": "mcp",
   "ignore": [

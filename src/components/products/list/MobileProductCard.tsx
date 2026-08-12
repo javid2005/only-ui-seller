@@ -6,6 +6,8 @@ interface MobileProductCardProps {
   product: Product
   isSelected: boolean
   onToggle: () => void
+  onDuplicate?: () => void
+  onDelete?: () => void
 }
 
 /**
@@ -22,7 +24,7 @@ interface MobileProductCardProps {
  *   CLAUDE.md «هر container جدا»)
  * - Bottom: قیمت/تخفیف (راست‌ترین) → موجودی/آخرین‌ویرایش (چپ‌ترین)
  */
-export function MobileProductCard({ product: p, isSelected, onToggle }: MobileProductCardProps) {
+export function MobileProductCard({ product: p, isSelected, onToggle, onDuplicate, onDelete }: MobileProductCardProps) {
   const inv = inventoryBadge(p)
 
   return (
@@ -49,7 +51,14 @@ export function MobileProductCard({ product: p, isSelected, onToggle }: MobilePr
             {p.status}
           </Badge>
           <Flex flex="1" justify="end">
-            <RowActionsMenu size="sm" actions={CARD_ROW_ACTIONS} />
+            <RowActionsMenu
+              size="sm"
+              actions={CARD_ROW_ACTIONS}
+              onAction={(value) => {
+                if (value === 'copy') onDuplicate?.()
+                if (value === 'delete') onDelete?.()
+              }}
+            />
           </Flex>
         </Flex>
 

@@ -1,0 +1,13 @@
+{
+  "ProductConfirmDialog": {
+    "textAlign": "start",
+    "iconSide": "end",
+    "childOrder": [
+      "CloseTrigger",
+      "Header",
+      "Body",
+      "Footer"
+    ],
+    "_synced": "2026-08-12"
+  }
+}

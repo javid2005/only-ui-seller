@@ -25,19 +25,22 @@ interface FilterBarProps {
  * RTL DOM order (اولین = راست‌ترین، از مقایسهٔ screenshot با طرح، نه خروجی کد فیگما):
  * جستجو → select دسته‌بندی → switch → Spacer → دکمهٔ فیلتر → select ترتیب نمایش (چپ‌ترین)
  *
- * media<md (screenshot کاربر — نه Figma node، مستقیم از کاربر): ردیف به ۳ کنترل ساده می‌شه
+ * media<lg (screenshot کاربر — نه Figma node، مستقیم از کاربر): ردیف به ۳ کنترل ساده می‌شه
  * (سوییچ/دسته‌بندی مخفی، فقط داخل دیالوگ فیلترها در دسترسن). جستجو fill می‌شه (بدون maxW).
- * ترتیب نمایش (breakpoint جدا، media<lg — مستقیم از کاربر) از select به IconButton+Menu
- * تبدیل می‌شه (چون یه select پهن جا نمی‌شه) — تابعش عوض نشده، فقط UI جمع‌تره. سوییچ
- * isCompact-aware طبق قرارداد پروژه (`isCompact ? mobileVal : {base:mobileVal, md/lg:desktopVal}`)
- * تا هم شبیه‌سازی هم موبایل واقعی درست کار کنه.
+ * threshold عمداً `lg` است، نه `md` — چون کل صفحه (ProductList) هم دقیقاً همون‌جا
+ * (lg) از جدول دسکتاپ به نمای کارت موبایل سوییچ می‌کنه؛ اگه اینجا `md` می‌موند، در
+ * بازهٔ ۷۶۸-۱۰۲۴px نمای کارت (موبایل) با ردیف فیلتر دسکتاپ ترکیب می‌شد (ناسازگار).
+ * ترتیب نمایش از select به IconButton+Menu هم همین‌جا (`lg`) تبدیل می‌شه، چون یه select
+ * پهن جا نمی‌شه. سوییچ isCompact-aware طبق قرارداد پروژه
+ * (`isCompact ? mobileVal : {base:mobileVal, lg:desktopVal}`) تا هم شبیه‌سازی هم موبایل
+ * واقعی درست کار کنه.
  */
 export function FilterBar({
   search, onSearchChange, category, onCategoryChange,
   featuredOnly, onFeaturedOnlyChange, sort, onSortChange, onOpenFilters,
   isCompact = false,
 }: FilterBarProps) {
-  const rv = <T,>(mobile: T, desktop: T) => (isCompact ? mobile : { base: mobile, md: desktop })
+  const rv = <T,>(mobile: T, desktop: T) => (isCompact ? mobile : { base: mobile, lg: desktop })
 
   return (
     <Flex gap="3" align="center" overflowX={rv('visible', 'auto')}>
@@ -76,7 +79,7 @@ export function FilterBar({
         <Filter size={16} />
       </IconButton>
 
-      {/* ترتیب نمایش — select در lg+ (بقیهٔ ردیف در md+ ظاهر می‌شه، این یکی جداگانه lg — مستقیم از کاربر) */}
+      {/* ترتیب نمایش — select در lg+ (هم‌راستا با بقیهٔ ردیف که الان همه در lg+ ظاهر می‌شن) */}
       <Box display={isCompact ? 'none' : { base: 'none', lg: 'block' }}>
         <FilterSelect collection={sortCollection} value={sort} onValueChange={onSortChange} minW="130px" maxW="170px" />
       </Box>

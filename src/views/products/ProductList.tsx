@@ -17,6 +17,8 @@ import { FilterResultBadges, type ActiveFilter } from '@/components/products/lis
 import { ProductTable } from '@/components/products/list/ProductTable'
 import { MobileProductCard } from '@/components/products/list/MobileProductCard'
 import { SelectionActionBar } from '@/components/products/list/SelectionActionBar'
+import { ProductConfirmDialog, type ProductConfirmVariant } from '@/components/products/list/ProductConfirmDialog'
+import { toaster } from '@/components/ui/toaster'
 
 /** آستانهٔ «درحال اتمام» — موجودی بیشتر از صفر ولی کمتر یا مساوی این عدد */
 const LOW_STOCK_THRESHOLD = 15
@@ -65,6 +67,9 @@ export function ProductList() {
   const [filterOpen, setFilterOpen] = useState(false)
   /** کلیک روی دکمهٔ فیلتر یک کارت KPI — key همون KpiItem.key هست، null = فیلتری فعال نیست */
   const [kpiFilter, setKpiFilter] = useState<string | null>(null)
+  /** دیالوگ کپی/حذف محصول — Figma node 5198:89891 / 5198:89897. targets = آیدی محصول‌های
+   * هدف؛ از جدول/کارت (تک‌آیتمی) یا دکمهٔ حذف گروهی در SelectionActionBar (چندآیتمی) باز می‌شه */
+  const [confirmDialog, setConfirmDialog] = useState<{ variant: ProductConfirmVariant; targets: string[] } | null>(null)
 
   // ── فیلتر KPI — هر key معادل همون شرطیه که مقدار کارت رو محاسبه کرده (پایین، kpiItems) ──
   const matchesKpiFilter = (p: (typeof PRODUCTS)[number]) => {
@@ -179,6 +184,25 @@ export function ProductList() {
     setPage(1)
   }
 
+  // ── کپی/حذف محصول (تک یا گروهی) — mock، بدون API واقعی (delay مصنوعی مطابق قرارداد mock پروژه) ──
+  const handleConfirmDialog = async () => {
+    if (!confirmDialog) return
+    const { variant, targets } = confirmDialog
+    await new Promise((resolve) => setTimeout(resolve, 600))
+    if (variant === 'copy') {
+      toaster.create({ id: `product-copy-${targets[0]}`, title: 'نسخهٔ کپی ایجاد شد', type: 'success', duration: 2500 })
+    } else {
+      toaster.create({
+        id: `product-delete-${targets.join('-')}`,
+        title: targets.length > 1 ? `${toPersianDigits(targets.length)} محصول حذف شد` : 'محصول حذف شد',
+        type: 'success',
+        duration: 2500,
+      })
+      setSelection((prev) => prev.filter((id) => !targets.includes(id)))
+    }
+    setConfirmDialog(null)
+  }
+
   return (
     <Flex direction="column" gap="4">
       {/* ── Page Header ── */}
@@ -208,7 +232,11 @@ export function ProductList() {
 
         {/* ── Selection Action Bar — Chakra ActionBar، همیشه mount (برای انیمیشن ورود/خروج)،
             open={count>0} خودش نمایش/انیمیشن رو کنترل می‌کنه (نه conditional render) ── */}
-        <SelectionActionBar count={selection.length} onCancel={() => setSelection([])} />
+        <SelectionActionBar
+          count={selection.length}
+          onCancel={() => setSelection([])}
+          onDelete={() => setConfirmDialog({ variant: 'delete', targets: selection })}
+        />
 
         {/* ── جدول — فقط lg+ (سوییچ CSS responsive، نه فقط isCompact) ── */}
         <Box display={isCompact ? 'none' : { base: 'none', lg: 'block' }}>
@@ -219,6 +247,8 @@ export function ProductList() {
             indeterminate={indeterminate}
             onToggleAll={toggleAll}
             onToggleOne={toggleOne}
+            onDuplicate={(product) => setConfirmDialog({ variant: 'copy', targets: [product.id] })}
+            onDelete={(product) => setConfirmDialog({ variant: 'delete', targets: [product.id] })}
           />
         </Box>
 
@@ -230,6 +260,8 @@ export function ProductList() {
               product={p}
               isSelected={selection.includes(p.id)}
               onToggle={() => toggleOne(p.id)}
+              onDuplicate={() => setConfirmDialog({ variant: 'copy', targets: [p.id] })}
+              onDelete={() => setConfirmDialog({ variant: 'delete', targets: [p.id] })}
             />
           ))}
         </Flex>
@@ -260,6 +292,15 @@ export function ProductList() {
         maxPrice={maxPrice} onMaxPriceChange={setMaxPrice}
         discountOnly={featuredOnly} onDiscountOnlyChange={setFeaturedOnly}
         onClearAll={clearAllFilters}
+      />
+
+      {/* ── دیالوگ کپی/حذف محصول (تک یا گروهی) ── */}
+      <ProductConfirmDialog
+        open={confirmDialog !== null}
+        variant={confirmDialog?.variant ?? null}
+        count={confirmDialog?.targets.length ?? 1}
+        onConfirm={handleConfirmDialog}
+        onCancel={() => setConfirmDialog(null)}
       />
     </Flex>
   )

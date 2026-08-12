@@ -2,16 +2,16 @@
 > 2026-08-12
 
 ## الان
-صفحهٔ بازطراحی‌شدهٔ `list2` داخل `/products/list` merge شد — فایل‌های `list2/*`
-rename شدن به `products/list/*` (FilterBar, FilterResultBadges, KpiRow, RowActionButtons)،
-`ProductList2.tsx`/`ProductTable2.tsx`/`app/products/list2/page.tsx` و کامپوننت‌های قدیمیِ
-`ProductCard`/`ProductGrid`/`SelectionActionBar` حذف شدن، `ProductList.tsx` و
-`ProductTable.tsx` merge شدن، و `MobileProductCard.tsx` + `PageSizeMenu.tsx` جدید اضافه
-شدن. این merge هنوز commit نشده. README جدول صفحات sync شد (ردیف `list2` حذف، توضیح
-`list` آپدیت شد).
+دیالوگ‌های «کپی محصول» و «حذف محصول» (Figma node 5198:89891 / 5198:89897) اضافه شدن —
+`ProductConfirmDialog.tsx` جدید، هم از دکمه‌های ردیف جدول/کارت موبایل (تک محصول) هم از
+دکمهٔ حذف گروهی در `SelectionActionBar` (چند محصول، متن ثابت «محصولات انتخاب شده») صدا
+زده می‌شه. `RowActionsMenu` پراپ `onAction` گرفت (قبلاً هیچ handler نداشت). جدا از این،
+ردیف فیلتر (`FilterBar`) ریسپانسیو شد: threshold از `md` به `lg` عوض شد تا با سوییچ
+جدول↔کارت موبایلِ کل صفحه (که در `lg` اتفاق می‌افته) هماهنگ باشه — قبلاً بین ۷۶۸-۱۰۲۴px
+حالت میانی ناهماهنگ نشون می‌داد. این تغییرات هنوز commit نشدن.
 
 ## بعدی
-commit کردن وضعیت فعلی (merge کامل شده، آماده برای commit).
+commit کردن وضعیت فعلی (دیالوگ‌ها + ریسپانسیو FilterBar).
 
 ## باگ‌های open
 (چیزی گزارش نشده)

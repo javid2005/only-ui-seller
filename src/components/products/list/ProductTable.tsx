@@ -9,6 +9,8 @@ interface ProductTableProps {
   indeterminate: boolean
   onToggleAll: () => void
   onToggleOne: (id: string) => void
+  onDuplicate?: (product: Product) => void
+  onDelete?: (product: Product) => void
 }
 
 /**
@@ -22,7 +24,7 @@ interface ProductTableProps {
  * دسته‌بندی → وضعیت → آخرین ویرایش → actions (چپ‌ترین)
  */
 export function ProductTable({
-  products, selection, allSelected, indeterminate, onToggleAll, onToggleOne,
+  products, selection, allSelected, indeterminate, onToggleAll, onToggleOne, onDuplicate, onDelete,
 }: ProductTableProps) {
   return (
     <Table.ScrollArea overflowX="auto" borderWidth="0">
@@ -143,7 +145,7 @@ export function ProductTable({
 
                 {/* actions — leftmost، ۴ دکمهٔ صریح */}
                 <Table.Cell>
-                  <RowActionButtons />
+                  <RowActionButtons onDuplicate={() => onDuplicate?.(p)} onDelete={() => onDelete?.(p)} />
                 </Table.Cell>
               </Table.Row>
             )
