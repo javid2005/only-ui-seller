@@ -25,9 +25,8 @@ import json
 import subprocess
 import sys
 
-# layout-diff از 1404/05/09 حذف شد (سیستم snapshot متنی) — مقایسهٔ چیدمان با طرح
-# حالا از روی preview انجام می‌شود، نه از روی figma-layout.json. جزئیات در CLAUDE.md
-# بخش «تطابق با طرح فیگما». این گیت فقط مقادیر فیزیکیِ چیدمان را می‌گیرد.
+# این گیت فقط مقادیر **فیزیکیِ** چیدمان را می‌گیرد — نمی‌گوید `start` درست است یا
+# `end`. آن را فقط مقایسهٔ preview با طرح می‌گیرد (CLAUDE.md § «تطابق با طرح فیگما»).
 MODULES = "css-logical-props,dom-order,icon-direction"
 
 
