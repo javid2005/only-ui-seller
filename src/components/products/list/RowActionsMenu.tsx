@@ -14,7 +14,7 @@ export function RowActionsMenu({
   return (
     <Menu.Root positioning={{ placement: 'bottom-end' }} onSelect={(d) => onAction?.(d.value)}>
       <Menu.Trigger asChild>
-        <IconButton variant="ghost" size={size} aria-label="عملیات" color="fg.muted">
+        <IconButton variant="outline" size={size} aria-label="عملیات" color="fg.muted">
           <MoreVertical size={16} />
         </IconButton>
       </Menu.Trigger>
