@@ -1,5 +1,5 @@
 # Vitrina — Project Context
-> updated: 2026-06-05 | tokens/breakpoints canonical → CLAUDE.md (اینجا فقط design-side context)
+> updated: 2026-08-13 | tokens/breakpoints canonical → CLAUDE.md (اینجا فقط design-side context)
 
 ---
 
@@ -9,7 +9,7 @@
 |------|-------|
 | نام | Vitrina |
 | نوع | Dashboard / E-commerce admin |
-| Framework | React + Vite + TypeScript |
+| Framework | React 19 + Next.js 16 (App Router) + TypeScript |
 | Design System | Chakra UI v3 |
 | زبان | فارسی — RTL only |
 | فونت | Vazirmatn |
@@ -77,10 +77,13 @@
 
 | فایل | مسیر | کاربرد |
 |------|------|--------|
-| `DashboardLayout` | `src/layouts/DashboardLayout.tsx` | layout اصلی — navbar + sidebar |
+| `Layout` | `src/components/layout/Layout.tsx` | layout اصلی — navbar + sidebar + `CompactModeProvider` |
+| root layout | `src/app/layout.tsx` | تنها `layout.tsx` در App Router؛ `Layout` را از اینجا wrap می‌کند |
 
 - **۹۰٪+ صفحات** از این layout استفاده می‌کنن
-- صفحات **بدون layout**: login، signup
+- صفحات **بدون layout**: `/login`، `/signup/*` — چون فقط یک root layout هست،
+  خودِ `Layout.tsx` بر اساس `usePathname()` تصمیم می‌گیرد navbar/sidebar را نشان دهد یا نه
+  (نه با route group جدا)
 - sidebar items بر اساس **permission/role** فیلتر می‌شن (vendor vs user)
 - در موبایل (480px): sidebar مخفی می‌شه، با drawer/hamburger جایگزین می‌شه
 - قبل از ساخت هر صفحه جدید این فایل رو بخون
@@ -100,7 +103,8 @@
 
 | کار | جزئیات | وضعیت |
 |-----|---------|--------|
-| Persian Numbers | ساخت `src/utils/numbers.ts` با `toPersianDigits` + `toLatinDigits` — migrate همه JSX display | ⏳ |
-| Persian Calendar | همه تاریخ‌های display باید `fa-IR-u-ca-persian` locale داشته باشن | ⏳ |
+| Persian Numbers | `src/utils/numbers.ts` (`toPersianDigits` / `toLatinDigits`) ساخته شد | ✅ |
+| Persian Calendar | `src/components/ui/DatePicker.tsx` — جلالی، بدون کتابخانهٔ خارجی | ✅ |
+| Backend | `src/services/auth.ts` هنوز کاملاً mock است (بدون API واقعی) | ⏳ |
 
 **قانون:** user میبینه؟ → فارسی. code میخونه؟ → انگلیسی (API، محاسبات، ID)

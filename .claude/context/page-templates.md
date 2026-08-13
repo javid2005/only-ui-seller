@@ -1,7 +1,7 @@
 <!-- version: 7 | updated: 2026-06-15 | changelog: «Grid System (مبنای قالب‌ها)» اضافه شد — قالب‌ها بر اساس span ستون از grid ۱۲ستونه (margin/gutter 16) تعریف می‌شن، نه px ثابت. قالب Print-Label (6 ستون مرکز = 808px) اضافه شد. -->
 
 # Page Templates — Vitrina Dashboard
-> همیشه همراه با `project-context.md` استفاده شود
+> همیشه همراه با `.claude/context/project-context.md` استفاده شود
 
 ---
 

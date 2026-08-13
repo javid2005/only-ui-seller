@@ -12,8 +12,15 @@
 | Chakra v3 tokens | `dev-knowledge/design-systems/chakra-ui-v3/tokens.md` |
 | RTL در Chakra | `dev-knowledge/design-systems/chakra-ui-v3/chakra-ui-v3.md` |
 | Figma→Code workflow | `dev-knowledge/universal/figma-to-code.md` |
-| Page Templates | `dev-knowledge/projects/vitrina/page-templates.md` |
 | Chakra v3 components | `dev-knowledge/design-systems/chakra-ui-v3/components.md` |
+
+→ **محتوای مخصوص همین پروژه — داخل repo، نه dev-knowledge:**
+
+| موضوع | فایل |
+|-------|------|
+| Page Templates | `.claude/context/page-templates.md` |
+| باگ‌های project-specific | `.claude/context/known-bugs.md` |
+| Context طراحی (grid، Figma variables، layout) | `.claude/context/project-context.md` |
 
 ---
 
@@ -48,8 +55,9 @@ Figma tool fail شد؟
    - doc ناقص/غلط  → fix the doc first
    - implementation منحرف شده از doc  → fix implementation + verify doc
 2. source رو fix کن
-   - pattern پروژه‌ای  → CLAUDE.md همین پروژه
-   - pattern shared  → dev-knowledge/ (page-templates, tokens, known-bugs, ...)
+   - pattern پروژه‌ای  → CLAUDE.md یا `.claude/context/` همین پروژه
+     (page-templates, known-bugs پروژه‌ای, project-context)
+   - pattern shared  → dev-knowledge/ (language, tokens, DS known-bugs, ...)
 3. همه instance‌های affected رو fix کن (نه فقط فایل جاری)
 ```
 
@@ -236,14 +244,12 @@ const box = (n) => `l=${Math.round(n.getBoundingClientRect().left)} r=${Math.rou
 ```
 
 > ⚠️ عنصری که `w="full"` دارد جابه‌جا نمی‌شود؛ فقط عناصر کوتاه (برچسب، دکمه، فیلد با maxW)
-> باگ جهت را نشان می‌دهند. پس **حتماً یک برچسب کوتاه را هم بسنج**، نه فقط ردیف‌های full-width.
+> باگ جهت را نشان می‌دهند. این و بقیهٔ تله‌ها + تاریخچهٔ incidentها ←
+> § «⛔ قانون طلایی» پایین‌تر (**تنها** جای درس‌ها؛ اینجا تکرار نمی‌شود).
 
-**سابقهٔ همین کلاس باگ (1404/05/09، درسی که این بخش را ساخت):** پنج مورد جهت‌معکوس
-(`«انتخاب شده»`، فیلد شرط سبد خرید، فیلد حداقل مبلغ سفارش) + دو نقص ساختاری (نبودِ کامل
-دکمه‌های حذف، تختِ‌شدن گروه‌های سلسله‌مراتبی) در `DiscountCodeNew` ship شدند در حالی که
-`dev-engine` و type-check **همه سبز بودند**. دلیل ریشه‌ای: آن ابزارها می‌سنجند
-«کد با آنچه *من گفتم* درست است می‌خواند؟» — وقتی خودِ فهم من معکوس باشد همه سبز می‌مانند.
-فقط مقایسه با **خود طرح** آن را می‌گیرد.
+**چرا این بخش وجود دارد:** `dev-engine` و type-check می‌سنجند «کد با آنچه *من گفتم*
+درست است می‌خواند؟» — وقتی خودِ فهم من معکوس باشد، همه سبز می‌مانند. فقط مقایسه با
+**خود طرح** آن را می‌گیرد.
 
 > به همین دلیل زیرسیستم snapshot متنی (`layout-diff` / `verify-render` / `layout-sync` /
 > `figma-layout.json` / anchorهای `data-layout`) در 1405/05 **ریشه‌ای حذف شد** — از engine،
@@ -413,26 +419,23 @@ start = راست        end = چپ
 
 > **سابقهٔ این کلاس باگ — پنج بار:** `CampaignCard` (1404/05/12) · `NewCampaignDialog`
 > (همان روز) · `DiscountCodesTable`+`DiscountCodeCard` (1404/05/17) · `DiscountCodeNew`
-> (1404/05/09، بعدِ «فیکس»های قبلی) · `KpiRow`+`FilterResultBadges`+قیمت جدول در
-> `ProductList2` (1404/05/22). سه‌تای اول با کامنت و بعد با snapshot متنی «فیکس»
-> شدند و هیچ‌کدام جلوی بعدی را نگرفت. چهارمی با **مقایسهٔ preview** در چند دقیقه پیدا شد.
-> **پنجمی حتی با مقایسهٔ preview هم اول رد شد** — چون آن مقایسه از روی screenshot
-> کامپوزیت کل صفحه (۱۹۲۰px، دانلود با `maxDimension` پیش‌فرض) بود؛ در آن رزولوشن، ترتیب
-> icon-vs-text داخل یک المان ~۳۶px (کارت KPI، بج فیلتر، بج تخفیف) عملاً غیرقابل‌تشخیصه.
-> با گزارش مستقیم کاربر («آیکون این سمته یا اون سمت؟») و گرفتن `get_screenshot` **مجزا
-> برای همان node کوچک** (نه کل صفحه) با `maxDimension` بالا، هر ۳ مورد در چند دقیقه پیدا
-> و فیکس شد. **قانون جدید:** برای هر المان ترکیبی کوچک (icon+text، badge+X، پیل) که در
-> screenshot کامپوزیت صفحه کوچک‌تر از ~۵۰px دیده می‌شه، `get_screenshot` را جداگانه روی
-> همان node بگیر (نه فقط از کل صفحه استنتاج کن) — قبل از نوشتن جدول ترجمه برای آن المان.
+> (1404/05/09 — ۵ مورد جهت‌معکوس + ۲ نقص ساختاری، با dev-engine و type-check **همه سبز**) ·
+> `KpiRow`+`FilterResultBadges`+قیمت جدول در `ProductList2` (1404/05/22).
+>
+> **دو درسِ متا:**
+> ۱. سه‌تای اول با کامنت و بعد با snapshot متنی «فیکس» شدند و **هیچ‌کدام جلوی بعدی را نگرفت**؛
+>    چهارمی با مقایسهٔ preview در چند دقیقه پیدا شد. به همین دلیل کل زیرسیستم snapshot متنی
+>    در 1405/05 حذف شد (بالاتر، § «تطابق با طرح فیگما»).
+> ۲. پنجمی **حتی از مقایسهٔ preview هم رد شد** — چون از screenshot کامپوزیت ۱۹۲۰px انجام
+>    شده بود. قاعدهٔ «node کوچک ← screenshot مجزا» (بولت آخر بالا) از همان‌جا آمد؛ با
+>    گزارش مستقیم کاربر پیدا شد، نه با هیچ ابزاری.
 
 ### RTL in Portal components (Menu, Drawer, Popover, Tooltip)
 
 - Portal content renders under `<body>` but DOES inherit `dir="rtl"` from `<html>` via CSS cascade
 - Add `dir="rtl"` to `Menu.Positioner` / `Drawer.Positioner` etc. as an explicit safeguard
-- **DOM order still controls flex direction** — only partially fixable via CSS (Switch has order:-1 in theme)
-- Always put elements in correct RTL DOM order: icon/avatar FIRST (rightmost), text SECOND, action LAST (leftmost)
-- **Switch + label RTL rule:** Switch FIRST in DOM (rightmost = right side) → label text LAST (leftmost = left side). Never text-then-switch.
-- `bg="white"` → از نظر gate hardcode نیست (token واقعی Chakra است، نه hex خام مثل `#ffffff`)، ولی **theme-aware نیست** — در dark mode هم white می‌مونه. برای سطوح/کارت/پنل از `bg="bg.panel"` استفاده کن (semantic، خودکار dark-adapt می‌شه). `bg="white"` فقط جایی درسته که واقعاً می‌خوای رنگ ثابت بمونه (نه یک surface تم‌پذیر).
+- **DOM order still controls flex direction** — CSS نمی‌تواند جبرانش کند (فقط Switch یک
+  `order:-1` در theme دارد). ترتیب درست ← جدول «ترتیب DOM» بالاتر در همین بخش.
 
 ---
 

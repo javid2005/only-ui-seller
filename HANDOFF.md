@@ -1,22 +1,27 @@
 # Vitrina — Handoff
-> 2026-08-12
+> 2026-08-13
 
 ## الان
-دیالوگ‌های «کپی محصول» و «حذف محصول» (Figma node 5198:89891 / 5198:89897) اضافه شدن —
-`ProductConfirmDialog.tsx` جدید، هم از دکمه‌های ردیف جدول/کارت موبایل (تک محصول) هم از
-دکمهٔ حذف گروهی در `SelectionActionBar` (چند محصول، متن ثابت «محصولات انتخاب شده») صدا
-زده می‌شه. `RowActionsMenu` پراپ `onAction` گرفت (قبلاً هیچ handler نداشت). جدا از این،
-ردیف فیلتر (`FilterBar`) ریسپانسیو شد: threshold از `md` به `lg` عوض شد تا با سوییچ
-جدول↔کارت موبایلِ کل صفحه (که در `lg` اتفاق می‌افته) هماهنگ باشه — قبلاً بین ۷۶۸-۱۰۲۴px
-حالت میانی ناهماهنگ نشون می‌داد. این تغییرات هنوز commit نشدن.
+دیالوگ‌های کپی/حذف محصول و ریسپانسیو FilterBar (از قبل) commit شده‌اند
+(`e879e65`). جدا از این، این session روی **بهینه‌سازی pipeline Figma→code** کار شد
+(uncommitted):
 
-جدا از این، `dev-knowledge`/`dev-agents` زیرسیستم snapshot متنی جهت (`layout-diff`
-و خواهرانش) را ریشه‌ای حذف کردند — این‌جا فقط `figma-layout.json` حذف و
-`rtl_gate.py`/`CLAUDE.md` sync شدند (بدون تغییر رفتار؛ تطابق با طرح از قبل هم
-عملاً فقط با مقایسهٔ preview بود).
+- **CLAUDE.md + `.claude/context/*.md`** — مرجع شکستهٔ `page-templates.md` فیکس شد
+  (اشاره به مسیری در dev-knowledge که وجود نداشت)، `known-bugs.md`/`project-context.md`
+  از دوران Vite به Next 16 sync شدند (`tsc -b`، `DashboardLayout.tsx` و مسیرهای دیگری
+  که دیگر وجود نداشتند)، و تکرار داخل CLAUDE.md (تاریخچهٔ incident در دو جا) به یک
+  جا ادغام شد.
+- **دو فایل uncommitted جدا** هست که این session دست نزده:
+  [FilterResultBadges.tsx](src/components/products/list/FilterResultBadges.tsx)
+  (بازنویسی با `Tag` چاکرا) و
+  [RowActionsMenu.tsx](src/components/products/list/RowActionsMenu.tsx) — منشأشان
+  روشن نیست، قبل از commit باید بررسی شوند.
 
 ## بعدی
-commit کردن وضعیت فعلی (دیالوگ‌ها + ریسپانسیو FilterBar + sync حذف layout-diff).
+- سه repo (Vitrina + dev-agents + dev-knowledge) با هم commit شوند — به هم وابسته‌اند.
+  جزئیات کار مشترک → `~/Documents/GitHub/Tools/dev-agents/HANDOFF.md`.
+- فاز ۳ pipeline بهینه‌سازی: `vision-diff` (crop + pixel-diff بدون مدل خارجی).
+- تکلیف دو فایل uncommitted بالا روشن شود.
 
 ## باگ‌های open
 (چیزی گزارش نشده)
