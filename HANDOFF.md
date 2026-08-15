@@ -1,27 +1,26 @@
 # Vitrina — Handoff
-> 2026-08-13
+> 2026-08-15
 
 ## الان
-دیالوگ‌های کپی/حذف محصول و ریسپانسیو FilterBar (از قبل) commit شده‌اند
-(`e879e65`). جدا از این، این session روی **بهینه‌سازی pipeline Figma→code** کار شد
-(uncommitted):
-
-- **CLAUDE.md + `.claude/context/*.md`** — مرجع شکستهٔ `page-templates.md` فیکس شد
-  (اشاره به مسیری در dev-knowledge که وجود نداشت)، `known-bugs.md`/`project-context.md`
-  از دوران Vite به Next 16 sync شدند (`tsc -b`، `DashboardLayout.tsx` و مسیرهای دیگری
-  که دیگر وجود نداشتند)، و تکرار داخل CLAUDE.md (تاریخچهٔ incident در دو جا) به یک
-  جا ادغام شد.
-- **دو فایل uncommitted جدا** هست که این session دست نزده:
-  [FilterResultBadges.tsx](src/components/products/list/FilterResultBadges.tsx)
-  (بازنویسی با `Tag` چاکرا) و
-  [RowActionsMenu.tsx](src/components/products/list/RowActionsMenu.tsx) — منشأشان
-  روشن نیست، قبل از commit باید بررسی شوند.
+آخرین commit (`7ead0f9`) discount toggle/outline icons/domain relabel بود. از اونجا
+تا الان uncommitted (۱۵ فایل):
+- بازسازی کامل لیست سفارشات (KPI/فیلتر/جدول/pagination مطابق لیست محصولات) + دیالوگ
+  فیلترها (`OrderFilterModal`) طبق Figma node 2169:28005 + لیبل منوی ترتیب.
+- فیکس سراسری فاصلهٔ زیاد ارقام فارسی در Table/Badge (`src/theme/index.ts` — override
+  `fontVariantNumeric` روی recipe، نه globalCss).
+- فیکس alignment ستون action در ۴ جدول (OrderTable، ProductTable/RowActionButtons،
+  CampaignTable، AbandonedCartTable) — `justify="end"` گم/غلط بود.
+- striped=true روی ۴ جدولی که نداشتنش (DiscountCodesTable، BulkSmsHistoryTable،
+  AbandonedCartTable، CampaignTable) — مطابق قرارداد محصولات/سفارشات.
+- OrderCard (کارت موبایل سفارشات) بازسازی طبق Figma node 5253:87246 —
+  فوتر/هدر جدا شد (فوتر همیشه bg.subtle)، hover فقط border کارت + bg فوتر رو
+  عوض می‌کنه (نه کل کارت)، Separator حذف شد.
 
 ## بعدی
-- سه repo (Vitrina + dev-agents + dev-knowledge) با هم commit شوند — به هم وابسته‌اند.
-  جزئیات کار مشترک → `~/Documents/GitHub/Tools/dev-agents/HANDOFF.md`.
-- فاز ۳ pipeline بهینه‌سازی: `vision-diff` (crop + pixel-diff بدون مدل خارجی).
-- تکلیف دو فایل uncommitted بالا روشن شود.
+OrderCard موبایل هم طبق Figma node 5253:87246 بازسازی و commit شد (فوتر همیشه
+bg.subtle + hover→brand.bg روی فوتر تنها با role="group"، border کارت hover→
+brand.focusRing، بدون Separator، IconButton فوتر variant="outline"). چیز
+open دیگه‌ای از این session نمونده.
 
 ## باگ‌های open
 (چیزی گزارش نشده)

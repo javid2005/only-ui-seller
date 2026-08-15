@@ -11,7 +11,7 @@ interface BulkSmsHistoryTableProps {
  * RTL DOM order (با screenshot تأیید شده — نه ترتیب خام JSX که LTR canvas است):
  * تاریخ شروع(راست‌ترین) → متن پیامک → مخاطبان → تعداد نفرات → وضعیت → عملیات(چپ‌ترین).
  * داخل ستون عملیات هم به همین ترتیب: ارسال‌مجدد(راست‌ترین این ستون) → ویرایش → آرشیو(چپ‌ترین).
- * بدون رنگ متناوب سطر — طبق طرح فیگما (فقط border-b + header با bg.muted).
+ * رنگ متناوب سطر (striped) — طبق قرارداد پروژه (مثل لیست محصولات/سفارشات)، نه طرح فیگما.
  */
 export function BulkSmsHistoryTable({ items }: BulkSmsHistoryTableProps) {
   return (
@@ -29,8 +29,8 @@ export function BulkSmsHistoryTable({ items }: BulkSmsHistoryTableProps) {
         </Table.Header>
 
         <Table.Body>
-          {items.map((item) => (
-            <Table.Row key={item.id} h="20" borderBottomWidth="1px" borderColor="border">
+          {items.map((item, i) => (
+            <Table.Row key={item.id} h="20" bg={i % 2 === 1 ? 'bg.subtle' : 'bg'} borderBottomWidth="1px" borderColor="border">
               <Table.Cell>
                 <Text fontSize="sm" color="fg">{item.startDate}</Text>
               </Table.Cell>

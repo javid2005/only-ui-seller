@@ -7,11 +7,16 @@ import { ROW_ACTIONS } from './data'
  * آیتم‌ها از Figma «Orders / CTmenu / More»: مشاهده جزئیات · کپی لینک.
  * Chakra Menu، RTL (Positioner dir="rtl").
  */
-export function OrderRowActionsMenu({ size = 'sm' }: { size?: 'xs' | 'sm' | 'md' }) {
+interface OrderRowActionsMenuProps {
+  size?: 'xs' | 'sm' | 'md'
+  variant?: 'ghost' | 'outline'
+}
+
+export function OrderRowActionsMenu({ size = 'sm', variant = 'ghost' }: OrderRowActionsMenuProps) {
   return (
     <Menu.Root positioning={{ placement: 'bottom-end' }}>
       <Menu.Trigger asChild>
-        <IconButton variant="ghost" size={size} aria-label="عملیات سفارش" color="fg.muted">
+        <IconButton variant={variant} size={size} aria-label="عملیات سفارش" color="fg.muted">
           <MoreVertical size={16} />
         </IconButton>
       </Menu.Trigger>

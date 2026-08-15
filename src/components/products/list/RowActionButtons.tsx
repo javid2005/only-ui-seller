@@ -15,7 +15,9 @@ interface RowActionButtonsProps {
  */
 export function RowActionButtons({ onEdit, onPreview, onDuplicate, onDelete }: RowActionButtonsProps) {
   return (
-    <Flex gap="2" align="center">
+    // justify="end" چون RTL: start=راست، end=چپ — این ستون لبهٔ چپ جدوله، آیکون‌ها باید
+    // به همون لبه بچسبن نه به لبهٔ راستِ سلول (که با auto table-layout ممکنه از محتوا پهن‌تر بشه)
+    <Flex gap="2" align="center" justify="end">
       <IconButton variant="outline" size="sm" aria-label="ویرایش" onClick={onEdit}>
         <Pencil size={16} />
       </IconButton>

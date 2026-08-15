@@ -10,7 +10,7 @@ interface CampaignTableProps {
 /**
  * جدول کمپین‌ها — desktop. RTL DOM order (اولین ستون = راست‌ترین):
  * نام کمپین(+نوع) → تاریخ شروع → تاریخ پایان → وضعیت → عملیات (چپ‌ترین)
- * بدون رنگ متناوب سطر — طبق طرح فیگما (Campaign/List) همه‌ی ردیف‌ها سفیدند، فقط border-b.
+ * رنگ متناوب سطر (striped) — طبق قرارداد پروژه (مثل لیست محصولات/سفارشات)، نه طرح فیگما.
  */
 export function CampaignTable({ campaigns, onDelete }: CampaignTableProps) {
   return (
@@ -29,8 +29,8 @@ export function CampaignTable({ campaigns, onDelete }: CampaignTableProps) {
         </Table.Header>
 
         <Table.Body>
-          {campaigns.map((c) => (
-            <Table.Row key={c.id} h="20" borderBottomWidth="1px" borderColor="border">
+          {campaigns.map((c, i) => (
+            <Table.Row key={c.id} h="20" bg={i % 2 === 1 ? 'bg.subtle' : 'bg'} borderBottomWidth="1px" borderColor="border">
               {/* نام کمپین — عنوان + badge نوع */}
               <Table.Cell>
                 <Flex direction="column" gap="1" align="start">
@@ -49,9 +49,11 @@ export function CampaignTable({ campaigns, onDelete }: CampaignTableProps) {
                 </Badge>
               </Table.Cell>
 
-              {/* عملیات — ویرایش (fg.muted) + حذف (red)، bg gray.subtle/red.subtle */}
+              {/* عملیات — ویرایش (fg.muted) + حذف (red)، bg gray.subtle/red.subtle.
+                  justify="end" چون RTL: start=راست، end=چپ — ستون آخر لبهٔ چپ جدوله،
+                  آیکون‌ها باید به همون لبه بچسبن (قبلاً start بود، اشتباه) */}
               <Table.Cell>
-                <Flex gap="2" justify="start">
+                <Flex gap="2" justify="end">
                   <IconButton
                     aria-label="ویرایش کمپین" size="sm"
                     variant="outline" color="fg.muted"

@@ -7,8 +7,9 @@ interface OrderTableProps {
 }
 
 /**
- * جدول سفارشات — desktop. RTL DOM order (اولین cell = راست‌ترین):
- * شماره/نوع → مشتری → تاریخ → مبلغ کل → روش ارسال → وضعیت → اکشن (چپ‌ترین)
+ * جدول سفارشات — desktop (Figma node 1923:21949). RTL DOM order (اولین cell = راست‌ترین،
+ * تأیید شده با اندازه‌گیری هدر ردیف روی screenshot طرح، نه خروجی کد فیگما):
+ * شماره/نوع → تاریخ → مشتری → مبلغ کل → روش ارسال → وضعیت → اکشن (چپ‌ترین)
  * سطرهای زوج/فرد رنگ متناوب (bg.subtle) — پیش‌فرض پروژه.
  */
 export function OrderTable({ orders }: OrderTableProps) {
@@ -19,8 +20,8 @@ export function OrderTable({ orders }: OrderTableProps) {
           <Table.Row bg="bg.subtle">
             {/* شماره/نوع سفارش — FIRST = rightmost */}
             <Table.ColumnHeader w="200px" textAlign="start">شماره/نوع سفارش</Table.ColumnHeader>
-            <Table.ColumnHeader w="200px">مشتری</Table.ColumnHeader>
             <Table.ColumnHeader w="140px">تاریخ</Table.ColumnHeader>
+            <Table.ColumnHeader w="200px">مشتری</Table.ColumnHeader>
             <Table.ColumnHeader w="200px">مبلغ کل</Table.ColumnHeader>
             <Table.ColumnHeader w="160px">روش ارسال</Table.ColumnHeader>
             <Table.ColumnHeader w="160px">وضعیت</Table.ColumnHeader>
@@ -38,16 +39,21 @@ export function OrderTable({ orders }: OrderTableProps) {
               _hover={{ bg: 'bg.muted' }}
               transition="background 0.15s"
             >
-              {/* شماره/نوع سفارش — orderNo (teal link) + type badge */}
+              {/* شماره/نوع سفارش — orderNo (brand.fg لینک) + type badge */}
               <Table.Cell>
                 <Flex direction="column" gap="1" align="start">
-                  <Link href="#" fontSize="sm" fontWeight="semibold" color="teal.fg">
+                  <Link href="#" fontSize="sm" fontWeight="semibold" color="brand.fg">
                     {o.orderNo}
                   </Link>
                   <Badge size="xs" colorPalette={TYPE_COLOR[o.type]} variant="subtle">
                     {o.type}
                   </Badge>
                 </Flex>
+              </Table.Cell>
+
+              {/* تاریخ */}
+              <Table.Cell>
+                <Text fontSize="sm" color="fg.muted">{o.date}</Text>
               </Table.Cell>
 
               {/* مشتری — نام + تلفن */}
@@ -58,27 +64,12 @@ export function OrderTable({ orders }: OrderTableProps) {
                 </Flex>
               </Table.Cell>
 
-              {/* تاریخ */}
+              {/* مبلغ کل — قیمت FIRST=راست، badge دلاری بعدش=چپ */}
               <Table.Cell>
-                <Text fontSize="sm" color="fg.muted">{o.date}</Text>
-              </Table.Cell>
-
-              {/* مبلغ کل — قیمت(+badge دلاری) / تخفیف solid(+badge درصد) */}
-              <Table.Cell>
-                <Flex direction="column" gap="0.5" align="start">
-                  <Flex align="center" gap="2">
-                    <Text fontSize="sm" fontWeight="semibold">{o.amount}</Text>
-                    {o.amountBadge && (
-                      <Badge size="xs" colorPalette="gray" variant="subtle">{o.amountBadge}</Badge>
-                    )}
-                  </Flex>
-                  {o.discount && (
-                    <Flex align="center" gap="2">
-                      <Text fontSize="xs" color="green.solid">{o.discount}</Text>
-                      {o.discountBadge && (
-                        <Badge size="xs" colorPalette="orange" variant="solid">{o.discountBadge}</Badge>
-                      )}
-                    </Flex>
+                <Flex align="center" gap="2">
+                  <Text fontSize="sm" fontWeight="semibold">{o.amount}</Text>
+                  {o.amountBadge && (
+                    <Badge size="xs" colorPalette="gray" variant="subtle">{o.amountBadge}</Badge>
                   )}
                 </Flex>
               </Table.Cell>
@@ -95,20 +86,25 @@ export function OrderTable({ orders }: OrderTableProps) {
                 </Badge>
               </Table.Cell>
 
-              {/* اکشن — مشاهده (eye) + کپی لینک (link)، bg gray.subtle */}
+              {/* اکشن — کپی لینک FIRST=راستِ جفت، مشاهده(eye) بعدش=چپِ جفت (تأیید با
+                  screenshot مجزای Figma روی همین دو دکمه — چون کل ستون full-height بود
+                  و باگ جهت داخلش با نگاه به کل صفحه دیده نمی‌شد) */}
               <Table.Cell>
-                <Flex gap="2" align="center">
-                  <IconButton
-                    aria-label="مشاهده سفارش" size="sm"
-                    variant="outline" color="fg.muted"
-                  >
-                    <Eye size={18} />
-                  </IconButton>
+                {/* justify="end" چون RTL: start=راست، end=چپ — ستون آخر لبهٔ چپ جدوله،
+                    آیکون‌ها باید به همون لبه بچسبن (auto table-layout این ستون رو
+                    گاهی از محتوا پهن‌تر می‌کنه) */}
+                <Flex gap="2" align="center" justify="end">
                   <IconButton
                     aria-label="کپی لینک" size="sm"
                     variant="outline" color="fg.muted"
                   >
                     <Link2 size={18} />
+                  </IconButton>
+                  <IconButton
+                    aria-label="مشاهده سفارش" size="sm"
+                    variant="outline" color="fg.muted"
+                  >
+                    <Eye size={18} />
                   </IconButton>
                 </Flex>
               </Table.Cell>

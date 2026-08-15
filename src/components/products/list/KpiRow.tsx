@@ -9,7 +9,7 @@ export interface KpiItem {
   value: number
   icon: LucideIcon
   /** پالت رنگ container آیکون — 'neutral' = bg.subtle/fg.muted (بدون رنگ خاص) */
-  palette: 'blue' | 'green' | 'orange' | 'red' | 'brand' | 'neutral'
+  palette: 'blue' | 'green' | 'orange' | 'red' | 'yellow' | 'brand' | 'neutral'
 }
 
 const PALETTE_TOKENS: Record<KpiItem['palette'], { bg: string; fg: string }> = {
@@ -17,6 +17,7 @@ const PALETTE_TOKENS: Record<KpiItem['palette'], { bg: string; fg: string }> = {
   green: { bg: 'green.bg', fg: 'green.solid' },
   orange: { bg: 'orange.bg', fg: 'orange.solid' },
   red: { bg: 'red.bg', fg: 'red.solid' },
+  yellow: { bg: 'yellow.bg', fg: 'yellow.solid' },
   brand: { bg: 'brand.bg', fg: 'brand.solid' },
   neutral: { bg: 'bg.subtle', fg: 'fg' },
 }

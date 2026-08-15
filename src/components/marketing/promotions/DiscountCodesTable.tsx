@@ -25,7 +25,7 @@ function handleCopyCode(code: string) {
  * RTL DOM order (با x مختصات Figma + screenshot تأیید شده — نه ترتیب خام export که LTR canvas است):
  * عنوان/نوع(راست‌ترین) → کد تخفیف → مقدار تخفیف → استفاده شده → تاریخ شروع → تاریخ پایان → وضعیت → عملیات(چپ‌ترین).
  * داخل ستون عملیات: ویرایش(راست‌ترین این ستون) → حذف(چپ‌ترین) — طبق x مختصات export (pencil x=56 > trash x=0).
- * بدون رنگ متناوب سطر — طبق طرح فیگما (فقط border-b + header با bg.muted).
+ * رنگ متناوب سطر (striped) — طبق قرارداد پروژه (مثل لیست محصولات/سفارشات)، نه طرح فیگما.
  */
 export function DiscountCodesTable({ items }: DiscountCodesTableProps) {
   return (
@@ -45,8 +45,8 @@ export function DiscountCodesTable({ items }: DiscountCodesTableProps) {
         </Table.Header>
 
         <Table.Body>
-          {items.map((item) => (
-            <Table.Row key={item.id} h="20" borderBottomWidth="1px" borderColor="border">
+          {items.map((item, i) => (
+            <Table.Row key={item.id} h="20" bg={i % 2 === 1 ? 'bg.subtle' : 'bg'} borderBottomWidth="1px" borderColor="border">
               <Table.Cell>
                 <Flex direction="column" gap="1" align="start">
                   <Text fontSize="sm" fontWeight="semibold" color="fg">{item.title}</Text>

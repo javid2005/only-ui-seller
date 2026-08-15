@@ -174,6 +174,9 @@ export const vitrinaTokens = defineConfig({
         green: {
           bg: { value: { _light: '{colors.green.50}', _dark: '{colors.green.950}' } },
         },
+        yellow: {
+          bg: { value: { _light: '{colors.yellow.50}', _dark: '{colors.yellow.950}' } },
+        },
       },
     },
   },

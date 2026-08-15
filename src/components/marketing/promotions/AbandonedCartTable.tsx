@@ -1,4 +1,4 @@
-import { Avatar, Badge, HStack, IconButton, Stack, Table, Text } from '@chakra-ui/react'
+import { Avatar, Badge, Flex, HStack, IconButton, Stack, Table, Text } from '@chakra-ui/react'
 import { Eye } from 'lucide-react'
 import { toPersianDigits } from '@/utils/numbers'
 import { STATUS_COLOR, type AbandonedCart } from './abandonedCartsData'
@@ -14,7 +14,7 @@ interface AbandonedCartTableProps {
  * fetch اولیه — «تاریخ ایجاد» ستون تازه است، «مشتری»→«ایجاد کننده»، «تعداد کالا در سبد»→«تعداد اقلام»، «مبلغ کل»→«جمع کل»)
  * RTL DOM order (اولین ستون = راست‌ترین، طبق x نزولی):
  * شناسه(x=876) → تاریخ ایجاد(x=736) → ایجاد کننده(x=492) → تعداد اقلام(x=352) → جمع کل(x=212) → وضعیت(x=72) → عملیات(x=0، چپ‌ترین)
- * بدون رنگ متناوب سطر — طبق طرح فیگما همه‌ی ردیف‌ها سفیدند، فقط header با bg.muted.
+ * رنگ متناوب سطر (striped) — طبق قرارداد پروژه (مثل لیست محصولات/سفارشات)، نه طرح فیگما.
  */
 export function AbandonedCartTable({ carts, onView }: AbandonedCartTableProps) {
   return (
@@ -35,8 +35,8 @@ export function AbandonedCartTable({ carts, onView }: AbandonedCartTableProps) {
         </Table.Header>
 
         <Table.Body>
-          {carts.map((cart) => (
-            <Table.Row key={cart.id} h="20" borderBottomWidth="1px" borderColor="border">
+          {carts.map((cart, i) => (
+            <Table.Row key={cart.id} h="20" bg={i % 2 === 1 ? 'bg.subtle' : 'bg'} borderBottomWidth="1px" borderColor="border">
               {/* شناسه */}
               <Table.Cell>
                 <Text fontSize="sm" fontWeight="semibold" color="fg.subtle">{cart.id}</Text>
@@ -77,15 +77,19 @@ export function AbandonedCartTable({ carts, onView }: AbandonedCartTableProps) {
                 </Badge>
               </Table.Cell>
 
-              {/* عملیات — مشاهده (eye)، bg gray.subtle */}
+              {/* عملیات — مشاهده (eye)، bg gray.subtle. Flex+justify="end" چون بدونش
+                  تک‌دکمه با textAlign="start" پیش‌فرض سلول به لبهٔ راست می‌چسبه، نه لبهٔ
+                  چپ جدول (auto table-layout این ستون رو گاهی از محتوا پهن‌تر می‌کنه) */}
               <Table.Cell>
-                <IconButton
-                  aria-label="مشاهده سبد" size="sm"
-                  variant="outline" color="fg.muted"
-                  onClick={() => onView?.(cart.id)}
-                >
-                  <Eye size={18} />
-                </IconButton>
+                <Flex justify="end">
+                  <IconButton
+                    aria-label="مشاهده سبد" size="sm"
+                    variant="outline" color="fg.muted"
+                    onClick={() => onView?.(cart.id)}
+                  >
+                    <Eye size={18} />
+                  </IconButton>
+                </Flex>
               </Table.Cell>
             </Table.Row>
           ))}
