@@ -54,13 +54,13 @@ export function CampaignTable({ campaigns, onDelete }: CampaignTableProps) {
                 <Flex gap="2" justify="start">
                   <IconButton
                     aria-label="ویرایش کمپین" size="sm"
-                    bg="gray.subtle" color="fg.muted" _hover={{ bg: 'gray.muted' }}
+                    variant="outline" color="fg.muted"
                   >
                     <Pencil size={18} />
                   </IconButton>
                   <IconButton
                     aria-label="حذف کمپین" size="sm"
-                    bg="red.subtle" color="red.fg" _hover={{ bg: 'red.muted' }}
+                    variant="outline" colorPalette="red"
                     onClick={() => onDelete(c.id)}
                   >
                     <Trash2 size={18} />

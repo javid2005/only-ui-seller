@@ -37,10 +37,10 @@ const countGroupItems = (groups: DiscountDomainGroup[]) =>
 const hasGroupData = (groups: DiscountDomainGroup[]) => groups.some((g) => g.items.length > 0)
 
 const DOMAIN_LABELS: Record<DomainKey, string> = {
-  products: 'محصولات خاص',
-  categories: 'دسته‌بندی',
-  customers: 'مشتریان خاص',
-  locations: 'موقعیت جغرافیایی',
+  products: 'محصولات منتخب',
+  categories: 'دسته بندی ها',
+  customers: 'مشتری های منتخب',
+  locations: 'موقعیت های جغرافیایی',
   cart: 'شرط سبد خرید',
 }
 
@@ -98,8 +98,10 @@ const DOMAIN_LABELS: Record<DomainKey, string> = {
  *     NumberField «حداقل تعداد اقلام سبد خرید» — عیناً طبق طرح node 5171:81702)، پس
  *     چک‌باکسش همیشه toggle سادهٔ `toggleDomainSelected('cart')` می‌ماند.
  *   - دکمهٔ دامنهٔ «موقعیت جغرافیایی» در طرح Selected (node 5171:81701) به‌اشتباه/کپی‌پیست
- *     برچسب «افزودن محصول» داشت (مغایر با الگوی افزودن+نامِ‌دامنهٔ سایر دکمه‌ها) — به‌جاش
- *     «افزودن موقعیت» گذاشته شد؛ اگر عمدی بود به من بگو تا برگردونم.
+ *     برچسب «افزودن محصول» داشت؛ به‌جاش «افزودن موقعیت» گذاشته شد. بعداً (تصمیم کاربر)
+ *     همهٔ ۴ دکمهٔ دامنه از «افزودن …» به «انتخاب …» تغییر کردن. عنوان accordion و عنوان
+ *     دیالوگ عمداً یکی نیستن — accordion (`DOMAIN_LABELS`) اسم کامل دامنه‌ست («محصولات
+ *     منتخب»)، دیالوگ کوتاه‌تره («محصولات») — طبق تصمیم بعدی کاربر.
  *
  * RTL DOM order آکاردئون دامنه (از get_metadata، x نزولی — جزئیات در DiscountDomainAccordion.tsx):
  *   header → [titleGroup(چک‌باکس+عنوان، راست) , statusGroup(بج+chevron، چپ)]
@@ -478,7 +480,7 @@ export function DiscountCodeNew() {
                   <DiscountDomainListContent
                     groups={productGroups}
                     emptyText="تاکنون محصولی انتخاب نکرده‌اید."
-                    addLabel="افزودن محصول"
+                    addLabel="انتخاب محصول"
                     onRemoveItem={makeRemoveItem('products', productGroups, setProductGroups)}
                     onRemoveGroup={makeRemoveGroup('products', productGroups, setProductGroups)}
                     onAdd={() => setProductDialogOpen(true)}
@@ -498,7 +500,7 @@ export function DiscountCodeNew() {
                   <DiscountDomainListContent
                     groups={categoryGroups}
                     emptyText="تاکنون دسته‌بندی‌ای انتخاب نکرده‌اید."
-                    addLabel="افزودن دسته بندی"
+                    addLabel="انتخاب دسته بندی"
                     onRemoveItem={makeRemoveItem('categories', categoryGroups, setCategoryGroups)}
                     onRemoveGroup={makeRemoveGroup('categories', categoryGroups, setCategoryGroups)}
                     onAdd={() => setCategoryDialogOpen(true)}
@@ -517,7 +519,7 @@ export function DiscountCodeNew() {
                   <DiscountDomainListContent
                     groups={customerGroups}
                     emptyText="تاکنون مشتری‌ای انتخاب نکرده‌اید."
-                    addLabel="افزودن مشتری"
+                    addLabel="انتخاب مشتری"
                     onRemoveItem={makeRemoveItem('customers', customerGroups, setCustomerGroups)}
                     onRemoveGroup={makeRemoveGroup('customers', customerGroups, setCustomerGroups)}
                     onAdd={() => setCustomerDialogOpen(true)}
@@ -536,7 +538,7 @@ export function DiscountCodeNew() {
                   <DiscountDomainListContent
                     groups={locationGroups}
                     emptyText="تاکنون موقعیتی انتخاب نکرده‌اید."
-                    addLabel="افزودن موقعیت"
+                    addLabel="انتخاب موقعیت"
                     onRemoveItem={makeRemoveItem('locations', locationGroups, setLocationGroups)}
                     onRemoveGroup={makeRemoveGroup('locations', locationGroups, setLocationGroups)}
                     onAdd={() => setLocationDialogOpen(true)}

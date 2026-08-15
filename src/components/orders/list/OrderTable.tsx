@@ -100,13 +100,13 @@ export function OrderTable({ orders }: OrderTableProps) {
                 <Flex gap="2" align="center">
                   <IconButton
                     aria-label="مشاهده سفارش" size="sm"
-                    bg="gray.subtle" color="fg.muted" _hover={{ bg: 'gray.muted' }}
+                    variant="outline" color="fg.muted"
                   >
                     <Eye size={18} />
                   </IconButton>
                   <IconButton
                     aria-label="کپی لینک" size="sm"
-                    bg="gray.subtle" color="fg.muted" _hover={{ bg: 'gray.muted' }}
+                    variant="outline" color="fg.muted"
                   >
                     <Link2 size={18} />
                   </IconButton>

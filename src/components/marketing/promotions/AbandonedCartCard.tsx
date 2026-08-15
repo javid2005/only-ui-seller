@@ -30,7 +30,7 @@ export function AbandonedCartCard({ cart, onView }: AbandonedCartCardProps) {
         </Flex>
         <IconButton
           aria-label="مشاهده سبد" size="sm"
-          bg="gray.subtle" color="fg.muted" _hover={{ bg: 'gray.muted' }}
+          variant="outline" color="fg.muted"
           onClick={() => onView?.(cart.id)}
         >
           <Eye size={18} />

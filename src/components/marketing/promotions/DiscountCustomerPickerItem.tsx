@@ -11,7 +11,7 @@ interface DiscountCustomerPickerItemProps {
 }
 
 /**
- * DiscountCustomerPickerItem — ردیف دیالوگ چندانتخابیِ «انتخاب مشتریان خاص»
+ * DiscountCustomerPickerItem — ردیف دیالوگ چندانتخابیِ «مشتری ها»
  * (Figma: Manual-Customer-Card در node 2663:97516 — عیناً همون کارتِ CustomerSelectPanel.tsx
  * صفحهٔ ایجاد سفارش دستی، فقط چک‌باکس به‌جای RadioCard.ItemIndicator، چون اونجا تک‌انتخابی
  * بود و اینجا چندانتخابی — طبق دستور مستقیم کاربر).

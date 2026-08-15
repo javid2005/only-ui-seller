@@ -12,7 +12,7 @@ interface DiscountProductPickerItemProps {
 }
 
 /**
- * DiscountProductPickerItem — ردیف دیالوگ چندانتخابیِ «انتخاب محصول» دامنهٔ «محصولات خاص»
+ * DiscountProductPickerItem — ردیف دیالوگ چندانتخابیِ «محصولات» دامنهٔ «محصولات منتخب»
  * (Figma: Prd-Card-Item در node 5171:85832 — همان کامپوننت ProductPickerItem.tsx کمپین‌ها،
  * تنها فرق واقعی: Checkmark مربعی به‌جای RadioMark دایره‌ای، طبق get_design_context).
  * RTL DOM order (عیناً مثل ProductPickerItem.tsx، تأیید شده با screenshot طرح این نود):

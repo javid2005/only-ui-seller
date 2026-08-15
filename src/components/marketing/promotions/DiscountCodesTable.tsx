@@ -113,13 +113,13 @@ export function DiscountCodesTable({ items }: DiscountCodesTableProps) {
                 <Flex gap="2" justify="end">
                   <IconButton
                     aria-label={`ویرایش ${item.title}`} size="sm"
-                    bg="gray.subtle" color="fg.muted" _hover={{ bg: 'gray.muted' }}
+                    variant="outline" color="fg.muted"
                   >
                     <Pencil size={18} />
                   </IconButton>
                   <IconButton
                     aria-label={`حذف ${item.title}`} size="sm"
-                    bg="red.subtle" color="red.fg" _hover={{ bg: 'red.muted' }}
+                    variant="outline" colorPalette="red"
                   >
                     <Trash2 size={18} />
                   </IconButton>

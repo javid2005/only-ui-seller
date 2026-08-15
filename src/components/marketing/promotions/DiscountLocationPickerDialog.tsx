@@ -13,8 +13,8 @@ interface DiscountLocationPickerDialogProps {
 }
 
 /**
- * DiscountLocationPickerDialog — «انتخاب موقعیت جغرافیایی» چندانتخابی برای دامنهٔ «موقعیت
- * جغرافیایی» (Figma: Dialog، node 2660:92036 — ۵۱۲px، تک‌ستونه، عیناً هم‌ساختار با دیالوگ
+ * DiscountLocationPickerDialog — «موقعیت‌های جغرافیایی» چندانتخابی برای دامنهٔ «موقعیت
+ * های جغرافیایی» (Figma: Dialog، node 2660:92036 — ۵۱۲px، تک‌ستونه، عیناً هم‌ساختار با دیالوگ
  * دسته‌بندی: فیلتر جستجو + یک ستون treeview + فوتر). طبق دستور کاربر: «از نظر ساختار مانند
  * دیالوگ دسته‌بندی‌هاست، فقط استان/شهر به‌جای دسته/زیردسته».
  *
@@ -38,7 +38,7 @@ export function DiscountLocationPickerDialog({ open, onClose, checkedValue, onCo
         <Dialog.Positioner dir="rtl">
           <Dialog.Content w="full" mx="4">
             <Dialog.Header pt="6" pb="4" px="6">
-              <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">انتخاب موقعیت جغرافیایی</Dialog.Title>
+              <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">موقعیت های جغرافیایی</Dialog.Title>
             </Dialog.Header>
 
             <Dialog.Body pt="2" pb="6" px="6">

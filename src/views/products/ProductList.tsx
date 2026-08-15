@@ -55,6 +55,7 @@ export function ProductList() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState(FILTER_DEFAULTS.category)
   const [featuredOnly, setFeaturedOnly] = useState(false)
+  const [discountOnly, setDiscountOnly] = useState(false)
   const [status, setStatus] = useState(FILTER_DEFAULTS.status)
   const [currency, setCurrency] = useState(FILTER_DEFAULTS.currency)
   const [sort, setSort] = useState(FILTER_DEFAULTS.sort)
@@ -105,6 +106,7 @@ export function ProductList() {
     setSearch('')
     setCategory(FILTER_DEFAULTS.category)
     setFeaturedOnly(false)
+    setDiscountOnly(false)
     setStatus(FILTER_DEFAULTS.status)
     setCurrency(FILTER_DEFAULTS.currency)
     setSort(FILTER_DEFAULTS.sort)
@@ -137,6 +139,7 @@ export function ProductList() {
       list.push({ key: 'category', label: catCollection.items.find((i) => i.value === category)?.label ?? category })
     }
     if (featuredOnly) list.push({ key: 'featuredOnly', label: 'محصولات ویژه' })
+    if (discountOnly) list.push({ key: 'discountOnly', label: 'دارای تخفیف' })
     if (status !== FILTER_DEFAULTS.status) {
       list.push({ key: 'status', label: statusCollection.items.find((i) => i.value === status)?.label ?? status })
     }
@@ -159,13 +162,14 @@ export function ProductList() {
     }
     return list
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, category, featuredOnly, status, currency, sort, stock, minPrice, maxPrice, kpiFilter])
+  }, [search, category, featuredOnly, discountOnly, status, currency, sort, stock, minPrice, maxPrice, kpiFilter])
 
   const removeFilter = (key: string) => {
     switch (key) {
       case 'search': setSearch(''); break
       case 'category': setCategory(FILTER_DEFAULTS.category); break
       case 'featuredOnly': setFeaturedOnly(false); break
+      case 'discountOnly': setDiscountOnly(false); break
       case 'status': setStatus(FILTER_DEFAULTS.status); break
       case 'currency': setCurrency(FILTER_DEFAULTS.currency); break
       case 'sort': setSort(FILTER_DEFAULTS.sort); break
@@ -223,6 +227,7 @@ export function ProductList() {
             search={search} onSearchChange={setSearch}
             category={category} onCategoryChange={setCategory}
             featuredOnly={featuredOnly} onFeaturedOnlyChange={setFeaturedOnly}
+            discountOnly={discountOnly} onDiscountOnlyChange={setDiscountOnly}
             sort={sort} onSortChange={setSort}
             onOpenFilters={() => setFilterOpen(true)}
             isCompact={isCompact}
@@ -290,7 +295,8 @@ export function ProductList() {
         stock={stock} onStockChange={setStock}
         minPrice={minPrice} onMinPriceChange={setMinPrice}
         maxPrice={maxPrice} onMaxPriceChange={setMaxPrice}
-        discountOnly={featuredOnly} onDiscountOnlyChange={setFeaturedOnly}
+        featuredOnly={featuredOnly} onFeaturedOnlyChange={setFeaturedOnly}
+        discountOnly={discountOnly} onDiscountOnlyChange={setDiscountOnly}
         onClearAll={clearAllFilters}
       />
 

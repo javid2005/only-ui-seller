@@ -59,20 +59,20 @@ export function BulkSmsHistoryTable({ items }: BulkSmsHistoryTableProps) {
                   {item.status === 'sent' && (
                     <IconButton
                       aria-label="ارسال مجدد" size="sm"
-                      bg="gray.subtle" color="fg.muted" _hover={{ bg: 'gray.muted' }}
+                      variant="outline" color="fg.muted"
                     >
                       <RefreshCcw size={18} />
                     </IconButton>
                   )}
                   <IconButton
                     aria-label="ویرایش" size="sm"
-                    bg="gray.subtle" color="fg.muted" _hover={{ bg: 'gray.muted' }}
+                    variant="outline" color="fg.muted"
                   >
                     <Pencil size={18} />
                   </IconButton>
                   <IconButton
                     aria-label="آرشیو" size="sm"
-                    bg="orange.subtle" color="orange.fg" _hover={{ bg: 'orange.muted' }}
+                    variant="outline" colorPalette="orange"
                   >
                     <Archive size={18} />
                   </IconButton>

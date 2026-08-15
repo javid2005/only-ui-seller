@@ -10,6 +10,8 @@ interface FilterBarProps {
   onCategoryChange: (v: string) => void
   featuredOnly: boolean
   onFeaturedOnlyChange: (v: boolean) => void
+  discountOnly: boolean
+  onDiscountOnlyChange: (v: boolean) => void
   sort: string
   onSortChange: (v: string) => void
   onOpenFilters: () => void
@@ -23,7 +25,8 @@ interface FilterBarProps {
  * (FilterModal) هستن.
  *
  * RTL DOM order (اولین = راست‌ترین، از مقایسهٔ screenshot با طرح، نه خروجی کد فیگما):
- * جستجو → select دسته‌بندی → switch → Spacer → دکمهٔ فیلتر → select ترتیب نمایش (چپ‌ترین)
+ * جستجو → select دسته‌بندی → switch «محصولات ویژه» → switch «دارای تخفیف» → Spacer →
+ * دکمهٔ فیلتر → select ترتیب نمایش (چپ‌ترین)
  *
  * media<lg (screenshot کاربر — نه Figma node، مستقیم از کاربر): ردیف به ۳ کنترل ساده می‌شه
  * (سوییچ/دسته‌بندی مخفی، فقط داخل دیالوگ فیلترها در دسترسن). جستجو fill می‌شه (بدون maxW).
@@ -37,7 +40,9 @@ interface FilterBarProps {
  */
 export function FilterBar({
   search, onSearchChange, category, onCategoryChange,
-  featuredOnly, onFeaturedOnlyChange, sort, onSortChange, onOpenFilters,
+  featuredOnly, onFeaturedOnlyChange,
+  discountOnly, onDiscountOnlyChange,
+  sort, onSortChange, onOpenFilters,
   isCompact = false,
 }: FilterBarProps) {
   const rv = <T,>(mobile: T, desktop: T) => (isCompact ? mobile : { base: mobile, lg: desktop })
@@ -70,6 +75,19 @@ export function FilterBar({
           <Switch.Control><Switch.Thumb /></Switch.Control>
         </Switch.Root>
         <Text fontSize="xs" whiteSpace="nowrap">محصولات ویژه</Text>
+      </Flex>
+
+      {/* switch «دارای تخفیف» — بعد از «محصولات ویژه» (چپ‌ترش) — همون الگو: Control اول=راست */}
+      <Flex align="center" gap="2.5" flexShrink={0} display={rv('none', 'flex')}>
+        <Switch.Root
+          size="sm" colorPalette="teal"
+          checked={discountOnly}
+          onCheckedChange={(e) => onDiscountOnlyChange(e.checked)}
+        >
+          <Switch.HiddenInput />
+          <Switch.Control><Switch.Thumb /></Switch.Control>
+        </Switch.Root>
+        <Text fontSize="xs" whiteSpace="nowrap">دارای تخفیف</Text>
       </Flex>
 
       <Spacer display={rv('none', 'block')} />

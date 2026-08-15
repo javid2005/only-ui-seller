@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { Badge, Box, Button, Collapsible, EmptyState, Flex, IconButton, Separator, Text, VStack } from '@chakra-ui/react'
-import { ChevronDown, ChevronUp, FolderPlus } from 'lucide-react'
+import { ChevronDown, ChevronUp, FolderPlus, Plus } from 'lucide-react'
 import type { ProductCategory } from './data'
 import { SubCategoryGrip } from './SubCategoryGrip'
 
@@ -22,7 +22,8 @@ export interface CategoryMngAccordionProps {
 /**
  * CategoryMngAccordion — ردیف مدیریت دسته با زیردسته‌ها.
  * collapsed: ردیف h-56 با border-b. open: bg.subtle + افزودن + لیست زیردسته.
- * RTL DOM order (first = rightmost): [emoji] [name] [badge] [add btn] [toggle].
+ * RTL DOM order — header (first = rightmost): [emoji] [name] [badge] [toggle].
+ * RTL DOM order — ردیف «زیردسته‌ها:» (first = rightmost): [label] [add btn].
  */
 export function CategoryMngAccordion({
   category,
@@ -70,21 +71,6 @@ export function CategoryMngAccordion({
           </Badge>
         )}
 
-        {/* افزودن زیردسته — فقط حالت باز */}
-        {isOpen && (
-          <Button
-            size="xs"
-            colorPalette="brand"
-            flexShrink={0}
-            onClick={(e) => {
-              e.stopPropagation()
-              onAddSub()
-            }}
-          >
-            افزودن زیردسته
-          </Button>
-        )}
-
         {/* LAST = leftmost: toggle */}
         <IconButton
           size="xs"
@@ -106,9 +92,28 @@ export function CategoryMngAccordion({
         <Collapsible.Content>
           <Box bg="bg.subtle" px="4" pb="4" pt="0">
             <Separator borderColor="border" mb="3" />
-            <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" mb="2">
-              زیردسته‌ها:
-            </Text>
+
+            {/* ردیف عنوان زیردسته‌ها + دکمه افزودن — تأیید با get_screenshot روی node 290:6534
+                (label flex=1 راست، دکمه شرینک-صفر چپ) — Figma node 290-6524 */}
+            <Flex align="center" gap="2" mb="2">
+              <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" flex="1" minW="0" truncate>
+                زیردسته‌ها:
+              </Text>
+              <Button
+                size="2xs"
+                colorPalette="brand"
+                flexShrink={0}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onAddSub()
+                }}
+              >
+                {/* آیکون FIRST = راست (قاعدهٔ پیش‌فرض پروژه) — تأیید با get_screenshot ۱۰x upscale
+                    روی node 290:6527 (btnAdd): + سمت راست، متن سمت چپ */}
+                <Plus size={14} />
+                افزودن زیردسته
+              </Button>
+            </Flex>
 
             {count > 0 ? (
               <Flex direction="column" gap="0.5">

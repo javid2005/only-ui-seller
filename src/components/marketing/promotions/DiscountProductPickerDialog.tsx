@@ -19,7 +19,7 @@ interface DiscountProductPickerDialogProps {
 }
 
 /**
- * DiscountProductPickerDialog — «انتخاب محصول» چندانتخابی برای دامنهٔ «محصولات خاص»
+ * DiscountProductPickerDialog — «محصولات» چندانتخابی برای دامنهٔ «محصولات منتخب»
  * (Figma: Dialog, node 5171:85832). ساختار (فیلتر جستجو+دسته‌بندی، لیست اسکرول‌پذیر، فوتر)
  * عیناً از ProductPickerDialog.tsx (دیالوگ تک‌انتخابیِ کمپین، node 2645:78420) کپی شده —
  * get_metadata دو نود را کاملاً هم‌ساختار نشان داد؛ تنها فرقِ واقعی چک‌باکس به‌جای رادیو است
@@ -61,7 +61,7 @@ export function DiscountProductPickerDialog({ open, onClose, selectedProductIds,
         <Dialog.Positioner dir="rtl">
           <Dialog.Content w="full" mx="4">
             <Dialog.Header pt="6" pb="4" px="6">
-              <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">انتخاب محصول</Dialog.Title>
+              <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">محصولات</Dialog.Title>
             </Dialog.Header>
 
             <Dialog.Body pt="2" pb="6" px="6">

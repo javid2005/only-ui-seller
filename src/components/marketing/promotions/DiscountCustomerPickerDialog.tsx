@@ -15,7 +15,7 @@ interface DiscountCustomerPickerDialogProps {
 }
 
 /**
- * DiscountCustomerPickerDialog — «انتخاب مشتریان خاص» چندانتخابی برای دامنهٔ «مشتریان خاص»
+ * DiscountCustomerPickerDialog — «مشتری ها» چندانتخابی برای دامنهٔ «مشتری های منتخب»
  * (Figma: Dialog، node 2663:97516 — ۵۱۲px، تک‌ستونه، عیناً هم‌ساختار با بقیهٔ دیالوگ‌های
  * این خانواده). ساختار ردیف/فیلتر جستجو از CustomerSelectPanel.tsx (صفحهٔ ایجاد سفارش
  * دستی) گرفته شده — طبق دستور کاربر: «شبیه همون ساختار، با این تفاوت که رادیو بود اینجا
@@ -55,7 +55,7 @@ export function DiscountCustomerPickerDialog({ open, onClose, selectedCustomerId
         <Dialog.Positioner dir="rtl">
           <Dialog.Content w="full" mx="4">
             <Dialog.Header pt="6" pb="4" px="6">
-              <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">انتخاب مشتریان خاص</Dialog.Title>
+              <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">مشتری ها</Dialog.Title>
             </Dialog.Header>
 
             <Dialog.Body pt="2" pb="6" px="6">

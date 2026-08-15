@@ -24,6 +24,8 @@ interface FilterModalProps {
   onMinPriceChange?: (v: string) => void
   maxPrice?: string
   onMaxPriceChange?: (v: string) => void
+  featuredOnly?: boolean
+  onFeaturedOnlyChange?: (v: boolean) => void
   discountOnly?: boolean
   onDiscountOnlyChange?: (v: boolean) => void
   onClearAll?: () => void
@@ -32,8 +34,8 @@ interface FilterModalProps {
 /**
  * مودال فیلترها — با دکمهٔ فیلتر در ردیف بالای جدول باز می‌شه.
  * فیلدها طبق screenshot طرح (مستقیم از کاربر، بدون Figma node): دسته‌بندی → نوع ارز →
- * وضعیت → موجودی → بازه قیمت (نو) → سوییچ «محصولات ویژه». «ترتیب نمایش» دیگه اینجا نیست
- * (تکراری بود — همون ردیف فیلترهای بالای صفحه/FilterBar داره).
+ * وضعیت → موجودی → بازه قیمت (نو) → سوییچ «محصولات ویژه» → سوییچ «دارای تخفیف» (زیرش، جدا).
+ * «ترتیب نمایش» دیگه اینجا نیست (تکراری بود — همون ردیف فیلترهای بالای صفحه/FilterBar داره).
  */
 export function FilterModal({
   open, onClose,
@@ -43,6 +45,7 @@ export function FilterModal({
   stock, onStockChange,
   minPrice, onMinPriceChange,
   maxPrice, onMaxPriceChange,
+  featuredOnly, onFeaturedOnlyChange,
   discountOnly, onDiscountOnlyChange,
   onClearAll,
 }: FilterModalProps) {
@@ -113,12 +116,24 @@ export function FilterModal({
                 {/* dev-engine-ignore: Switch IS first child — RTL correct */}
                 <Switch.Root
                   size="sm" colorPalette="teal" flexShrink={0}
+                  checked={featuredOnly} onCheckedChange={(e) => onFeaturedOnlyChange?.(e.checked)}
+                >
+                  <Switch.HiddenInput />
+                  <Switch.Control><Switch.Thumb /></Switch.Control>
+                </Switch.Root>
+                <Text flex="1" fontSize="sm">محصولات ویژه</Text>
+              </Flex>
+
+              <Flex align="center" gap="2.5" w="full">
+                {/* dev-engine-ignore: Switch IS first child — RTL correct */}
+                <Switch.Root
+                  size="sm" colorPalette="teal" flexShrink={0}
                   checked={discountOnly} onCheckedChange={(e) => onDiscountOnlyChange?.(e.checked)}
                 >
                   <Switch.HiddenInput />
                   <Switch.Control><Switch.Thumb /></Switch.Control>
                 </Switch.Root>
-                <Text flex="1" fontSize="sm">محصولات ویژه (تخفیف دار)</Text>
+                <Text flex="1" fontSize="sm">دارای تخفیف</Text>
               </Flex>
             </Dialog.Body>
 

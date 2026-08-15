@@ -13,7 +13,7 @@ interface DiscountCategoryPickerDialogProps {
 }
 
 /**
- * DiscountCategoryPickerDialog — «انتخاب دسته بندی» چندانتخابی برای دامنهٔ «دسته‌بندی»
+ * DiscountCategoryPickerDialog — «دسته بندی ها» چندانتخابی برای دامنهٔ «دسته بندی ها»
  * (Figma: Dialog، node 2660:91406 — تک‌ستونه، ۵۱۲px، فقط یک ستون treeview؛ برخلاف نسخهٔ
  * اولیه که به‌اشتباه دو ستون FreeShippingGeoSection رو کپی کرده بود، طبق تصحیح کاربر).
  * منطق/چک‌باکس/indent همان CategoryTreeView واقعیِ Chakra است (نه موکاپ فلتِ بدون‌indent
@@ -40,7 +40,7 @@ export function DiscountCategoryPickerDialog({ open, onClose, checkedValue, onCo
         <Dialog.Positioner dir="rtl">
           <Dialog.Content w="full" mx="4">
             <Dialog.Header pt="6" pb="4" px="6">
-              <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">انتخاب دسته بندی</Dialog.Title>
+              <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">دسته بندی ها</Dialog.Title>
             </Dialog.Header>
 
             <Dialog.Body pt="2" pb="6" px="6">
