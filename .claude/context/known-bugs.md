@@ -2,7 +2,7 @@
 > آخرین آپدیت: 2026-08-15
 
 باگ‌هایی که در پروژه Vitrina کشف شدن و project-specific هستن.
-برای باگ‌های DS-level → `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`
+برای باگ‌های DS-level → `dev-stack/knowledge/design-systems/chakra-ui-v3/known-bugs.md`
 
 ---
 

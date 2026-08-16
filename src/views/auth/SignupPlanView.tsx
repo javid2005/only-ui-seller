@@ -70,7 +70,7 @@ export function SignupPlanView() {
           یک Flex جدا از SignupLayout چون گپ پیش‌فرض بین subtitle/children اونجا 16px (برای فیلدهای فرم صفحات دیگه) است. */}
       <Flex direction="column" gap="10" align="center" w="full">
         <SegmentGroup.Root value={period} onValueChange={(e) => setPeriod(e.value as BillingPeriod)}>
-          {/* bg="bg.panel" نه "white" — باگ شناخته‌شدهٔ Chakra v3.35: bg پیش‌فرض indicator transparent resolve می‌شه (dev-knowledge/chakra-ui-v3/known-bugs.md) */}
+          {/* bg="bg.panel" نه "white" — باگ شناخته‌شدهٔ Chakra v3.35: bg پیش‌فرض indicator transparent resolve می‌شه (dev-stack/knowledge/design-systems/chakra-ui-v3/known-bugs.md) */}
           <SegmentGroup.Indicator bg="bg.panel" />
           <SegmentGroup.Items items={PERIOD_ITEMS} />
         </SegmentGroup.Root>

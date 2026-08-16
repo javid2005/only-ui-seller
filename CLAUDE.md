@@ -3,18 +3,18 @@
 ## Knowledge References
 
 → repo خارجیِ مشترک — **بیرون پروژه است، auto-load نمی‌شود؛ موقع نیاز با Read باز کن.**
-ریشه: `~/Documents/GitHub/Tools/dev-knowledge/` — مسیرهای جدول زیر نسبت به همین ریشه‌اند.
+ریشه: `~/Documents/GitHub/dev-stack/knowledge/` — مسیرهای جدول زیر نسبت به همین ریشه‌اند.
 
 | موضوع | فایل (نسبت به ریشهٔ بالا) |
 |-------|------|
-| RTL concepts | `dev-knowledge/universal/language.md` |
-| Chakra v3 bugs | `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md` |
-| Chakra v3 tokens | `dev-knowledge/design-systems/chakra-ui-v3/tokens.md` |
-| RTL در Chakra | `dev-knowledge/design-systems/chakra-ui-v3/chakra-ui-v3.md` |
-| Figma→Code workflow | `dev-knowledge/universal/figma-to-code.md` |
-| Chakra v3 components | `dev-knowledge/design-systems/chakra-ui-v3/components.md` |
+| RTL concepts | `universal/language.md` |
+| Chakra v3 bugs | `design-systems/chakra-ui-v3/known-bugs.md` |
+| Chakra v3 tokens | `design-systems/chakra-ui-v3/tokens.md` |
+| RTL در Chakra | `design-systems/chakra-ui-v3/chakra-ui-v3.md` |
+| Figma→Code workflow | `universal/figma-to-code.md` |
+| Chakra v3 components | `design-systems/chakra-ui-v3/components.md` |
 
-→ **محتوای مخصوص همین پروژه — داخل repo، نه dev-knowledge:**
+→ **محتوای مخصوص همین پروژه — داخل repo، نه در knowledge مشترک:**
 
 | موضوع | فایل |
 |-------|------|
@@ -57,7 +57,7 @@ Figma tool fail شد؟
 2. source رو fix کن
    - pattern پروژه‌ای  → CLAUDE.md یا `.claude/context/` همین پروژه
      (page-templates, known-bugs پروژه‌ای, project-context)
-   - pattern shared  → dev-knowledge/ (language, tokens, DS known-bugs, ...)
+   - pattern shared  → dev-stack/knowledge/ (language, tokens, DS known-bugs, ...)
 3. همه instance‌های affected رو fix کن (نه فقط فایل جاری)
 ```
 
@@ -82,7 +82,7 @@ Figma tool fail شد؟
 - **MCP Figma fetch فقط Tier 2.** Tier 0/1 از local cache، صفر MCP call.
 - **شک بین دو tier؟ → پایین‌تر رو بگیر**، لازم شد escalate کن. سرعت اول.
 
-مرجع عمیق: `dev-knowledge/universal/scope-triage.md`
+مرجع عمیق: `universal/scope-triage.md`
 
 ---
 
@@ -115,7 +115,7 @@ Figma tool fail شد؟
 ```
 
 چرا لازم است (مکانیزم دابل-فلیپ، قانون ترجمه، استثناها):
-`dev-knowledge/universal/language.md` § «دابل-فلیپ» — منبع canonical، تکرارش نکن.
+`universal/language.md` § «دابل-فلیپ» — منبع canonical، تکرارش نکن.
 
 **Component Resolution (به ترتیب، اجباری):**
 ```
@@ -126,7 +126,7 @@ Figma tool fail شد؟
 
 **DS second — نحوه صحیح استفاده (اجباری):**
 ```
-step 1: dev-knowledge/design-systems/chakra-ui-v3/components.md رو چک کن (بدون tool call)
+step 1: dev-stack/knowledge/design-systems/chakra-ui-v3/components.md رو چک کن (بدون tool call)
          → اسم component اونجاست؟ بله → step 2. نه → step 3 (Build last)
 step 2: mcp__chakra-ui__get_component_example → snippet بگیر
 step 3: snippet رو عیناً src/components/ui/[name].tsx کپی کن
@@ -188,7 +188,7 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 - [ ] **مقایسهٔ preview با طرح** (اجباری برای Tier 2 — روش اصلیِ تشخیص چیدمان، پایین ↓)
 - [ ] `dev-engine .` بدون error — مرجع: «RTL — مرجع واحد»
 
-مرجع عمیق: `dev-knowledge/universal/figma-to-code.md`
+مرجع عمیق: `universal/figma-to-code.md`
 
 ---
 
@@ -201,9 +201,9 @@ dev-engine --version      # باید 0.1.0 بده
 اگه یه روز `command -v dev-engine` چیزی برنگردوند (مثلاً بعد از پاک‌شدن node_modules)،
 **متوقف نشو و چک رو skip نکن** — یکی از این دو:
 ```bash
-cd ~/Documents/GitHub/Tools/dev-agents/packages/dev-engine && npm run build && npm link
+cd ~/Documents/GitHub/dev-stack/packages/dev-engine && npm run build && npm link
 # یا مستقیم:
-node ~/Documents/GitHub/Tools/dev-agents/packages/dev-engine/dist/cli.js <args>
+node ~/Documents/GitHub/dev-stack/packages/dev-engine/dist/cli.js <args>
 ```
 > سابقه: 1404 — اسکیل‌ها `command -v dev-engine || "به کاربر بگو نصب کنه و stop"` داشتن؛
 > چون لینک نبود، یه session کامل بدون هیچ چکی کد زد و بعداً معلوم شد pipeline اجرا نشده.
@@ -298,10 +298,10 @@ const box = (n) => `l=${Math.round(n.getBoundingClientRect().left)} r=${Math.rou
 
 این قوانین در **همه** taskها اجباری‌ان (نه فقط Figma→code):
 
-1. **Select فقط** — `NativeSelect` ممنوع. همه‌جا `Select` namespace + `createListCollection` (الگو: `Sidebar.tsx`). → عمیق: `dev-knowledge/design-systems/chakra-ui-v3/chakra-ui-v3.md §۱-الف`
+1. **Select فقط** — `NativeSelect` ممنوع. همه‌جا `Select` namespace + `createListCollection` (الگو: `Sidebar.tsx`). → عمیق: `design-systems/chakra-ui-v3/chakra-ui-v3.md §۱-الف`
 2. **Table alt-row** — قبل از ساخت هر جدول از کاربر بپرس: سطرهای متناوب رنگ پس‌زمینه متفاوت بخوان؟ چه رنگی؟ (پیش‌فرض `bg.subtle`). پیاده‌سازی با token: `<Table.Row bg={i % 2 ? 'bg.subtle' : undefined}>`.
-3. **Sidebar selected** — صفحه‌ی فعال باید item متناظرش در Sidebar را `active`/selected نشان دهد — هم parent (auto-open + highlight)، هم sub-item — به‌صورت route-aware (نه state دستی). → `dev-knowledge/universal/app-conventions.md`
-4. **Responsive assets** — برای حالت responsive/mobile اگر لینک یا تصویر مخصوص آن view به تو داده نشده، قبل از ساخت **ماژولار بپرس** (نه حدس). → `dev-knowledge/universal/app-conventions.md`
+3. **Sidebar selected** — صفحه‌ی فعال باید item متناظرش در Sidebar را `active`/selected نشان دهد — هم parent (auto-open + highlight)، هم sub-item — به‌صورت route-aware (نه state دستی). → `universal/app-conventions.md`
+4. **Responsive assets** — برای حالت responsive/mobile اگر لینک یا تصویر مخصوص آن view به تو داده نشده، قبل از ساخت **ماژولار بپرس** (نه حدس). → `universal/app-conventions.md`
 5. **NumberField فقط** — هر input **عددی** (قیمت، مبلغ، وزن، تخفیف، موجودی، تعداد، روز/زمان، …) باید `<NumberField>` باشد (`src/components/ui/NumberField.tsx`) — نه `<Input inputMode="numeric">` خام و نه `<NumberInput.Root>` مستقیم. خودش جداکنندهٔ سه‌رقمیِ زنده + ارقام فارسی + فقط-رقم می‌دهد و مقدار **لاتینِ تمیز** برمی‌گرداند (برای API/محاسبه). با هر کیبورد (فارسی/عربی/لاتین) یکسان کار می‌کند — ورودی را داخل خودش به لاتین normalize می‌کند. (روی `<Input>` ساده ساخته شده، نه zag `NumberInput` — چون parserِ locale آن ورودیِ ترکیبیِ فارسی/لاتین را reject می‌کرد.)
    - props: `value`/`onChange(v)` (string لاتین) · `allowDecimals` (وزن) · `showSteppers` (تعداد/موجودی) · `startElement`/`endElement` + `*ElementProps` (addon واحد مثل تومان/kg — داخلش `InputGroup` می‌زند) · `inputProps` (style روی خودِ input مثل `bg="bg.panel"`، چون `{...rest}` به `Root` می‌رود نه input).
    - الگو: `InfoTab.tsx` (قیمت/تخفیف/وزن/موجودی)، `AddShippingMethod.tsx`، `ShippingCalculatorDialog.tsx`.
@@ -310,7 +310,7 @@ const box = (n) => `l=${Math.round(n.getBoundingClientRect().left)} r=${Math.rou
 ## RTL — مرجع واحد
 
 > 📍 **مفاهیم عمومی جهت** (مکانیزم دابل-فلیپ، قانون ترجمه، logical props دو-گامی،
-> بازگشتی‌بودن ترتیب DOM، استثنای centering) → `dev-knowledge/universal/language.md`.
+> بازگشتی‌بودن ترتیب DOM، استثنای centering) → `universal/language.md`.
 > آن فایل canonical است. این بخش فقط چیزهای **مخصوص Vitrina** را دارد: setup،
 > نگاشت prop به محور در Chakra، الگوهای کامپوننتی، و تاریخچهٔ incidentها.
 > تناقض دیدی؟ `language.md` برنده است و این بخش باید اصلاح شود.
@@ -453,16 +453,16 @@ start = راست        end = چپ
 - Avatar.Root / complex components → do NOT forward refs for `asChild`. Wrap in `<Box as="button" type="button">` first
 - `sx` prop → **nested selectors NOT injected** (`'& .child': {...}`, `'&:focus-within': {...}` کار نمی‌کنن). برای nested CSS از `editorProps.attributes.style` (Tiptap)، `_focusWithin` prop (Chakra)، یا `Global` از `@emotion/react` استفاده کن
 - `Combobox.Root` با `inputValue` **کنترل‌شده** + `allowCustomValue={true}` → گاهی رویداد تایپِ متن دلخواه (که با هیچ آیتمی مطابقت ندارد) گم می‌شود و ورودی کاربر ثبت نمی‌شود. راه‌حل: `defaultInputValue` (uncontrolled) به‌جای `inputValue` + خواندن مقدار لحظهٔ ثبت مستقیم از DOM (`ref`)، نه از React state. برای reset از بیرون (بعد از ثبت) از `key` جدید برای remount استفاده کن، نه پاک‌کردن state کنترل‌شده. الگو: `src/components/products/new/VariantAccordion.tsx` (`SuggestCombobox`)
-- `PinInput.Root autoFocus` باید روی **Root** باشه، نه `autoFocus` روی `PinInput.Input` (native HTML attribute) — وگرنه با hydration Next.js race می‌کنه و machine در state `idle` گیر می‌کنه (فقط خانهٔ اول پر می‌شه، بقیه advance نمی‌کنن). جزئیات: `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`
+- `PinInput.Root autoFocus` باید روی **Root** باشه، نه `autoFocus` روی `PinInput.Input` (native HTML attribute) — وگرنه با hydration Next.js race می‌کنه و machine در state `idle` گیر می‌کنه (فقط خانهٔ اول پر می‌شه، بقیه advance نمی‌کنن). جزئیات: `design-systems/chakra-ui-v3/known-bugs.md`
 - `PinInput` با `type="numeric"` ارقام فارسی (۰-۹) رو کامل reject می‌کنه (نه فقط نمایش اشتباه) — برای فیلد OTP باید `pattern="^[0-9۰-۹]+$"` بدی + در `onValueChange` با `toLatinDigits` نرمالایز کنی. الگو: `src/components/auth/OtpForm.tsx`
 - Flex ستونی با `justify="center"` که تنها فرزندش `flex="1"` داره → `justify` بی‌اثر می‌شه (فرزند تمام فضا رو می‌بلعه، چیزی برای centering نمی‌مونه). باید `justify` رو مستقیم روی همون فرزند flex=1 هم بذاری. الگو: `src/components/auth/AuthLayout.tsx` (`centerContent` prop)
 - `Steps.Root orientation="vertical"` → رسیپی پیش‌فرضش `height:100%` است؛ اگه پنل والد stretch شده باشه (`align="stretch"`)، آیتم‌ها (`flex:1 0 0`) کل ارتفاع پنل رو مساوی تقسیم می‌کنن و خط رابط (`separator`) خیلی کشیده می‌شه. فیکس: `h="auto"` روی `Steps.Root` (override رسیپی) + یه `Box flex="1"` spacer بعدش که فضای اضافه رو جذب کنه. الگو: `src/components/auth/SignupStepper.tsx`
 - `Steps.Status` بدون prop `current` → قدم فعلی رو با عدد **لاتین** رندر می‌کنه (fallback به `incomplete` نمی‌ره). باید `current` رو صریح بدی (مثلاً `current={toPersianDigits(i+1)}`) وگرنه فقط قدم‌های غیرفعال فارسی می‌شن.
 - `InputGroup` با `startElement`/`endElement` متنی (نه آیکون کوچیک) → فرمول پیش‌فرض padding (`ps`/`pe` بر اساس `var(--input-height)`) برای متن عریض‌تر از یک آیکون کافی نیست و متن ورودی با دکوریشن overlap می‌کنه. باید `ps`/`pe` رو دستی روی `<Input>` ست کنی متناسب با عرض واقعی متن (اندازه‌گیری با `getBoundingClientRect`). الگو: `src/views/auth/SignupBasicInfoView.tsx` (فیلد آدرس اختصاصی فروشگاه، `https://`/`.vitrinaa.shop`)
-- `Progress.Root striped` → **BROKEN** (نسخهٔ `3.35.0`) — recipe داخلی `--stripe-color` رو با مقدار conditional (`_light`/`_dark`) روی یه CSS custom property ست می‌کنه که resolve نمی‌شه (computed value خالی → `backgroundImage` invalid → `none`). فیکس: `backgroundImage`/`backgroundSize` رو مستقیم روی `<Progress.Range>` بده + override با `_dark` (نه custom property). جزئیات: `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/views/auth/SignupPreparingView.tsx`
+- `Progress.Root striped` → **BROKEN** (نسخهٔ `3.35.0`) — recipe داخلی `--stripe-color` رو با مقدار conditional (`_light`/`_dark`) روی یه CSS custom property ست می‌کنه که resolve نمی‌شه (computed value خالی → `backgroundImage` invalid → `none`). فیکس: `backgroundImage`/`backgroundSize` رو مستقیم روی `<Progress.Range>` بده + override با `_dark` (نه custom property). جزئیات: `design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/views/auth/SignupPreparingView.tsx`
 - `position="fixed"` + centering با `left:"50%"` + `transform:"translateX(-50%)"` → اگه `left` رو با `insetInlineStart` (منطقی) بدی، در RTL به `right` تبدیل می‌شه و فرمول centering (که فیزیکی و جهت‌مستقله) بهم می‌ریزه — عنصر به‌جای وسط، به چپ صفحه پرت می‌شه. باید `left` فیزیکی باشه. **راه‌حل ساده‌تر و ترجیحی:** وقتی عرض باید «fill» بمونه (نه یک maxW ثابت)، اصلاً از `left+transform` استفاده نکن — `insetInlineStart`/`insetInlineEnd` رو با مقدار **یکسان** (مثلاً هر دو `'4'`) بده؛ چون مقدار دو طرف برابره، منطقی/فیزیکی فرقی نداره و عرض خودش از فاصلهٔ دو لبه محاسبه می‌شه (با کوچک‌شدن ویوپورت خودش کوچیک می‌شه، بدون نیاز به `maxW`/`w`/`transform`). الگو: `src/components/orders/manual/ManualOrderFooter.tsx`
-- `RadioCard.Root value={x ?? undefined}` → **کنترل‌شده به‌درستی پاک نمی‌شه** — `undefined` برای RadioGroup زیرینِ zag یعنی uncontrolled، پس یه بار انتخاب‌شده دیگه با state بیرونی پاک نمی‌شه (مثلاً دکمهٔ «حذف» state رو null می‌کنه ولی کارت هنوز checked می‌مونه). باید `value` رو مستقیم (با نوع `string | null`) پاس بدی، نه با `?? undefined`. جزئیات: `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/components/orders/manual/DiscountSelectPanel.tsx`
-- `direction` prop روی هر کامپوننتی جز `Flex`/`Stack` (مثل `RadioCard.ItemControl`, `Grid`) → **بی‌صدا drop می‌شه**، چون ترجمهٔ `direction`→`flexDirection` فقط داخل `Flex`/`Stack` هست، نه یه shorthand عمومیِ style-system. همیشه `flexDirection` بنویس. جزئیات: `dev-knowledge/design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/components/orders/manual/DiscountSelectPanel.tsx`
+- `RadioCard.Root value={x ?? undefined}` → **کنترل‌شده به‌درستی پاک نمی‌شه** — `undefined` برای RadioGroup زیرینِ zag یعنی uncontrolled، پس یه بار انتخاب‌شده دیگه با state بیرونی پاک نمی‌شه (مثلاً دکمهٔ «حذف» state رو null می‌کنه ولی کارت هنوز checked می‌مونه). باید `value` رو مستقیم (با نوع `string | null`) پاس بدی، نه با `?? undefined`. جزئیات: `design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/components/orders/manual/DiscountSelectPanel.tsx`
+- `direction` prop روی هر کامپوننتی جز `Flex`/`Stack` (مثل `RadioCard.ItemControl`, `Grid`) → **بی‌صدا drop می‌شه**، چون ترجمهٔ `direction`→`flexDirection` فقط داخل `Flex`/`Stack` هست، نه یه shorthand عمومیِ style-system. همیشه `flexDirection` بنویس. جزئیات: `design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/components/orders/manual/DiscountSelectPanel.tsx`
 - `Popover.Trigger asChild` + `<Box as="button">` → **type error** (`disabled`/`type` روی نوع props وجود نداره، چون `as` فقط تگ رندرشده رو عوض می‌کنه نه inference تایپ‌اسکریپت). به‌جاش استایل رو مستقیم روی خودِ `Popover.Trigger` بده (بدون `asChild`) — چون `PopoverTriggerProps` از `HTMLChakraProps<"button">` ارث می‌بره و خودش یه دکمهٔ استایل‌پذیره. الگو: `src/components/ui/DatePicker.tsx`
 
 ---
@@ -594,7 +594,7 @@ toLatinDigits(s: string): string             // برای input → API
 ## Token Reference
 
 > **مقادیر کامل semantic (bg/fg/border) و per-color (`{color}.{variant}`: contrast/fg/subtle/muted/emphasized/solid/focusRing/border) = استاندارد Chakra v3.**
-> منبع داخل پروژه: `src/theme/tokens.ts` · مرجع مشترک: `dev-knowledge/.../tokens.md` · runtime: Chakra MCP `get_theme`.
+> منبع داخل پروژه: `src/theme/tokens.ts` · مرجع مشترک: `dev-stack/knowledge/design-systems/chakra-ui-v3/tokens.md` · runtime: Chakra MCP `get_theme`.
 > فقط توکن‌های **Vitrina-specific** اینجا inline‌اند:
 
 ### Vitrina Brand Tokens (`src/theme/tokens.ts`)

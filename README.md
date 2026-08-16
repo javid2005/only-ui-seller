@@ -93,4 +93,4 @@ src/
 
 - [CLAUDE.md](CLAUDE.md) — قوانین کدنویسی، RTL، tokens، protocols
 - [HANDOFF.md](HANDOFF.md) — وضعیت فعلی پروژه
-- [dev-knowledge](../../../Tools/dev-knowledge/) — دانش مشترک DS/RTL/skills
+- [dev-stack](../../dev-stack/) — دانش مشترک DS/RTL/skills
