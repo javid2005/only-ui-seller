@@ -14,6 +14,26 @@ export const ratingCollection = createListCollection<FilterOption>({
   ],
 })
 
+/** ۴ وضعیت نظر — Figma «Comment» prop `type` (node 2547:52028) */
+export type ReviewStatus = 'pending' | 'verified' | 'archived' | 'deleted'
+
+/** ترتیب تب‌ها = ترتیب راست‌به‌چپ در screenshot صفحه (node 5288:78902 / 5291:81754) */
+export const STATUS_ORDER: ReviewStatus[] = ['pending', 'verified', 'archived', 'deleted']
+
+export const STATUS_LABEL: Record<ReviewStatus, string> = {
+  pending: 'در انتظار تایید',
+  verified: 'تایید شده',
+  archived: 'آرشیو شده',
+  deleted: 'حذف شده',
+}
+
+export const STATUS_COLOR: Record<ReviewStatus, string> = {
+  pending: 'orange',
+  verified: 'green',
+  archived: 'blue',
+  deleted: 'red',
+}
+
 export interface Review {
   id: string
   author: string
@@ -31,11 +51,9 @@ export interface Review {
   text: string
   /** تصاویر پیوست‌شده به نظر (تعداد thumbnail) */
   images?: number
-  likes: number
-  dislikes: number
-  /** پاسخ فروشنده — وجودش = حالت «پاسخ داده شده» */
+  /** پاسخ فروشنده — وجودش = حالت «پاسخ داده شده» (فقط verified) */
   vendorReply?: string
-  /** archived: محتوا به‌خاطر کلمات نامناسب فیلتر شده */
+  /** archived: محتوا به‌خاطر کلمات نامناسب فیلتر شده (فقط archived — طبق Comment component، pending/deleted این حالت رو ندارن) */
   filtered?: boolean
 }
 
@@ -51,8 +69,6 @@ export const VERIFIED_REVIEWS: Review[] = [
     variant: 'قرمز / XL',
     text: 'کیفیت جنس واقعا خوبه، دوخت محکم و دقیقا مثل عکس. فقط سایزبندی به کم بزرگ‌تر از حد معمول بود، بهتره به سایر کوچک‌تر سفارش بدید. در کل راضی‌ام و پیشنهاد می‌کنم.',
     images: 3,
-    likes: 18,
-    dislikes: 7,
   },
   {
     id: 'v2',
@@ -63,8 +79,6 @@ export const VERIFIED_REVIEWS: Review[] = [
     verifiedBuyer: true,
     variant: 'آبی / L',
     text: 'ارسال سریع بود ولی بسته‌بندی می‌تونست بهتر باشه. محصول خودش خوبه.',
-    likes: 13,
-    dislikes: 5,
   },
   {
     id: 'v3',
@@ -73,8 +87,6 @@ export const VERIFIED_REVIEWS: Review[] = [
     rating: 5,
     text: 'عالی بود. بهترین خریدی که تا حالا کردم. حتما دوباره سفارش می‌دم.',
     images: 1,
-    likes: 10,
-    dislikes: 0,
     vendorReply: 'ممنون از خرید و نظر سازنده‌تون. راهنمایی سایزبندی در صفحه محصول به‌زودی کامل‌تر می‌شه.',
   },
 ]
@@ -88,8 +100,6 @@ export const ARCHIVED_REVIEWS: Review[] = [
     rating: 0,
     text: '',
     filtered: true,
-    likes: 13,
-    dislikes: 6,
   },
   {
     id: 'a2',
@@ -99,8 +109,6 @@ export const ARCHIVED_REVIEWS: Review[] = [
     text: '',
     filtered: true,
     images: 1,
-    likes: 13,
-    dislikes: 6,
   },
   {
     id: 'a3',
@@ -111,8 +119,6 @@ export const ARCHIVED_REVIEWS: Review[] = [
     verifiedBuyer: true,
     text: '',
     filtered: true,
-    likes: 13,
-    dislikes: 6,
   },
   {
     id: 'a4',
@@ -121,7 +127,78 @@ export const ARCHIVED_REVIEWS: Review[] = [
     rating: 0,
     text: '',
     filtered: true,
-    likes: 13,
-    dislikes: 6,
   },
 ]
+
+/** نظرات در انتظار تایید (تب در انتظار تایید) — Figma node 5288:78902 */
+export const PENDING_REVIEWS: Review[] = [
+  {
+    id: 'p1',
+    author: 'سارا احمدی',
+    date: '۱۴۰۳/۰۲/۱۲',
+    rating: 4,
+    verifiedBuyer: true,
+    variant: 'مشکی / L',
+    text: 'کیفیت جنس واقعاً خوبه، دوخت محکم و رنگ دقیقاً مثل عکس. فقط سایزبندی یه کم بزرگ‌تر از حد معمول بود، بهتره یه سایز کوچیک‌تر سفارش بدید. در کل راضی‌ام و پیشنهاد می‌کنم.',
+    images: 3,
+  },
+  {
+    id: 'p2',
+    author: 'آرش نیکو',
+    date: '۱۴۰۳/۰۱/۲۸',
+    rating: 1,
+    verifiedBuyer: true,
+    variant: 'سفید / M',
+    text: 'ارسال سریع بود ولی بسته‌بندی می‌تونست بهتر باشه. محصول خودش خوبه.',
+  },
+  {
+    id: 'p3',
+    author: 'نیلوفر رضایی',
+    date: '۱۴۰۳/۰۳/۰۵',
+    rating: 4,
+    text: 'عالی بود. بهترین خریدی که تا حالا کردم. حتماً دوباره سفارش می‌دم.',
+    images: 1,
+  },
+]
+
+/** نظرات حذف شده (تب حذف شده) — Figma node 5291:81754 */
+export const DELETED_REVIEWS: Review[] = [
+  {
+    id: 'd1',
+    author: 'کامران آریا',
+    date: '۱۴۰۳/۰۲/۱۲',
+    rating: 0,
+    text: 'محصول با عکس فرق داشت، خیلی راضی نبودم.',
+  },
+  {
+    id: 'd2',
+    author: 'نیما سهراب',
+    date: '۱۴۰۳/۰۱/۲۸',
+    rating: 0,
+    text: 'ارسال دیر شد و بسته‌بندی آسیب دیده بود.',
+    images: 1,
+  },
+  {
+    id: 'd3',
+    author: 'فرزاد کیوان',
+    date: '۱۴۰۳/۰۳/۰۵',
+    rating: 4,
+    verifiedBuyer: true,
+    variant: 'سفید / M',
+    text: 'کیفیت خوب بود، پیشنهاد می‌کنم بخرید.',
+  },
+  {
+    id: 'd4',
+    author: 'آرش نیکو',
+    date: '۱۴۰۳/۱۱/۰۶',
+    rating: 1,
+    text: 'اصلاً راضی نبودم، سایزبندی درست نبود.',
+  },
+]
+
+export const REVIEWS_BY_STATUS: Record<ReviewStatus, Review[]> = {
+  pending: PENDING_REVIEWS,
+  verified: VERIFIED_REVIEWS,
+  archived: ARCHIVED_REVIEWS,
+  deleted: DELETED_REVIEWS,
+}

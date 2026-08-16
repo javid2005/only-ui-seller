@@ -1,26 +1,24 @@
 # Vitrina — Handoff
-> 2026-08-15
+> 2026-08-16
 
 ## الان
-آخرین commit (`7ead0f9`) discount toggle/outline icons/domain relabel بود. از اونجا
-تا الان uncommitted (۱۵ فایل):
-- بازسازی کامل لیست سفارشات (KPI/فیلتر/جدول/pagination مطابق لیست محصولات) + دیالوگ
-  فیلترها (`OrderFilterModal`) طبق Figma node 2169:28005 + لیبل منوی ترتیب.
-- فیکس سراسری فاصلهٔ زیاد ارقام فارسی در Table/Badge (`src/theme/index.ts` — override
-  `fontVariantNumeric` روی recipe، نه globalCss).
-- فیکس alignment ستون action در ۴ جدول (OrderTable، ProductTable/RowActionButtons،
-  CampaignTable، AbandonedCartTable) — `justify="end"` گم/غلط بود.
-- striped=true روی ۴ جدولی که نداشتنش (DiscountCodesTable، BulkSmsHistoryTable،
-  AbandonedCartTable، CampaignTable) — مطابق قرارداد محصولات/سفارشات.
-- OrderCard (کارت موبایل سفارشات) بازسازی طبق Figma node 5253:87246 —
-  فوتر/هدر جدا شد (فوتر همیشه bg.subtle)، hover فقط border کارت + bg فوتر رو
-  عوض می‌کنه (نه کل کارت)، Separator حذف شد.
+آخرین commit (`134d632`) بازسازی لیست سفارشات + OrderCard موبایل بود. از اونجا تا
+الان uncommitted (۴ فایل) — صفحهٔ «نظرات کاربران» بازسازی شد:
+- `Comment` component طبق Figma بازسازی شد: ۴ وضعیت (`pending`/`verified`/
+  `archived`/`deleted`) به‌جای boolean `archived`، فوتر بدون شمارندهٔ لایک/دیسلایک،
+  دکمه‌های فوتر solid/outline/متن‌قرمز طبق طرح، آیکون‌های پاسخ فروشنده `ghost`.
+- تب‌ها از `SegmentGroup` به `Tabs variant="enclosed"` تغییر کرد (الگو:
+  `SecuritySection.tsx`)؛ ترتیب: در انتظار تایید → تایید شده → آرشیو شده → حذف شده.
+- بج شمارنده فقط رو تب «در انتظار تایید» موند؛ رنگ بج pending=orange،
+  archived=blue.
+- زیر `md`: `Tabs.List` به‌جای wrap کردن متن، افقی اسکرول می‌خوره.
+- فیکس: وقتی «پاسخ» کلیک می‌شه، انصراف/ثبت جای همون ۳ دکمهٔ فوتر می‌شینن (نه یه
+  بلوک جدا)؛ فیکس: Avatar موبایل align=start (نه center) وقتی نام/بج به ۲ خط می‌شکنن.
 
 ## بعدی
-OrderCard موبایل هم طبق Figma node 5253:87246 بازسازی و commit شد (فوتر همیشه
-bg.subtle + hover→brand.bg روی فوتر تنها با role="group"، border کارت hover→
-brand.focusRing، بدون Separator، IconButton فوتر variant="outline"). چیز
-open دیگه‌ای از این session نمونده.
+همین ۴ فایل commit بشه:
+`data.ts`, `CommentCard.tsx`, `ReviewsFilterModal.tsx`, `views/products/Reviews.tsx`.
+آخرین fix (Avatar alignment موبایل) هنوز preview نشده.
 
 ## باگ‌های open
 (چیزی گزارش نشده)

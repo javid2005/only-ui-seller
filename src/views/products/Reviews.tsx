@@ -1,19 +1,19 @@
 import { useMemo, useState } from 'react'
 import {
   Alert, Badge, Box, Flex, IconButton, Input, InputGroup,
-  SegmentGroup, Select, Spacer, Switch, Text,
+  Select, Spacer, Switch, Tabs, Text,
 } from '@chakra-ui/react'
-import { ListFilter, Search } from 'lucide-react'
+import { Filter, Search } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header } from '@/components/layout/Header'
 import { toLatinDigits, toPersianDigits } from '@/utils/numbers'
 import {
-  VERIFIED_REVIEWS, ARCHIVED_REVIEWS, ratingCollection,
+  REVIEWS_BY_STATUS, STATUS_COLOR, STATUS_LABEL, STATUS_ORDER, ratingCollection, type ReviewStatus,
 } from '@/components/products/reviews/data'
 import { CommentCard } from '@/components/products/reviews/CommentCard'
 import { ReviewsFilterModal } from '@/components/products/reviews/ReviewsFilterModal'
 
-type Tab = 'verified' | 'archived'
+type Tab = ReviewStatus
 
 /** Select امتیاز — namespace Select (نه NativeSelect — قانون پروژه) */
 function RatingSelect() {
@@ -57,7 +57,7 @@ function InlineSwitch({ label }: { label: string }) {
 
 export function Reviews() {
   const isCompact = useCompactMode()
-  const [tab, setTab] = useState<Tab>('verified')
+  const [tab, setTab] = useState<Tab>('pending')
   const [search, setSearch] = useState('')
   const [filterOpen, setFilterOpen] = useState(false)
   const [replyingId, setReplyingId] = useState<string | null>(null)
@@ -66,7 +66,7 @@ export function Reviews() {
   const [deletedReplies, setDeletedReplies] = useState<string[]>([])
 
   const archived = tab === 'archived'
-  const reviews = archived ? ARCHIVED_REVIEWS : VERIFIED_REVIEWS
+  const reviews = REVIEWS_BY_STATUS[tab]
 
   // جستجو در نام کاربر یا متن نظر — اعداد فارسی→لاتین
   const filtered = useMemo(() => {
@@ -108,37 +108,34 @@ export function Reviews() {
       >
         <Flex direction="column" gap="4" maxW="960px" w="full" mx="auto">
 
-          {/* ── Tabs (تایید شده / آرشیو شده) — SegmentGroup track ──
-              RTL: تایید شده FIRST = راست‌ترین */}
-          <SegmentGroup.Root
+          {/* ── Tabs (در انتظار تایید / تایید شده / آرشیو شده / حذف شده) — Tabs enclosed ──
+              (نه SegmentGroup — قاعده‌ی صفحه). RTL: ترتیب طبق screenshot صفحهٔ کامل
+              (node 5288:78902 / 5291:81754، نه حدس): در انتظار تایید FIRST=راست‌ترین
+              → تایید شده → آرشیو شده → حذف شده=چپ‌ترین. الگو: SecuritySection.tsx */}
+          <Tabs.Root
+            variant="enclosed"
             value={tab}
-            onValueChange={(e) => { setTab((e.value ?? 'verified') as Tab); setReplyingId(null); setEditingId(null) }}
-            size="sm" alignSelf="start"
+            onValueChange={(e) => { setTab(e.value as Tab); setReplyingId(null); setEditingId(null) }}
           >
-            <SegmentGroup.Indicator bg="bg.subtle" />
-            <SegmentGroup.Item value="verified">
-              <SegmentGroup.ItemText>
-                <Flex align="center" gap="2">
-                  تایید شده
-                  <Badge colorPalette="green" variant="subtle" size="xs">
-                    {toPersianDigits(VERIFIED_REVIEWS.length)}
-                  </Badge>
-                </Flex>
-              </SegmentGroup.ItemText>
-              <SegmentGroup.ItemHiddenInput />
-            </SegmentGroup.Item>
-            <SegmentGroup.Item value="archived">
-              <SegmentGroup.ItemText>
-                <Flex align="center" gap="2">
-                  آرشیو شده
-                  <Badge colorPalette="red" variant="subtle" size="xs">
-                    {toPersianDigits(ARCHIVED_REVIEWS.length)}
-                  </Badge>
-                </Flex>
-              </SegmentGroup.ItemText>
-              <SegmentGroup.ItemHiddenInput />
-            </SegmentGroup.Item>
-          </SegmentGroup.Root>
+            {/* w="full" — پس‌زمینهٔ track تا عرض کامل پنل کشیده بشه.
+                زیر md: به‌جای wrap کردن متن تب، خودِ نوار افقی اسکرول می‌خوره
+                (viewport واقعی — isCompact نه، طبق قانون پروژه). */}
+            <Tabs.List w="full" overflowX={{ base: 'auto', md: 'visible' }} flexWrap="nowrap">
+              {STATUS_ORDER.map((s) => (
+                <Tabs.Trigger key={s} value={s} fontSize="sm" flexShrink={0} whiteSpace="nowrap">
+                  <Flex align="center" gap="2" whiteSpace="nowrap">
+                    {STATUS_LABEL[s]}
+                    {/* فقط «در انتظار تایید» بج شمارنده داره — بقیه حذف شد */}
+                    {s === 'pending' && (
+                      <Badge colorPalette={STATUS_COLOR[s]} variant="subtle" size="xs">
+                        {toPersianDigits(REVIEWS_BY_STATUS[s].length)}
+                      </Badge>
+                    )}
+                  </Flex>
+                </Tabs.Trigger>
+              ))}
+            </Tabs.List>
+          </Tabs.Root>
 
           {/* ── Alert (فقط آرشیو) ── */}
           {archived && (
@@ -158,7 +155,7 @@ export function Reviews() {
           <Flex display={{ base: 'flex', md: isCompact ? 'flex' : 'none' }} gap="2" align="center">
             {makeSearch('1', 'full')}
             <IconButton variant="outline" size="sm" aria-label="فیلترها" onClick={() => setFilterOpen(true)} flexShrink={0}>
-              <ListFilter size={16} />
+              <Filter size={16} />
             </IconButton>
           </Flex>
 
@@ -167,7 +164,7 @@ export function Reviews() {
             {makeSearch('0 1 200px', '240px')}
             <RatingSelect />
             <InlineSwitch label="شامل تصویر" />
-            {!archived && <InlineSwitch label="پاسخ داده شده" />}
+            {tab === 'verified' && <InlineSwitch label="پاسخ داده شده" />}
             <Spacer />
           </Flex>
 
@@ -180,7 +177,7 @@ export function Reviews() {
               <CommentCard
                 key={r.id}
                 review={review}
-                archived={archived}
+                status={tab}
                 replying={replyingId === r.id}
                 editing={editingId === r.id}
                 onReply={() => { setReplyingId(r.id); setEditingId(null) }}
@@ -204,7 +201,7 @@ export function Reviews() {
       </Box>
 
       {/* ── Mobile Filter Modal ── */}
-      <ReviewsFilterModal open={filterOpen} onClose={() => setFilterOpen(false)} archived={archived} />
+      <ReviewsFilterModal open={filterOpen} onClose={() => setFilterOpen(false)} showRepliedFilter={tab === 'verified'} />
     </Flex>
   )
 }

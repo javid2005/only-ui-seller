@@ -2,11 +2,10 @@ import {
   Avatar, Badge, Box, Button, Flex, IconButton, Text, Textarea,
 } from '@chakra-ui/react'
 import {
-  Check, Image as ImageIcon, Pencil, ThumbsDown, ThumbsUp, Trash2,
+  Check, Image as ImageIcon, Pencil, Trash2,
 } from 'lucide-react'
-import { toPersianDigits } from '@/utils/numbers'
+import { STATUS_COLOR, STATUS_LABEL, type Review, type ReviewStatus } from './data'
 import { Rating } from './Rating'
-import type { Review } from './data'
 
 const FILTERED_TEXT = '[محتوای این نظر حاوی کلمات نامناسب بوده و فیلتر شده است]'
 
@@ -23,23 +22,13 @@ function ThumbEmpty() {
   )
 }
 
-/** شمارنده لایک/دیسلایک — آیکون رنگی (success/error) FIRST (راست در RTL) + عدد */
-function ReactionCount({ icon, value, color }: { icon: React.ReactNode; value: number; color: string }) {
-  return (
-    <Flex align="center" gap="2">
-      <Flex color={color} align="center">{icon}</Flex>
-      <Text fontSize="sm" color="fg.muted">{toPersianDigits(value)}</Text>
-    </Flex>
-  )
-}
-
 export interface CommentCardProps {
   review: Review
-  /** کارت در تب آرشیو است */
-  archived?: boolean
-  /** حالت پاسخ‌دهی نو (textarea خالی باز) */
+  /** وضعیت کارت — تعیین‌کنندهٔ badge بالا و دکمه‌های فوتر (Figma Comment prop `type`) */
+  status: ReviewStatus
+  /** حالت پاسخ‌دهی نو (textarea خالی باز) — فقط verified */
   replying?: boolean
-  /** حالت ویرایش پاسخ فروشنده (textarea با متن قبلی) */
+  /** حالت ویرایش پاسخ فروشنده (textarea با متن قبلی) — فقط verified */
   editing?: boolean
   onReply?: () => void
   onCancelReply?: () => void
@@ -48,25 +37,40 @@ export interface CommentCardProps {
   onCancelEdit?: () => void
   onSubmitEdit?: () => void
   onDeleteReply?: () => void
-  onDelete?: () => void
+  /** pending → verified */
+  onApprove?: () => void
+  /** verified/pending → archived */
   onArchive?: () => void
+  /** verified/pending/archived → deleted */
+  onDelete?: () => void
+  /** archived → verified */
   onRestore?: () => void
+  /** deleted → archived */
+  onRestoreArchive?: () => void
 }
 
 /**
- * کارت نظر کاربر — معادل کامپوننت Comment فیگما (۴ variant):
- *   verified/default · verified/reply · verified/replied · archived/default
+ * کارت نظر کاربر — معادل کامپوننت Comment فیگما (node 2547:52028)، ۴ وضعیت × ۳ state:
+ *   pending/verified/archived/deleted (type) × Default/Reply/Replied (state, فقط verified)
  * RTL: اولین child = راست‌ترین.
+ *
+ * ⚠️ فوتر بدون Separator/شمارندهٔ لایک-دیسلایک — طبق fetch واقعی Comment از Figma این
+ * ردیف اصلاً وجود نداره (حذف شد، قبلاً اضافه‌ی خارج از طرح بوده).
+ * ⚠️ ترتیب DOM دکمه‌های فوتر: چون Wrapper فوتر در Figma بدون justify-end بوده و
+ * پیش‌فرض چپ‌چین (packed-start در LTR خام) رندر شده، دکمهٔ primary (پاسخ/تایید) همیشه
+ * چسبیده به لبهٔ **چپ** کارته (نه راست) — یعنی در RTL ما باید **LAST** DOM باشه، نه اول.
+ * پس ترتیب: حذف(اول/راست‌ترین کلاستر) → آرشیو/انتقال(وسط) → primary(آخر/چسبیده چپ).
  */
 export function CommentCard({
-  review, archived = false, replying = false, editing = false,
+  review, status, replying = false, editing = false,
   onReply, onCancelReply, onSubmitReply, onEditReply, onCancelEdit, onSubmitEdit, onDeleteReply,
-  onDelete, onArchive, onRestore,
+  onApprove, onArchive, onDelete, onRestore, onRestoreArchive,
 }: CommentCardProps) {
-  const { author, date, relativeTime, rating, verifiedBuyer, variant, text, images, likes, dislikes, vendorReply, filtered } = review
+  const { author, date, relativeTime, rating, verifiedBuyer, variant, text, images, vendorReply, filtered } = review
 
-  const showInput = !archived && (replying || editing)
-  const showVendorReply = !archived && !!vendorReply && !editing
+  const showInput = status === 'verified' && (replying || editing)
+  const showVendorReply = status === 'verified' && !!vendorReply && !editing
+  const showFilteredBody = status === 'archived' && filtered
 
   return (
     <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="lg" overflow="hidden" w="full">
@@ -76,8 +80,9 @@ export function CommentCard({
 
         {/* Header: details (راست) ←→ status badge (چپ) */}
         <Flex gap="4" align="start">
-          {/* Details — flex 1، راست‌ترین */}
-          <Flex flex="1" gap="2" align="center" minW="0">
+          {/* Details — flex 1، راست‌ترین. موبایل: وقتی نام/بج wrap می‌شن و Stack بلند
+              می‌شه، Avatar باید بالا(start) بچسبه نه وسط — دسکتاپ همون center بمونه */}
+          <Flex flex="1" gap="2" align={{ base: 'start', md: 'center' }} minW="0">
             {/* Avatar FIRST = راست */}
             <Avatar.Root size="md" flexShrink={0} bg="brand.solid" color="brand.contrast">
               <Avatar.Fallback name={author} />
@@ -112,14 +117,14 @@ export function CommentCard({
           </Flex>
 
           {/* status badge — چپ‌ترین */}
-          <Badge colorPalette={archived ? 'orange' : 'green'} variant="subtle" size="sm" flexShrink={0}>
-            {archived ? 'آرشیو شده' : 'تایید شده'}
+          <Badge colorPalette={STATUS_COLOR[status]} variant="subtle" size="sm" flexShrink={0}>
+            {STATUS_LABEL[status]}
           </Badge>
         </Flex>
 
         {/* ── Body ── */}
-        {filtered ? (
-          /* archived: متن فیلترشده (راست) + مشاهده (چپ) */
+        {showFilteredBody ? (
+          /* archived+filtered: متن فیلترشده (راست) + مشاهده (چپ) */
           <Flex gap="2" align="center" flexWrap="wrap" justify="end">
             <Text flex="1" fontSize="sm" color="fg.muted" textAlign="start">{FILTERED_TEXT}</Text>
             <Button variant="ghost" size="xs" color="brand.fg" flexShrink={0}>مشاهده</Button>
@@ -135,26 +140,14 @@ export function CommentCard({
           </Flex>
         )}
 
-        {/* حالت پاسخ‌دهی نو یا ویرایش — textarea + CTA (state=reply فیگما) */}
+        {/* حالت پاسخ‌دهی نو یا ویرایش — فقط textarea؛ دکمه‌های انصراف/ثبت جای همون سه
+            دکمهٔ فوتر می‌شینن (پایین‌تر)، نه اینجا (state=Reply فیگما، فقط verified) */}
         {showInput && (
-          <Flex direction="column" gap="1.5">
-            <Textarea
-              key={editing ? 'edit' : 'new'}
-              defaultValue={editing ? vendorReply : undefined}
-              placeholder="پاسخ شما..." size="sm" rows={2} resize="vertical"
-            />
-            {/* انصراف (راست) · ثبت پاسخ (چپ، primary) */}
-            <Flex gap="2" justify="end">
-              <Button variant="ghost" size="xs" onClick={editing ? onCancelEdit : onCancelReply}>انصراف</Button>
-              <Button
-                size="xs" bg="brand.solid" color="brand.contrast"
-                _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }}
-                onClick={editing ? onSubmitEdit : onSubmitReply}
-              >
-                ثبت پاسخ
-              </Button>
-            </Flex>
-          </Flex>
+          <Textarea
+            key={editing ? 'edit' : 'new'}
+            defaultValue={editing ? vendorReply : undefined}
+            placeholder="پاسخ شما..." size="sm" rows={2} resize="vertical"
+          />
         )}
 
         {/* پاسخ فروشنده — بلوک teal (RTL: محتوا راست، اکشن‌ها زیر آن) */}
@@ -171,12 +164,13 @@ export function CommentCard({
                 <Text fontSize="sm" fontWeight="semibold" color="brand.fg">پاسخ فروشنده</Text>
                 <Text fontSize="sm" color="fg.muted" textAlign="start">{vendorReply}</Text>
               </Flex>
-              {/* edit/delete — LAST = چپ. ترتیب: ویرایش FIRST=راست، حذف LAST=چپ */}
+              {/* edit/delete — LAST = چپ، ترتیب: ویرایش FIRST=راست، حذف LAST=چپ.
+                  ghost بدون پس‌زمینه (طبق fetch جدید Vendor-Reply، نه subtle باکس‌دار قبلی) */}
               <Flex gap="2" align="center" flexShrink={0}>
-                <IconButton aria-label="ویرایش پاسخ" size="xs" variant="subtle" colorPalette="teal" onClick={onEditReply}>
+                <IconButton aria-label="ویرایش پاسخ" size="2xs" variant="ghost" colorPalette="teal" onClick={onEditReply}>
                   <Pencil size={14} />
                 </IconButton>
-                <IconButton aria-label="حذف پاسخ" size="xs" variant="subtle" colorPalette="red" onClick={onDeleteReply}>
+                <IconButton aria-label="حذف پاسخ" size="2xs" variant="ghost" colorPalette="red" onClick={onDeleteReply}>
                   <Trash2 size={14} />
                 </IconButton>
               </Flex>
@@ -185,43 +179,62 @@ export function CommentCard({
         )}
       </Flex>
 
-      {/* ── Footer ── < sm: ستونی (دکمه‌ها زیر like/dislike) · ≥ sm: ردیفی */}
-      <Flex
-        bg="bg.muted" px="4" py="2" gap="3"
-        direction={{ base: 'column', sm: 'row' }}
-        align={{ base: 'stretch', sm: 'center' }}
-        justify="space-between"
-      >
-        {/* counts — راست (RTL start). لایک=success، دیسلایک=error */}
-        <Flex gap="4" align="center" justify="start">
-          <ReactionCount icon={<ThumbsUp size={16} />} value={likes} color="fg.success" />
-          <ReactionCount icon={<ThumbsDown size={16} />} value={dislikes} color="fg.error" />
-        </Flex>
+      {/* ── Footer — بدون شمارندهٔ لایک/دیسلایک، فقط CTA. flex-wrap برای موبایل ──
+          وقتی showInput فعاله، انصراف/ثبت دقیقاً جای همون سه دکمهٔ پایین می‌شینن. */}
+      <Flex bg="bg.subtle" px="4" py="2" gap="2" justify="end" flexWrap="wrap">
+        {showInput && (
+          /* انصراف (اول/راست‌ترین) · ثبت (آخر/چسبیده چپ، primary) — هم‌ترتیب بقیهٔ حالت‌ها */
+          <>
+            <Button variant="ghost" size="sm" onClick={editing ? onCancelEdit : onCancelReply}>انصراف</Button>
+            <Button
+              size="sm" bg="brand.solid" color="brand.contrast"
+              _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }}
+              onClick={editing ? onSubmitEdit : onSubmitReply}
+            >
+              ثبت
+            </Button>
+          </>
+        )}
 
-        {/* CTA — < sm: fill (دکمه‌ها هم‌عرض) · ≥ sm: راست-معمولی. primary LAST = چپ */}
-        <Flex gap="2" align="center" w={{ base: 'full', sm: 'auto' }}>
-          {archived ? (
-            <>
-              <Button
-                size="sm" bg="brand.solid" color="brand.contrast"
-                _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }}
-                flex={{ base: '1', sm: 'initial' }}
-                onClick={onRestore}
-              >
-                انتقال به تایید شده
-              </Button>
-              <Button variant="outline" size="sm" colorPalette="red" color="fg.error" flex={{ base: '1', sm: 'initial' }} onClick={onDelete}>حذف</Button>
-            </>
-          ) : (
-            <>
-              {!vendorReply && !replying && !editing && (
-                <Button variant="outline" size="sm" flex={{ base: '1', sm: 'initial' }} onClick={onReply}>پاسخ</Button>
-              )}
-              <Button variant="outline" size="sm" flex={{ base: '1', sm: 'initial' }} onClick={onArchive}>آرشیو</Button>
-              <Button variant="outline" size="sm" colorPalette="red" color="fg.error" flex={{ base: '1', sm: 'initial' }} onClick={onDelete}>حذف</Button>
-            </>
-          )}
-        </Flex>
+        {status === 'pending' && !showInput && (
+          <>
+            {/* حذف(اول/راست‌ترین کلاستر) → آرشیو(وسط) → تایید(آخر/چسبیده چپ، primary) */}
+            <Button variant="ghost" size="sm" color="fg.error" onClick={onDelete}>حذف</Button>
+            <Button variant="outline" size="sm" onClick={onArchive}>آرشیو</Button>
+            <Button size="sm" bg="brand.solid" color="brand.contrast" _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }} onClick={onApprove}>
+              تایید
+            </Button>
+          </>
+        )}
+
+        {status === 'verified' && !showInput && !vendorReply && (
+          <>
+            <Button variant="ghost" size="sm" color="fg.error" onClick={onDelete}>حذف</Button>
+            <Button variant="outline" size="sm" onClick={onArchive}>آرشیو</Button>
+            <Button size="sm" bg="brand.solid" color="brand.contrast" _hover={{ bg: 'brand.emphasized', color: 'brand.fg' }} onClick={onReply}>
+              پاسخ
+            </Button>
+          </>
+        )}
+
+        {status === 'verified' && !showInput && !!vendorReply && (
+          /* Replied — بدون primary، فقط حذف(راست‌ترین) → آرشیو(چسبیده چپ) */
+          <>
+            <Button variant="ghost" size="sm" color="fg.error" onClick={onDelete}>حذف</Button>
+            <Button variant="outline" size="sm" onClick={onArchive}>آرشیو</Button>
+          </>
+        )}
+
+        {status === 'archived' && (
+          <>
+            <Button variant="ghost" size="sm" color="fg.error" onClick={onDelete}>حذف</Button>
+            <Button variant="outline" size="sm" onClick={onRestore}>انتقال به تایید شده</Button>
+          </>
+        )}
+
+        {status === 'deleted' && (
+          <Button variant="outline" size="sm" onClick={onRestoreArchive}>انتقال به آرشیو</Button>
+        )}
       </Flex>
     </Box>
   )

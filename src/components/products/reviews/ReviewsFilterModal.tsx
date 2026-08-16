@@ -6,8 +6,8 @@ import { ratingCollection } from './data'
 interface ReviewsFilterModalProps {
   open: boolean
   onClose: () => void
-  /** تب آرشیو — سوییچ «پاسخ داده شده» را مخفی می‌کند */
-  archived?: boolean
+  /** فقط تب «تایید شده» — سوییچ «پاسخ داده شده» معنا داره (بقیهٔ تب‌ها vendorReply ندارن) */
+  showRepliedFilter?: boolean
 }
 
 /** سوییچ ردیف — Switch FIRST (راست) · label LAST (چپ) */
@@ -24,7 +24,7 @@ function FilterSwitch({ label }: { label: string }) {
 }
 
 /** مودال فیلتر نظرات — فقط در حالت mobile/compact باز می‌شود. */
-export function ReviewsFilterModal({ open, onClose, archived = false }: ReviewsFilterModalProps) {
+export function ReviewsFilterModal({ open, onClose, showRepliedFilter = false }: ReviewsFilterModalProps) {
   return (
     <Dialog.Root open={open} onOpenChange={(e) => { if (!e.open) onClose() }} placement="center">
       <Portal>
@@ -62,7 +62,7 @@ export function ReviewsFilterModal({ open, onClose, archived = false }: ReviewsF
                 </Select.Positioner>
               </Select.Root>
 
-              {!archived && <FilterSwitch label="پاسخ داده شده" />}
+              {showRepliedFilter && <FilterSwitch label="پاسخ داده شده" />}
               <FilterSwitch label="شامل تصویر" />
             </Dialog.Body>
 
