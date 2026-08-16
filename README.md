@@ -4,8 +4,10 @@
 
 ## Stack
 
-- React 19 + Next.js 16 (App Router) + TypeScript
-- Chakra UI v3 + `@chakra-ui/charts`
+- React 19 + Next.js 16 (App Router, Turbopack) + TypeScript
+- Chakra UI v3 + `@chakra-ui/charts` (Recharts)
+- TanStack Query v5 + axios — data layer
+- lucide-react — آیکون‌ها · Tiptap — ادیتور متن غنی
 - RTL / Vazirmatn font
 - pnpm
 
@@ -14,13 +16,17 @@
 ```bash
 pnpm install
 cp .env.example .env.local   # NEXT_PUBLIC_API_BASE_URL
-pnpm dev                     # Next dev (port 5174)
+pnpm dev                     # http://localhost:3000
 ```
 
 ```bash
 pnpm build   # production build (+ type-check)
 pnpm start   # serve production build
+pnpm lint    # eslint
 ```
+
+> پورت ۵۱۷۴ فقط مربوط به preview داخل Claude است (`.claude/launch.json` → `vitrina-dev`)؛
+> `pnpm dev` در ترمینال روی پورت پیش‌فرض Next بالا می‌آید.
 
 > **Routing:** file-based در `src/app/**/page.tsx` (هر page یه wrapper نازک که کامپوننت `src/views/*` رو render می‌کنه). جزئیات معماری Next در [CLAUDE.md](CLAUDE.md#nextjs--app-router-conventions-اجباری).
 
@@ -45,8 +51,8 @@ pnpm start   # serve production build
 | `/products/list` | لیست محصولات — بازطراحی‌شده (KPI آیکون‌دار، فیلتر ساده‌شده + دیالوگ فیلترها، بج فیلتر فعال، جدول + کارت موبایل). نسخهٔ قدیم `list2` داخلش merge شد؛ Sidebar «لیست محصولات» به این اشاره می‌کنه |
 | `/products/new` | افزودن محصول جدید (مرحله‌ای: اطلاعات / گالری / تنوع‌ها) |
 | `/products/categories` | دسته‌بندی محصولات |
-| `/products/reviews` | نظرات محصولات |
-| `/orders/list` | لیست سفارش‌ها |
+| `/products/reviews` | نظرات محصولات — تب‌های `enclosed` با ۴ وضعیت (در انتظار / تأییدشده / بایگانی / حذف‌شده، بج شمارش فقط روی «در انتظار»)، کارت نظر با پاسخ فروشنده (ثبت/ویرایش/حذف) + دیالوگ فیلتر |
+| `/orders/list` | لیست سفارش‌ها — هم‌معماری با لیست محصولات (KPI، `FilterBar` + دیالوگ فیلترها، منوی مرتب‌سازی)، جدول راه‌راه + کارت موبایل |
 | `/orders/new` | ایجاد سفارش دستی — ویزارد ۵مرحله‌ای کامل (مشتری/محصول/ارسال/تخفیف/ثبت و ایجاد لینک) |
 | `/orders/[orderId]` | جزئیات سفارش |
 | `/orders/[orderId]/print-label` | پرینت برچسب (قالب 6-ستون مرکز، چاپ‌محور) |
@@ -78,14 +84,24 @@ pnpm start   # serve production build
 ```
 src/
   app/        — Next App Router (routing فایل‌محور؛ هر page یه wrapper نازک → views/*)
-  components/ — layout/ · settings/ · ui/ (کامپوننت‌های قابل‌استفادهٔ مجدد)
-  contexts/   — ColorMode (dark mode) · CompactMode (شبیه‌سازی 512px)
   views/      — کامپوننت صفحات (توسط app/**/page.tsx render می‌شن)
-  services/   — api.ts
+  components/
+    ui/         — عمومی و بدون دامنه: DatePicker · RichTextEditor · ListPagination · NumberField · TitleBar · …
+    layout/     — Layout · Header · Navbar · Sidebar · UserMenu
+    auth/       — ورود و ثبت‌نام (AuthLayout · OtpForm · PhoneInput · PlanCard · Stepper)
+    products/   — list/ · new/ · categories/ · reviews/
+    orders/     — list/ · manual/ + کارت‌های جزئیات سفارش
+    marketing/  — campaigns/ · channels/ · promotions/
+    settings/   — info/ · categories/ · shipping/ · themes/ · domain/
+  contexts/   — ColorMode (dark mode) · CompactMode (شبیه‌سازی 512px)
+  services/   — api.ts · auth.ts · domain.ts
   theme/      — index.ts (createSystem) · tokens.ts (توکن‌های Vitrina)
-  utils/      — numbers.ts (toPersianDigits / toLatinDigits) · dates.ts (formatJalaliDate)
+  utils/      — numbers.ts (toPersianDigits / toLatinDigits) · dates.ts (formatJalaliDate) · validation.ts
   types/      — nav.ts
+  assets/     — فونت و تصاویر استاتیک
 ```
+
+> دادهٔ نمونهٔ هر بخش کنار خودش می‌ماند (`components/<domain>/**/data.ts`)، نه در یک پوشهٔ `mocks/` مرکزی.
 
 > درختِ تفصیلیِ فایل‌به‌فایل اینجا نگه‌داری نمی‌شه (سریع stale می‌شه) — ساختار واقعی رو از repo بخون.
 
