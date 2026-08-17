@@ -1,24 +1,22 @@
 # Vitrina — Handoff
-> 2026-08-16
+> 2026-08-17
 
 ## الان
-آخرین commit (`134d632`) بازسازی لیست سفارشات + OrderCard موبایل بود. از اونجا تا
-الان uncommitted (۴ فایل) — صفحهٔ «نظرات کاربران» بازسازی شد:
-- `Comment` component طبق Figma بازسازی شد: ۴ وضعیت (`pending`/`verified`/
-  `archived`/`deleted`) به‌جای boolean `archived`، فوتر بدون شمارندهٔ لایک/دیسلایک،
-  دکمه‌های فوتر solid/outline/متن‌قرمز طبق طرح، آیکون‌های پاسخ فروشنده `ghost`.
-- تب‌ها از `SegmentGroup` به `Tabs variant="enclosed"` تغییر کرد (الگو:
-  `SecuritySection.tsx`)؛ ترتیب: در انتظار تایید → تایید شده → آرشیو شده → حذف شده.
-- بج شمارنده فقط رو تب «در انتظار تایید» موند؛ رنگ بج pending=orange،
-  archived=blue.
-- زیر `md`: `Tabs.List` به‌جای wrap کردن متن، افقی اسکرول می‌خوره.
-- فیکس: وقتی «پاسخ» کلیک می‌شه، انصراف/ثبت جای همون ۳ دکمهٔ فوتر می‌شینن (نه یه
-  بلوک جدا)؛ فیکس: Avatar موبایل align=start (نه center) وقتی نام/بج به ۲ خط می‌شکنن.
+از آخرین commit (`e7ef285`، sync README) هیچ کد اپلیکیشنی عوض نشده. کارِ این session
+فقط روی مستندات بود و **uncommitted** است — در دو repo:
+- `CLAUDE.md` — بازساختاردهی: ۶۴۴→۶۰۷ خط (۵۲.۲→۴۵.۵KB). کاتالوگ ۲۳تایی باگ Chakra
+  به ۴ قاعدهٔ همیشه-لازم + جدول ایندکس ۱۴ ردیفی تبدیل شد؛ تکرارهای `w="full"`،
+  DOM-order، DatePicker، `bg.panel` حذف؛ Localization و dev-engine فشرده.
+- `dev-stack/knowledge/design-systems/chakra-ui-v3/known-bugs.md` — canonical شد:
+  ۹ باگ Vitrina-only منتقل شد، دو ورودیِ **غلط** اصلاح شد (`textAlign="right"` به‌عنوان
+  راه‌حل RTL · `bg="white"` به‌عنوان جایگزین `bg.default`)، یک ارجاع مردهٔ Combobox پر شد.
+
+→ تصمیم لایه‌بندی مستندات ثبت شد: CLAUDE.md Architectural Decisions.
 
 ## بعدی
-همین ۴ فایل commit بشه:
-`data.ts`, `CommentCard.tsx`, `ReviewsFilterModal.tsx`, `views/products/Reviews.tsx`.
-آخرین fix (Avatar alignment موبایل) هنوز preview نشده.
+commit هر دو repo (دو پیام جدا) — با skill `wf-commit`.
+⚠️ `dev-stack` دو فایل uncommitted **از قبل** هم دارد (`HANDOFF.md`,
+`scripts/check-refs.mjs`) که کار این session نیستند — قاطی نکن.
 
 ## باگ‌های open
-(چیزی گزارش نشده)
+- `CommentCard.tsx` — fix آخرِ Avatar alignment موبایل هنوز preview نشده (ship شده بدون تأیید بصری).

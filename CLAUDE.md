@@ -111,7 +111,7 @@ Figma tool fail شد؟
           → همین ستون است که فلیپ را از فرض ضمنی به تصمیم نوشته‌شده تبدیل می‌کند.
 ❌ ممنوع: در یک تصحیح، هم‌زمان ترتیب DOM و مقدار logical را عوض کنی
           → یا خنثی می‌شوند یا دوباره برعکس. هر بار فقط یک متغیر.
-✅ اجباری: حداقل یک برچسب/دکمهٔ کوتاه در جدول باشد — المان w="full" باگ جهت را پنهان می‌کند.
+✅ اجباری: حداقل یک برچسب/دکمهٔ کوتاه در جدول باشد (چرا ← § «⛔ قانون طلایی»).
 ```
 
 چرا لازم است (مکانیزم دابل-فلیپ، قانون ترجمه، استثناها):
@@ -139,10 +139,9 @@ step 4: فقط Vitrina-specific adaptation اضافه کن (RTL، icon، token)
 ✅ مجاز: snippet + swap کردن startElement/endElement برای RTL direction
 ```
 
-**⚠️ Figma DOM order ≠ RTL DOM order** → قاعده، جدول الگوها و استثنای namespace componentها
-یک‌جا در «RTL — مرجع واحد» (پایین‌تر). تکرارش نکن؛ همان یک مرجع را بخوان.
-نکتهٔ مخصوصِ این مرحله: `get_design_context` فرزندها را چپ→راست لیست می‌کند، پس
-**هرگز** ترتیب خروجی‌اش را برای یک container افقی verbatim کپی نکن — از screenshot بخوان.
+**⚠️ Figma DOM order ≠ RTL DOM order** → قاعده، جدول الگوها، استثنای namespace componentها،
+و اینکه چرا خروجی `get_design_context` را نباید verbatim کپی کرد: یک‌جا در
+«RTL — مرجع واحد» § «ترتیب DOM» (پایین‌تر). تکرارش نکن؛ همان یک مرجع را بخوان.
 
 **Component descriptions = implementation checklist (اجباری):**
 ```
@@ -194,29 +193,20 @@ point-by-point گزارش بده. چک skip‌شده = ⚠️ نه ✅.
 
 ### dev-engine CLI — اجرای صحیح (اجباری)
 
-`dev-engine` حالا **گلوبال لینک شده** (`npm link` از پکیج) و مستقیم در PATH هست:
-```bash
-dev-engine --version      # باید 0.1.0 بده
-```
-اگه یه روز `command -v dev-engine` چیزی برنگردوند (مثلاً بعد از پاک‌شدن node_modules)،
-**متوقف نشو و چک رو skip نکن** — یکی از این دو:
+**همیشه از repo root با `path="."`.** آرگومان `path` هم‌زمان root اسکن **و** root حل‌کردن
+config است (`.dev-engine.json`, `.claude/context/figma-resolve.json`) — با subdirectory،
+configها silently پیدا نمی‌شوند.
+
+گلوبال لینک شده است (`dev-engine --version` → `0.1.0`). اگر نبود، **چک را skip نکن**:
 ```bash
 cd ~/Documents/GitHub/dev-stack/packages/dev-engine && npm run build && npm link
-# یا مستقیم:
-node ~/Documents/GitHub/dev-stack/packages/dev-engine/dist/cli.js <args>
 ```
-> سابقه: 1404 — اسکیل‌ها `command -v dev-engine || "به کاربر بگو نصب کنه و stop"` داشتن؛
-> چون لینک نبود، یه session کامل بدون هیچ چکی کد زد و بعداً معلوم شد pipeline اجرا نشده.
 > **قانون: step اجرا نشد → یا درستش کن، یا به کاربر بگو. هیچ‌وقت بی‌صدا رد نشو.**
+> (سابقه 1404: یک session کامل بدون هیچ چکی کد زد چون لینک نبود و skip بی‌صدا شد.)
 
-**⚠️ gotcha:** آرگومان `path` هم‌زمان هم root اسکن فایل‌هاست هم root حل‌کردن config
-(`.dev-engine.json`, `.claude/context/figma-resolve.json`). اگه یه subdirectory بدی نه repo
-root، configها silently پیدا نمی‌شن. **همیشه از repo root با `path="."` اجرا کن.**
-
-**چه چیزی را همچنان می‌گیرد:** `one-align-idiom` (مقدار فیزیکی چیدمان) · `dom-order` (آیکن
-بعد از متن) · `icon-direction` · `persian-numerals` · hardcode رنگ/spacing.
-**چه چیزی را نمی‌گیرد:** اینکه `start` درست است یا `end`، و اینکه ساختار با طرح می‌خواند
-یا نه → آن دو فقط با مقایسهٔ preview (بخش «تطابق با طرح فیگما»).
+**می‌گیرد:** `one-align-idiom` · `dom-order` · `icon-direction` · `persian-numerals` · hardcode.
+**نمی‌گیرد:** اینکه `start` درست است یا `end`، و اینکه ساختار با طرح می‌خواند یا نه →
+فقط مقایسهٔ preview (§ «تطابق با طرح فیگما»).
 
 ---
 
@@ -243,9 +233,8 @@ const box = (n) => `l=${Math.round(n.getBoundingClientRect().left)} r=${Math.rou
 // راست‌چین درست = r عنصر == r پنل  ·  چپ‌چین = l عنصر == l پنل
 ```
 
-> ⚠️ عنصری که `w="full"` دارد جابه‌جا نمی‌شود؛ فقط عناصر کوتاه (برچسب، دکمه، فیلد با maxW)
-> باگ جهت را نشان می‌دهند. این و بقیهٔ تله‌ها + تاریخچهٔ incidentها ←
-> § «⛔ قانون طلایی» پایین‌تر (**تنها** جای درس‌ها؛ اینجا تکرار نمی‌شود).
+> ⚠️ **کدام عناصر را بسنجی، و تله‌های این مقایسه** ← § «⛔ قانون طلایی» پایین‌تر
+> (**تنها** جای درس‌ها و تاریخچه؛ اینجا تکرار نمی‌شود).
 
 **چرا این بخش وجود دارد:** `dev-engine` و type-check می‌سنجند «کد با آنچه *من گفتم*
 درست است می‌خواند؟» — وقتی خودِ فهم من معکوس باشد، همه سبز می‌مانند. فقط مقایسه با
@@ -277,6 +266,7 @@ const box = (n) => `l=${Math.round(n.getBoundingClientRect().left)} r=${Math.rou
 | Jalali DatePicker | `src/components/ui/DatePicker.tsx` — دستی با `Intl.DateTimeFormat('...-ca-persian-nu-latn')`، صفر کتابخانهٔ خارجی | هیچ پکیج jalali/date در پروژه نبود؛ ICU خودش leap-year/طول ماه رو حساب می‌کنه، پس نیازی به پیاده‌سازی الگوریتم تقویم یا اضافه‌کردن dependency نیست |
 | چیدمان RTL | یک idiom (`start`/`end`) + سمت از **مقایسهٔ screenshot طرح با preview** تأیید می‌شود، نه از خروجی کد فیگما و نه با استدلال ذهنی | چهار incident (1404/05/12 ×۲، 05/17، 05/09) همه از قضاوت دستی آمدند؛ لایه‌های متنی هر بار سبز بودند. جزئیات: «RTL — مرجع واحد» |
 | گیت چیدمان | hook `Stop` → `.claude/hooks/rtl_gate.py` (`dev-engine --changed`، ~۰.۳s) | فقط مقادیر فیزیکی (`flex-end`, `mr`, …) را می‌گیرد — ارزان و بی‌دردسر، ولی جهتِ درست را تشخیص نمی‌دهد |
+| لایه‌بندی مستندات | **CLAUDE.md = قانون همیشه-لازم + ایندکس، نه کاتالوگ.** متن کامل باگ‌های Chakra → shared `known-bugs.md` (canonical) · باگ project-specific → `.claude/context/known-bugs.md` · توکن و breakpoint → همین‌جا canonical (در `project-context.md` تکرار **نشود**) | 1405/05/26 — کاتالوگ کامل در CLAUDE.md هر پیام لود می‌شد. ولی حذف کامل هم غلط است: اگر ندانی باگ وجود دارد، دنبالش نمی‌گردی → ایندکسِ «اسم + علامت» می‌ماند، متن کامل نه. ⚠️ توکن‌ها قبلاً یک‌بار به project-context منتقل شدند و drift کردند (`focusRing`/`border`) — تکرار نکن |
 
 ### Next.js — App Router conventions (اجباری)
 
@@ -286,6 +276,7 @@ const box = (n) => `l=${Math.round(n.getBoundingClientRect().left)} r=${Math.rou
 - **`'use client'` boundary:** wrapperهای `page.tsx` همگی `'use client'` دارند → کامپوننت‌های `src/views/*` و فرزندانشان خودکار client می‌شوند (نیازی به افزودن `'use client'` به هر فایل view نیست). Providerها (`src/app/providers.tsx`) و `Layout.tsx` هم `'use client'`.
 - **Providers:** `ChakraProvider → LocaleProvider(fa-IR) → ColorModeProvider → QueryClientProvider` در `src/app/providers.tsx`. root layout: `src/app/layout.tsx`.
 - **Navigation:** `next/link` (prop `href`، نه `to`) + `next/navigation` (`useRouter().push()`، `usePathname()`، `useSearchParams()`). react-router استفاده نمی‌شود. NavLink active = مقایسه‌ی دستی با `usePathname()`. انتقال state بین صفحات = query params (نه router state).
+  - ⚠️ `Text`/`Flex` چاکرا prop `href` نمی‌گیرند → برای ناوبری داخلی با `next/link` بپیچ (لوگو، breadcrumb). الگو: `SettingCard` با `<Box as={Link} href=...>`.
 - **Assets:** import کردن هر تصویر (`.svg` و `.png/.jpg`) → `StaticImageData` object (نه string). برای استفاده در `<img>`/`<Image>` باید `.src` بگیری: `src={logo.src}`. ⚠️ Next نوع `.svg` import رو `any` می‌ده پس type-check **خطا نمی‌ده** ولی runtime object است → یادت باشه `.src`. (الگو: `Navbar.tsx`، `data.ts`، `Categories.tsx`.)
 - **Env:** `process.env.NEXT_PUBLIC_*` (نه `import.meta.env`). نمونه: `NEXT_PUBLIC_API_BASE_URL` در `.env.local`.
 - **type-check:** `npx tsc --noEmit` یا `pnpm build` (Next موقع build هم type-check می‌کند). `tsconfig.app.json` حذف شده — فقط `tsconfig.json`.
@@ -359,7 +350,8 @@ start = راست        end = چپ
 3. آخرش با screenshot preview مقایسه کن (بخش «تطابق با طرح فیگما»)
 ```
 خروجی کد Figma فقط مرجع style/token است، نه ساختار ردیف‌های افقی — canvas فیگما
-همیشه LTR است، پس کپی verbatim ترتیبش = layout آینه‌ای.
+همیشه LTR است و `get_design_context` فرزندها را چپ→راست لیست می‌کند، پس کپی verbatim
+ترتیبش = layout آینه‌ای. ترتیب را از **screenshot** بخوان، نه از خروجی کد.
 
 **استثنا:** namespace componentهای چاکرا (Table, Pagination, Steps, Select, Menu…) خودشان
 `dir="rtl"` ست می‌کنند — داخلشان reorder نکن. قاعده فقط برای `Box`/`Flex`/`Grid` ساده است.
@@ -439,31 +431,33 @@ start = راست        end = چپ
 
 ---
 
-### Chakra v3 Known Issues
+### Chakra v3 — قواعد همیشه-لازم (این چهارتا را از بر باش)
 
-- `lineHeight="8"` → **BROKEN** — resolves to unitless CSS `line-height: 8` = 8× font-size (e.g. 8×24px = 192px!). Use ratio strings instead: `lineHeight="1.333"` for 32px at 2xl, `lineHeight="1.14"` for 32px at 3xl. Never use numeric lineHeight tokens.
-- `bg="bg.default"` → **BROKEN** (CSS var resolves to transparent). Use `bg="bg"` instead
-- `bg="white"` روی کارت/پنل → **hardcode، dark mode رو می‌شکنه** (white در dark هم white می‌مونه). به‌جاش `bg="bg.panel"` (white در light، gray.950 در dark). سابقه: 1404 — چهار صفحهٔ auth (`AuthLayout`, `SignupLayout`, `SignupPreparingView`, `SignupDoneView`) با `bg="white"` ship شدن، در dark mode کارت روشن موند تا کشف و فیکس شد.
-- `bg="bg.subtle"` → works (`#fafafa`)
-- Tooltip = namespace: `Tooltip.Root` / `Tooltip.Trigger asChild` / `Tooltip.Content`
-- `Text` and `Flex` don't accept `href` prop → for internal navigation wrap with `next/link` (`<Link href=...>`), e.g. logo/breadcrumb. (`SettingCard` uses `<Box as={Link} href=...>`.)
-- `useColorMode` → **DOES NOT EXIST** in Chakra v3. Use `useColorMode` from `@/contexts/ColorModeContext` instead
-- Dark mode: toggle `.dark` class on `document.documentElement` (NOT a wrapper div) — Portal content lives outside React tree and needs the class on `<html>` to get dark tokens
-- Color mode toggle → uses `<Theme appearance="light"|"dark">` wrapper in `ColorModeProvider`; persists to `localStorage` key `vitrina-color-mode`
-- Avatar.Root / complex components → do NOT forward refs for `asChild`. Wrap in `<Box as="button" type="button">` first
-- `sx` prop → **nested selectors NOT injected** (`'& .child': {...}`, `'&:focus-within': {...}` کار نمی‌کنن). برای nested CSS از `editorProps.attributes.style` (Tiptap)، `_focusWithin` prop (Chakra)، یا `Global` از `@emotion/react` استفاده کن
-- `Combobox.Root` با `inputValue` **کنترل‌شده** + `allowCustomValue={true}` → گاهی رویداد تایپِ متن دلخواه (که با هیچ آیتمی مطابقت ندارد) گم می‌شود و ورودی کاربر ثبت نمی‌شود. راه‌حل: `defaultInputValue` (uncontrolled) به‌جای `inputValue` + خواندن مقدار لحظهٔ ثبت مستقیم از DOM (`ref`)، نه از React state. برای reset از بیرون (بعد از ثبت) از `key` جدید برای remount استفاده کن، نه پاک‌کردن state کنترل‌شده. الگو: `src/components/products/new/VariantAccordion.tsx` (`SuggestCombobox`)
-- `PinInput.Root autoFocus` باید روی **Root** باشه، نه `autoFocus` روی `PinInput.Input` (native HTML attribute) — وگرنه با hydration Next.js race می‌کنه و machine در state `idle` گیر می‌کنه (فقط خانهٔ اول پر می‌شه، بقیه advance نمی‌کنن). جزئیات: `design-systems/chakra-ui-v3/known-bugs.md`
-- `PinInput` با `type="numeric"` ارقام فارسی (۰-۹) رو کامل reject می‌کنه (نه فقط نمایش اشتباه) — برای فیلد OTP باید `pattern="^[0-9۰-۹]+$"` بدی + در `onValueChange` با `toLatinDigits` نرمالایز کنی. الگو: `src/components/auth/OtpForm.tsx`
-- Flex ستونی با `justify="center"` که تنها فرزندش `flex="1"` داره → `justify` بی‌اثر می‌شه (فرزند تمام فضا رو می‌بلعه، چیزی برای centering نمی‌مونه). باید `justify` رو مستقیم روی همون فرزند flex=1 هم بذاری. الگو: `src/components/auth/AuthLayout.tsx` (`centerContent` prop)
-- `Steps.Root orientation="vertical"` → رسیپی پیش‌فرضش `height:100%` است؛ اگه پنل والد stretch شده باشه (`align="stretch"`)، آیتم‌ها (`flex:1 0 0`) کل ارتفاع پنل رو مساوی تقسیم می‌کنن و خط رابط (`separator`) خیلی کشیده می‌شه. فیکس: `h="auto"` روی `Steps.Root` (override رسیپی) + یه `Box flex="1"` spacer بعدش که فضای اضافه رو جذب کنه. الگو: `src/components/auth/SignupStepper.tsx`
-- `Steps.Status` بدون prop `current` → قدم فعلی رو با عدد **لاتین** رندر می‌کنه (fallback به `incomplete` نمی‌ره). باید `current` رو صریح بدی (مثلاً `current={toPersianDigits(i+1)}`) وگرنه فقط قدم‌های غیرفعال فارسی می‌شن.
-- `InputGroup` با `startElement`/`endElement` متنی (نه آیکون کوچیک) → فرمول پیش‌فرض padding (`ps`/`pe` بر اساس `var(--input-height)`) برای متن عریض‌تر از یک آیکون کافی نیست و متن ورودی با دکوریشن overlap می‌کنه. باید `ps`/`pe` رو دستی روی `<Input>` ست کنی متناسب با عرض واقعی متن (اندازه‌گیری با `getBoundingClientRect`). الگو: `src/views/auth/SignupBasicInfoView.tsx` (فیلد آدرس اختصاصی فروشگاه، `https://`/`.vitrinaa.shop`)
-- `Progress.Root striped` → **BROKEN** (نسخهٔ `3.35.0`) — recipe داخلی `--stripe-color` رو با مقدار conditional (`_light`/`_dark`) روی یه CSS custom property ست می‌کنه که resolve نمی‌شه (computed value خالی → `backgroundImage` invalid → `none`). فیکس: `backgroundImage`/`backgroundSize` رو مستقیم روی `<Progress.Range>` بده + override با `_dark` (نه custom property). جزئیات: `design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/views/auth/SignupPreparingView.tsx`
-- `position="fixed"` + centering با `left:"50%"` + `transform:"translateX(-50%)"` → اگه `left` رو با `insetInlineStart` (منطقی) بدی، در RTL به `right` تبدیل می‌شه و فرمول centering (که فیزیکی و جهت‌مستقله) بهم می‌ریزه — عنصر به‌جای وسط، به چپ صفحه پرت می‌شه. باید `left` فیزیکی باشه. **راه‌حل ساده‌تر و ترجیحی:** وقتی عرض باید «fill» بمونه (نه یک maxW ثابت)، اصلاً از `left+transform` استفاده نکن — `insetInlineStart`/`insetInlineEnd` رو با مقدار **یکسان** (مثلاً هر دو `'4'`) بده؛ چون مقدار دو طرف برابره، منطقی/فیزیکی فرقی نداره و عرض خودش از فاصلهٔ دو لبه محاسبه می‌شه (با کوچک‌شدن ویوپورت خودش کوچیک می‌شه، بدون نیاز به `maxW`/`w`/`transform`). الگو: `src/components/orders/manual/ManualOrderFooter.tsx`
-- `RadioCard.Root value={x ?? undefined}` → **کنترل‌شده به‌درستی پاک نمی‌شه** — `undefined` برای RadioGroup زیرینِ zag یعنی uncontrolled، پس یه بار انتخاب‌شده دیگه با state بیرونی پاک نمی‌شه (مثلاً دکمهٔ «حذف» state رو null می‌کنه ولی کارت هنوز checked می‌مونه). باید `value` رو مستقیم (با نوع `string | null`) پاس بدی، نه با `?? undefined`. جزئیات: `design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/components/orders/manual/DiscountSelectPanel.tsx`
-- `direction` prop روی هر کامپوننتی جز `Flex`/`Stack` (مثل `RadioCard.ItemControl`, `Grid`) → **بی‌صدا drop می‌شه**، چون ترجمهٔ `direction`→`flexDirection` فقط داخل `Flex`/`Stack` هست، نه یه shorthand عمومیِ style-system. همیشه `flexDirection` بنویس. جزئیات: `design-systems/chakra-ui-v3/known-bugs.md`. الگو: `src/components/orders/manual/DiscountSelectPanel.tsx`
-- `Popover.Trigger asChild` + `<Box as="button">` → **type error** (`disabled`/`type` روی نوع props وجود نداره، چون `as` فقط تگ رندرشده رو عوض می‌کنه نه inference تایپ‌اسکریپت). به‌جاش استایل رو مستقیم روی خودِ `Popover.Trigger` بده (بدون `asChild`) — چون `PopoverTriggerProps` از `HTMLChakraProps<"button">` ارث می‌بره و خودش یه دکمهٔ استایل‌پذیره. الگو: `src/components/ui/DatePicker.tsx`
+- **`lineHeight` عددی BROKEN** — `lineHeight="8"` یعنی unitless `line-height:8` = ۸× font-size (۱۹۲px!). همیشه ratio string: `"1.333"` برای 32px در `2xl`، `"1.14"` برای 32px در `3xl`.
+- **سطوح (کارت/پنل/`SegmentGroup.Indicator`/Drawer) = `bg="bg.panel"`.** `bg="bg.default"` BROKEN (به transparent resolve می‌شود) · `bg="white"` توکن معتبر است ولی در dark هم white می‌ماند و **هیچ gate‌ای نمی‌گیردش** · `bg="bg.subtle"` سالم (`#fafafa`) · `bg="bg"` برای سطح صفحه.
+- **Color mode — setup این پروژه:** `useColorMode` در Chakra v3 **وجود ندارد** → از `@/contexts/ColorModeContext`. `ColorModeProvider` با `<Theme appearance="light"|"dark">` wrap می‌کند و در `localStorage` key `vitrina-color-mode` ذخیره می‌شود. کلاس `.dark` روی `document.documentElement` toggle می‌شود، **نه** روی wrapper div — Portal بیرون درخت React است و توکن dark را فقط از `<html>` می‌گیرد.
+- **رنگ سطوح = توکن semantic، نه palette خام** — `brand.bg` نه `teal.50`. در light هم‌هگزند، در dark فقط semantic ادپت می‌کند. (تکرارِ عملیِ «Token mapping» در Figma Protocol؛ چون خارج از Tier 2 هم اتفاق می‌افتد.)
+
+### Chakra v3 — کاتالوگ باگ‌ها (ایندکس؛ متن کامل + fix در shared)
+
+📖 **`design-systems/chakra-ui-v3/known-bugs.md`** — canonical. زیر فقط ایندکس است تا **بدانی وجود دارد**؛ به یکی برخوردی، آن فایل را باز کن. سابقه و الگوی Vitrina همان‌جا ثبت شده.
+
+| کامپوننت | علامت |
+|---|---|
+| `PinInput` | `autoFocus` روی `Input` (نه `Root`) → فقط خانهٔ اول پر می‌شود · `type="numeric"` ارقام فارسی را کامل reject می‌کند |
+| `Steps` | `orientation` به‌صورت responsive object → variant leak · vertical با پنل stretch → separator کشیده · `Steps.Status` بدون `current` → رقم لاتین |
+| `RadioCard` | `value={x ?? undefined}` → انتخاب پاک نمی‌شود · border روی `Item` نه `ItemControl` (وگرنه دو خط) |
+| `Combobox` | `inputValue` کنترل‌شده + `allowCustomValue` → ورودی دلخواه گم می‌شود |
+| `Progress` | `striped` بی‌اثر (`--stripe-color` resolve نمی‌شود) |
+| `InputGroup` | `startElement`/`endElement` **متنی** → padding پیش‌فرض کم است، متن overlap می‌کند |
+| `Popover.Trigger` | `asChild` + `<Box as="button">` → type error؛ استایل را مستقیم روی Trigger بده |
+| `Avatar.Root` | برای `asChild` ref فوروارد نمی‌کند → اول در `<Box as="button">` بپیچ |
+| `Tooltip` | namespace است: `Tooltip.Root` / `.Trigger asChild` / `.Content` |
+| `Select`/`Menu` | داخل `Dialog scrollBehavior="inside"` → `Positioner` را `Portal` کن |
+| `sx` prop | selector تودرتو (`'& .child'`, `'&:focus-within'`) inject نمی‌شود |
+| `direction` prop | جز روی `Flex`/`Stack` بی‌صدا drop می‌شود → همیشه `flexDirection` |
+| `position="fixed"` | centering با `insetInlineStart:50%` در RTL می‌شکند → دو لبه با مقدار یکسان |
+| `Flex` ستونی | `justify="center"` با تنها فرزندِ `flex="1"` بی‌اثر است |
 
 ---
 
@@ -509,7 +503,7 @@ function MyPage() {
 - `isCompact=true` → panel pt/px = `'4'` (16px)، **pb همیشه `'6'` (24px)**
 - `Layout.tsx` provider رو wrap می‌کنه — نیازی به Provider اضافه در page نیست
 - هر sub-component داخل page (مثل Tab functions) هم باید `useCompactMode()` بگیره اگه grid داره
-- SegmentGroup.Indicator → `bg="bg.panel"` (white در light، gray.950 در dark) — `bg="white"` dark mode رو می‌شکنه، `bg.default` broken
+- سطوح (`SegmentGroup.Indicator`، کارت، پنل) → `bg="bg.panel"` — چرایی ← § «Chakra v3 — قواعد همیشه-لازم»
 
 **⚠️ isCompact = toggle، نه real viewport detection:**
 `isCompact` فقط برای شبیه‌سازی 512px در desktop هست. روی موبایل واقعی همیشه `false` است.
@@ -527,19 +521,9 @@ direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
 
 ### viewport-based mobile detection (برای behavior، نه layout)
 
-وقتی behavior (نه فقط layout) باید در موبایل واقعی تغییر کنه — مثل نمایش دکمه بدون hover:
-
-```tsx
-const [isMobile, setIsMobile] = useState(false)
-useEffect(() => {
-  const check = () => setIsMobile(window.innerWidth < 480)
-  check()
-  window.addEventListener('resize', check)
-  return () => window.removeEventListener('resize', check)
-}, [])
-```
-
-`isCompact` برای این کار مناسب نیست — روی موبایل واقعی همیشه `false` است.
+وقتی **behavior** (نه چیدمان) باید در موبایل واقعی فرق کند — مثلاً دکمه‌ای که بدون hover
+باید دیده شود — یک `useState` + `useEffect` روی `window.innerWidth < 480` با listener
+`resize` بگذار. `isCompact` برای این کار مناسب نیست (روی موبایل واقعی همیشه `false`).
 
 ### TitleBar — wrapping rule
 
@@ -556,38 +540,18 @@ useEffect(() => {
 
 ### Localization — اعداد و تاریخ فارسی (اجباری)
 
-#### قانون کلی
 ```
-user میبینه؟ → فارسی
-code میخونه؟ → انگلیسی (API، محاسبات، ID، URL)
+user میبینه؟ → فارسی        code میخونه؟ → انگلیسی
 ```
 
-#### Persian Numbers
-همه اعداد display باید از utility رد بشن:
-
-```ts
-// src/utils/numbers.ts
-toPersianDigits(n: number | string): string  // برای نمایش
-toLatinDigits(s: string): string             // برای input → API
-```
-
-**اعداد انگلیسی مجاز (هرگز convert نکن):**
-- `<input>` value — ارسال به API
-- API request/response
-- محاسبات (`parseFloat`, `parseInt`)
-- IDs، کدها (`SKU-123`)، URLs
-
-**اعداد فارسی اجباری:**
-- قیمت، تعداد، موجودی — هر عدد visible به کاربر
-- pagination، آمار، جداول
-
-#### Persian Calendar
-همه تاریخ‌های نمایشی باید Jalali (شمسی) باشن:
-- locale: `fa-IR-u-ca-persian` (نه فقط `fa-IR`)
-- هر جا `Date` نمایش داده میشه باید این locale استفاده بشه
-
-> **وضعیت:** `src/utils/numbers.ts` ساخته شده — `toPersianDigits` + `toLatinDigits` موجود.
-> **DatePicker:** `src/components/ui/DatePicker.tsx` — تقویم جلالی سفارشی، **بدون کتابخانهٔ خارجی** (هیچ پکیج jalali/date در dependencies نیست). محاسبات (طول ماه، سال کبیسه، تبدیل) صرفاً با `Intl.DateTimeFormat('fa-IR-u-ca-persian-nu-latn')` روی حساب روزهای میلادی — چون هر دو تقویم شمسی‌اند، جابه‌جایی روزبه‌روز با `Date.setDate` صحیحه و ICU خودش کبیسه رو حساب می‌کنه. مقدار ورودی/خروجی همچنان ISO میلادی (`YYYY-MM-DD`) است، فقط نمایش/انتخاب جلالی‌ست. `DateField` (کمپین‌ها) از این کامپوننت استفاده می‌کنه؛ برای هر فیلد تاریخ جدید همینو import کن، دوباره نساز.
+- **فارسی اجباری:** هر عددِ visible — قیمت، تعداد، موجودی، pagination، آمار، جدول.
+  از `src/utils/numbers.ts` رد کن: `toPersianDigits` (نمایش) · `toLatinDigits` (input → API).
+- **لاتین بمان (هرگز convert نکن):** `<input>` value · API request/response ·
+  محاسبات (`parseFloat`/`parseInt`) · ID و کد (`SKU-123`) · URL.
+- **تاریخ نمایشی = جلالی** — locale `fa-IR-u-ca-persian` (نه فقط `fa-IR`).
+  فیلد تاریخ = `src/components/ui/DatePicker.tsx` را import کن، دوباره نساز
+  (ورودی/خروجی همچنان ISO میلادی `YYYY-MM-DD`؛ فقط نمایش جلالی است).
+  چرایی پیاده‌سازی ← جدول «Architectural Decisions» بالاتر، ردیف *Jalali DatePicker*.
 
 ---
 
@@ -631,7 +595,7 @@ toLatinDigits(s: string): string             // برای input → API
 ## Design Scale
 
 > **همهٔ scaleها (spacing، radius، shadow، font-size/weight، line-height، layer-style، z-index، palette raw) = استاندارد Chakra v3** → `src/theme/tokens.ts` یا Chakra MCP `get_theme`.
-> ⚠️ تنها تله‌ای که باید یادت باشه (در Chakra Known Issues بالا هم هست): `lineHeight` numeric شکسته است — همیشه ratio string بده.
+> ⚠️ تنها تلهٔ این بخش: `lineHeight` عددی شکسته است ← § «Chakra v3 — قواعد همیشه-لازم».
 
 ### Breakpoints — Vitrina targets (project-specific)
 ```
