@@ -14,7 +14,7 @@ omitted:
 
 # Vitrina — Design Reference
 
-<!-- version: 1 | updated: 2026-08-21 | changelog: ساخته شد — از CLAUDE.md §Layout/§Compact/§Localization، .claude/context/project-context.md، و page-templates.md §Grid منتقل شد. بخش‌های نو: Interaction & States، Accessibility، Motion، Iconography، Do's & Don'ts. -->
+<!-- version: 2 | updated: 2026-08-21 | changelog: ساخته شد — از CLAUDE.md §Layout/§Compact/§Localization، .claude/context/project-context.md، و page-templates.md §Grid منتقل شد. بخش‌های نو: Interaction & States، Accessibility، Motion، Iconography، Do's & Don'ts. -->
 
 > **این فایل چیست:** منبع حقیقت **تصمیم‌های بصری**. «محصول باید چه شکلی باشد».
 > **این فایل چه نیست:** gate، پروتکل، قانون اجراشونده → آن‌ها در `CLAUDE.md` (always-on) هستند.
@@ -45,7 +45,7 @@ Vitrina یک **داشبورد مدیریتی متراکم** است، نه یک �
 
 این حس از این تصمیم‌های قابل‌مشاهده می‌آید:
 
-- **سطح‌بندی با border و فاصله، نه با سایه** — `boxShadow="none"` ۱۴ بار در کد صریحاً نوشته شده؛ `shadow="md"` فقط ۳ بار (overlay). این یک تصمیم است، نه تصادف.
+- **سطح‌بندی با border و فاصله، نه با سایه** — `boxShadow="none"` ۱۴ بار صریحاً نوشته شده؛ `shadow="md"` فقط ۳ بار و هر سه برای عنصر شناور. این یک تصمیم است، نه تصادف.
 - **یک رنگ برند (`teal`)** فقط برای کنش اصلی و وضعیت انتخاب‌شده — نه برای سطح بزرگ.
 - **تراکم بالا بدون خفگی:** panel `p="6"` (24px)، ستون‌ها `gap="10"` (40px).
 - **تایپوگرافی بدون تیتر تزئینی** — عنوان بزرگ marketing داخل صفحهٔ محصول نداریم.
@@ -184,11 +184,20 @@ direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
 
 | لایه | ابزار |
 |---|---|
-| panel / کارت | `borderWidth="1px"` + `borderColor="border"` — **بدون shadow** |
-| overlay (menu, popover, dialog, drawer) | `shadow="md"` |
-| تأکید درجا | `boxShadow="inset 0 0 0 1px {token}"` |
+| panel / کارت درون جریان صفحه | `borderWidth="1px"` + `borderColor="border"` — **بدون shadow** |
+| عنصر شناور روی محتوای در حال اسکرول | `shadow="md"` |
+| تأکید درجا (بدون تغییر اندازه) | `boxShadow="inset 0 0 0 1px {token}"` |
 
-⛔ سایه برای عمق تزئینی روی محتوای درون‌صفحه‌ای ممنوع.
+`shadow="md"` فقط سه جا استفاده شده و **هر سه یک الگو دارند: عنصری که روی محتوای زیرش شناور است.**
+
+| فایل | چرا |
+|---|---|
+| `ManualOrderFooter.tsx` | نوار `fixed` کف صفحه در موبایل — دسکتاپ درون جریان است و shadow ندارد |
+| `OrderSummaryAccordion.tsx` | ستون sticky خلاصهٔ سفارش |
+| `Settings.tsx` | تصویر روی بنر با `zIndex={1}` |
+
+⛔ سایه برای عمق تزئینی روی محتوای ساکن ممنوع.
+⛔ به overlay های خود DS (Menu, Popover, Dialog, Drawer) دستی shadow نده — از recipe خودشان می‌آید.
 
 ---
 
@@ -230,7 +239,7 @@ direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
 - حالت خالی و در-حال-بارگذاری اجباری است.
 
 ### EmptyState
-`EmptyState.Root` چاکرا (۹۸ استفاده در کد). هر لیست/جدول/tab که می‌تواند خالی باشد باید داشته باشد. متن باید بگوید **قدم بعدی چیست**، نه فقط «موردی نیست».
+`EmptyState.Root` چاکرا (۱۸ نمونه در ۷ فایل). هر لیست/جدول/tab که می‌تواند خالی باشد باید داشته باشد. متن باید بگوید **قدم بعدی چیست**، نه فقط «موردی نیست».
 
 ---
 
@@ -243,10 +252,10 @@ direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
 | default | ✅ | — |
 | hover | ✅ `_hover` ۸۲ بار | — |
 | active/pressed | ⚠️ `_active` فقط ۱ بار | برای هر کنترل کلیک‌شونده لازم است |
-| disabled | ⚠️ prop `disabled` ۱۹۱ بار ولی `_disabled` صفر | استایل صریح لازم است — نه اتکا به پیش‌فرض |
-| loading | ⚠️ `loading` ۵۸ بار، بدون Skeleton/Spinner استاندارد | الگوی واحد لازم است |
+| disabled | ⚠️ prop `disabled=` ۸۶ بار ولی `_disabled` صفر | استایل صریح لازم است — نه اتکا به پیش‌فرض |
+| loading | ⚠️ prop `loading=` ۱۷ بار، بدون Skeleton/Spinner استاندارد | الگوی واحد لازم است |
 | focus-visible | ❌ `_focusVisible` صفر | **شکاف a11y — پایین** |
-| empty | ✅ `EmptyState` ۹۸ بار | — |
+| empty | ✅ `EmptyState.Root` ۱۸ نمونه در ۷ فایل | — |
 | error | ✅ Alert + validation | پیام باید راه‌حل بدهد |
 
 > 📌 **TODO — تصمیم گرفته نشده:** الگوی واحد `loading` (Skeleton یا Spinner یا `loading` prop دکمه؟) و استایل `_disabled`. تا وقتی تصمیم نگرفته‌ایم، از الگوی پیش‌فرض Chakra تخطی نکن و اینجا ثبتش کن.
@@ -259,7 +268,7 @@ direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
 
 - **کنتراست:** حداقل WCAG AA (۴.۵:۱ متن، ۳:۱ عنصر کنشی و border). ترکیب رنگ سفارشی خارج از توکن‌ها ساخته نشود.
 - **کیبورد:** هر کنترل باید با Tab قابل‌رسیدن و با Enter/Space فعال‌شدنی باشد. `onClick` روی `Box`/`div` بدون `role` و `tabIndex` ممنوع.
-- **focus قابل‌دیدن:** حلقهٔ focus هرگز حذف نشود. `brand.focusRing` توکنش موجود است — استفاده شود.
+- **focus قابل‌دیدن:** حلقهٔ focus هرگز حذف نشود. `brand.focusRing` موجود است (`teal.500` در هر دو مود، `src/theme/tokens.ts:151`) — استفاده شود.
 - **معنا فقط با رنگ نه:** وضعیت (موفق/خطا/هشدار) همیشه متن یا آیکون همراه داشته باشد.
 - **پیام خطا به فیلدش وصل باشد** (`aria-describedby`)، نه فقط متن شناور.
 - **آیکون بدون label:** اگر آیکون تنها محتوای دکمه است، `aria-label` فارسی اجباری. آیکون تزئینی → `aria-hidden`.
