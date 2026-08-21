@@ -1,7 +1,7 @@
-<!-- version: 7 | updated: 2026-06-15 | changelog: «Grid System (مبنای قالب‌ها)» اضافه شد — قالب‌ها بر اساس span ستون از grid ۱۲ستونه (margin/gutter 16) تعریف می‌شن، نه px ثابت. قالب Print-Label (6 ستون مرکز = 808px) اضافه شد. -->
+<!-- version: 8 | updated: 2026-06-15 | changelog: «Grid System (مبنای قالب‌ها)» اضافه شد — قالب‌ها بر اساس span ستون از grid ۱۲ستونه (margin/gutter 16) تعریف می‌شن، نه px ثابت. قالب Print-Label (6 ستون مرکز = 808px) اضافه شد. -->
 
 # Page Templates — Vitrina Dashboard
-> همیشه همراه با `.claude/context/project-context.md` استفاده شود
+> مبنای گرید و spacing → `DESIGN.md` §Layout & Responsiveness
 
 ---
 
@@ -15,106 +15,12 @@
 
 ---
 
-## Grid System — مبنای قالب‌ها (canonical)
+## مبنا → DESIGN.md
 
-> **اصل:** قالب‌ها بر اساس **span ستون** از یک grid ۱۲ستونه روی Main تعریف می‌شن — **نه** عرض px ثابت.
-> px فقط مقدار محاسبه‌شده‌ی span در یه canvas مشخصه. در Figma این همون layout-guide ـه:
-> `Main → 12 columns · margin 16 · gutter 16 · type: Stretch`.
+گرید ۱۲ستونه، فرمول `span(N)`، ساختار لایه‌بندی (Start/Middle/End)، spacing فریم‌ها،
+و قانون panel → **`DESIGN.md` §Layout & Responsiveness** (canonical).
 
-**فرمول (هر canvas):**
-```
-content   = Main − 2×margin            (margin = 16)
-colWidth  = (content − 11×gutter) / 12  (gutter = 16)
-span(N)   = N×colWidth + (N−1)×gutter   ← عرض N ستون متوالی
-```
-
-**جدول مرجع — canvas 1920 (Main = 1664px):**
-```
-content = 1664 − 32 = 1632    |    colWidth = (1632 − 176)/12 = 121.33px
-```
-| span | px | کاربرد نمونه |
-|------|-----|-------------|
-| 3 ستون | **396** | ستون باریک کناری (End — خلاصه/یادداشت) |
-| 6 ستون | **808** | محتوای مرکز باریک (Print-Label) |
-| 9 ستون | **1220** | ستون اصلی پهن (Middle — Order Details) |
-| 9 + 3 | 1220 + 396 (+16) = 1632 | دوستونه (Order Details: راست پهن + چپ باریک) |
-
-**ترجمه به کد:**
-```tsx
-// span مرکز (مثل Print-Label = 6 ستون):
-<Flex direction="column" align="center" w="full">
-  <Box w="full" maxW="808px"> … </Box>   {/* fill زیر 808، cap بالای آن */}
-</Flex>
-
-// دو ستون نامتقارن (مثل Order Details = 9 + 3):
-<Flex gap="6" align="flex-start">       {/* gap ستون‌ها = gutter سیستم */}
-  <Box flex="1" minW="0">…</Box>         {/* Middle ~9 ستون — راست (اول DOM) */}
-  <Box w="396px" flexShrink={0}>…</Box>  {/* End 3 ستون — چپ (آخر DOM) */}
-</Flex>
-```
-- `maxW` = `span(N)` در بزرگ‌ترین canvas؛ زیر آن fill می‌شه (Stretch).
-- مرکز‌کردن: `mx="auto"` یا والد `align="center"`.
-- قالب‌های px-محورِ پایین (960/1584/…) سابقه‌ی قدیمی‌ترن؛ برای صفحات **نو** این grid مبناست.
-
----
-
-## ساختار لایه‌بندی استاندارد
-
-```
-Page
-├── Navbar                          ← fill container | محتوا max 1920px
-└── Body  [horizontal auto layout]
-    ├── Main  [vertical auto layout]
-    │   │   width: fill container
-    │   │   padding: 16px
-    │   │   gap: 16px
-    │   ├── Page-Header (component)
-    │   └── Content  [horizontal auto layout]
-    │       │   padding: 24px
-    │       │   gap: 40px
-    │       ├── Start   ← ستون راست (RTL — اول رندر می‌شود)
-    │       ├── Middle  ← ستون مرکزی (شامل کارت/panel)
-    │       └── End     ← ستون چپ
-    └── Sidebar (component)         ← width: 256px — fixed
-```
-
-### قوانین نام‌گذاری ستون‌ها در RTL
-
-| نام | موقعیت | توضیح |
-|-----|---------|-------|
-| **Start** | راست | در RTL، شروع از راست — اول رندر می‌شود |
-| **Middle** | مرکز | ستون اصلی محتوا |
-| **End** | چپ | در RTL، انتها سمت چپ |
-
----
-
-## Spacing
-
-### Main Frame
-| مشخصه | مقدار | Chakra token |
-|--------|-------|-------------|
-| padding | 16px (همه طرف) | `p="4"` |
-| gap | 16px | `gap="4"` |
-
-### Content Frame
-| مشخصه | مقدار | Chakra token |
-|--------|-------|-------------|
-| padding | 24px (همه طرف) | `p="6"` |
-| gap | 40px (بین ستون‌ها) | `gap="10"` |
-
-### عرض‌های محاسبه‌شده در canvas 1920px
-
-| لایه | محاسبه | نتیجه |
-|------|--------|-------|
-| Body | 1920 − 256 (Sidebar) | **1664px** |
-| Main | 1664 − 16×2 (padding) | **1632px** |
-| Content | 1632 − 24×2 (padding) | **1584px** |
-
-### داخل Panel
-
-> **قانون:** `bg="bg.panel"`, `borderWidth="1px"`, `borderColor="border"`, `rounded="2xl"` و `p="6"` (24px) فقط روی **panel wrapper** قرار می‌گیرد.  
-> ستون‌های داخل (Start/Middle/End) هیچ‌کدام `bg` یا `padding` ندارند.  
-> inner content داخل هر ستون میتواند padding داشته باشد — این به طراحی همان component بستگی دارد.
+این فایل فقط ۷ قالبِ ساخته‌شده روی همان گرید است.
 
 ---
 
