@@ -20,7 +20,7 @@
 |-------|------|
 | Page Templates | `.claude/context/page-templates.md` |
 | باگ‌های project-specific | `.claude/context/known-bugs.md` |
-| Context طراحی (grid، Figma variables، layout) | `.claude/context/project-context.md` |
+| **تصمیم‌های بصری** (grid، layout، responsive، a11y، motion، icon، لحن) | **`DESIGN.md`** (ریشهٔ پروژه) |
 
 ---
 
@@ -56,7 +56,7 @@ Figma tool fail شد؟
    - implementation منحرف شده از doc  → fix implementation + verify doc
 2. source رو fix کن
    - pattern پروژه‌ای  → CLAUDE.md یا `.claude/context/` همین پروژه
-     (page-templates, known-bugs پروژه‌ای, project-context)
+     (DESIGN.md, page-templates, known-bugs پروژه‌ای)
    - pattern shared  → dev-stack/knowledge/ (language, tokens, DS known-bugs, ...)
 3. همه instance‌های affected رو fix کن (نه فقط فایل جاری)
 ```
@@ -256,6 +256,18 @@ const box = (n) => `l=${Math.round(n.getBoundingClientRect().left)} r=${Math.rou
 - pnpm
 - Dev: `pnpm dev` (Next dev, Turbopack — port 5174 via `.claude/launch.json`) · Build: `pnpm build` · Serve prod: `pnpm start`
 
+### Layout shell
+
+| فایل | کاربرد |
+|------|--------|
+| `src/components/layout/Layout.tsx` | layout اصلی — navbar + sidebar + `CompactModeProvider` |
+| `src/app/layout.tsx` | تنها `layout.tsx` در App Router؛ `Layout` را از اینجا wrap می‌کند |
+
+۹۰٪+ صفحات از این layout استفاده می‌کنند. صفحات بدون layout: `/login`، `/signup/*` — چون فقط
+یک root layout هست، خودِ `Layout.tsx` با `usePathname()` تصمیم می‌گیرد navbar/sidebar را نشان
+دهد یا نه (نه با route group جدا). item های sidebar بر اساس permission/role فیلتر می‌شوند
+(vendor vs user). قواعد بصری این پوسته → `DESIGN.md` §Layout.
+
 ### Architectural Decisions
 
 | موضوع | تصمیم | چرا |
@@ -266,7 +278,7 @@ const box = (n) => `l=${Math.round(n.getBoundingClientRect().left)} r=${Math.rou
 | Jalali DatePicker | `src/components/ui/DatePicker.tsx` — دستی با `Intl.DateTimeFormat('...-ca-persian-nu-latn')`، صفر کتابخانهٔ خارجی | هیچ پکیج jalali/date در پروژه نبود؛ ICU خودش leap-year/طول ماه رو حساب می‌کنه، پس نیازی به پیاده‌سازی الگوریتم تقویم یا اضافه‌کردن dependency نیست |
 | چیدمان RTL | یک idiom (`start`/`end`) + سمت از **مقایسهٔ screenshot طرح با preview** تأیید می‌شود، نه از خروجی کد فیگما و نه با استدلال ذهنی | چهار incident (1404/05/12 ×۲، 05/17، 05/09) همه از قضاوت دستی آمدند؛ لایه‌های متنی هر بار سبز بودند. جزئیات: «RTL — مرجع واحد» |
 | گیت چیدمان | hook `Stop` → `.claude/hooks/rtl_gate.py` (`dev-engine --changed`، ~۰.۳s) | فقط مقادیر فیزیکی (`flex-end`, `mr`, …) را می‌گیرد — ارزان و بی‌دردسر، ولی جهتِ درست را تشخیص نمی‌دهد |
-| لایه‌بندی مستندات | **CLAUDE.md = قانون همیشه-لازم + ایندکس، نه کاتالوگ.** متن کامل باگ‌های Chakra → shared `known-bugs.md` (canonical) · باگ project-specific → `.claude/context/known-bugs.md` · توکن و breakpoint → همین‌جا canonical (در `project-context.md` تکرار **نشود**) | 1405/05/26 — کاتالوگ کامل در CLAUDE.md هر پیام لود می‌شد. ولی حذف کامل هم غلط است: اگر ندانی باگ وجود دارد، دنبالش نمی‌گردی → ایندکسِ «اسم + علامت» می‌ماند، متن کامل نه. ⚠️ توکن‌ها قبلاً یک‌بار به project-context منتقل شدند و drift کردند (`focusRing`/`border`) — تکرار نکن |
+| لایه‌بندی مستندات | **CLAUDE.md = قانون همیشه-لازم + ایندکس، نه کاتالوگ.** متن کامل باگ‌های Chakra → shared `known-bugs.md` (canonical) · باگ project-specific → `.claude/context/known-bugs.md` · توکن و breakpoint → همین‌جا canonical (در `DESIGN.md` تکرار **نشود**) · تصمیم بصری → `DESIGN.md` | 1405/05/26 — کاتالوگ کامل در CLAUDE.md هر پیام لود می‌شد. ولی حذف کامل هم غلط است: اگر ندانی باگ وجود دارد، دنبالش نمی‌گردی → ایندکسِ «اسم + علامت» می‌ماند، متن کامل نه. ⚠️ توکن‌ها قبلاً یک‌بار به یک فایل context منتقل شدند و drift کردند (`focusRing`/`border`) — به همین دلیل `DESIGN.md` هیچ مقدار توکنی inline ندارد، فقط ارجاع |
 
 ### Next.js — App Router conventions (اجباری)
 
@@ -461,63 +473,18 @@ start = راست        end = چپ
 
 ---
 
-### Layout
+## UI و طراحی — کجا را بخوان
 
-- Navbar: full-width (no `maxW` on outer container); controls DOM order (RTL): Min/Max | Bell | Avatar with `gap="6"` (24px)
-- Body (sidebar + content): `maxW="1920px" mx="auto"`, compact mode: `maxW="512px"`
-- Sidebar: `w="256px"` expanded, `w="16"` collapsed
-- **Sticky in-page panels (summary/step-nav columns):** Navbar خودش `position="sticky" top="0"` با `h="16"` (64px) و `zIndex="sticky"` است. هر پنل sticky دیگه‌ای زیر همون scroll container باید `top="20"` (80px = 64+16) بگیره، نه `top="4"` — وگرنه چون هر دو روی همون top=0 رقابت می‌کنن و Navbar zIndex بالاتری داره، پنل زیرِ Navbar گم می‌شه. الگوی درست از قبل در `NewProduct.tsx` (StepNav ستون) بود؛ `ManualOrderNew.tsx` (خلاصه سفارش) هم به همین اصلاح شد. ⚠️ `OrderDetails.tsx` و `GeneralInfo.tsx` هنوز `top="4"` دارن — احتمالاً همین باگ رو دارن، در صورت گزارش کاربر چک شه.
+هر task که **UI، styling، layout، responsive، a11y یا motion** را عوض می‌کند:
 
-### Compact / Mobile mode
+1. اول `DESIGN.md` (ریشهٔ پروژه) را بخوان — منبع حقیقتِ تصمیم‌های بصری.
+2. کامپوننت موجود در `src/components` را قبل از ساخت نو جست‌وجو کن.
+3. توکن استفاده کن؛ رنگ/spacing/radius نو اختراع نکن.
+4. تعارض `DESIGN.md` با کد → **کد برنده است**؛ تعارض را گزارش کن و `DESIGN.md` را اصلاح کن.
+5. الگوی reusable نو تأیید شد → `DESIGN.md` را آپدیت کن.
 
-- Compact mode (`isCompact=true`) = 512px view — behaves like mobile
-- In compact: sidebar hidden (`display="none"`), hamburger visible
-- Hamburger is grouped with logo; hamburger FIRST in DOM → appears RIGHT of logo in RTL
-- Drawer: `placement="start"` = opens from RIGHT in RTL ✓, `maxW="256px"` (same as desktop sidebar)
-- Drawer header: logo (FIRST=right) + CloseButton (LAST=left) — no title
-- Always add `dir="rtl"` to `Drawer.Positioner`
-
-### CompactMode در صفحات (اجباری برای هر page جدید)
-
-CSS media queries به **viewport** نگاه می‌کنن نه container — پس `maxW="512px"` به تنهایی کافی نیست.
-هر page که responsive grid یا padding داره باید از context استفاده کنه:
-
-```tsx
-import { useCompactMode } from '@/contexts/CompactModeContext'
-
-function MyPage() {
-  const isCompact = useCompactMode()
-
-  // Panel padding — pb همیشه '6' (24px) در همه حالت‌ها
-  pt={isCompact ? '4' : { base: '4', sm: '6' }}
-  pb="6"
-  px={isCompact ? '4' : { base: '4', sm: '6' }}
-
-  // Grid columns
-  templateColumns={isCompact ? '1fr' : { base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }}
-}
-```
-
-**قوانین:**
-- `isCompact=true` → همه grids = `'1fr'` (single column)
-- `isCompact=true` → panel pt/px = `'4'` (16px)، **pb همیشه `'6'` (24px)**
-- `Layout.tsx` provider رو wrap می‌کنه — نیازی به Provider اضافه در page نیست
-- هر sub-component داخل page (مثل Tab functions) هم باید `useCompactMode()` بگیره اگه grid داره
-- سطوح (`SegmentGroup.Indicator`، کارت، پنل) → `bg="bg.panel"` — چرایی ← § «Chakra v3 — قواعد همیشه-لازم»
-
-**⚠️ isCompact = toggle، نه real viewport detection:**
-`isCompact` فقط برای شبیه‌سازی 512px در desktop هست. روی موبایل واقعی همیشه `false` است.
-برای layout props (direction، columns، order) وقتی non-compact value هست، **باید responsive object باشه**:
-
-```tsx
-// ❌ BROKEN on real mobile — isCompact=false → direction='row' at 360px
-direction={isCompact ? 'column' : 'row'}
-
-// ✅ CORRECT — real mobile gets 'column' via base, compact mode gets 'column' direct
-direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
-```
-
-قانون: `isCompact ? X : Y` — اگه Y یه string ساده‌ست و layout-affecting (direction، templateColumns، order، display)، باید `{ base: mobile-val, breakpoint: desktop-val }` بشه.
+> import مستقیم `@DESIGN.md` عمداً استفاده **نشده**: این repo کار logic/backend هم دارد و
+> لود همیشگیِ آن، context را بی‌دلیل پر می‌کند. شرطی بخوان.
 
 ### viewport-based mobile detection (برای behavior، نه layout)
 
@@ -525,20 +492,9 @@ direction={isCompact ? 'column' : { base: 'column', lg: 'row' }}
 باید دیده شود — یک `useState` + `useEffect` روی `window.innerWidth < 480` با listener
 `resize` بگذار. `isCompact` برای این کار مناسب نیست (روی موبایل واقعی همیشه `false`).
 
-### TitleBar — wrapping rule
-
-- title و subtitle هیچ‌وقت truncate نمیشن (`whiteSpace="nowrap"` ممنوع)
-- روی صفحه‌های باریک (360px) عناوین بلند wrap میشن — این intentional است
-
-### Breadcrumb — wrap نه overflow (اجباری)
-
-- وقتی breadcrumb در فضای موجود جا نمی‌شود باید **wrap** شود به خط بعد — هرگز overflow/scroll افقی نکند.
-- پیاده‌سازی در `Header.tsx`: container breadcrumb = `flexWrap="wrap" w="full"` (نه `overflowX="auto"`، نه `flexShrink={0}`). هر crumb خودش `whiteSpace="nowrap"` است؛ شکست فقط بین crumbها.
-- container-based است → روی موبایل واقعی **و** حالت compact هر دو درست کار می‌کند (نیازی به breakpoint نیست).
-
 ---
 
-### Localization — اعداد و تاریخ فارسی (اجباری)
+### Localization — enforce (اجباری)
 
 ```
 user میبینه؟ → فارسی        code میخونه؟ → انگلیسی
@@ -546,12 +502,14 @@ user میبینه؟ → فارسی        code میخونه؟ → انگلیسی
 
 - **فارسی اجباری:** هر عددِ visible — قیمت، تعداد، موجودی، pagination، آمار، جدول.
   از `src/utils/numbers.ts` رد کن: `toPersianDigits` (نمایش) · `toLatinDigits` (input → API).
+  enforce: `dev-engine` rule `persian-numerals`.
 - **لاتین بمان (هرگز convert نکن):** `<input>` value · API request/response ·
   محاسبات (`parseFloat`/`parseInt`) · ID و کد (`SKU-123`) · URL.
-- **تاریخ نمایشی = جلالی** — locale `fa-IR-u-ca-persian` (نه فقط `fa-IR`).
-  فیلد تاریخ = `src/components/ui/DatePicker.tsx` را import کن، دوباره نساز
+- **تاریخ نمایشی = جلالی** — `src/components/ui/DatePicker.tsx` را import کن، دوباره نساز
   (ورودی/خروجی همچنان ISO میلادی `YYYY-MM-DD`؛ فقط نمایش جلالی است).
-  چرایی پیاده‌سازی ← جدول «Architectural Decisions» بالاتر، ردیف *Jalali DatePicker*.
+  چرایی ← «Architectural Decisions» بالاتر، ردیف *Jalali DatePicker*.
+
+→ لحن، label دکمه، متن پیام خطا، واحد پول → `DESIGN.md` §Product Content.
 
 ---
 

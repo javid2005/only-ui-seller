@@ -20,3 +20,14 @@ commit هر دو repo (دو پیام جدا) — با skill `wf-commit`.
 
 ## باگ‌های open
 - `CommentCard.tsx` — fix آخرِ Avatar alignment موبایل هنوز preview نشده (ship شده بدون تأیید بصری).
+
+
+---
+
+## کارهای معوق (منتقل‌شده از `.claude/context/project-context.md`، 1405/05/30)
+
+| کار | جزئیات | وضعیت |
+|-----|---------|--------|
+| Persian Numbers | `src/utils/numbers.ts` (`toPersianDigits` / `toLatinDigits`) ساخته شد | ✅ |
+| Persian Calendar | `src/components/ui/DatePicker.tsx` — جلالی، بدون کتابخانهٔ خارجی | ✅ |
+| Backend | `src/services/auth.ts` هنوز کاملاً mock است (بدون API واقعی) | ⏳ |
