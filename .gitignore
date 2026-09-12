@@ -39,3 +39,7 @@ CLAUDE.md.bak-*
 
 # dev-engine transient render dump (verify-render)
 .claude/context/render-snapshot.json
+
+# Product-editor reference material (large prototype exports, read-only)
+/reference/clean-reference-1.0/
+/reference/chakra-versions/

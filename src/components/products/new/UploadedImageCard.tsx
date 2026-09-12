@@ -1,5 +1,6 @@
 import { Box, Flex, Text, Badge, Button, IconButton } from '@chakra-ui/react'
 import { Trash2, X } from 'lucide-react'
+import { MediaThumb } from './MediaThumb'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -60,25 +61,16 @@ export function UploadedImageCard({
       align="start"
       w="full"
     >
-      {/* FIRST = rightmost: Thumbnail */}
-      <Box
+      {/* FIRST = rightmost: Thumbnail — پس‌زمینهٔ سفید + حاشیهٔ نسبی از MediaThumb */}
+      <MediaThumb
+        src={src}
+        alt={label}
         boxSize="106px"
         flexShrink={0}
         rounded="lg"
-        overflow="hidden"
-        bg="bg.subtle"
-      >
-        <img
-          src={src}
-          alt={label}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            pointerEvents: 'none',
-          }}
-        />
-      </Box>
+        borderWidth="1px"
+        borderColor="border.muted"
+      />
 
       {/* SECOND = left: Content */}
       <Flex direction="column" gap="2" flex="1" minW="0" alignSelf="stretch">

@@ -1,4 +1,5 @@
 import { createListCollection } from '@chakra-ui/react'
+import { Images, LayoutGrid, Pencil, type LucideIcon } from 'lucide-react'
 
 // ─── Pricing mode — backend-driven trigger (per category config) ───────────────
 // 'standard' → قیمت دستی · 'currency' → ارزی (نرخ زنده) · 'gold' → طلا (فرمول)
@@ -56,13 +57,18 @@ export type StepId = 'info' | 'gallery' | 'variants'
 
 export interface ProductStep {
   id: StepId
+  /** عنوان کامل — rail عمودی و متن تولتیپ */
   label: string
+  /** عنوان کوتاه — زیر آیکن در حالت افقی/فشرده (حذف نمی‌شود، فقط کوتاه می‌شود) */
+  shortLabel: string
+  /** آیکن مرحله — معادل lucide آیکن همین مرحله در طرح تأییدشده */
+  icon: LucideIcon
 }
 
 export const STEPS: ProductStep[] = [
-  { id: 'info',     label: 'اطلاعات محصول' },
-  { id: 'gallery',  label: 'گالری'         },
-  { id: 'variants', label: 'تنوع ها'       },
+  { id: 'info',     label: 'اطلاعات محصول', shortLabel: 'اطلاعات', icon: Pencil     },
+  { id: 'gallery',  label: 'گالری',         shortLabel: 'گالری',   icon: Images     },
+  { id: 'variants', label: 'تنوع ها',       shortLabel: 'تنوع‌ها',  icon: LayoutGrid },
 ]
 
 // ─── Product attribute (ویژگی داینامیک) ────────────────────────────────────────
@@ -157,6 +163,8 @@ export interface VariantCombination {
   id: string
   /** مقدار هر تنوع، به ترتیب form.variants — برای نمایش badge و فیلتر */
   values: string[]
+  /** تصویر این ترکیب — از گالری محصول انتخاب می‌شود ('' = انتخاب‌نشده) */
+  image: string
   sku: string
   active: boolean
   phoneSale: boolean
@@ -184,6 +192,7 @@ export function buildCombinations(variants: ProductVariant[], skuBase: string): 
   return rows.map((row) => ({
     id: `combo_${row.map((v) => v.id).join('_')}`,
     values: row.map((v) => v.label),
+    image: '',
     sku: `${skuBase || 'SKU'}-${row.map((v) => v.label.replace(/\s+/g, '')).join('-')}`,
     active: true,
     phoneSale: false,

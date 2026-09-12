@@ -1,4 +1,6 @@
-import { Box, Flex, Text, Badge, Field, Switch } from '@chakra-ui/react'
+import { Box, Flex, Text, Badge, Field, Switch, chakra } from '@chakra-ui/react'
+import { ImagePlus } from 'lucide-react'
+import { MediaThumb } from './MediaThumb'
 import { NumberField } from '@/components/ui/NumberField'
 import { UnitSelect } from './InfoTab'
 import { DISCOUNT_TYPES, type VariantCombination } from './data'
@@ -8,6 +10,8 @@ import { DISCOUNT_TYPES, type VariantCombination } from './data'
 export interface VariantCombinationCardProps {
   combo: VariantCombination
   onChange: (patch: Partial<VariantCombination>) => void
+  /** باز کردن انتخابگر تصویر این ترکیب (از گالری محصول) */
+  onPickImage?: () => void
 }
 
 // ─── Toggle row — الگوی پروژه: Switch FIRST=راست، Text LAST=چپ ──────────────────
@@ -43,7 +47,7 @@ function ToggleRow({
  *
  * Figma: New Product / Variants — ماتریس ترکیب‌ها cards (نمونه node 1194:16240 و ...)
  */
-export function VariantCombinationCard({ combo, onChange }: VariantCombinationCardProps) {
+export function VariantCombinationCard({ combo, onChange, onPickImage }: VariantCombinationCardProps) {
   const { active } = combo
   const priceDisabled = !active || combo.phoneSale
   const inventoryDisabled = !active || combo.unlimitedInventory
@@ -81,12 +85,41 @@ export function VariantCombinationCard({ combo, onChange }: VariantCombinationCa
         gap="2"
       >
         {/* موبایل (<sm): ردیف badgeها زیر SKU · sm+: همه در یک ردیف */}
-        <Flex direction={{ base: 'column', sm: 'row' }} align={{ base: 'end', sm: 'center' }} gap="2">
+        <Flex align="center" gap="3" minW="0">
+
+          {/* FIRST = rightmost: کادر تصویر ترکیب — مربع با گوشهٔ گرد (نه دایره) */}
+          <chakra.button
+            type="button"
+            aria-label={combo.image ? 'تغییر تصویر این ترکیب' : 'انتخاب تصویر این ترکیب'}
+            onClick={onPickImage}
+            disabled={!onPickImage}
+            boxSize="44px"
+            flexShrink={0}
+            rounded="l2"
+            overflow="hidden"
+            borderWidth="1px"
+            borderColor="border"
+            bg={combo.image ? undefined : 'bg.subtle'}
+            display="grid"
+            placeItems="center"
+            color="fg.muted"
+            transition="border-color 0.15s"
+            _hover={{ borderColor: 'brand.border' }}
+          >
+            {combo.image ? (
+              <MediaThumb src={combo.image} boxSize="full" />
+            ) : (
+              <ImagePlus size={18} />
+            )}
+          </chakra.button>
+
+          <Flex direction={{ base: 'column', sm: 'row' }} align={{ base: 'end', sm: 'center' }} gap="2" minW="0">
           <Text fontSize="sm" fontWeight="semibold" color="fg.muted" whiteSpace="nowrap">{combo.sku}</Text>
           <Flex gap="2" wrap="wrap" justify="start">
             {orderedValues.map((label, i) => (
               <Badge key={i} colorPalette="gray" variant="subtle" size="sm" rounded="l2">{label}</Badge>
             ))}
+            </Flex>
           </Flex>
         </Flex>
 
@@ -125,7 +158,6 @@ export function VariantCombinationCard({ combo, onChange }: VariantCombinationCa
             placeholder="موجودی"
             value={combo.inventory}
             onChange={(v) => onChange({ inventory: v })}
-            showSteppers
             disabled={inventoryDisabled}
           />
         </Field.Root>

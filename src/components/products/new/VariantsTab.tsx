@@ -9,6 +9,7 @@ import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { VariantAccordion } from './VariantAccordion'
 import { VariantCombinationCard } from './VariantCombinationCard'
+import { VariantImagePickerDialog } from './VariantImagePickerDialog'
 import {
   MAX_VARIANTS, newVariant, buildCombinations,
   type ProductForm, type ProductVariant,
@@ -179,6 +180,10 @@ export function VariantsTab({ form, onChange, onBack, onSave }: VariantsTabProps
 
   const patchCombo = (id: string, patch: Partial<typeof combinations[number]>) =>
     onChange({ combinations: combinations.map((c) => (c.id === id ? { ...c, ...patch } : c)) })
+
+  // ترکیبی که انتخابگر تصویرش باز است
+  const [imagePickerComboId, setImagePickerComboId] = useState<string | null>(null)
+  const imagePickerCombo = combinations.find((c) => c.id === imagePickerComboId) ?? null
 
   // ─── فیلتر لیست کارت‌ها (فقط نمایش) ─────────────────────────────────────────────
   // پیش‌فرض: همهٔ آیتم‌ها (فعال+غیرفعال) نمایش داده می‌شوند. «نمایش غیرفعال‌ها» یعنی
@@ -476,7 +481,12 @@ export function VariantsTab({ form, onChange, onBack, onSave }: VariantsTabProps
               ) : (
                 <Flex direction="column" gap="4">
                   {filteredCombos.map((c) => (
-                    <VariantCombinationCard key={c.id} combo={c} onChange={(patch) => patchCombo(c.id, patch)} />
+                    <VariantCombinationCard
+                      key={c.id}
+                      combo={c}
+                      onChange={(patch) => patchCombo(c.id, patch)}
+                      onPickImage={() => setImagePickerComboId(c.id)}
+                    />
                   ))}
                 </Flex>
               )}
@@ -488,6 +498,15 @@ export function VariantsTab({ form, onChange, onBack, onSave }: VariantsTabProps
       <ButtonFooter
         primary={{ label: 'ذخیره', onClick: onSave }}
         back={{ label: 'بازگشت', onClick: onBack }}
+      />
+
+      {/* ═══ انتخابگر تصویر ترکیب — منبع: گالری محصول ═══════════════════════════ */}
+      <VariantImagePickerDialog
+        open={imagePickerCombo !== null}
+        onClose={() => setImagePickerComboId(null)}
+        images={form.gallery}
+        selected={imagePickerCombo?.image ?? ''}
+        onConfirm={(src) => imagePickerCombo && patchCombo(imagePickerCombo.id, { image: src })}
       />
 
     </Flex>

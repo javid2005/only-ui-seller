@@ -496,11 +496,15 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
           divider
         />
         <Box pt="4">
+          {/* عرض ۱۰۰٪: نه فقط روی Root — خودِ Control هم باید کشیده شود، وگرنه
+              والد عرض را محدود می‌کند و فیلد باریک می‌ماند (ریشهٔ بازخورد تکرارشده). */}
           <TagsInput.Root
             value={form.tags}
             onValueChange={(e) => onChange({ tags: e.value })}
+            w="full"
+            maxW="none"
           >
-            <TagsInput.Control>
+            <TagsInput.Control w="full" minW="0">
               <TagsInput.Context>
                 {(api) =>
                   api.value.map((value, index) => (
