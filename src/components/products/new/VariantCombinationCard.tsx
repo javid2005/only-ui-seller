@@ -95,7 +95,8 @@ export function VariantCombinationCard({ combo, onChange, onPickImage }: Variant
             disabled={!onPickImage}
             boxSize="44px"
             flexShrink={0}
-            rounded="l2"
+            // مربع با گوشهٔ گرد (نه دایره) — شعاع مطابق طرح تأییدشده
+            rounded="xl"
             overflow="hidden"
             borderWidth="1px"
             borderColor="border"

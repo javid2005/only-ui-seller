@@ -54,46 +54,56 @@ function StatusGlyph({ status }: { status: StepStatus }) {
 
 // ─── Connector ──────────────────────────────────────────────────────────────────
 /**
- * خط اتصال بین مراحل — از مرکز آیکن مرحلهٔ قبل تا مرکز آیکن همین مرحله.
+ * خط اتصال بین مراحل.
  *
- * چرا متعلق به مرحلهٔ «بعدی» است و نه قبلی: این‌طور دیرتر از مرحلهٔ قبل paint می‌شود،
- * پس پس‌زمینهٔ تبِ فعال رویش نمی‌افتد. خودِ کادر آیکن با `zIndex=1` رویش می‌نشیند.
+ * هر مرحله فقط **نیمهٔ خودش** را می‌کشد: نیمهٔ رو به مرحلهٔ قبل و نیمهٔ رو به مرحلهٔ
+ * بعد. دو نیمهٔ مجاور به هم می‌رسند و خط پیوسته می‌شود.
  *
- * مرکزیابی کاملاً layout-based است (بدون عدد جادویی): کانتینر دقیقاً روی ردِ کادر
- * آیکن قرار می‌گیرد و خط با flex در وسطش مرکز می‌شود — در هر دو جهت و هر اندازه.
+ * چرا این‌طور و نه یک خط که از آیتم بیرون بزند:
+ *   ۱. هیچ عددِ جادویی و هیچ offset فیزیکی لازم نیست — کانتینر دقیقاً روی ردِ کادر
+ *      آیکن می‌افتد و مرکزیابی را flex انجام می‌دهد. سابقه: پروتوتایپ offset ثابت
+ *      (`right:27px`) داشت و با تغییر اندازهٔ آیکن از مرکز خارج شد.
+ *   ۲. چیزی از مرزِ آیتم بیرون نمی‌زند، پس نه انتهای rail خط اضافه می‌ماند و نه
+ *      پس‌زمینهٔ تبِ بعدی رویش می‌افتد.
+ *
+ * ترتیب دو نیمه در حالت افقی = همان قاعدهٔ DOM پروژه: فرزند اول = سمت start
+ * (راست در RTL) = رو به مرحلهٔ قبل.
  */
-function Connector({ horizontal, done }: { horizontal: boolean; done: boolean }) {
-  const color = done ? 'brand.emphasized' : 'border'
-  return horizontal ? (
-    // افقی: از ۵۰٪ همین آیتم به سمت آیتم قبلی (در RTL: راست) کشیده می‌شود
+function Connector({
+  horizontal, hasPrev, hasNext, prevDone, done,
+}: {
+  horizontal: boolean
+  hasPrev: boolean
+  hasNext: boolean
+  prevDone: boolean
+  done: boolean
+}) {
+  const half = (show: boolean, isDone: boolean) => (
     <Box
+      flex="1"
+      w={horizontal ? 'full' : '2px'}
+      h={horizontal ? '2px' : 'full'}
+      bg={show ? (isDone ? 'brand.emphasized' : 'border') : 'transparent'}
+      rounded="full"
+    />
+  )
+
+  return (
+    <Flex
       aria-hidden
       position="absolute"
-      insetInlineEnd="50%"
-      w="full"
-      top={COMPACT_PT}
-      h={ICON_SIZE}
-      display="flex"
-      alignItems="center"
       pointerEvents="none"
+      direction={horizontal ? 'row' : 'column'}
+      align="center"
+      {...(horizontal
+        ? { insetInline: '0', top: COMPACT_PT, h: ICON_SIZE }
+        : { insetBlock: '0', insetInlineStart: ROW_PX, w: ICON_SIZE })}
     >
-      <Box w="full" h="2px" bg={color} rounded="full" />
-    </Box>
-  ) : (
-    // عمودی: از مرکز همین ردیف تا مرکز ردیف قبلی (ارتفاع ردیف ثابت است)
-    <Box
-      aria-hidden
-      position="absolute"
-      bottom="50%"
-      h="full"
-      insetInlineStart={ROW_PX}
-      w={ICON_SIZE}
-      display="flex"
-      justifyContent="center"
-      pointerEvents="none"
-    >
-      <Box h="full" w="2px" bg={color} rounded="full" />
-    </Box>
+      {/* FIRST = رو به مرحلهٔ قبل (بالا در عمودی · راست در RTL افقی) */}
+      {half(hasPrev, prevDone)}
+      {/* LAST = رو به مرحلهٔ بعد */}
+      {half(hasNext, done)}
+    </Flex>
   )
 }
 
@@ -181,7 +191,13 @@ export function StepNav({
                 alignItems="center"
                 gap={isHorizontal ? '1.5' : '2.5'}
               >
-                {i > 0 && <Connector horizontal={isHorizontal} done={prevDone} />}
+                <Connector
+                  horizontal={isHorizontal}
+                  hasPrev={i > 0}
+                  hasNext={i < STEPS.length - 1}
+                  prevDone={prevDone}
+                  done={isDone}
+                />
 
                 {/* FIRST = rightmost (عمودی) / بالا (افقی): کادر آیکن.
                     zIndex=1 → خط اتصال پشتش پنهان می‌شود و به لبه‌اش می‌چسبد. */}

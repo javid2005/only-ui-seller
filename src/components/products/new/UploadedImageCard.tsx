@@ -1,6 +1,7 @@
-import { Box, Flex, Text, Badge, Button, IconButton } from '@chakra-ui/react'
-import { Trash2, X } from 'lucide-react'
+import { Box, Flex, Text, Badge, Button, IconButton, Menu, Portal } from '@chakra-ui/react'
+import { Trash2, X, GripVertical, FolderInput } from 'lucide-react'
 import { MediaThumb } from './MediaThumb'
+import { MEDIA_FOLDERS, type MediaFolderId } from './data'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -20,6 +21,16 @@ export interface UploadedImageCardProps {
   onRemoveTag?: (tag: string) => void
   /** روی موبایلِ واقعی hover نداریم → دکمه‌ها همیشه نمایش داده شوند */
   alwaysShowActions?: boolean
+  /** پوشهٔ فعلی این رسانه — برای منوی «انتقال به پوشه» */
+  folder?: MediaFolderId
+  onMoveToFolder?: (target: MediaFolderId) => void
+  // ── مرتب‌سازی با drag & drop (در هر پوشه) ──
+  draggable?: boolean
+  isDragging?: boolean
+  onDragStart?: () => void
+  onDragOver?: (e: React.DragEvent) => void
+  onDrop?: () => void
+  onDragEnd?: () => void
 }
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -43,6 +54,14 @@ export function UploadedImageCard({
   onSelectVariant,
   onRemoveTag,
   alwaysShowActions = false,
+  folder,
+  onMoveToFolder,
+  draggable,
+  isDragging = false,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
 }: UploadedImageCardProps) {
   const actionsDisplay = alwaysShowActions ? 'flex' : 'none'
 
@@ -60,7 +79,27 @@ export function UploadedImageCard({
       _hover={{ borderColor: 'brand.border', bg: 'brand.bg' }}
       align="start"
       w="full"
+      draggable={draggable}
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
+      opacity={isDragging ? 0.5 : 1}
+      cursor={draggable ? 'grab' : undefined}
     >
+
+      {/* FIRST = rightmost: دستگیرهٔ جابه‌جایی — در همهٔ پوشه‌ها فعال است */}
+      {draggable && (
+        <Flex
+          align="center"
+          alignSelf="stretch"
+          color="fg.muted"
+          flexShrink={0}
+          aria-hidden
+        >
+          <GripVertical size={16} />
+        </Flex>
+      )}
       {/* FIRST = rightmost: Thumbnail — پس‌زمینهٔ سفید + حاشیهٔ نسبی از MediaThumb */}
       <MediaThumb
         src={src}
@@ -127,7 +166,29 @@ export function UploadedImageCard({
           display={actionsDisplay}
           _groupHover={{ display: 'flex' }}
         >
-          {/* DOM rightmost-first: انتخاب تنوع → انتخاب شاخص (فقط اگر شاخص نیست) → trash (چپ‌ترین) */}
+          {/* DOM rightmost-first: انتقال به پوشه → انتخاب تنوع → انتخاب شاخص → trash (چپ‌ترین) */}
+          {onMoveToFolder && (
+            <Menu.Root>
+              <Menu.Trigger asChild>
+                <Button size="xs" variant="outline" rounded="l2" gap="1.5">
+                  {/* FIRST = rightmost: آیکن (leading) */}
+                  <FolderInput size={14} />
+                  انتقال
+                </Button>
+              </Menu.Trigger>
+              <Portal>
+                <Menu.Positioner dir="rtl">
+                  <Menu.Content>
+                    {MEDIA_FOLDERS.filter((f) => f.id !== folder).map((f) => (
+                      <Menu.Item key={f.id} value={f.id} onSelect={() => onMoveToFolder(f.id)}>
+                        {f.label}
+                      </Menu.Item>
+                    ))}
+                  </Menu.Content>
+                </Menu.Positioner>
+              </Portal>
+            </Menu.Root>
+          )}
           <Button size="xs" colorPalette="brand" variant="subtle" rounded="l2" onClick={onSelectVariant}>
             انتخاب تنوع
           </Button>

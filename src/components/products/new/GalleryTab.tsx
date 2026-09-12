@@ -6,9 +6,10 @@ import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { toPersianDigits } from '@/utils/numbers'
 import { UploadedImageCard } from './UploadedImageCard'
 import { VariantSelectDialog } from './VariantSelectDialog'
+import { FolderPanel } from './FolderPanel'
 import {
-  GALLERY_MAX_IMAGES, GALLERY_MAX_IMAGE_SIZE,
-  type ProductForm, type GalleryImage,
+  GALLERY_MAX_IMAGES, GALLERY_MAX_IMAGE_SIZE, MEDIA_FOLDERS,
+  type ProductForm, type GalleryImage, type MediaFolderId,
 } from './data'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
@@ -30,12 +31,15 @@ const INFO_BADGES = [
 ]
 
 let _gid = 0
-const newImage = (src: string, fileName: string, featured: boolean): GalleryImage => ({
+const newImage = (
+  src: string, fileName: string, featured: boolean, folder: MediaFolderId,
+): GalleryImage => ({
   id: `img_${++_gid}`,
   src,
   fileName,
   featured,
   variantTags: [],
+  folder,
 })
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -64,6 +68,21 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
   const remaining = GALLERY_MAX_IMAGES - images.length
   const isFull = remaining <= 0
 
+  // پوشهٔ فعال + رسانه‌های همان پوشه (به ترتیبِ سراسری)
+  const [folder, setFolder] = useState<MediaFolderId>('products')
+  const visible = images.filter((img) => img.folder === folder)
+
+  const counts = MEDIA_FOLDERS.reduce(
+    (acc, f) => ({ ...acc, [f.id]: images.filter((img) => img.folder === f.id).length }),
+    {} as Record<MediaFolderId, number>,
+  )
+
+  // رسانه‌ای که در حال درگ است (مرتب‌سازی با drag & drop)
+  const [dragId, setDragId] = useState<string | null>(null)
+
+  // کلید remount برای FileUpload — چرایی در handleFileAccept
+  const [uploadKey, setUploadKey] = useState(0)
+
   // تصویری که دیالوگ «انتخاب تنوع»‌اش باز است
   const [variantDialogImageId, setVariantDialogImageId] = useState<string | null>(null)
   const variantDialogImage = images.find((img) => img.id === variantDialogImageId) ?? null
@@ -86,9 +105,13 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
       const hasFeatured = images.some((img) => img.featured)
       const added = loaded.map((l, i) =>
         // اگر هنوز هیچ تصویر شاخصی نیست، اولین تصویرِ افزوده‌شده شاخص می‌شود
-        newImage(l.src, l.name, !hasFeatured && i === 0),
+        newImage(l.src, l.name, !hasFeatured && i === 0, folder),
       )
       onChange({ gallery: [...images, ...added] })
+      // FileUpload فایل‌های پذیرفته‌شده را داخل خودش نگه می‌دارد و در انتخاب بعدی
+      // دوباره emit می‌کند → همان تصویر دوباره اضافه می‌شد. با remount، state داخلی
+      // خالی می‌شود و هر انتخاب فقط فایل‌های همان نوبت را می‌دهد.
+      setUploadKey((k) => k + 1)
     })
   }
 
@@ -116,6 +139,36 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
       gallery: images.map((img) => (img.id === id ? { ...img, variantTags: tags } : img)),
     })
 
+  const moveToFolder = (id: string, target: MediaFolderId) =>
+    onChange({
+      gallery: images.map((img) => (img.id === id ? { ...img, folder: target } : img)),
+    })
+
+  /**
+   * مرتب‌سازی با drag & drop — در **هر** پوشه، نه فقط پوشهٔ اصلی.
+   *
+   * ریشهٔ باگ پروتوتایپ: مرتب‌سازی مستقیم روی آرایهٔ سراسری کار می‌کرد و فقط برای
+   * پوشهٔ محصول فعال بود. اینجا جابه‌جایی روی لیستِ همان پوشه انجام می‌شود و بعد
+   * در جای‌های همان پوشه در آرایهٔ سراسری بازنویسی می‌شود — پس ترتیب پوشه‌های
+   * دیگر دست‌نخورده می‌ماند و رفتار در همهٔ پوشه‌ها یکسان است.
+   */
+  const reorderTo = (targetId: string) => {
+    if (!dragId || dragId === targetId) return
+    const from = visible.findIndex((img) => img.id === dragId)
+    const to = visible.findIndex((img) => img.id === targetId)
+    if (from === -1 || to === -1) return
+
+    const nextVisible = [...visible]
+    const [moved] = nextVisible.splice(from, 1)
+    nextVisible.splice(to, 0, moved)
+
+    // جای‌های همین پوشه در آرایهٔ سراسری را به ترتیب جدید پر کن
+    let cursor = 0
+    onChange({
+      gallery: images.map((img) => (img.folder === folder ? nextVisible[cursor++] : img)),
+    })
+  }
+
   return (
     <Flex direction="column" gap="6" w="full">
 
@@ -140,6 +193,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
 
       {/* ═══ Dropzone ═══════════════════════════════════════════════════════════ */}
       <FileUpload.Root
+        key={uploadKey}
         accept="image/*"
         maxFiles={Math.max(1, remaining)}
         maxFileSize={GALLERY_MAX_IMAGE_SIZE}
@@ -165,29 +219,69 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
         </FileUpload.Dropzone>
       </FileUpload.Root>
 
-      {/* ═══ گرید کارت‌های تصویر ════════════════════════════════════════════════ */}
-      {images.length > 0 && (
-        <Grid
-          templateColumns="1fr"
-          gap="4"
-          w="full"
-        >
-          {images.map((img, i) => (
-            <UploadedImageCard
-              key={img.id}
-              src={img.src}
-              label={`تصویر ${toPersianDigits(i + 1)}`}
-              featured={img.featured}
-              variantTags={img.variantTags}
-              alwaysShowActions={isMobile}
-              onRemove={() => removeImage(img.id)}
-              onSetFeatured={() => setFeatured(img.id)}
-              onSelectVariant={() => setVariantDialogImageId(img.id)}
-              onRemoveTag={(tag) => removeTag(img.id, tag)}
-            />
-          ))}
-        </Grid>
-      )}
+      {/* ═══ کتابخانهٔ رسانه — ستون پوشه‌ها + پنل رسانه ═════════════════════════ */}
+      {/* FIRST = rightmost در RTL: ستون پوشه‌ها · پنل رسانه سمت چپ.
+          عرض ستون مطابق طرح تأییدشده: ۲۶۴px، و ۲۲۸px در فضای کمتر. */}
+      <Grid
+        templateColumns={{ base: '1fr', lg: '228px minmax(0, 1fr)', xl: '264px minmax(0, 1fr)' }}
+        gap={{ base: '6', lg: '8' }}
+        w="full"
+        alignItems="start"
+      >
+        <FolderPanel active={folder} onSelect={setFolder} counts={counts} />
+
+        <Flex direction="column" gap="4" minW="0" w="full">
+          <Flex align="center" justify="space-between" gap="3" w="full" wrap="wrap">
+            <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start">
+              {MEDIA_FOLDERS.find((f) => f.id === folder)?.label}
+            </Text>
+            <Text fontSize="xs" color="fg.muted">
+              {toPersianDigits(visible.length)} رسانه • قابل مرتب‌سازی با کشیدن
+            </Text>
+          </Flex>
+
+          {visible.length === 0 ? (
+            <Box
+              borderWidth="1px"
+              borderStyle="dashed"
+              borderColor="border"
+              rounded="lg"
+              py="8"
+              px="4"
+            >
+              <Text fontSize="sm" color="fg.muted" textAlign="center">
+                این پوشه خالی است.
+              </Text>
+            </Box>
+          ) : (
+            <Grid templateColumns="1fr" gap="4" w="full">
+              {visible.map((img, i) => (
+                <UploadedImageCard
+                  key={img.id}
+                  src={img.src}
+                  label={`تصویر ${toPersianDigits(i + 1)}`}
+                  featured={img.featured}
+                  variantTags={img.variantTags}
+                  alwaysShowActions={isMobile}
+                  folder={img.folder}
+                  onMoveToFolder={(target) => moveToFolder(img.id, target)}
+                  onRemove={() => removeImage(img.id)}
+                  onSetFeatured={() => setFeatured(img.id)}
+                  onSelectVariant={() => setVariantDialogImageId(img.id)}
+                  onRemoveTag={(tag) => removeTag(img.id, tag)}
+                  // مرتب‌سازی — در همهٔ پوشه‌ها فعال است
+                  draggable
+                  isDragging={dragId === img.id}
+                  onDragStart={() => setDragId(img.id)}
+                  onDragOver={(e) => { e.preventDefault(); reorderTo(img.id) }}
+                  onDrop={() => setDragId(null)}
+                  onDragEnd={() => setDragId(null)}
+                />
+              ))}
+            </Grid>
+          )}
+        </Flex>
+      </Grid>
 
       {/* ═══ Footer ═════════════════════════════════════════════════════════════ */}
       <ButtonFooter

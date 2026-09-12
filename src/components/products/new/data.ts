@@ -93,7 +93,25 @@ export interface GalleryImage {
   featured: boolean
   /** تنوع‌های تخصیص‌یافته به این تصویر (label از VARIANT_GROUPS) */
   variantTags: string[]
+  /** پوشهٔ کتابخانه که این رسانه در آن دیده می‌شود */
+  folder: MediaFolderId
 }
+
+// ─── پوشه‌های کتابخانهٔ رسانه ────────────────────────────────────────────────────
+// پوشه‌ها فقط برای نظم کتابخانه‌اند؛ فایل را جابه‌جا نمی‌کنند و همان رسانه می‌تواند
+// در محصولات دیگر هم استفاده شود (همان قرارداد طرح تأییدشده).
+export type MediaFolderId = 'products' | 'uncategorized' | 'library'
+
+export interface MediaFolder {
+  id: MediaFolderId
+  label: string
+}
+
+export const MEDIA_FOLDERS: MediaFolder[] = [
+  { id: 'products',      label: 'رسانه‌های این محصول' },
+  { id: 'uncategorized', label: 'بدون پوشه'           },
+  { id: 'library',       label: 'کتابخانه فروشگاه'    },
+]
 
 // ─── Variant groups (دیالوگ «انتخاب تنوع» در گالری) ──────────────────────────────
 // mock — به تب «تنوع‌ها» وابسته است؛ وقتی آن تب ساخته شد این گروه‌ها از آنجا می‌آیند.
