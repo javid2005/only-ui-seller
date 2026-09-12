@@ -304,6 +304,10 @@ export interface ProductForm {
   attributes: Attribute[]
   description: string
   tags: string[]
+  // ── سئو ──
+  seoSlug: string
+  seoTitle: string
+  seoDescription: string
   // ── گالری ──
   gallery: GalleryImage[]
   // ── تنوع‌ها ──
@@ -339,7 +343,73 @@ export const EMPTY_FORM: ProductForm = {
   attributes: [],
   description: '',
   tags: [],
+  seoSlug: '',
+  seoTitle: '',
+  seoDescription: '',
   gallery: [],
   variants: [],
   combinations: [],
+}
+
+// ─── بررسی‌های سئو ───────────────────────────────────────────────────────────────
+// هر بررسی روی **دادهٔ واقعی همین فرم** انجام می‌شود، نه یک امتیاز ساختگی. هر مورد
+// مرحله‌ای را می‌شناسد که باید برای رفعش رفت — بند ۹ دور «چاکرا اصلاح»: کلیک روی
+// هشدار باید کاربر را مستقیم به بخش مرتبط ببرد.
+export interface SeoCheck {
+  id: string
+  label: string
+  /** چه چیزی لازم است — زیر عنوان مورد نمایش داده می‌شود */
+  hint: string
+  /** مرحله‌ای که این مورد آنجا رفع می‌شود */
+  step: StepId
+  /** آیا با دادهٔ فعلی فرم تأمین شده است؟ */
+  ok: (f: ProductForm) => boolean
+}
+
+export const SEO_CHECKS: SeoCheck[] = [
+  {
+    id: 'slug', label: 'آدرس صفحه محصول', hint: 'یک آدرس لاتین کوتاه و خوانا',
+    step: 'seo', ok: (f) => f.seoSlug.trim().length > 0,
+  },
+  {
+    id: 'title', label: 'عنوان سئو', hint: 'بین ۱۰ تا ۶۰ کاراکتر',
+    step: 'seo', ok: (f) => { const n = f.seoTitle.trim().length; return n >= 10 && n <= 60 },
+  },
+  {
+    id: 'meta', label: 'توضیح متا', hint: 'بین ۵۰ تا ۱۶۵ کاراکتر',
+    step: 'seo', ok: (f) => { const n = f.seoDescription.trim().length; return n >= 50 && n <= 165 },
+  },
+  {
+    id: 'images', label: 'تصاویر محصول', hint: 'حداقل یک تصویر در گالری',
+    step: 'gallery', ok: (f) => f.gallery.length > 0,
+  },
+  {
+    id: 'category', label: 'دسته‌بندی', hint: 'برای دیده‌شدن در جست‌وجوی دسته لازم است',
+    step: 'basic', ok: (f) => Boolean(f.category),
+  },
+  {
+    id: 'tags', label: 'برچسب‌ها', hint: 'حداقل یک برچسب مرتبط',
+    step: 'basic', ok: (f) => f.tags.length > 0,
+  },
+]
+
+/** امتیاز ۰ تا ۱۰۰ بر اساس بررسی‌های تأمین‌شده */
+export function seoScore(form: ProductForm): number {
+  const passed = SEO_CHECKS.filter((c) => c.ok(form)).length
+  return Math.round((passed / SEO_CHECKS.length) * 100)
+}
+
+/**
+ * slug لاتینِ تمیز از نام محصول — فقط پیشنهاد، همیشه قابل ویرایش.
+ *
+ * عمداً فقط بخش‌های لاتین/عددیِ نام را برمی‌دارد: نام محصول معمولاً فارسی است و
+ * نگه‌داشتن فارسی در URL، آدرسِ percent-encoded و ناخوانا می‌سازد — دقیقاً همان
+ * چیزی که راهنمای زیر فیلد از آن پرهیز می‌دهد. اگر نام هیچ بخش لاتینی نداشت،
+ * خالی برمی‌گردد تا کاربر خودش بنویسد.
+ */
+export function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
 }

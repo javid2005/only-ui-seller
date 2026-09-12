@@ -13,7 +13,7 @@ import { SpecsTab } from '@/components/products/new/SpecsTab'
 import { VariantsTab } from '@/components/products/new/VariantsTab'
 import { SeoTab } from '@/components/products/new/SeoTab'
 import {
-  EMPTY_FORM, STEPS, pricingModeOf,
+  EMPTY_FORM, STEPS, pricingModeOf, seoScore,
   type ProductForm, type ProductTypeId, type StepId,
 } from '@/components/products/new/data'
 
@@ -84,7 +84,7 @@ export function NewProduct() {
     specs: specsComplete ? 'complete' : 'pending',
     // تنوع اختیاری است: صفر ترکیب یعنی «کامل»، نه یک عددِ خام روی استپر
     models: form.combinations.length > 0 ? form.combinations.length : 'complete',
-    seo: 'pending',
+    seo: seoScore(form) === 100 ? 'complete' : 'pending',
   }
 
   // انتشار فقط وقتی اطلاعات اجباری هر سه تب کامل باشد
@@ -178,7 +178,13 @@ export function NewProduct() {
               <VariantsTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
             {activeStep === 'seo' && (
-              <SeoTab form={form} onChange={patch} onBack={goBack} onSave={save} />
+              <SeoTab
+                form={form}
+                onChange={patch}
+                onBack={goBack}
+                onSave={save}
+                onGoToStep={setActiveStep}
+              />
             )}
           </Flex>
 
