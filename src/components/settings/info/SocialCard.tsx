@@ -1,14 +1,14 @@
 import { Box, Flex, Text, Badge, Menu, IconButton, Portal } from '@chakra-ui/react'
 import { EllipsisVertical, Pencil, Trash2, PlayCircle, Globe } from 'lucide-react'
 
-import telegramSvg    from '@/assets/icons/Messenger/telegram.svg'
-import whatsappSvg    from '@/assets/icons/Messenger/whatsapp.svg'
-import discordSvg     from '@/assets/icons/Messenger/discord.svg'
-import instagramSvg   from '@/assets/icons/Social Network/instagram.svg'
-import twitterSvg     from '@/assets/icons/Social Network/twitter.svg'
-import facebookSvg    from '@/assets/icons/Social Network/Facebook.svg'
-import linkedinSvg    from '@/assets/icons/Social Network/linkedin.svg'
-import tiktokSvg      from '@/assets/icons/Social Network/tiktok.svg'
+import telegramSvg    from '@/assets/Icons/Messenger/telegram.svg'
+import whatsappSvg    from '@/assets/Icons/Messenger/whatsapp.svg'
+import discordSvg     from '@/assets/Icons/Messenger/discord.svg'
+import instagramSvg   from '@/assets/Icons/Social Network/instagram.svg'
+import twitterSvg     from '@/assets/Icons/Social Network/twitter.svg'
+import facebookSvg    from '@/assets/Icons/Social Network/Facebook.svg'
+import linkedinSvg    from '@/assets/Icons/Social Network/linkedin.svg'
+import tiktokSvg      from '@/assets/Icons/Social Network/tiktok.svg'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
