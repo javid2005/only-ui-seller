@@ -12,6 +12,7 @@ import { WarehouseTab } from '@/components/products/new/WarehouseTab'
 import { SpecsTab } from '@/components/products/new/SpecsTab'
 import { VariantsTab } from '@/components/products/new/VariantsTab'
 import { SeoTab } from '@/components/products/new/SeoTab'
+import { ProductPreviewCard } from '@/components/products/new/ProductPreviewCard'
 import {
   EMPTY_FORM, STEPS, pricingModeOf, seoScore,
   type ProductForm, type ProductTypeId, type StepId,
@@ -136,6 +137,9 @@ export function NewProduct() {
             statuses={statuses}
             steps={steps}
           />
+          <Box mt="4">
+            <ProductPreviewCard form={form} collapsible />
+          </Box>
         </Box>
 
         <Flex gap="10" align="start">
@@ -150,13 +154,17 @@ export function NewProduct() {
               top="20"
               alignSelf="start"
             >
-              <StepNav
-                orientation="vertical"
-                active={activeStep}
-                onSelect={setActiveStep}
-                statuses={statuses}
-                steps={steps}
-              />
+              <Flex direction="column" gap="4">
+                <StepNav
+                  orientation="vertical"
+                  active={activeStep}
+                  onSelect={setActiveStep}
+                  statuses={statuses}
+                  steps={steps}
+                />
+                {/* پیش‌نمایش زندهٔ محصول — زیر استپر، مثل طرح */}
+                <ProductPreviewCard form={form} />
+              </Flex>
             </Box>
           )}
 
