@@ -5,10 +5,14 @@ import { Upload } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header, HeaderCTA } from '@/components/layout/Header'
 import { StepNav, type StepStatus } from '@/components/products/new/StepNav'
+import { ProductTypeDialog, ProductTypeSwitch } from '@/components/products/new/ProductTypeDialog'
 import { InfoTab } from '@/components/products/new/InfoTab'
 import { GalleryTab } from '@/components/products/new/GalleryTab'
 import { VariantsTab } from '@/components/products/new/VariantsTab'
-import { EMPTY_FORM, pricingModeOf, type ProductForm, type StepId } from '@/components/products/new/data'
+import {
+  EMPTY_FORM, STEPS, pricingModeOf,
+  type ProductForm, type ProductTypeId, type StepId,
+} from '@/components/products/new/data'
 
 /**
  * NewProduct — صفحه «محصول جدید»
@@ -24,7 +28,29 @@ export function NewProduct() {
   const [activeStep, setActiveStep] = useState<StepId>('info')
   const [form, setForm] = useState<ProductForm>(EMPTY_FORM)
 
+  // دیالوگ نوع محصول: در ورود اول باز است و تا انتخاب نشدن بسته نمی‌شود
+  const [typeChosen, setTypeChosen] = useState(false)
+  const [typeDialogOpen, setTypeDialogOpen] = useState(true)
+
   const patch = (p: Partial<ProductForm>) => setForm((prev) => ({ ...prev, ...p }))
+
+  // محصول ساده مرحلهٔ «تنوع ها» ندارد
+  const isVaried = form.productType === 'varied'
+  const steps = isVaried ? STEPS : STEPS.filter((s) => s.id !== 'variants')
+
+  const chooseType = (productType: ProductTypeId) => {
+    setForm((prev) => ({
+      ...prev,
+      productType,
+      // برگشت به ساده یعنی تنوع‌ها و ترکیب‌ها دیگر معنا ندارند
+      ...(productType === 'simple'
+        ? { hasVariants: false, variants: [], combinations: [] }
+        : {}),
+    }))
+    if (productType === 'simple' && activeStep === 'variants') setActiveStep('info')
+    setTypeChosen(true)
+    setTypeDialogOpen(false)
+  }
 
   // ─── تکمیل هر تب ──────────────────────────────────────────────────────────────
   // اطلاعات محصول: نام + دسته + قیمت (مگر فروش تلفنی) + موجودی (مگر نامحدود/تنوع)
@@ -64,7 +90,16 @@ export function NewProduct() {
           { label: 'لیست محصولات', href: '/products/list' },
           { label: 'محصول جدید' },
         ]}
-        cta={<HeaderCTA label="انتشار" icon={<Upload size={16} />} onClick={save} disabled={!canPublish} />}
+        cta={
+          /* FIRST = rightmost: سوییچ نوع محصول · LAST = leftmost: انتشار */
+          <Flex align="center" gap="3" wrap="wrap" justify="end">
+            <ProductTypeSwitch
+              value={form.productType}
+              onChange={(t) => t !== form.productType && chooseType(t)}
+            />
+            <HeaderCTA label="انتشار" icon={<Upload size={16} />} onClick={save} disabled={!canPublish} />
+          </Flex>
+        }
       />
 
       {/* ─── Panel (Two Columns Right Center) ─────────────────────────────────── */}
@@ -85,6 +120,7 @@ export function NewProduct() {
             active={activeStep}
             onSelect={setActiveStep}
             statuses={statuses}
+            steps={steps}
           />
         </Box>
 
@@ -105,6 +141,7 @@ export function NewProduct() {
                 active={activeStep}
                 onSelect={setActiveStep}
                 statuses={statuses}
+                steps={steps}
               />
             </Box>
           )}
@@ -117,13 +154,21 @@ export function NewProduct() {
             {activeStep === 'gallery' && (
               <GalleryTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
-            {activeStep === 'variants' && (
+            {activeStep === 'variants' && isVaried && (
               <VariantsTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
           </Flex>
 
         </Flex>
       </Box>
+
+      {/* ═══ دروازهٔ ورود: انتخاب نوع محصول ════════════════════════════════════ */}
+      <ProductTypeDialog
+        open={typeDialogOpen}
+        value={form.productType}
+        onConfirm={chooseType}
+        onClose={typeChosen ? () => setTypeDialogOpen(false) : undefined}
+      />
 
     </Flex>
   )

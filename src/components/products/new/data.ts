@@ -52,6 +52,40 @@ export const DISCOUNT_TYPES: { value: string; label: string }[] = [
   { value: 'amount',  label: 'مبلغ' },
 ]
 
+// ─── نوع محصول (دروازهٔ ورود) ────────────────────────────────────────────────────
+// انتخاب فقط ساختار قیمت/موجودی/گزینه‌های خرید را تعیین می‌کند و بعداً قابل تغییر است.
+export type ProductTypeId = 'simple' | 'varied'
+
+export interface ProductType {
+  id: ProductTypeId
+  label: string
+  /** زیرعنوان کوتاه کنار عنوان در کارت انتخاب */
+  tagline: string
+  /** توضیح کامل داخل کارت */
+  description: string
+  /** برچسب سوییچ فشردهٔ بالای فرم */
+  shortLabel: string
+}
+
+export const PRODUCT_TYPES: ProductType[] = [
+  {
+    id: 'simple',
+    label: 'محصول ساده',
+    tagline: 'بدون گزینه و تنوع',
+    description:
+      'برای محصولی که خریدار همان نسخه اصلی را بدون انتخاب رنگ، سایز یا مدل خریداری می‌کند.',
+    shortLabel: 'ساده',
+  },
+  {
+    id: 'varied',
+    label: 'محصول متنوع',
+    tagline: 'چند انتخاب برای خریدار',
+    description:
+      'برای محصولی که خریدار پیش از خرید بین گزینه‌هایی مثل رنگ، حافظه یا سایز انتخاب می‌کند.',
+    shortLabel: 'متنوع',
+  },
+]
+
 // ─── Steps (نویگیشن مرحله‌ای) ───────────────────────────────────────────────────
 export type StepId = 'info' | 'gallery' | 'variants'
 
@@ -226,6 +260,8 @@ export function buildCombinations(variants: ProductVariant[], skuBase: string): 
 
 // ─── Form state (UI + local state only این پاس) ─────────────────────────────────
 export interface ProductForm {
+  /** نوع محصول — با دیالوگ ورودی انتخاب می‌شود؛ 'varied' مرحلهٔ تنوع‌ها را باز می‌کند */
+  productType: ProductTypeId
   name: string
   category: string
   sku: string
@@ -256,6 +292,7 @@ export interface ProductForm {
 }
 
 export const EMPTY_FORM: ProductForm = {
+  productType: 'simple',
   name: '',
   category: '',
   sku: '',

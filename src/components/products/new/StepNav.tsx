@@ -1,6 +1,6 @@
 import { Tabs, Text, Flex, Box, Icon } from '@chakra-ui/react'
 import { Check, TriangleAlert } from 'lucide-react'
-import { STEPS, type StepId } from './data'
+import { STEPS, type ProductStep, type StepId } from './data'
 import { toPersianDigits } from '@/utils/numbers'
 import { Tooltip } from '@/components/ui/Tooltip'
 
@@ -118,6 +118,8 @@ export interface StepNavProps {
   orientation?: 'vertical' | 'horizontal'
   /** غیرفعال‌سازی مراحلی که هنوز پیاده نشده‌اند */
   disabled?: StepId[]
+  /** مراحل نمایش‌داده‌شده — محصول ساده مرحلهٔ «تنوع ها» ندارد. پیش‌فرض: همه */
+  steps?: ProductStep[]
 }
 
 /**
@@ -140,6 +142,7 @@ export function StepNav({
   statuses,
   orientation = 'vertical',
   disabled = [],
+  steps = STEPS,
 }: StepNavProps) {
   const isHorizontal = orientation === 'horizontal'
 
@@ -157,13 +160,13 @@ export function StepNav({
         overflow="visible"
         pt={isHorizontal ? '0' : '2'}
       >
-        {STEPS.map((step, i) => {
+        {steps.map((step, i) => {
           const status = statuses[step.id]
           const StepIcon = step.icon
           const isActive = step.id === active
           const isDone = status === 'complete' || (typeof status === 'number' && status > 0)
           // خط اتصالِ رسیده به این مرحله وقتی «طی‌شده» است که مرحلهٔ قبل کامل باشد
-          const prev = i > 0 ? statuses[STEPS[i - 1].id] : undefined
+          const prev = i > 0 ? statuses[steps[i - 1].id] : undefined
           const prevDone = prev === 'complete' || (typeof prev === 'number' && prev > 0)
 
           return (
@@ -194,7 +197,7 @@ export function StepNav({
                 <Connector
                   horizontal={isHorizontal}
                   hasPrev={i > 0}
-                  hasNext={i < STEPS.length - 1}
+                  hasNext={i < steps.length - 1}
                   prevDone={prevDone}
                   done={isDone}
                 />
