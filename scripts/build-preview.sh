@@ -45,7 +45,25 @@ for r in refs:
     copied += 1
 
 shutil.copy2('out/products/new/index.html', os.path.join(dest, 'index.html'))
-print(f'refs={len(refs)} copied={copied}')
+
+# چانک‌های ری‌اکت کاراکتر U+FFFD را عیناً داخل رشته می‌گذارند (مسیر decode کردن URI و
+# escape کردن CSS). انتشار Artifact فایل متنی حاوی این کاراکتر را رد می‌کند، پس فقط
+# جایی که دقیقاً "<U+FFFD>" است به escape معادلش تبدیل می‌شود — از نظر اجرا یکسان.
+fixed = 0
+for root_dir, _, names in os.walk(dest):
+    for n in names:
+        if not n.endswith('.js'):
+            continue
+        fp = os.path.join(root_dir, n)
+        t = open(fp, encoding='utf-8').read()
+        if '\ufffd' not in t:
+            continue
+        t2 = t.replace('"\ufffd"', '"\\uFFFD"')
+        assert '\ufffd' not in t2, f'U+FFFD outside a string literal in {fp}'
+        open(fp, 'w', encoding='utf-8').write(t2)
+        fixed += 1
+
+print(f'refs={len(refs)} copied={copied} escaped={fixed}')
 PY
 
 echo "files: $(find "$DEST" -type f | wc -l)  size: $(du -sh "$DEST" | cut -f1)"
