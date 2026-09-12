@@ -1,5 +1,5 @@
 import { createListCollection } from '@chakra-ui/react'
-import { Images, LayoutGrid, Pencil, type LucideIcon } from 'lucide-react'
+import { Images, LayoutGrid, ListChecks, Package, Pencil, Sparkles, type LucideIcon } from 'lucide-react'
 
 // ─── Pricing mode — backend-driven trigger (per category config) ───────────────
 // 'standard' → قیمت دستی · 'currency' → ارزی (نرخ زنده) · 'gold' → طلا (فرمول)
@@ -86,8 +86,15 @@ export const PRODUCT_TYPES: ProductType[] = [
   },
 ]
 
+// ─── پروفایل هزینهٔ ارسال ────────────────────────────────────────────────────────
+export const SHIPPING_PROFILES: { value: string; label: string }[] = [
+  { value: 'store', label: 'طبق تنظیمات فروشگاه' },
+  { value: 'free',  label: 'ارسال رایگان'        },
+  { value: 'fixed', label: 'هزینهٔ ثابت'          },
+]
+
 // ─── Steps (نویگیشن مرحله‌ای) ───────────────────────────────────────────────────
-export type StepId = 'info' | 'gallery' | 'variants'
+export type StepId = 'basic' | 'gallery' | 'warehouse' | 'specs' | 'models' | 'seo'
 
 export interface ProductStep {
   id: StepId
@@ -99,10 +106,15 @@ export interface ProductStep {
   icon: LucideIcon
 }
 
+// شش مرحله، با همان عنوان‌ها و ترتیب طرح تأییدشده. شماره جزو عنوان است چون
+// خودِ ترتیب اطلاعات است، نه تزئین — کاربر با «مرحلهٔ ۳» به آن ارجاع می‌دهد.
 export const STEPS: ProductStep[] = [
-  { id: 'info',     label: 'اطلاعات محصول', shortLabel: 'اطلاعات', icon: Pencil     },
-  { id: 'gallery',  label: 'گالری',         shortLabel: 'گالری',   icon: Images     },
-  { id: 'variants', label: 'تنوع ها',       shortLabel: 'تنوع‌ها',  icon: LayoutGrid },
+  { id: 'basic',     label: '۱. مشخصات اولیه',      shortLabel: 'شروع',    icon: Pencil     },
+  { id: 'gallery',   label: '۲. گالری',             shortLabel: 'گالری',   icon: Images     },
+  { id: 'warehouse', label: '۳. انبارداری و ارسال', shortLabel: 'انبار',   icon: Package    },
+  { id: 'specs',     label: '۴. مشخصات محصول',      shortLabel: 'مشخصات',  icon: ListChecks },
+  { id: 'models',    label: '۵. مدل‌ها و تنوع',      shortLabel: 'تنوع',    icon: LayoutGrid },
+  { id: 'seo',       label: '۶. سئو و انتشار',      shortLabel: 'انتشار',  icon: Sparkles   },
 ]
 
 // ─── Product attribute (ویژگی داینامیک) ────────────────────────────────────────
@@ -279,6 +291,14 @@ export interface ProductForm {
   goldTax: string
   inventory: string
   unlimitedInventory: boolean
+  // ── ابعاد بسته (سانتی‌متر) ──
+  packLength: string
+  packWidth: string
+  packHeight: string
+  // ── تنظیمات ارسال ──
+  prepDays: string
+  shippingProfile: string
+  shippingNote: string
   /** آیا محصول تنوع دارد؟ (از تب «تنوع‌ها» — با وجود تنوع، موجودی/قیمت سطح محصول read-only می‌شود) */
   hasVariants: boolean
   attributes: Attribute[]
@@ -309,6 +329,12 @@ export const EMPTY_FORM: ProductForm = {
   goldTax: '10',
   inventory: '',
   unlimitedInventory: false,
+  packLength: '',
+  packWidth: '',
+  packHeight: '',
+  prepDays: '1',
+  shippingProfile: 'store',
+  shippingNote: '',
   hasVariants: false,
   attributes: [],
   description: '',

@@ -8,7 +8,10 @@ import { StepNav, type StepStatus } from '@/components/products/new/StepNav'
 import { ProductTypeDialog, ProductTypeSwitch } from '@/components/products/new/ProductTypeDialog'
 import { InfoTab } from '@/components/products/new/InfoTab'
 import { GalleryTab } from '@/components/products/new/GalleryTab'
+import { WarehouseTab } from '@/components/products/new/WarehouseTab'
+import { SpecsTab } from '@/components/products/new/SpecsTab'
 import { VariantsTab } from '@/components/products/new/VariantsTab'
+import { SeoTab } from '@/components/products/new/SeoTab'
 import {
   EMPTY_FORM, STEPS, pricingModeOf,
   type ProductForm, type ProductTypeId, type StepId,
@@ -25,7 +28,7 @@ export function NewProduct() {
   const router = useRouter()
   const isCompact = useCompactMode()
 
-  const [activeStep, setActiveStep] = useState<StepId>('info')
+  const [activeStep, setActiveStep] = useState<StepId>('basic')
   const [form, setForm] = useState<ProductForm>(EMPTY_FORM)
 
   // دیالوگ نوع محصول: در ورود اول باز است و تا انتخاب نشدن بسته نمی‌شود
@@ -36,7 +39,7 @@ export function NewProduct() {
 
   // محصول ساده مرحلهٔ «تنوع ها» ندارد
   const isVaried = form.productType === 'varied'
-  const steps = isVaried ? STEPS : STEPS.filter((s) => s.id !== 'variants')
+  const steps = isVaried ? STEPS : STEPS.filter((s) => s.id !== 'models')
 
   const chooseType = (productType: ProductTypeId) => {
     setForm((prev) => ({
@@ -47,7 +50,7 @@ export function NewProduct() {
         ? { hasVariants: false, variants: [], combinations: [] }
         : {}),
     }))
-    if (productType === 'simple' && activeStep === 'variants') setActiveStep('info')
+    if (productType === 'simple' && activeStep === 'models') setActiveStep('basic')
     setTypeChosen(true)
     setTypeDialogOpen(false)
   }
@@ -67,14 +70,25 @@ export function NewProduct() {
   // تنوع اختیاری است؛ نبودِ تنوع هم معتبر است
   const variantsComplete = true
 
+  // انبارداری: شناسه و — مگر نامحدود/تنوع — موجودی لازم است
+  const warehouseComplete = Boolean(
+    form.sku.trim() && (form.unlimitedInventory || form.hasVariants || form.inventory.trim()),
+  )
+  // مشخصات اختیاری است؛ نبودِ ویژگی هم معتبر است
+  const specsComplete = true
+
   const statuses: Record<StepId, StepStatus> = {
-    info: infoComplete ? 'complete' : 'pending',
+    basic: infoComplete ? 'complete' : 'pending',
     gallery: galleryComplete ? 'complete' : 'pending',
-    variants: form.combinations.length,
+    warehouse: warehouseComplete ? 'complete' : 'pending',
+    specs: specsComplete ? 'complete' : 'pending',
+    // تنوع اختیاری است: صفر ترکیب یعنی «کامل»، نه یک عددِ خام روی استپر
+    models: form.combinations.length > 0 ? form.combinations.length : 'complete',
+    seo: 'pending',
   }
 
   // انتشار فقط وقتی اطلاعات اجباری هر سه تب کامل باشد
-  const canPublish = infoComplete && galleryComplete && variantsComplete
+  const canPublish = infoComplete && galleryComplete && warehouseComplete && variantsComplete
 
   const goBack = () => router.push('/products/list')
   const save = () => { /* TODO: persist (UI-only این پاس) */ }
@@ -148,14 +162,23 @@ export function NewProduct() {
 
           {/* SECOND: ستون Middle (مرکز) — max 960 */}
           <Flex direction="column" gap="4" maxW="960px" flex="1" minW="0">
-            {activeStep === 'info' && (
+            {activeStep === 'basic' && (
               <InfoTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
             {activeStep === 'gallery' && (
               <GalleryTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
-            {activeStep === 'variants' && isVaried && (
+            {activeStep === 'warehouse' && (
+              <WarehouseTab form={form} onChange={patch} onBack={goBack} onSave={save} />
+            )}
+            {activeStep === 'specs' && (
+              <SpecsTab form={form} onChange={patch} onBack={goBack} onSave={save} />
+            )}
+            {activeStep === 'models' && isVaried && (
               <VariantsTab form={form} onChange={patch} onBack={goBack} onSave={save} />
+            )}
+            {activeStep === 'seo' && (
+              <SeoTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
           </Flex>
 

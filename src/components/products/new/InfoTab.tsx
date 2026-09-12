@@ -1,9 +1,9 @@
 import {
   Box, Flex, Grid, Text, Input, InputGroup, NativeSelect,
-  Select, Switch, Badge, Alert, IconButton, Button, Field, TagsInput,
+  Select, Switch, Alert, Field, TagsInput,
   Collapsible, createListCollection, Portal,
 } from '@chakra-ui/react'
-import { Plus, Trash2, DollarSign } from 'lucide-react'
+import { DollarSign } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
@@ -14,7 +14,7 @@ import { toPersianDigits, toLatinDigits, formatThousands, toPersianWords } from 
 import {
   categoryCollection, CURRENCY_UNITS, DISCOUNT_TYPES, currencyLabel,
   USD_RATE, USD_RATE_UPDATED, GOLD_GRAM_PRICE, pricingModeOf,
-  type ProductForm, type Attribute,
+  type ProductForm,
 } from './data'
 
 // ─── UnitSelect — NativeSelect inline addon داخل InputGroup endElement ──────────
@@ -53,21 +53,12 @@ export interface InfoTabProps {
   onSave: () => void
 }
 
-let _aid = 0
-const newAttr = (): Attribute => ({ id: `attr_${++_aid}`, name: '', value: '' })
-
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
   const isCompact = useCompactMode()
   const twoCol = isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }
 
-  // ─── Attributes ─────────────────────────────────────────────────────────────
-  const addAttr = () => onChange({ attributes: [...form.attributes, newAttr()] })
-  const removeAttr = (id: string) =>
-    onChange({ attributes: form.attributes.filter((a) => a.id !== id) })
-  const patchAttr = (id: string, patch: Partial<Attribute>) =>
-    onChange({ attributes: form.attributes.map((a) => (a.id === id ? { ...a, ...patch } : a)) })
 
   // ─── Pricing (محاسبهٔ کلاینت — این پاس بدون API) ──────────────────────────────
   const num = (s: string) => Number(toLatinDigits(s).replace(/[^\d.]/g, '')) || 0
@@ -110,18 +101,12 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
 
   // ─── Inventory ────────────────────────────────────────────────────────────────
   // با وجود تنوع: موجودی و تاگل نامحدود read-only (مدیریت از تب تنوع‌ها)
-  const inventoryLocked = form.hasVariants
-  const inventoryNum = Number(toLatinDigits(form.inventory).replace(/[^\d]/g, ''))
-  // alert «موجودی صفر» فقط وقتی: نه تنوع، نه نامحدود، و موجودی خالی/صفر باشد
-  const showZeroInventoryAlert =
-    !inventoryLocked && !form.unlimitedInventory && (form.inventory.trim() === '' || inventoryNum === 0)
-
   return (
     <Flex direction="column" gap="10" w="full">
 
       {/* ═══ اطلاعات پایه ═══════════════════════════════════════════════════════ */}
       <Box>
-        <TitleBar title="اطلاعات پایه" subtitle="اطلاعات پایه و اصلی محصول را وارد نمایید." size="xl" divider />
+        <TitleBar title="اطلاعات اصلی" subtitle="این اطلاعات در صفحه محصول نمایش داده می‌شود" size="xl" divider />
         <Grid templateColumns={twoCol} gap="4" pt="4">
 
           {/* نام محصول * — FIRST = راست */}
@@ -168,39 +153,6 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                 </Select.Positioner>
               </Portal>
             </Select.Root>
-          </Field.Root>
-
-          {/* شناسه کالا — auto badge + قابل ویرایش */}
-          <Field.Root>
-            <Field.Label fontSize="sm" fontWeight="semibold">شناسه کالا</Field.Label>
-            <InputGroup
-              startElement={
-                <Badge colorPalette="gray" variant="subtle" size="xs" rounded="l2">auto</Badge>
-              }
-              startElementProps={{ pointerEvents: 'none' }}
-            >
-              <Input
-                placeholder="مثال: SKU-1234"
-                value={form.sku}
-                onChange={(e) => onChange({ sku: e.target.value })}
-                dir="ltr"
-                disabled
-              />
-            </InputGroup>
-            <Field.HelperText>بصورت خودکار تولید می‌شود، قابل ویرایش است</Field.HelperText>
-          </Field.Root>
-
-          {/* وزن */}
-          <Field.Root>
-            <Field.Label fontSize="sm" fontWeight="semibold">وزن</Field.Label>
-            <NumberField
-              placeholder="۰"
-              value={form.weight}
-              onChange={(v) => onChange({ weight: v })}
-              allowDecimals
-              showSteppers
-            />
-            <Field.HelperText>برای محاسبه هزینه ارسال استفاده می‌شود</Field.HelperText>
           </Field.Root>
 
         </Grid>
@@ -343,138 +295,6 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
         </Flex>
       </Box>
 
-      {/* ═══ موجودی ═════════════════════════════════════════════════════════════ */}
-      <Box>
-        <TitleBar title="موجودی" subtitle="تعداد موجودی انبار را مشخص کنید." size="xl" divider />
-        <Flex direction="column" gap="4" pt="4">
-
-          {/* Alert تنوع — بالای فیلد، فقط وقتی محصول تنوع دارد */}
-          {inventoryLocked && (
-            <Alert.Root status="info" variant="subtle">
-              <Alert.Indicator />
-              <Alert.Content>
-                <Text fontSize="xs">موجودی کل برابر مجموع موجودی تنوع‌های فعال محاسبه می‌شود.</Text>
-              </Alert.Content>
-            </Alert.Root>
-          )}
-
-          <Flex gap="4" align={isCompact ? 'stretch' : { base: 'stretch', sm: 'end' }} direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}>
-            <Field.Root required flex={isCompact ? '1' : { base: 'none', sm: '1' }} w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
-              <Field.Label fontSize="sm" fontWeight="semibold">
-                موجودی<Field.RequiredIndicator />
-              </Field.Label>
-              <NumberField
-                placeholder="۰"
-                value={form.inventory}
-                onChange={(v) => onChange({ inventory: v })}
-                disabled={form.unlimitedInventory || inventoryLocked}
-                showSteppers
-              />
-            </Field.Root>
-
-            {/* موجودی نامحدود — Switch FIRST=راست، Text چپ */}
-            <Flex align="center" gap="2.5" pb={isCompact ? '0' : { base: '0', sm: '1.5' }} flexShrink={0}>
-              <Switch.Root
-                colorPalette="brand"
-                checked={form.unlimitedInventory}
-                onCheckedChange={(e) => onChange({ unlimitedInventory: e.checked })}
-                disabled={inventoryLocked}
-              >
-                <Switch.HiddenInput />
-                <Switch.Control><Switch.Thumb /></Switch.Control>
-              </Switch.Root>
-              <Text fontSize="sm" color="fg" whiteSpace="nowrap">موجودی نامحدود (محدودیت تعداد ندارد)</Text>
-            </Flex>
-          </Flex>
-
-          {/* Alert هشدار موجودی صفر — فقط وقتی موجودی صفر/خالی است */}
-          {showZeroInventoryAlert && (
-            <Alert.Root status="warning" variant="subtle">
-              <Alert.Indicator />
-              <Alert.Content>
-                <Text fontSize="xs">
-                  موجودی صفر — محصول به انتهای ویترین منتقل شده و برچسب «ناموجود» می‌گیرد.
-                </Text>
-              </Alert.Content>
-            </Alert.Root>
-          )}
-
-        </Flex>
-      </Box>
-
-      {/* ═══ ویژگی های محصول ════════════════════════════════════════════════════ */}
-      <Box>
-        <TitleBar
-          title="ویژگی های محصول"
-          subtitle="ویژگی‌های اختصاصی این محصول را وارد کنید. (حداکثر ۲۰ کاراکتر)"
-          size="xl"
-          divider
-          cta={
-            <Button
-              size="sm"
-              variant="outline"
-              colorPalette="brand"
-              onClick={addAttr}
-              disabled={!form.category}
-            >
-              <Plus size={16} />افزودن ویژگی
-            </Button>
-          }
-        />
-        <Box pt="4">
-          {form.attributes.length === 0 ? (
-            <Alert.Root status="info" variant="subtle">
-              <Alert.Indicator />
-              <Alert.Content>
-                <Text fontSize="xs">
-                  ابتدا دسته‌بندی محصول را انتخاب کنید تا ویژگی‌های پیش‌فرض بارگذاری شوند.
-                </Text>
-              </Alert.Content>
-            </Alert.Root>
-          ) : (
-            <Flex direction="column" gap="3">
-              {form.attributes.map((attr, idx) => (
-                /* RTL DOM order: نام ویژگی FIRST=راست · مقدار · حذف LAST=چپ
-                   label فقط روی ردیف اول؛ alignItems=end تا دکمه حذف هم‌تراز input بماند */
-                <Grid key={attr.id} templateColumns="1fr 1fr auto" gap="3" alignItems="end">
-                  <Field.Root>
-                    {idx === 0 && (
-                      <Field.Label fontSize="sm" fontWeight="semibold">نام ویژگی</Field.Label>
-                    )}
-                    <Input
-                      placeholder="نام ویژگی"
-                      value={attr.name}
-                      maxLength={20}
-                      onChange={(e) => patchAttr(attr.id, { name: e.target.value })}
-                    />
-                  </Field.Root>
-                  <Field.Root>
-                    {idx === 0 && (
-                      <Field.Label fontSize="sm" fontWeight="semibold">مقدار</Field.Label>
-                    )}
-                    <Input
-                      placeholder="مقدار"
-                      value={attr.value}
-                      maxLength={20}
-                      onChange={(e) => patchAttr(attr.id, { value: e.target.value })}
-                    />
-                  </Field.Root>
-                  <IconButton
-                    aria-label="حذف ویژگی"
-                    variant="outline"
-                    colorPalette="red"
-                    size="md"
-                    onClick={() => removeAttr(attr.id)}
-                  >
-                    <Trash2 size={16} />
-                  </IconButton>
-                </Grid>
-              ))}
-            </Flex>
-          )}
-        </Box>
-      </Box>
-
       {/* ═══ توضیحات اجمالی ═════════════════════════════════════════════════════ */}
       <Box>
         <TitleBar title="توضیحات اجمالی درباره محصول" subtitle="توضیحات کامل محصول را وارد کنید." size="xl" divider />
@@ -527,8 +347,8 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
 
       {/* ═══ Footer ═════════════════════════════════════════════════════════════ */}
       <ButtonFooter
-        primary={{ label: 'ذخیره', onClick: onSave }}
-        back={{ label: 'بازگشت', onClick: onBack }}
+        primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
+        back={{ label: 'بازگشت به لیست', onClick: onBack }}
       />
 
     </Flex>
