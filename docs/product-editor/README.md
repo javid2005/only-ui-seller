@@ -119,3 +119,13 @@ gallery: images.map((img) => (img.folder === folder ? nextVisible[cursor++] : im
 - پیش‌نمایش محصول و حالت sticky آن
 - نمای شبکه‌ای/لیستی گالری، انتخاب گروهی، جست‌وجوی نام فایل
 - راهنماهای مدال (help) با گرید رنگی و باکس ویدئو
+
+---
+
+## پیش‌نمایش زنده
+
+`scripts/build-preview.sh <out-dir>` صفحهٔ `/products/new` را به یک باندل استاتیک
+خودبسنده (۲۲ فایل، ~۳MB) تبدیل می‌کند که به‌صورت Artifact منتشر می‌شود.
+فهرست نسخه‌ها: https://claude.ai/code/artifact/e1a63324-9e14-450c-beb5-81f11d4aaece
+
+⚠️ HTML خروجی را دستکاری نکن — جزئیات در کامنت بالای همان اسکریپت.
