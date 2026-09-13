@@ -6,7 +6,7 @@ import { StepVideoButton } from './StepVideo'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { SectionCard } from './SectionCard'
 import type { Attribute, ProductForm } from './data'
-import { attributesForCategory } from './categoryKnowledge'
+import { attributesForCategory, tagSuggestions } from './categoryKnowledge'
 import { SuggestInput } from './SuggestInput'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
@@ -58,6 +58,8 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
   }
 
   const removeTag = (t: string) => onChange({ tags: form.tags.filter((x) => x !== t) })
+
+  const tagIdeas = tagSuggestions(form.name, form.category, form.attributes, form.tags)
 
   const attrSuggestions = attributesForCategory(form.category)
     .filter((a) => !form.attributes.some((x) => x.name === a.title))
@@ -182,6 +184,39 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
         subtitle="برچسب را بنویسید و Enter بزنید"
         helpTopic="برچسب‌های محصول"
       >
+        {/* پیشنهاد برچسب — از نام محصول، برند، و نمونه‌های همین دسته ساخته می‌شود */}
+        {tagIdeas.length > 0 && (
+          <Flex gap="1.5" wrap="wrap" mb="3" align="center">
+            {/* FIRST = rightmost: برچسبِ توضیحی */}
+            <Text fontSize="2xs" color="fg.muted" flexShrink={0}>پیشنهاد:</Text>
+            {tagIdeas.map((t) => (
+              <chakra.button
+                key={t}
+                type="button"
+                onClick={() => onChange({ tags: [...form.tags, t] })}
+                display="inline-flex"
+                alignItems="center"
+                gap="1"
+                h="7"
+                px="2"
+                rounded="l2"
+                fontSize="2xs"
+                cursor="pointer"
+                borderWidth="1px"
+                borderStyle="dashed"
+                borderColor="border"
+                color="fg.muted"
+                bg="transparent"
+                transition="border-color .15s, color .15s, background .15s"
+                _hover={{ borderColor: 'brand.border', color: 'brand.fg', bg: 'brand.bg' }}
+              >
+                {/* FIRST = rightmost: علامت + */}
+                <Plus size={11} />{t}
+              </chakra.button>
+            ))}
+          </Flex>
+        )}
+
         {/* FIRST = rightmost: کادر برچسب‌ها · LAST = leftmost: دکمهٔ + */}
         <chakra.form
           data-field="tags"

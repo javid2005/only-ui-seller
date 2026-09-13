@@ -434,3 +434,54 @@ export function sampleForCategory(category: string) {
     tags: ['دستهٔ اصلی', 'برند', 'ویژگی شاخص'],
   }
 }
+
+// ─── پیشنهاد برچسب ──────────────────────────────────────────────────────────────
+/**
+ * برچسب‌ها الگوی ثابت ندارند — برخلاف تنوع و مشخصه که فهرست مشخصی دارند.
+ *
+ * پس به‌جای فهرست از پیش نوشته‌شده، از سه منبعِ واقعیِ همین فرم ساخته می‌شوند:
+ *   ۱. واژه‌های معنادارِ نام محصول (کلمات پرتکرار و عدد و واحد حذف می‌شوند)
+ *   ۲. برند و مدل، اگر در مشخصات وارد شده باشند
+ *   ۳. برچسب‌های نمونهٔ همان دسته‌بندی
+ *
+ * نتیجه همان چیزی است که خریدار جست‌وجو می‌کند، نه واژه‌های داخلیِ فروشگاه.
+ */
+
+/** واژه‌هایی که به‌تنهایی برچسب نمی‌شوند */
+const TAG_STOPWORDS = new Set([
+  'و', 'با', 'در', 'از', 'برای', 'به', 'یا', 'تا', 'این', 'آن', 'مدل', 'نوع',
+  'اصلی', 'اورجینال', 'جدید', 'ویژه', 'عالی', 'سایز', 'رنگ', 'بسته', 'عدد',
+  'گرم', 'کیلوگرم', 'لیتر', 'میلی‌لیتر', 'اینچ', 'گیگابایت', 'ترابایت', 'سانتی‌متر',
+])
+
+const isMeaningful = (w: string) =>
+  w.length > 2 && !TAG_STOPWORDS.has(w) && !/^[0-9۰-۹٠-٩]+$/.test(w)
+
+export function tagSuggestions(
+  productName: string,
+  category: string,
+  attributes: { name: string; value: string }[],
+  existing: string[],
+): string[] {
+  const out: string[] = []
+
+  // ۱. عبارت‌های دوکلمه‌ای از ابتدای نام — «گوشی موبایل»، «کوله پشتی»
+  const words = productName.trim().split(/\s+/).filter(isMeaningful)
+  if (words.length >= 2) out.push(`${words[0]} ${words[1]}`)
+  out.push(...words.slice(0, 4))
+
+  // ۲. برند و مدل از مشخصات
+  for (const key of ['برند', 'مدل', 'نویسنده', 'ناشر']) {
+    const hit = attributes.find((a) => a.name.trim() === key)?.value.trim()
+    if (hit) out.push(hit)
+  }
+
+  // ۳. نمونه‌های همان دسته
+  out.push(...sampleForCategory(category).tags)
+
+  const seen = new Set(existing.map((t) => t.trim()))
+  return out
+    .map((t) => t.trim())
+    .filter((t) => t.length > 1 && !seen.has(t) && (seen.add(t) as unknown as boolean || true))
+    .slice(0, 8)
+}
