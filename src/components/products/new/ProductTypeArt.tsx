@@ -1,54 +1,99 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Flex, Text } from '@chakra-ui/react'
 import type { BoxProps } from '@chakra-ui/react'
 import type { ProductTypeId } from './data'
 
 // ─── ProductTypeArt ─────────────────────────────────────────────────────────────
 /**
- * تصویر انتزاعیِ هر نوع محصول در دیالوگ انتخاب نوع.
+ * پیش‌نمایشِ کارتِ محصول برای هر نوع.
  *
- * عیناً همان دو تصویر طرح تأییدشده است (از data-URI داخل پروتوتایپ استخراج شد):
- * یک اسکلتِ کالا روی زمینهٔ گرادیانی — «ساده» با تهِ خاکستریِ برند و «متنوع» با
- * تهِ آبی، تا حتی بدون خواندن عنوان هم دو گزینه از هم تفکیک شوند.
+ * ⚠️ نسخهٔ قبل فقط یک وکتورِ **عمودی** از یک گوشی بود: نه شکلِ کارت محصول را
+ * نشان می‌داد و نه چیزی دربارهٔ تفاوت «ساده» و «متنوع» می‌گفت، و چون قدش بلند بود
+ * دیالوگ را بی‌دلیل اسکرول‌دار می‌کرد.
  *
- * چرا inline SVG و نه فایل: رنگ‌ها **دادهٔ تصویرند** نه سطح theme-able، حجمش ناچیز
- * است، و inline بودن یعنی در خروجی استاتیک هم بدون درخواست شبکه رندر می‌شود.
+ * حالا همان چیزی است که در طرح تأییدشده بود (`.mini-product`): یک کارتِ **افقیِ**
+ * کوتاه — تصویر سمت راست، و سمت چپ اسکلتِ عنوان و قیمت. تفاوت دو نوع دقیقاً در
+ * ردیف آخر دیده می‌شود:
+ *   ساده  → یک نشانِ «آماده فروش»
+ *   متنوع → سواچ رنگ‌ها و پیل‌های سایز، یعنی خریدار قبل از خرید انتخاب می‌کند
+ *
+ * پس کاربر شکلِ نتیجه را می‌بیند، نه یک آیکنِ تزئینی.
  */
 export interface ProductTypeArtProps extends Omit<BoxProps, 'children'> {
   type: ProductTypeId
 }
 
-const PALETTE: Record<ProductTypeId, { accent: string; ink: string }> = {
-  simple: { accent: '#52bda4', ink: '#3a4348' },
-  varied: { accent: '#6bd2bd', ink: '#447bab' },
-}
+/** رنگ‌های اسکلت — دادهٔ تصویرند، نه سطحِ theme-able؛ در dark هم همین‌اند */
+const INK = '#cfd8dc'
+const PRICE = '#8acdbd'
 
 export function ProductTypeArt({ type, ...rest }: ProductTypeArtProps) {
-  const { accent, ink } = PALETTE[type]
-  const gid = `pta-g-${type}`
-  const bid = `pta-bg-${type}`
+  const varied = type === 'varied'
 
   return (
-    <Box overflow="hidden" lineHeight="0" {...rest}>
-      <svg viewBox="0 0 256 256" width="100%" height="100%" role="img" aria-label={`نمونه ${type === 'simple' ? 'محصول ساده' : 'محصول متنوع'}`}>
-        <defs>
-          <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor={accent} />
-            <stop offset="1" stopColor="#d8f4ed" />
-          </linearGradient>
-          <linearGradient id={bid} x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor={accent} stopOpacity=".24" />
-            <stop offset=".52" stopColor="#f9fcfb" />
-            <stop offset="1" stopColor={ink} stopOpacity=".12" />
-          </linearGradient>
-        </defs>
-        <rect width="256" height="256" fill={`url(#${bid})`} />
-        <circle cx="213" cy="44" r="54" fill={accent} opacity=".10" />
-        <circle cx="37" cy="211" r="62" fill={ink} opacity=".08" />
-        <rect x="82" y="34" width="91" height="176" rx="18" fill={ink} />
-        <rect x="89" y="43" width="77" height="151" rx="12" fill={`url(#${gid})`} />
-        <rect x="113" y="199" width="29" height="4" rx="2" fill="#fff" opacity=".55" />
-        <ellipse cx="128" cy="219" rx="67" ry="10" fill="#607078" opacity=".16" />
-      </svg>
+    <Box
+      display="grid"
+      gridTemplateColumns="86px minmax(0, 1fr)"
+      gap="2.5"
+      alignItems="center"
+      p="2"
+      minH="112px"
+      rounded="11px"
+      borderWidth="1px"
+      borderColor="border.muted"
+      bg="bg.subtle"
+      {...rest}
+    >
+      {/* FIRST = rightmost: تصویرِ کالا (اسکلتِ انتزاعی) */}
+      <Box
+        h="92px"
+        rounded="8px"
+        overflow="hidden"
+        bgGradient="to-bl"
+        gradientFrom={varied ? 'blue.subtle' : 'brand.subtle'}
+        gradientTo="bg.panel"
+        display="grid"
+        placeItems="center"
+      >
+        <Box
+          w="46px"
+          h="62px"
+          rounded="6px"
+          bgGradient="to-b"
+          gradientFrom={varied ? 'blue.emphasized' : 'brand.emphasized'}
+          gradientTo={varied ? 'blue.muted' : 'brand.muted'}
+        />
+      </Box>
+
+      {/* SECOND = چپ: اسکلتِ متنِ کارت */}
+      <Box minW="0">
+        <Box h="7px" w="80%" rounded="5px" bg={INK} mb="2" />
+        <Box h="7px" w="52%" rounded="5px" bg={PRICE} mb="2.5" />
+
+        {varied ? (
+          <Flex direction="column" gap="1.5">
+            {/* FIRST = rightmost: سواچ رنگ‌ها */}
+            <Flex gap="1">
+              <Box w="17px" h="11px" rounded="4px" bg="#333" />
+              <Box w="17px" h="11px" rounded="4px" bg="#f3f3f3" borderWidth="1px" borderColor="#dfe4e6" />
+              <Box w="17px" h="11px" rounded="4px" bg="#5d8fc8" />
+            </Flex>
+            <Flex gap="1">
+              <Flex minW="30px" h="16px" px="1" rounded="4px" bg="#e4eaec" align="center" justify="center">
+                <Text fontSize="7px" color="#5d6970">M</Text>
+              </Flex>
+              <Flex minW="30px" h="16px" px="1" rounded="4px" bg="#e4eaec" align="center" justify="center">
+                <Text fontSize="7px" color="#5d6970">L</Text>
+              </Flex>
+            </Flex>
+          </Flex>
+        ) : (
+          <Flex align="center" gap="1.5" mt="1.5">
+            {/* FIRST = rightmost: نقطهٔ وضعیت */}
+            <Box boxSize="7px" rounded="full" bg="brand.solid" flexShrink={0} />
+            <Text fontSize="9px" color="fg.muted">آماده فروش</Text>
+          </Flex>
+        )}
+      </Box>
     </Box>
   )
 }

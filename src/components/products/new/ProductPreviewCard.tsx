@@ -193,7 +193,7 @@ export function ProductPreviewCard({ form, variant = 'rail' }: ProductPreviewCar
         />
       )}
 
-      <MediaThumb src={featured?.src} alt={title} aspectRatio="1.1" w="full" padRatio={0.08} />
+      <MediaThumb src={featured?.src} alt={title} aspectRatio="1.1" w="full" />
       {body}
     </Box>
   )

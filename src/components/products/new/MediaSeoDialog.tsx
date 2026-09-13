@@ -60,7 +60,7 @@ export function MediaSeoDialog({ image, onClose, onConfirm }: MediaSeoDialogProp
                   flexShrink={0}
                   rounded="14px"
                   borderWidth="1px"
-                  borderColor="border.muted"
+                  borderColor="border"
                 />
                 <Flex direction="column" gap="3" flex="1" minW="0">
                   <NotchedField

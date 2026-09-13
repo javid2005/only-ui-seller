@@ -67,7 +67,7 @@ export function MediaRenameDialog({ image, onClose, onConfirm }: MediaRenameDial
                   flexShrink={0}
                   rounded="14px"
                   borderWidth="1px"
-                  borderColor="border.muted"
+                  borderColor="border"
                 />
                 <Box flex="1" minW="0">
                   <Input

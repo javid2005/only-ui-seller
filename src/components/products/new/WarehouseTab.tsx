@@ -14,7 +14,6 @@ import { SHIPPING_PROFILES, type ProductForm } from './data'
 export interface WarehouseTabProps {
   form: ProductForm
   onChange: (patch: Partial<ProductForm>) => void
-  onBack: () => void
   onSave: () => void
 }
 
@@ -42,7 +41,7 @@ function Unit({ children }: { children: string }) {
  *
  * RTL DOM order هر ردیف (first = rightmost): شناسه ← موجودی ← وزن.
  */
-export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabProps) {
+export function WarehouseTab({ form, onChange, onSave }: WarehouseTabProps) {
   return (
     <Flex direction="column" gap="5" w="full">
 
@@ -166,8 +165,10 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
                       </Text>
                     }
                     inputProps={{
-                      bg: 'bg.subtle',
-                      borderColor: 'border.muted',
+                      // سفید مثل بقیهٔ ورودی‌ها؛ ته‌رنگ باعث می‌شد این سه فیلد
+                      // از پس‌زمینهٔ پنل جدا دیده نشوند (بازخورد ۱۴۰۵/۰۶)
+                      bg: 'bg.panel',
+                      borderColor: 'border',
                       rounded: 'lg',
                       h: '9',
                       fontSize: '12px',
@@ -280,7 +281,6 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
 
       <ButtonFooter
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
-        back={{ label: 'بازگشت به لیست', onClick: onBack }}
       />
 
     </Flex>

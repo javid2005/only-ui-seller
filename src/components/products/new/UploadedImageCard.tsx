@@ -111,7 +111,7 @@ export function UploadedImageCard({
           <GripVertical size={16} />
         </Flex>
       )}
-      {/* FIRST = rightmost: Thumbnail — پس‌زمینهٔ سفید + حاشیهٔ نسبی از MediaThumb */}
+      {/* FIRST = rightmost: Thumbnail — بدون فریم، فقط یک حاشیهٔ نازکِ دیده‌شدنی */}
       <MediaThumb
         src={src}
         alt={label}
@@ -119,7 +119,7 @@ export function UploadedImageCard({
         flexShrink={0}
         rounded="14px"
         borderWidth="1px"
-        borderColor="border.muted"
+        borderColor="border"
       />
 
       {/* SECOND = left: Content */}

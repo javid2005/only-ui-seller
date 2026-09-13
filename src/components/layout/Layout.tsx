@@ -77,7 +77,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <Drawer.Backdrop />
           <Drawer.Positioner dir="rtl">
             {/* Same width as desktop sidebar */}
-            <Drawer.Content w="full" maxW="256px">
+            <Drawer.Content w="full" maxW="320px">
 
               {/* Header: Logo (RIGHT) + Close button (LEFT) */}
               <Drawer.Header

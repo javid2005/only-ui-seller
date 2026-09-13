@@ -30,7 +30,6 @@ import {
 export interface GalleryTabProps {
   form: ProductForm
   onChange: (patch: Partial<ProductForm>) => void
-  onBack: () => void
   onSave: () => void
 }
 
@@ -68,7 +67,7 @@ let _fid = 0
  * فقط **یک** دکمهٔ افزودن داریم و هم تصویر هم ویدئو را می‌گیرد (بند ۶ دور
  * «چاکرا اصلاح»)؛ عملیات هر کارت پشت منوی سه‌نقطه است، نه ردیف دکمه.
  */
-export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) {
+export function GalleryTab({ form, onChange, onSave }: GalleryTabProps) {
   // روی موبایلِ واقعی hover نداریم → دکمه‌های کارت همیشه نمایش
   const [isMobile, setIsMobile] = useState(false)
   useEffect(() => {
@@ -498,7 +497,6 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
 
       <ButtonFooter
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
-        back={{ label: 'بازگشت به لیست', onClick: onBack }}
       />
 
       {/* ═══ آپلودگر چندگانه ════════════════════════════════════════════════════ */}

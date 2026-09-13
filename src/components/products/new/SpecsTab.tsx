@@ -14,7 +14,6 @@ import { SuggestInput } from './SuggestInput'
 export interface SpecsTabProps {
   form: ProductForm
   onChange: (patch: Partial<ProductForm>) => void
-  onBack: () => void
   onSave: () => void
 }
 
@@ -33,7 +32,7 @@ let _attrId = 0
  *
  * RTL DOM order ردیف افزودن (first = rightmost): عنوان ← مقدار ← دکمهٔ +.
  */
-export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
+export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
   const [name, setName] = useState('')
   const [value, setValue] = useState('')
   const [tag, setTag] = useState('')
@@ -307,7 +306,6 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
 
       <ButtonFooter
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
-        back={{ label: 'بازگشت به لیست', onClick: onBack }}
       />
 
     </Flex>

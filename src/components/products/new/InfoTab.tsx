@@ -57,13 +57,12 @@ const categorySelectCollection = createListCollection({ items: categoryCollectio
 export interface InfoTabProps {
   form: ProductForm
   onChange: (patch: Partial<ProductForm>) => void
-  onBack: () => void
   onSave: () => void
 }
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
+export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
   const isCompact = useCompactMode()
   const twoCol = isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }
 
@@ -420,7 +419,6 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
 
       <ButtonFooter
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
-        back={{ label: 'بازگشت به لیست', onClick: onBack }}
       />
 
     </Flex>

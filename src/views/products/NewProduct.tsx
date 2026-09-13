@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Box, Flex, IconButton } from '@chakra-ui/react'
 import { Upload, Save, Eye } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
@@ -36,7 +35,6 @@ const ASK_TYPE_KEY = 'vitrina-product-type-ask'
  * سه تب: اطلاعات محصول / گالری / تنوع‌ها (Accordion + ماتریس ترکیب‌ها) — UI + state محلی.
  */
 export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
-  const router = useRouter()
   const isCompact = useCompactMode()
 
   const [activeStep, setActiveStep] = useState<StepId>('basic')
@@ -126,7 +124,8 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
   // انتشار فقط وقتی اطلاعات اجباری هر سه تب کامل باشد
   const canPublish = infoComplete && galleryComplete && warehouseComplete && variantsComplete
 
-  const goBack = () => router.push('/products/list')
+  // «بازگشت به لیست» از فوتر حذف شد: breadcrumb بالای صفحه همان کار را می‌کند و
+  // یک دکمهٔ تکراری پایینِ هر مرحله فقط فوتر را شلوغ می‌کرد (بازخورد ۱۴۰۵/۰۶).
 
   /**
    * ذخیره/انتشار — اول اعتبارسنجی.
@@ -279,28 +278,27 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
             key={activeStep}
             direction="column"
             gap="4"
-            maxW="960px"
             flex="1"
             minW="0"
             {...enterPanel}
           >
             {activeStep === 'basic' && (
-              <InfoTab form={form} onChange={patch} onBack={goBack} onSave={save} />
+              <InfoTab form={form} onChange={patch} onSave={save} />
             )}
             {activeStep === 'gallery' && (
-              <GalleryTab form={form} onChange={patch} onBack={goBack} onSave={save} />
+              <GalleryTab form={form} onChange={patch} onSave={save} />
             )}
             {activeStep === 'warehouse' && (
-              <WarehouseTab form={form} onChange={patch} onBack={goBack} onSave={save} />
+              <WarehouseTab form={form} onChange={patch} onSave={save} />
             )}
             {activeStep === 'specs' && (
-              <SpecsTab form={form} onChange={patch} onBack={goBack} onSave={save} />
+              <SpecsTab form={form} onChange={patch} onSave={save} />
             )}
             {activeStep === 'models' && (
               <VariantsTab
                 form={form}
                 onChange={patch}
-                onBack={goBack}
+               
                 onSave={save}
                 onMakeVaried={() => chooseType('varied')}
                 onLeave={() => setActiveStep('specs')}
@@ -310,7 +308,7 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
               <SeoTab
                 form={form}
                 onChange={patch}
-                onBack={goBack}
+               
                 onSave={save}
                 onGoToStep={setActiveStep}
               />

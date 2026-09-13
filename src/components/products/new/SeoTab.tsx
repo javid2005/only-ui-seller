@@ -32,7 +32,6 @@ import { SEO_CHECKS, seoScore, slugify, type ProductForm, type StepId } from './
 export interface SeoTabProps {
   form: ProductForm
   onChange: (patch: Partial<ProductForm>) => void
-  onBack: () => void
   onSave: () => void
   /** رفتن به مرحله‌ای که یک مورد سئو آنجا رفع می‌شود */
   onGoToStep: (step: StepId) => void
@@ -51,7 +50,7 @@ export interface SeoTabProps {
  *
  * امتیاز از دادهٔ واقعی همین فرم حساب می‌شود، نه یک عدد ثابت.
  */
-export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabProps) {
+export function SeoTab({ form, onChange, onSave, onGoToStep }: SeoTabProps) {
   const score = seoScore(form)
   const pending = SEO_CHECKS.filter((c) => !c.ok(form))
 
@@ -246,7 +245,6 @@ export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabPro
       {/* مرحلهٔ آخر است، پس «ادامه»‌ای در کار نیست — مثل طرح: «ذخیره و بستن» */}
       <ButtonFooter
         primary={{ label: 'ذخیره و بستن', onClick: onSave }}
-        back={{ label: 'بازگشت به لیست', onClick: onBack }}
       />
 
     </Flex>

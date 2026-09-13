@@ -141,7 +141,9 @@ export function Sidebar() {
   return (
     <Box
       as="aside"
-      w="64"
+      // عرض سایدبار در دسکتاپ ۳۰٪ بیشتر شد (۲۵۶ → ۳۲۰) تا نسبتش با بدنهٔ عریضِ
+      // فرم به هم نخورد — بازخورد مالک محصول، ۱۴۰۵/۰۶
+      w="80"
       h="full"
       bg="bg.subtle"
       overflow="hidden"

@@ -21,7 +21,6 @@ import {
 export interface VariantsTabProps {
   form: ProductForm
   onChange: (patch: Partial<ProductForm>) => void
-  onBack: () => void
   onSave: () => void
   /** برای بنر حالت ساده: تغییر نوع محصول یا برگشت به مرحلهٔ قبل */
   onMakeVaried?: () => void
@@ -43,7 +42,7 @@ const key = (values: string[]) => values.join('|')
  * کلیدِ ترکیب حفظ می‌مانند. کاربر دیگر نمی‌تواند فراموش کند دکمه را بزند.
  */
 export function VariantsTab({
-  form, onChange, onBack, onSave, onMakeVaried, onLeave,
+  form, onChange, onSave, onMakeVaried, onLeave,
 }: VariantsTabProps) {
   const options = form.variants
   const combos = form.combinations
@@ -130,7 +129,6 @@ export function VariantsTab({
         </Flex>
         <ButtonFooter
           primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
-          back={{ label: 'بازگشت به لیست', onClick: onBack }}
         />
       </Flex>
     )
@@ -265,7 +263,6 @@ export function VariantsTab({
 
       <ButtonFooter
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
-        back={{ label: 'بازگشت به لیست', onClick: onBack }}
       />
 
       {/* فهرست کامل انتخاب‌ها — پشت «انتخاب سفارشی» */}
