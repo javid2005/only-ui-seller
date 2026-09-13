@@ -1,4 +1,5 @@
 import { pricingModeOf, type ProductForm, type StepId } from './data'
+import { toPersianDigits } from '@/utils/numbers'
 
 // ─── اعتبارسنجی فرم محصول ───────────────────────────────────────────────────────
 /**
@@ -86,13 +87,32 @@ export function validateProduct(form: ProductForm): FieldIssue[] {
   const pricelessModels = form.combinations.filter(
     (c) => c.active && !c.phoneSale && !c.price.trim(),
   )
-  if (form.hasVariants && !form.phoneSale && form.price.trim() && pricelessModels.length > 0) {
+  /*
+   * شرطِ `form.price.trim()` برداشته شد (بازخورد کاربر، مورد ۱۱): از وقتی قیمتِ
+   * پایه در محصول متنوع قفل و خالی است، آن شرط هیچ‌وقت برقرار نمی‌شد و این خطا
+   * هرگز نمایش داده نمی‌شد — یعنی «قیمت» جدول عملاً اجباری نبود.
+   */
+  if (form.hasVariants && !form.phoneSale && pricelessModels.length > 0) {
     issues.push({
       id: 'modelPrices',
       label: 'قیمت مدل‌ها',
-      message: `${pricelessModels.length} مدل فعال بدون قیمت است. برای هر کدام قیمت بگذارید یا از ⋮ همان ردیف «فروش تلفنی» را روشن کنید.`,
+      message: `${toPersianDigits(pricelessModels.length)} مدل فعال بدون قیمت است. برای هر کدام قیمت بگذارید یا از ⋮ همان ردیف «فروش تلفنی» را روشن کنید.`,
       step: 'models',
-      field: 'modelsTable',
+      field: 'modelPrices',
+    })
+  }
+
+  /** موجودیِ مدل‌ها — همان قاعدهٔ قیمت؛ «نامحدود» استثنای آن است */
+  const stocklessModels = form.combinations.filter(
+    (c) => c.active && !c.unlimitedInventory && !c.inventory.trim(),
+  )
+  if (form.hasVariants && stocklessModels.length > 0) {
+    issues.push({
+      id: 'modelStocks',
+      label: 'موجودی مدل‌ها',
+      message: `${toPersianDigits(stocklessModels.length)} مدل فعال بدون موجودی است. عدد را وارد کنید یا از ⋮ همان ردیف «موجودی نامحدود» را روشن کنید.`,
+      step: 'models',
+      field: 'modelStocks',
     })
   }
 

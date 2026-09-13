@@ -71,8 +71,7 @@ export function AddSocialDialog({ open, onClose, onSubmit, initial }: AddSocialD
               pb="4"
               pt="6"
               px="6"
-              position="relative"
-            >
+              position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">
                 {isEdit ? 'ویرایش شبکه اجتماعی' : 'افزودن شبکه اجتماعی'}
               </Dialog.Title>

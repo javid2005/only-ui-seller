@@ -172,7 +172,7 @@ export function ShippingCalculatorDialog({
           >
 
             {/* Header */}
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">
                 محاسبه هزینه ارسال
               </Dialog.Title>

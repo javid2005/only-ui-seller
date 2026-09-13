@@ -73,7 +73,7 @@ export function DiscountDialog({
         <Dialog.Positioner dir="rtl" py="6">
           <Dialog.Content maxW="520px" w="full" mx="4" {...dialogEnterSubmit(() => { onConfirm({ type, value, until }); onClose() }, !invalid && value.trim() !== '')}>
 
-            <Dialog.Header pt="5" px="6" pb="2" position="relative">
+            <Dialog.Header pt="5" px="6" pb="2" position="relative" pe="12">
               <Dialog.Title fontSize="md" fontWeight="semibold" textAlign="start" w="full">
                 تخفیف محصول
               </Dialog.Title>

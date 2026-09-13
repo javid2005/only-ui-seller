@@ -62,8 +62,7 @@ export function AddPhoneDialog({ open, onClose, onSubmit, initial }: AddPhoneDia
               pb="4"
               pt="6"
               px="6"
-              position="relative"
-            >
+              position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">
                 {isEdit ? 'ویرایش شماره تماس' : 'افزودن شماره تماس'}
               </Dialog.Title>

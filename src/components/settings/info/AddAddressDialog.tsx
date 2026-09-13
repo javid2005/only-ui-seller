@@ -188,7 +188,7 @@ export function AddAddressDialog({ open, onClose, onSubmit, initial, phones = []
           <Dialog.Content maxW={isCompact ? '480px' : '900px'} w="full" mx="4">
 
             {/* Header — no bottom border per Figma */}
-            <Dialog.Header pb="3" pt="6" px="6" position="relative">
+            <Dialog.Header pb="3" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">
                 {isEdit ? 'ویرایش آدرس' : 'افزودن آدرس'}
               </Dialog.Title>

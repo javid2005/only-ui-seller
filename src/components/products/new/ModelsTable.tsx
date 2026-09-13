@@ -132,6 +132,16 @@ export function ModelsTable({
   options, combos, onChange, onPickImage, onOpenSettings, filter,
 }: ModelsTableProps) {
   const [selected, setSelected] = useState<string[]>([])
+  /**
+   * اولین سلولِ اجباریِ خالی از هر ستون.
+   *
+   * فهرست خطاها با `focusField('modelPrices')` سراغ همین می‌آید — پس باید
+   * **دقیقاً همان سلول** باشد، نه کلِ جدول: کاربر باید ببیند کدام خانه را پر
+   * کند (بازخورد کاربر، مورد ۱۱). قاعده‌اش عیناً همان `validation.ts` است.
+   */
+  const firstMissingPrice = combos.find((c) => c.active && !c.phoneSale && !c.price.trim())?.id
+  const firstMissingStock = combos.find((c) => c.active && !c.unlimitedInventory && !c.inventory.trim())?.id
+
   const [bulkOp, setBulkOp] = useState<BulkOp>('priceSet')
   const [bulkValue, setBulkValue] = useState('')
   const visible = combos.filter((c) =>
@@ -296,13 +306,17 @@ export function ModelsTable({
           css={{
             '& th': { height: '39px', paddingInline: '5px' },
             '& td': { paddingBlock: '5px', paddingInline: '5px' },
+            /* نوارِ رنگیِ گروه روی لبهٔ شروعِ همین سلول می‌نشیند؛ بدون این فاصله،
+               چک‌باکس تقریباً به آن می‌چسبید (بازخورد کاربر، مورد ۱۱). سرستون هم
+               همان فاصله را می‌گیرد تا چک‌باکسِ «انتخاب همه» با ستون هم‌تراز بماند. */
+            '& th:first-of-type, & td:first-of-type': { paddingInlineStart: '11px' },
           }}
         >
           <Table.Root size="sm" variant="line" minW="720px">
             <Table.Header>
               {/* FIRST = rightmost: چک‌باکس ← وضعیت ← تصویر ← مدل ← قیمت ← تخفیف ← موجودی */}
               <Table.Row bg="bg.subtle">
-                <Table.ColumnHeader w="36px">
+                <Table.ColumnHeader w="42px">
                   <Checkbox.Root
                     size="sm"
                     checked={allSelected}
@@ -400,7 +414,11 @@ export function ModelsTable({
                     </Text>
                     <Text fontSize="8.5px" color="fg.muted" textAlign="start" dir="ltr">{c.sku}</Text>
                   </Table.Cell>
-                  <Table.Cell onClick={focusInputWithin} cursor="text">
+                  <Table.Cell
+                    onClick={focusInputWithin}
+                    cursor="text"
+                    data-field={c.id === firstMissingPrice ? 'modelPrices' : undefined}
+                  >
                     <NumberField
                       value={c.price}
                       // ویرایش دستی، ارث‌بریِ همین مقدار را قطع می‌کند
@@ -421,7 +439,11 @@ export function ModelsTable({
                       />
                     </Table.Cell>
                   )}
-                  <Table.Cell onClick={focusInputWithin} cursor="text">
+                  <Table.Cell
+                    onClick={focusInputWithin}
+                    cursor="text"
+                    data-field={c.id === firstMissingStock ? 'modelStocks' : undefined}
+                  >
                     <NumberField
                       value={c.inventory}
                       onChange={(v) => patch(c.id, { inventory: v, inherits: { ...c.inherits, inventory: v.trim() === '' } })}

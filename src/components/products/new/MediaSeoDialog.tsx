@@ -39,7 +39,7 @@ export function MediaSeoDialog({ image, onClose, onConfirm }: MediaSeoDialogProp
         <Dialog.Positioner dir="rtl" py="6">
           <Dialog.Content maxW="520px" w="full" mx="4" {...dialogEnterSubmit(() => { onConfirm({ alt, caption }); onClose() })}>
 
-            <Dialog.Header pb="3" pt="6" px="6" position="relative">
+            <Dialog.Header pb="3" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="start" w="full">
                 سئوی تصویر
               </Dialog.Title>

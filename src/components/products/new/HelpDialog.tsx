@@ -49,7 +49,7 @@ export function HelpDialog({ topic, onClose, description }: HelpDialogProps) {
         <Dialog.Positioner dir="rtl" py="6">
           <Dialog.Content maxW="820px" w="full" mx="4">
 
-            <Dialog.Header pt="5" px="6" pb="3" position="relative">
+            <Dialog.Header pt="5" px="6" pb="3" position="relative" pe="12">
               <Dialog.Title fontSize="md" fontWeight="semibold" textAlign="start" w="full">
                 راهنمای «{data?.title}»
               </Dialog.Title>

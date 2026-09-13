@@ -85,7 +85,7 @@ export function VariantSelectDialog({ open, product, onClose, onAddVariant, rema
         <Dialog.Positioner dir="rtl">
           <Dialog.Content maxW="420px" w="full" mx="4">
 
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">انتخاب تنوع</Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" onClick={onClose} />

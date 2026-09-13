@@ -59,7 +59,7 @@ export function OrderFilterModal({
         <Dialog.Positioner dir="rtl">
           <Dialog.Content maxW="480px" w="full" mx="4">
 
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">فیلترها</Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" onClick={onClose} />

@@ -52,7 +52,7 @@ export function ShipDialog({ open, onClose, onSubmit }: ShipDialogProps) {
         <Dialog.Positioner dir="rtl">
           <Dialog.Content maxW={isCompact ? '420px' : '480px'} w="full" mx="4">
 
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">ثبت ارسال</Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" onClick={handleClose} />
@@ -135,7 +135,7 @@ export function TrackingCodeDialog({ open, onClose, onSubmit, initial = '' }: Tr
         <Dialog.Positioner dir="rtl">
           <Dialog.Content maxW={isCompact ? '420px' : '480px'} w="full" mx="4">
 
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">کد رهگیری</Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" onClick={onClose} />
@@ -184,7 +184,7 @@ export function CancelOrderDialog({ open, onClose, onConfirm }: CancelOrderDialo
         <Dialog.Positioner dir="rtl">
           <Dialog.Content maxW={isCompact ? '420px' : '480px'} w="full" mx="4">
 
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">لغو سفارش</Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" onClick={onClose} />
@@ -243,7 +243,7 @@ export function EditReceiverDialog({ open, onClose, onSubmit, initial }: EditRec
         <Dialog.Positioner dir="rtl">
           <Dialog.Content maxW={isCompact ? '420px' : '480px'} w="full" mx="4">
 
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">ویرایش اطلاعات گیرنده</Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" onClick={onClose} />
@@ -337,7 +337,7 @@ export function EditAddressDialog({ open, onClose, onSubmit, initial }: EditAddr
         <Dialog.Positioner dir="rtl" py="6">
           <Dialog.Content maxW={isCompact ? '420px' : '480px'} w="full" mx="4">
 
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">ویرایش آدرس</Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" onClick={onClose} />
@@ -478,7 +478,7 @@ export function SelectSenderAddressDialog({ open, onClose, onSubmit, initialId }
         <Dialog.Positioner dir="rtl" py="6">
           <Dialog.Content maxW={isCompact ? '420px' : '480px'} w="full" mx="4">
 
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" color="fg">انتخاب آدرس فرستنده</Dialog.Title>
               <Dialog.CloseTrigger asChild position="absolute" top="4" insetEnd="4">
                 <CloseButton size="sm" onClick={onClose} />

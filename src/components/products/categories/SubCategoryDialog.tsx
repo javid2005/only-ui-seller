@@ -60,7 +60,7 @@ export function SubCategoryDialog({
           <Dialog.Content maxW="512px" w="full" mx="4">
 
             {/* ─── Header ─────────────────────────────────────────────── */}
-            <Dialog.Header pb="4" pt="6" px="6" position="relative">
+            <Dialog.Header pb="4" pt="6" px="6" position="relative" pe="12">
               <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="start" w="full">
                 {title}
               </Dialog.Title>
