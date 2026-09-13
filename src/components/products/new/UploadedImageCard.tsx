@@ -1,7 +1,7 @@
 import { Box, Flex, Text, Badge, Button, IconButton, Menu, Portal } from '@chakra-ui/react'
 import { Trash2, X, GripVertical, FolderInput } from 'lucide-react'
 import { MediaThumb } from './MediaThumb'
-import { MEDIA_FOLDERS, type MediaFolderId } from './data'
+import type { MediaFolder, MediaFolderId } from './data'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -23,6 +23,7 @@ export interface UploadedImageCardProps {
   alwaysShowActions?: boolean
   /** پوشهٔ فعلی این رسانه — برای منوی «انتقال به پوشه» */
   folder?: MediaFolderId
+  folders?: MediaFolder[]
   onMoveToFolder?: (target: MediaFolderId) => void
   // ── مرتب‌سازی با drag & drop (در هر پوشه) ──
   draggable?: boolean
@@ -55,6 +56,7 @@ export function UploadedImageCard({
   onRemoveTag,
   alwaysShowActions = false,
   folder,
+  folders = [],
   onMoveToFolder,
   draggable,
   isDragging = false,
@@ -179,7 +181,7 @@ export function UploadedImageCard({
               <Portal>
                 <Menu.Positioner dir="rtl">
                   <Menu.Content>
-                    {MEDIA_FOLDERS.filter((f) => f.id !== folder).map((f) => (
+                    {folders.filter((f) => f.id !== folder).map((f) => (
                       <Menu.Item key={f.id} value={f.id} onSelect={() => onMoveToFolder(f.id)}>
                         {f.label}
                       </Menu.Item>

@@ -1,15 +1,18 @@
-import { Flex, Text, Box, Icon, chakra } from '@chakra-ui/react'
-import { Images as ImagesIcon, Folder } from 'lucide-react'
+import { Flex, Text, Box, Icon, IconButton, chakra } from '@chakra-ui/react'
+import { Images as ImagesIcon, Folder, Plus } from 'lucide-react'
 import { toPersianDigits } from '@/utils/numbers'
-import { MEDIA_FOLDERS, type MediaFolderId } from './data'
+import type { MediaFolder, MediaFolderId } from './data'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
 export interface FolderPanelProps {
+  folders: MediaFolder[]
   active: MediaFolderId
   onSelect: (id: MediaFolderId) => void
   /** تعداد رسانهٔ هر پوشه */
   counts: Record<MediaFolderId, number>
+  /** ساخت پوشهٔ تازه در کتابخانه */
+  onCreate?: () => void
 }
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -22,15 +25,30 @@ export interface FolderPanelProps {
  * پوشه‌ها فقط نما هستند: «افزودن به محصول» فایل را جابه‌جا نمی‌کند و همان رسانه
  * می‌تواند در محصولات دیگر هم استفاده شود.
  */
-export function FolderPanel({ active, onSelect, counts }: FolderPanelProps) {
+export function FolderPanel({ folders, active, onSelect, counts, onCreate }: FolderPanelProps) {
   return (
     <Flex direction="column" gap="3" w="full">
-      <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start">
-        پوشه‌ها
-      </Text>
+      {/* FIRST = rightmost: عنوان · LAST = leftmost: ساخت پوشه */}
+      <Flex align="center" gap="2" w="full">
+        <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" flex="1">
+          پوشه‌ها
+        </Text>
+        {onCreate && (
+          <IconButton
+            size="xs"
+            variant="outline"
+            colorPalette="brand"
+            rounded="l2"
+            aria-label="ساخت پوشه در کتابخانه"
+            onClick={onCreate}
+          >
+            <Plus size={14} />
+          </IconButton>
+        )}
+      </Flex>
 
       <Flex direction="column" gap="1" w="full">
-        {MEDIA_FOLDERS.map((folder) => {
+        {folders.map((folder) => {
           const isActive = folder.id === active
           const FolderIcon = folder.id === 'products' ? ImagesIcon : Folder
           return (
