@@ -6,6 +6,7 @@ import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { NumberField } from '@/components/ui/NumberField'
 import { SectionCard, Panel } from './SectionCard'
 import { PrepDaysStepper } from './PrepDaysStepper'
+import { focusInputWithin } from './focusField'
 import { NotchedField, bareControlSm } from './NotchedField'
 import { SHIPPING_PROFILES, type ProductForm } from './data'
 
@@ -141,7 +142,14 @@ export function WarehouseTab({ form, onChange, onSave }: WarehouseTabProps) {
               ] as const).map(([label, value, set]) => (
                 /* در طرح، لیبلِ ابعاد **کنارِ** کادر است نه رویش — سه فیلد کوتاه
                    کنار هم، و لیبلِ روی‌خط آن‌ها را بی‌دلیل بلند می‌کرد. */
-                <Flex key={label} align="center" gap="1.5" minW="0">
+                <Flex
+                  key={label}
+                  align="center"
+                  gap="1.5"
+                  minW="0"
+                  cursor="text"
+                  onClick={focusInputWithin}
+                >
                   {/* FIRST = rightmost: لیبل */}
                   <Text
                     as="label"

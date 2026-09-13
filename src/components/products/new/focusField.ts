@@ -34,3 +34,25 @@ export function focusField(field: string, delay = 220): void {
     window.setTimeout(() => el.classList.remove(FIELD_FLASH_CLASS), 2000)
   }, delay)
 }
+
+// ─── کلیک روی لیبل → مکان‌نما داخل فیلد ────────────────────────────────────────
+/**
+ * نزدیک‌ترین ورودیِ داخل همین عنصر را فوکوس می‌کند.
+ *
+ * چرا نه `<label htmlFor>`: بیشتر این لیبل‌ها داخل `fieldset/legend` یا داخل یک
+ * سلول جدول‌اند و id یکتا ندارند (یک فیلد ممکن است هم در دسکتاپ و هم در موبایل
+ * رندر شود و id تکراری بسازد). این راه بدون id کار می‌کند و برای واحدهای کنار
+ * فیلد («تومان»، «عدد») هم که اصلاً لیبل نیستند، همان رفتار را می‌دهد.
+ *
+ * اگر کلیک روی خودِ ورودی یا روی یک دکمه بوده، کاری نمی‌کند تا رفتار طبیعی
+ * عنصر را خراب نکند.
+ */
+export function focusInputWithin(e: { currentTarget: HTMLElement; target: EventTarget | null }): void {
+  const target = e.target as HTMLElement | null
+  if (target?.closest('input, textarea, select, button, [role="button"], a')) return
+
+  const input = e.currentTarget.querySelector<HTMLElement>(
+    'input:not([type="hidden"]):not([disabled]), textarea:not([disabled])',
+  )
+  input?.focus()
+}

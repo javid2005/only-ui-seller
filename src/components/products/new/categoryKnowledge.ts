@@ -27,8 +27,14 @@ export interface OptionSuggestion {
 
 export interface AttributeSuggestion {
   title: string
-  /** نمونه‌مقدار — هم در placeholder و هم در راهنما استفاده می‌شود */
-  example: string
+  /**
+   * مقادیر رایجِ همین مشخصه.
+   *
+   * یک نمونه کافی نبود: کاربر عنوان را از فهرست برمی‌داشت و بعد باید مقدار را
+   * از صفر می‌نوشت. اولین مقدار نقشِ «مثال» را هم بازی می‌کند (placeholder و
+   * راهنما)، بقیه در فهرست پیشنهادِ فیلدِ مقدار می‌آیند.
+   */
+  values: string[]
 }
 
 export interface CategoryKnowledge {
@@ -58,24 +64,24 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'اندازه صفحه', values: ['۱۳ اینچ', '۱۴ اینچ', '۱۵٫۶ اینچ', '۱۷ اینچ', '۲۴ اینچ', '۲۷ اینچ', '۳۲ اینچ'] },
     ],
     attributes: [
-      { title: 'برند', example: 'سامسونگ' },
-      { title: 'مدل', example: 'Galaxy S24 Ultra' },
-      { title: 'کشور سازنده', example: 'کره جنوبی' },
-      { title: 'حافظه داخلی', example: '۲۵۶ گیگابایت' },
-      { title: 'مقدار رم', example: '۱۲ گیگابایت' },
-      { title: 'پردازنده', example: 'Snapdragon 8 Gen 3' },
-      { title: 'اندازه صفحه نمایش', example: '۶٫۸ اینچ' },
-      { title: 'نوع صفحه نمایش', example: 'AMOLED' },
-      { title: 'رزولوشن', example: '۳۰۸۸×۱۴۴۰ پیکسل' },
-      { title: 'ظرفیت باتری', example: '۵۰۰۰ میلی‌آمپر' },
-      { title: 'دوربین اصلی', example: '۲۰۰ مگاپیکسل' },
-      { title: 'سیستم عامل', example: 'اندروید ۱۴' },
-      { title: 'پشتیبانی شبکه', example: '5G' },
-      { title: 'ضد آب', example: 'IP68' },
-      { title: 'پورت شارژ', example: 'USB-C' },
-      { title: 'وزن', example: '۲۳۲ گرم' },
-      { title: 'گارانتی', example: '۱۸ ماه شرکتی' },
-      { title: 'محتویات جعبه', example: 'گوشی، کابل، سنجاق سیم‌کارت' },
+      { title: 'برند', values: ['سامسونگ', 'اپل', 'شیائومی', 'هواوی', 'ال‌جی', 'سونی', 'ایسوس', 'لنوو', 'اچ‌پی', 'دل', 'ایسر', 'نوکیا', 'موتورولا', 'آنر', 'ریلمی', 'وان‌پلاس'] },
+      { title: 'مدل', values: ['Galaxy S24 Ultra'] },
+      { title: 'کشور سازنده', values: ['کره جنوبی', 'چین', 'ژاپن', 'آمریکا', 'آلمان', 'ویتنام', 'هند', 'تایوان', 'ایران', 'ترکیه'] },
+      { title: 'حافظه داخلی', values: ['۲۵۶ گیگابایت'] },
+      { title: 'مقدار رم', values: ['۱۲ گیگابایت'] },
+      { title: 'پردازنده', values: ['Snapdragon 8 Gen 3', 'Snapdragon 7 Gen 2', 'Dimensity 9200', 'Exynos 2400', 'Apple A17 Pro', 'Apple M3', 'Core i5', 'Core i7', 'Ryzen 5', 'Ryzen 7'] },
+      { title: 'اندازه صفحه نمایش', values: ['۶٫۸ اینچ'] },
+      { title: 'نوع صفحه نمایش', values: ['AMOLED', 'Super AMOLED', 'IPS LCD', 'OLED', 'Retina', 'TFT', 'Mini-LED'] },
+      { title: 'رزولوشن', values: ['۳۰۸۸×۱۴۴۰ پیکسل'] },
+      { title: 'ظرفیت باتری', values: ['۵۰۰۰ میلی‌آمپر'] },
+      { title: 'دوربین اصلی', values: ['۲۰۰ مگاپیکسل'] },
+      { title: 'سیستم عامل', values: ['اندروید ۱۴', 'اندروید ۱۳', 'iOS 17', 'ویندوز ۱۱', 'ویندوز ۱۰', 'macOS', 'بدون سیستم عامل'] },
+      { title: 'پشتیبانی شبکه', values: ['5G', '4G LTE', '3G', 'Wi-Fi 6', 'Wi-Fi 6E', 'بدون شبکه'] },
+      { title: 'ضد آب', values: ['IP68', 'IP67', 'IP54', 'ضد پاشش آب', 'ندارد'] },
+      { title: 'پورت شارژ', values: ['USB-C', 'Lightning', 'Micro USB', 'MagSafe', 'بدون پورت'] },
+      { title: 'وزن', values: ['۲۳۲ گرم'] },
+      { title: 'گارانتی', values: ['۶ ماه شرکتی', '۱۲ ماه شرکتی', '۱۸ ماه شرکتی', '۲۴ ماه شرکتی', '۳۶ ماه شرکتی', 'گارانتی فروشگاه', 'بدون گارانتی'] },
+      { title: 'محتویات جعبه', values: ['گوشی، کابل، سنجاق سیم‌کارت'] },
     ],
     sample: {
       name: 'گوشی موبایل سامسونگ مدل Galaxy S24 Ultra ظرفیت ۲۵۶ گیگابایت',
@@ -96,18 +102,18 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'طرح', values: ['ساده', 'راه‌راه', 'چهارخانه', 'گل‌دار', 'طرح‌دار'] },
     ],
     attributes: [
-      { title: 'برند', example: 'زارا' },
-      { title: 'جنس پارچه', example: '۹۵٪ پنبه، ۵٪ الاستان' },
-      { title: 'نوع یقه', example: 'یقه گرد' },
-      { title: 'نوع آستین', example: 'آستین بلند' },
-      { title: 'فرم لباس', example: 'رگولار' },
-      { title: 'قد لباس', example: '۷۰ سانتی‌متر' },
-      { title: 'نوع بسته‌شدن', example: 'دکمه‌دار' },
-      { title: 'کشور سازنده', example: 'ترکیه' },
-      { title: 'فصل مناسب', example: 'پاییز و زمستان' },
-      { title: 'شستشو', example: 'شستشو با آب سرد' },
-      { title: 'جیب', example: 'دو جیب جانبی' },
-      { title: 'مناسب برای', example: 'استفاده روزمره' },
+      { title: 'برند', values: ['زارا', 'مانگو', 'اچ‌اند‌ام', 'دیفکتو', 'کوتون', 'ال‌سی وایکیکی', 'نایک', 'آدیداس', 'پوما', 'تولیدی داخلی'] },
+      { title: 'جنس پارچه', values: ['۱۰۰٪ پنبه', '۹۵٪ پنبه، ۵٪ الاستان', 'پلی‌استر', 'ویسکوز', 'کتان', 'جین', 'مخمل', 'پشم', 'لینن', 'ترکیب پنبه و پلی‌استر'] },
+      { title: 'نوع یقه', values: ['یقه گرد', 'یقه هفت', 'یقه اسکی', 'یقه انگلیسی', 'یقه دیپلمات', 'یقه ایستاده', 'بدون یقه'] },
+      { title: 'نوع آستین', values: ['آستین بلند', 'آستین کوتاه', 'آستین سه‌ربع', 'بدون آستین', 'آستین رگلان'] },
+      { title: 'فرم لباس', values: ['رگولار', 'اسلیم', 'اورسایز', 'آزاد', 'کشی'] },
+      { title: 'قد لباس', values: ['۷۰ سانتی‌متر'] },
+      { title: 'نوع بسته‌شدن', values: ['دکمه‌دار'] },
+      { title: 'کشور سازنده', values: ['ترکیه'] },
+      { title: 'فصل مناسب', values: ['بهار و تابستان', 'پاییز و زمستان', 'چهارفصل', 'مخصوص تابستان', 'مخصوص زمستان'] },
+      { title: 'شستشو', values: ['شستشو با آب سرد', 'شستشو با دست', 'خشک‌شویی', 'ماشین لباسشویی دور کم', 'بدون سفیدکننده'] },
+      { title: 'جیب', values: ['دو جیب جانبی'] },
+      { title: 'مناسب برای', values: ['استفاده روزمره'] },
     ],
     sample: {
       name: 'پیراهن مردانه آستین بلند جنس نخ پنبه مدل کلاسیک',
@@ -126,18 +132,18 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'تعداد در بسته', values: ['۱ عددی', '۲ عددی', '۴ عددی', '۶ عددی', '۱۲ عددی'] },
     ],
     attributes: [
-      { title: 'برند', example: 'دلمونتی' },
-      { title: 'جنس بدنه', example: 'استیل ضدزنگ' },
-      { title: 'ظرفیت', example: '۲٫۵ لیتر' },
-      { title: 'توان مصرفی', example: '۱۸۰۰ وات' },
-      { title: 'ولتاژ', example: '۲۲۰ ولت' },
-      { title: 'ابعاد', example: '۳۰×۲۰×۱۵ سانتی‌متر' },
-      { title: 'وزن', example: '۱٫۸ کیلوگرم' },
-      { title: 'قابل شستشو در ماشین ظرفشویی', example: 'بله' },
-      { title: 'مناسب برای اجاق القایی', example: 'بله' },
-      { title: 'کشور سازنده', example: 'ایتالیا' },
-      { title: 'گارانتی', example: '۲۴ ماه' },
-      { title: 'محتویات بسته', example: 'دستگاه، دفترچه راهنما' },
+      { title: 'برند', values: ['دلمونتی'] },
+      { title: 'جنس بدنه', values: ['استیل ضدزنگ', 'چدن', 'آلومینیوم', 'گرانیت', 'سرامیک', 'شیشه پیرکس', 'مس', 'پلاستیک نسوز', 'چوب'] },
+      { title: 'ظرفیت', values: ['۲٫۵ لیتر'] },
+      { title: 'توان مصرفی', values: ['۶۰۰ وات', '۱۰۰۰ وات', '۱۵۰۰ وات', '۱۸۰۰ وات', '۲۰۰۰ وات', '۲۴۰۰ وات'] },
+      { title: 'ولتاژ', values: ['۲۲۰ ولت'] },
+      { title: 'ابعاد', values: ['۳۰×۲۰×۱۵ سانتی‌متر'] },
+      { title: 'وزن', values: ['۱٫۸ کیلوگرم'] },
+      { title: 'قابل شستشو در ماشین ظرفشویی', values: ['بله'] },
+      { title: 'مناسب برای اجاق القایی', values: ['بله'] },
+      { title: 'کشور سازنده', values: ['ایتالیا'] },
+      { title: 'گارانتی', values: ['۲۴ ماه'] },
+      { title: 'محتویات بسته', values: ['دستگاه، دفترچه راهنما'] },
     ],
     sample: {
       name: 'سرویس قابلمه گرانیتی ۸ پارچه مدل کلاسیک',
@@ -156,17 +162,17 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'حالت', values: ['کرم', 'ژل', 'سرم', 'روغن', 'فوم', 'اسپری'] },
     ],
     attributes: [
-      { title: 'برند', example: 'لورآل' },
-      { title: 'حجم', example: '۵۰ میلی‌لیتر' },
-      { title: 'مناسب پوست', example: 'پوست مختلط تا چرب' },
-      { title: 'مواد مؤثر', example: 'ویتامین C، هیالورونیک اسید' },
-      { title: 'SPF', example: 'SPF 50' },
-      { title: 'فاقد پارابن', example: 'بله' },
-      { title: 'تاریخ انقضا', example: '۲۴ ماه پس از باز شدن' },
-      { title: 'کشور سازنده', example: 'فرانسه' },
-      { title: 'نوع بسته‌بندی', example: 'پمپ ایرلس' },
-      { title: 'مناسب برای', example: 'روز و شب' },
-      { title: 'تست حیوانی', example: 'ندارد' },
+      { title: 'برند', values: ['لورآل', 'نیوآ', 'گارنیه', 'اوریفلیم', 'سین‌ری', 'لافارر', 'هیدرودرم', 'سریتا', 'اردن', 'مای'] },
+      { title: 'حجم', values: ['۵۰ میلی‌لیتر'] },
+      { title: 'مناسب پوست', values: ['پوست خشک', 'پوست چرب', 'پوست مختلط', 'پوست حساس', 'پوست نرمال', 'همهٔ انواع پوست'] },
+      { title: 'مواد مؤثر', values: ['ویتامین C', 'هیالورونیک اسید', 'رتینول', 'نیاسینامید', 'سالیسیلیک اسید', 'کلاژن', 'آلوئه‌ورا', 'روغن آرگان'] },
+      { title: 'SPF', values: ['SPF 15', 'SPF 30', 'SPF 50', 'SPF 50+', 'بدون SPF'] },
+      { title: 'فاقد پارابن', values: ['بله'] },
+      { title: 'تاریخ انقضا', values: ['۲۴ ماه پس از باز شدن'] },
+      { title: 'کشور سازنده', values: ['فرانسه'] },
+      { title: 'نوع بسته‌بندی', values: ['پمپ ایرلس'] },
+      { title: 'مناسب برای', values: ['روز و شب'] },
+      { title: 'تست حیوانی', values: ['ندارد'] },
     ],
     sample: {
       name: 'سرم ویتامین C روشن‌کننده پوست حجم ۳۰ میلی‌لیتر',
@@ -184,14 +190,14 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'مدت تحویل', values: ['۷ تا ۱۰ روز', '۱۰ تا ۱۵ روز', '۱۵ تا ۲۵ روز'] },
     ],
     attributes: [
-      { title: 'برند', example: 'اپل' },
-      { title: 'مدل', example: 'AirPods Pro 2' },
-      { title: 'کشور مبدأ', example: 'آمریکا' },
-      { title: 'مدت زمان تحویل', example: '۱۵ تا ۲۵ روز کاری' },
-      { title: 'اصالت کالا', example: 'اورجینال با کد رهگیری' },
-      { title: 'نرخ مرجع ارز', example: 'دلار آزاد' },
-      { title: 'شامل گمرک', example: 'بله' },
-      { title: 'گارانتی', example: 'گارانتی فروشگاه' },
+      { title: 'برند', values: ['اپل'] },
+      { title: 'مدل', values: ['AirPods Pro 2'] },
+      { title: 'کشور مبدأ', values: ['آمریکا'] },
+      { title: 'مدت زمان تحویل', values: ['۱۵ تا ۲۵ روز کاری'] },
+      { title: 'اصالت کالا', values: ['اورجینال با کد رهگیری'] },
+      { title: 'نرخ مرجع ارز', values: ['دلار آزاد'] },
+      { title: 'شامل گمرک', values: ['بله'] },
+      { title: 'گارانتی', values: ['گارانتی فروشگاه'] },
     ],
     sample: {
       name: 'هدفون بی‌سیم اپل مدل AirPods Pro نسل دوم',
@@ -210,15 +216,15 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'نوع سنگ', values: ['بدون سنگ', 'نگین CZ', 'برلیان', 'فیروزه', 'یاقوت', 'مروارید'] },
     ],
     attributes: [
-      { title: 'عیار', example: '۱۸ عیار (۷۵۰)' },
-      { title: 'وزن طلا', example: '۳٫۲۵ گرم' },
-      { title: 'رنگ طلا', example: 'زرد' },
-      { title: 'نوع سنگ', example: 'نگین CZ' },
-      { title: 'تعداد سنگ', example: '۱۲ عدد' },
-      { title: 'اجرت ساخت', example: '۱۵ درصد' },
-      { title: 'دارای شناسنامه', example: 'بله' },
-      { title: 'کشور سازنده', example: 'ایران' },
-      { title: 'مناسب برای', example: 'هدیه و مراسم' },
+      { title: 'عیار', values: ['۱۸ عیار (۷۵۰)', '۲۱ عیار (۸۷۵)', '۲۴ عیار (۹۹۹)', 'نقره ۹۲۵'] },
+      { title: 'وزن طلا', values: ['۳٫۲۵ گرم'] },
+      { title: 'رنگ طلا', values: ['زرد'] },
+      { title: 'نوع سنگ', values: ['بدون سنگ', 'نگین CZ', 'برلیان', 'فیروزه', 'یاقوت', 'زمرد', 'مروارید', 'عقیق'] },
+      { title: 'تعداد سنگ', values: ['۱۲ عدد'] },
+      { title: 'اجرت ساخت', values: ['۱۵ درصد'] },
+      { title: 'دارای شناسنامه', values: ['بله'] },
+      { title: 'کشور سازنده', values: ['ایران'] },
+      { title: 'مناسب برای', values: ['هدیه و مراسم'] },
     ],
     sample: {
       name: 'انگشتر طلا ۱۸ عیار زنانه طرح قلب با نگین',
@@ -237,15 +243,15 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'جنس', values: ['پلی‌استر', 'نایلون', 'نئوپرن', 'کربن', 'آلومینیوم'] },
     ],
     attributes: [
-      { title: 'برند', example: 'آدیداس' },
-      { title: 'نوع ورزش', example: 'دویدن' },
-      { title: 'جنس', example: 'پلی‌استر تنفسی' },
-      { title: 'وزن', example: '۲۸۰ گرم' },
-      { title: 'ابعاد', example: '۵۰×۳۰×۲۰ سانتی‌متر' },
-      { title: 'ضد آب', example: 'بله' },
-      { title: 'مناسب برای', example: 'فضای باز' },
-      { title: 'کشور سازنده', example: 'ویتنام' },
-      { title: 'گارانتی', example: '۱۲ ماه' },
+      { title: 'برند', values: ['آدیداس'] },
+      { title: 'نوع ورزش', values: ['دویدن'] },
+      { title: 'جنس', values: ['پلی‌استر تنفسی'] },
+      { title: 'وزن', values: ['۲۸۰ گرم'] },
+      { title: 'ابعاد', values: ['۵۰×۳۰×۲۰ سانتی‌متر'] },
+      { title: 'ضد آب', values: ['بله'] },
+      { title: 'مناسب برای', values: ['فضای باز'] },
+      { title: 'کشور سازنده', values: ['ویتنام'] },
+      { title: 'گارانتی', values: ['۱۲ ماه'] },
     ],
     sample: {
       name: 'کوله پشتی کوهنوردی ۴۰ لیتری ضد آب',
@@ -264,15 +270,15 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'تعداد قطعات', values: ['۲۰ قطعه', '۵۰ قطعه', '۱۰۰ قطعه', '۲۵۰ قطعه', '۵۰۰ قطعه'] },
     ],
     attributes: [
-      { title: 'برند', example: 'لگو' },
-      { title: 'رده سنی', example: '۶ سال به بالا' },
-      { title: 'جنس', example: 'پلاستیک ABS' },
-      { title: 'تعداد قطعات', example: '۲۵۰ قطعه' },
-      { title: 'استاندارد ایمنی', example: 'CE' },
-      { title: 'باتری', example: 'نیاز ندارد' },
-      { title: 'ابعاد جعبه', example: '۳۵×۲۵×۸ سانتی‌متر' },
-      { title: 'کشور سازنده', example: 'دانمارک' },
-      { title: 'قابل شستشو', example: 'بله' },
+      { title: 'برند', values: ['لگو'] },
+      { title: 'رده سنی', values: ['۶ سال به بالا'] },
+      { title: 'جنس', values: ['پلاستیک ABS'] },
+      { title: 'تعداد قطعات', values: ['۲۵۰ قطعه'] },
+      { title: 'استاندارد ایمنی', values: ['CE'] },
+      { title: 'باتری', values: ['نیاز ندارد'] },
+      { title: 'ابعاد جعبه', values: ['۳۵×۲۵×۸ سانتی‌متر'] },
+      { title: 'کشور سازنده', values: ['دانمارک'] },
+      { title: 'قابل شستشو', values: ['بله'] },
     ],
     sample: {
       name: 'بازی فکری ساختنی ۲۵۰ قطعه مناسب ۶ سال به بالا',
@@ -290,16 +296,16 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'تعداد برگ', values: ['۴۰ برگ', '۶۰ برگ', '۸۰ برگ', '۱۰۰ برگ', '۲۰۰ برگ'] },
     ],
     attributes: [
-      { title: 'نویسنده', example: 'محمدعلی جمالزاده' },
-      { title: 'مترجم', example: 'ندارد' },
-      { title: 'ناشر', example: 'نشر چشمه' },
-      { title: 'تعداد صفحات', example: '۳۲۰ صفحه' },
-      { title: 'قطع', example: 'رقعی' },
-      { title: 'نوع جلد', example: 'شومیز' },
-      { title: 'شابک', example: '978-600-229-000-0' },
-      { title: 'سال انتشار', example: '۱۴۰۳' },
-      { title: 'نوبت چاپ', example: 'چاپ پنجم' },
-      { title: 'زبان', example: 'فارسی' },
+      { title: 'نویسنده', values: ['محمدعلی جمالزاده'] },
+      { title: 'مترجم', values: ['ندارد'] },
+      { title: 'ناشر', values: ['نشر چشمه', 'نشر نی', 'نشر ثالث', 'انتشارات امیرکبیر', 'نشر مرکز', 'نشر ققنوس', 'انتشارات علمی و فرهنگی', 'نشر افق'] },
+      { title: 'تعداد صفحات', values: ['۳۲۰ صفحه'] },
+      { title: 'قطع', values: ['جیبی', 'رقعی', 'وزیری', 'رحلی', 'خشتی', 'پالتویی'] },
+      { title: 'نوع جلد', values: ['شومیز', 'گالینگور', 'جلد سخت', 'جلد چرمی'] },
+      { title: 'شابک', values: ['978-600-229-000-0'] },
+      { title: 'سال انتشار', values: ['۱۴۰۳'] },
+      { title: 'نوبت چاپ', values: ['چاپ پنجم'] },
+      { title: 'زبان', values: ['فارسی', 'انگلیسی', 'عربی', 'دوزبانه'] },
     ],
     sample: {
       name: 'کتاب یکی بود و یکی نبود اثر محمدعلی جمالزاده',
@@ -317,15 +323,15 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'نوع بسته‌بندی', values: ['پاکت', 'قوطی', 'شیشه‌ای', 'وکیوم'] },
     ],
     attributes: [
-      { title: 'برند', example: 'لاواتزا' },
-      { title: 'وزن خالص', example: '۲۵۰ گرم' },
-      { title: 'مواد تشکیل‌دهنده', example: '۱۰۰٪ عربیکا' },
-      { title: 'تاریخ تولید', example: '۱۴۰۴/۰۳/۱۵' },
-      { title: 'ماندگاری', example: '۱۸ ماه' },
-      { title: 'شرایط نگهداری', example: 'دور از نور و رطوبت' },
-      { title: 'کشور سازنده', example: 'ایتالیا' },
-      { title: 'مجوز بهداشت', example: 'دارد' },
-      { title: 'ارزش غذایی', example: 'در هر ۱۰۰ گرم: ۲ کیلوکالری' },
+      { title: 'برند', values: ['لاواتزا'] },
+      { title: 'وزن خالص', values: ['۲۵۰ گرم'] },
+      { title: 'مواد تشکیل‌دهنده', values: ['۱۰۰٪ عربیکا'] },
+      { title: 'تاریخ تولید', values: ['۱۴۰۴/۰۳/۱۵'] },
+      { title: 'ماندگاری', values: ['۱۸ ماه'] },
+      { title: 'شرایط نگهداری', values: ['دور از نور و رطوبت', 'در جای خشک و خنک', 'یخچال (۰ تا ۴ درجه)', 'فریزر (منفی ۱۸ درجه)', 'دمای محیط'] },
+      { title: 'کشور سازنده', values: ['ایتالیا'] },
+      { title: 'مجوز بهداشت', values: ['دارد'] },
+      { title: 'ارزش غذایی', values: ['در هر ۱۰۰ گرم: ۲ کیلوکالری'] },
     ],
     sample: {
       name: 'قهوه عربیکا آسیاب شده درجه برشت متوسط ۲۵۰ گرم',
@@ -344,16 +350,16 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'جنس', values: ['فولاد', 'آلومینیوم', 'پلاستیک فشرده', 'لاستیک'] },
     ],
     attributes: [
-      { title: 'برند', example: 'بوش' },
-      { title: 'مناسب برای خودرو', example: 'پژو ۲۰۶' },
-      { title: 'شماره فنی', example: 'BSH-11045' },
-      { title: 'جنس', example: 'فولاد آلیاژی' },
-      { title: 'توان', example: '۷۵۰ وات' },
-      { title: 'ولتاژ', example: '۲۲۰ ولت' },
-      { title: 'وزن', example: '۱٫۹ کیلوگرم' },
-      { title: 'کشور سازنده', example: 'آلمان' },
-      { title: 'گارانتی', example: '۱۲ ماه' },
-      { title: 'محتویات بسته', example: 'دستگاه، کیف، متعلقات' },
+      { title: 'برند', values: ['بوش', 'مکیتا', 'دیوالت', 'رونیکس', 'انکور', 'توتال', 'استنلی', 'هیوندای'] },
+      { title: 'مناسب برای خودرو', values: ['پژو ۲۰۶'] },
+      { title: 'شماره فنی', values: ['BSH-11045'] },
+      { title: 'جنس', values: ['فولاد آلیاژی'] },
+      { title: 'توان', values: ['۷۵۰ وات'] },
+      { title: 'ولتاژ', values: ['۲۲۰ ولت'] },
+      { title: 'وزن', values: ['۱٫۹ کیلوگرم'] },
+      { title: 'کشور سازنده', values: ['آلمان'] },
+      { title: 'گارانتی', values: ['۱۲ ماه'] },
+      { title: 'محتویات بسته', values: ['دستگاه، کیف، متعلقات'] },
     ],
     sample: {
       name: 'دریل چکشی بوش توان ۷۵۰ وات همراه کیف',
@@ -372,14 +378,14 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
       { title: 'طعم', values: ['مرغ', 'گوشت', 'ماهی', 'بره'] },
     ],
     attributes: [
-      { title: 'برند', example: 'رویال کنین' },
-      { title: 'مناسب برای', example: 'گربه بالغ' },
-      { title: 'وزن خالص', example: '۲ کیلوگرم' },
-      { title: 'مواد اصلی', example: 'مرغ، برنج، چربی حیوانی' },
-      { title: 'درصد پروتئین', example: '۳۲٪' },
-      { title: 'ماندگاری', example: '۱۸ ماه' },
-      { title: 'کشور سازنده', example: 'فرانسه' },
-      { title: 'نوع بسته‌بندی', example: 'پاکت زیپ‌دار' },
+      { title: 'برند', values: ['رویال کنین', 'پروپلن', 'هپی کت', 'جوسرا', 'مفید', 'نوتری‌پت', 'فیدار'] },
+      { title: 'مناسب برای', values: ['بچه‌گربه', 'گربه بالغ', 'گربه مسن', 'توله‌سگ', 'سگ بالغ', 'سگ نژاد کوچک', 'سگ نژاد بزرگ'] },
+      { title: 'وزن خالص', values: ['۲ کیلوگرم'] },
+      { title: 'مواد اصلی', values: ['مرغ، برنج، چربی حیوانی'] },
+      { title: 'درصد پروتئین', values: ['۳۲٪'] },
+      { title: 'ماندگاری', values: ['۱۸ ماه'] },
+      { title: 'کشور سازنده', values: ['فرانسه'] },
+      { title: 'نوع بسته‌بندی', values: ['پاکت زیپ‌دار'] },
     ],
     sample: {
       name: 'غذای خشک گربه بالغ رویال کنین وزن ۲ کیلوگرم',
@@ -415,15 +421,20 @@ export function valuesForOption(category: string, optionTitle: string): string[]
 /** مشخصه‌های پیشنهادی همین دسته */
 export function attributesForCategory(category: string): AttributeSuggestion[] {
   return CATEGORY_KNOWLEDGE[category]?.attributes ?? [
-    { title: 'برند', example: 'نام برند' },
-    { title: 'مدل', example: 'شماره یا نام مدل' },
-    { title: 'جنس', example: 'جنس اصلی کالا' },
-    { title: 'کشور سازنده', example: 'ایران' },
-    { title: 'ابعاد', example: '۳۰×۲۰×۱۰ سانتی‌متر' },
-    { title: 'وزن', example: '۱٫۲ کیلوگرم' },
-    { title: 'گارانتی', example: '۱۲ ماه' },
-    { title: 'محتویات بسته', example: 'کالا، دفترچه راهنما' },
+    { title: 'برند', values: ['نام برند'] },
+    { title: 'مدل', values: ['شماره یا نام مدل'] },
+    { title: 'جنس', values: ['جنس اصلی کالا'] },
+    { title: 'کشور سازنده', values: ['ایران'] },
+    { title: 'ابعاد', values: ['۳۰×۲۰×۱۰ سانتی‌متر'] },
+    { title: 'وزن', values: ['۱٫۲ کیلوگرم'] },
+    { title: 'گارانتی', values: ['۱۲ ماه'] },
+    { title: 'محتویات بسته', values: ['کالا، دفترچه راهنما'] },
   ]
+}
+
+/** اولین مقدار هر مشخصه — همان چیزی که به‌عنوان «مثال» نشان داده می‌شود */
+export function exampleOf(a: AttributeSuggestion): string {
+  return a.values[0] ?? ''
 }
 
 /** نمونهٔ پرشدهٔ همین دسته — برای بخش «مثال» در راهنما */
@@ -433,55 +444,4 @@ export function sampleForCategory(category: string) {
     shortDescription: 'یک جملهٔ کوتاه که مهم‌ترین مزیت محصول را می‌گوید',
     tags: ['دستهٔ اصلی', 'برند', 'ویژگی شاخص'],
   }
-}
-
-// ─── پیشنهاد برچسب ──────────────────────────────────────────────────────────────
-/**
- * برچسب‌ها الگوی ثابت ندارند — برخلاف تنوع و مشخصه که فهرست مشخصی دارند.
- *
- * پس به‌جای فهرست از پیش نوشته‌شده، از سه منبعِ واقعیِ همین فرم ساخته می‌شوند:
- *   ۱. واژه‌های معنادارِ نام محصول (کلمات پرتکرار و عدد و واحد حذف می‌شوند)
- *   ۲. برند و مدل، اگر در مشخصات وارد شده باشند
- *   ۳. برچسب‌های نمونهٔ همان دسته‌بندی
- *
- * نتیجه همان چیزی است که خریدار جست‌وجو می‌کند، نه واژه‌های داخلیِ فروشگاه.
- */
-
-/** واژه‌هایی که به‌تنهایی برچسب نمی‌شوند */
-const TAG_STOPWORDS = new Set([
-  'و', 'با', 'در', 'از', 'برای', 'به', 'یا', 'تا', 'این', 'آن', 'مدل', 'نوع',
-  'اصلی', 'اورجینال', 'جدید', 'ویژه', 'عالی', 'سایز', 'رنگ', 'بسته', 'عدد',
-  'گرم', 'کیلوگرم', 'لیتر', 'میلی‌لیتر', 'اینچ', 'گیگابایت', 'ترابایت', 'سانتی‌متر',
-])
-
-const isMeaningful = (w: string) =>
-  w.length > 2 && !TAG_STOPWORDS.has(w) && !/^[0-9۰-۹٠-٩]+$/.test(w)
-
-export function tagSuggestions(
-  productName: string,
-  category: string,
-  attributes: { name: string; value: string }[],
-  existing: string[],
-): string[] {
-  const out: string[] = []
-
-  // ۱. عبارت‌های دوکلمه‌ای از ابتدای نام — «گوشی موبایل»، «کوله پشتی»
-  const words = productName.trim().split(/\s+/).filter(isMeaningful)
-  if (words.length >= 2) out.push(`${words[0]} ${words[1]}`)
-  out.push(...words.slice(0, 4))
-
-  // ۲. برند و مدل از مشخصات
-  for (const key of ['برند', 'مدل', 'نویسنده', 'ناشر']) {
-    const hit = attributes.find((a) => a.name.trim() === key)?.value.trim()
-    if (hit) out.push(hit)
-  }
-
-  // ۳. نمونه‌های همان دسته
-  out.push(...sampleForCategory(category).tags)
-
-  const seen = new Set(existing.map((t) => t.trim()))
-  return out
-    .map((t) => t.trim())
-    .filter((t) => t.length > 1 && !seen.has(t) && (seen.add(t) as unknown as boolean || true))
-    .slice(0, 8)
 }

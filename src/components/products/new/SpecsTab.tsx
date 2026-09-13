@@ -6,8 +6,9 @@ import { StepVideoButton } from './StepVideo'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { SectionCard } from './SectionCard'
 import type { Attribute, ProductForm } from './data'
-import { attributesForCategory, tagSuggestions } from './categoryKnowledge'
+import { attributesForCategory, exampleOf } from './categoryKnowledge'
 import { SuggestInput } from './SuggestInput'
+import { enterItem } from './motion'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -49,6 +50,10 @@ export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
   const removeAttr = (id: string) =>
     onChange({ attributes: form.attributes.filter((a) => a.id !== id) })
 
+  /** ویرایش درجا — همان جدول، بدون دیالوگ و بدون حالتِ «ویرایش» */
+  const patchAttr = (id: string, patch: Partial<Attribute>) =>
+    onChange({ attributes: form.attributes.map((a) => (a.id === id ? { ...a, ...patch } : a)) })
+
   const addTag = () => {
     const t = tag.trim()
     if (!t || form.tags.includes(t)) { setTag(''); return }
@@ -58,10 +63,18 @@ export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
 
   const removeTag = (t: string) => onChange({ tags: form.tags.filter((x) => x !== t) })
 
-  const tagIdeas = tagSuggestions(form.name, form.category, form.attributes, form.tags)
+  const allAttrs = attributesForCategory(form.category)
+  const attrTitles = allAttrs.map((a) => a.title)
+  const attrSuggestions = allAttrs.filter((a) => !form.attributes.some((x) => x.name === a.title))
 
-  const attrSuggestions = attributesForCategory(form.category)
-    .filter((a) => !form.attributes.some((x) => x.name === a.title))
+  /** مقادیر پیشنهادی یک مشخصه — با تطبیق نرم، چون عنوان ممکن است دست‌نویس باشد */
+  const valuesOfAttr = (title: string) => {
+    const t = title.trim()
+    if (!t) return []
+    const hit = allAttrs.find((a) => a.title === t)
+      ?? allAttrs.find((a) => t.includes(a.title) || a.title.includes(t))
+    return hit?.values ?? []
+  }
 
   return (
     <Flex direction="column" gap="5" w="full">
@@ -79,7 +92,8 @@ export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
           {/* ردیف افزودن — FIRST = rightmost: عنوان · مقدار · دکمهٔ + چپ‌ترین */}
           <chakra.form
             display="grid"
-            gridTemplateColumns={{ base: '1fr', sm: '1fr 1fr auto' }}
+            // هم‌تراز با ستون‌های جدول پایین: دو نیمهٔ مساوی + ستون ۴۴px
+            gridTemplateColumns={{ base: '1fr', sm: 'minmax(0, 1fr) minmax(0, 1fr) 44px' }}
             gap="2"
             onSubmit={(e) => { e.preventDefault(); addAttr() }}
           >
@@ -96,24 +110,22 @@ export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
               onPick={(title) => {
                 setName(title)
                 const hit = attrSuggestions.find((a) => a.title === title)
-                if (hit && !value.trim()) setValue(hit.example)
+                if (hit && !value.trim()) setValue(exampleOf(hit))
               }}
             />
             <SuggestInput
               size="sm"
-              placeholder={`مقدار، مثلاً ${attrSuggestions[0]?.example ?? 'سامسونگ'}`}
+              placeholder={`مقدار، مثلاً ${attrSuggestions[0] ? exampleOf(attrSuggestions[0]) : 'سامسونگ'}`}
               value={value}
               maxLength={20}
               onChange={setValue}
-              suggestions={
-                name.trim()
-                  ? attrSuggestions.filter((a) => a.title === name.trim()).map((a) => a.example)
-                  : []
-              }
+              suggestions={valuesOfAttr(name)}
             />
             <IconButton
               type="submit"
               size="sm"
+              w="44px"
+              minW="44px"
               colorPalette="brand"
               aria-label="افزودن مشخصه"
               disabled={!name.trim() || !value.trim()}
@@ -146,16 +158,46 @@ export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
                 <Table.Header>
                   {/* FIRST = rightmost: عنوان مشخصه · مقدار · حذف (چپ‌ترین) */}
                   <Table.Row bg="bg.subtle">
-                    <Table.ColumnHeader>عنوان مشخصه</Table.ColumnHeader>
-                    <Table.ColumnHeader>مقدار</Table.ColumnHeader>
+                    <Table.ColumnHeader w="50%">عنوان مشخصه</Table.ColumnHeader>
+                    <Table.ColumnHeader w="50%">مقدار</Table.ColumnHeader>
                     <Table.ColumnHeader w="44px" />
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
                   {form.attributes.map((a, i) => (
                     <Table.Row key={a.id} bg={i % 2 ? 'bg.subtle' : undefined}>
-                      <Table.Cell fontSize="xs" fontWeight="medium">{a.name}</Table.Cell>
-                      <Table.Cell fontSize="xs" color="fg.muted">{a.value}</Table.Cell>
+                      {/* ویرایش درجا: خودِ سلول یک ورودی بی‌کادر است. کاربر برای
+                          اصلاح یک غلط تایپی نباید ردیف را حذف و دوباره بسازد. */}
+                      <Table.Cell>
+                        <SuggestInput
+                          value={a.name}
+                          onChange={(v) => patchAttr(a.id, { name: v })}
+                          suggestions={attrTitles.filter((t) => t !== a.name)}
+                          onPick={(title) => {
+                            const hit = allAttrs.find((x) => x.title === title)
+                            patchAttr(a.id, { name: title, ...(hit && !a.value.trim() ? { value: exampleOf(hit) } : {}) })
+                          }}
+                          variant="flushed"
+                          size="sm"
+                          fontSize="xs"
+                          fontWeight="medium"
+                          maxLength={30}
+                          aria-label={`عنوان ${a.name}`}
+                        />
+                      </Table.Cell>
+                      <Table.Cell>
+                        <SuggestInput
+                          value={a.value}
+                          onChange={(v) => patchAttr(a.id, { value: v })}
+                          suggestions={valuesOfAttr(a.name).filter((v) => v !== a.value)}
+                          variant="flushed"
+                          size="sm"
+                          fontSize="xs"
+                          color="fg.muted"
+                          maxLength={40}
+                          aria-label={`مقدار ${a.name}`}
+                        />
+                      </Table.Cell>
                       <Table.Cell>
                         <IconButton
                           size="2xs"
@@ -183,40 +225,15 @@ export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
         subtitle="برچسب را بنویسید و Enter بزنید"
         helpTopic="برچسب‌های محصول"
       >
-        {/* پیشنهاد برچسب — از نام محصول، برند، و نمونه‌های همین دسته ساخته می‌شود */}
-        {tagIdeas.length > 0 && (
-          <Flex gap="1.5" wrap="wrap" mb="3" align="center">
-            {/* FIRST = rightmost: برچسبِ توضیحی */}
-            <Text fontSize="2xs" color="fg.muted" flexShrink={0}>پیشنهاد:</Text>
-            {tagIdeas.map((t) => (
-              <chakra.button
-                key={t}
-                type="button"
-                onClick={() => onChange({ tags: [...form.tags, t] })}
-                display="inline-flex"
-                alignItems="center"
-                gap="1"
-                h="7"
-                px="2"
-                rounded="l2"
-                fontSize="2xs"
-                cursor="pointer"
-                borderWidth="1px"
-                borderStyle="dashed"
-                borderColor="border"
-                color="fg.muted"
-                bg="transparent"
-                transition="border-color .15s, color .15s, background .15s"
-                _hover={{ borderColor: 'brand.border', color: 'brand.fg', bg: 'brand.bg' }}
-              >
-                {/* FIRST = rightmost: علامت + */}
-                <Plus size={11} />{t}
-              </chakra.button>
-            ))}
-          </Flex>
-        )}
+        {/*
+          کادر برچسب‌ها یک فیلدِ واحد است: چیپ‌ها و ورودی **داخل همان کادر** و در
+          یک جریان می‌آیند، نه چیپ‌ها بالا و یک ورودیِ تمام‌عرض زیرشان. ورودی
+          `flex:1` است، پس با هر برچسب تازه سر جای خالیِ همان ردیف ادامه می‌دهد.
 
-        {/* FIRST = rightmost: کادر برچسب‌ها · LAST = leftmost: دکمهٔ + */}
+          پیشنهادِ خودکارِ برچسب برداشته شد: برچسب انتخابی شخصیِ فروشنده است و
+          حدس‌زدنش از روی دسته‌بندی، فهرستی مبهم می‌ساخت که به کاربر کمکی نمی‌کرد.
+          به‌جایش راهنمای همین بخش می‌گوید برچسب خوب چه شکلی است.
+        */}
         <chakra.form
           data-field="tags"
           display="flex"
@@ -225,69 +242,77 @@ export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
           w="full"
           onSubmit={(e) => { e.preventDefault(); addTag() }}
         >
-          {/*
-            کادر برچسب‌ها **یک فیلد** است، نه یک جعبهٔ دور فیلد: padding داخلی کم و
-            ارتفاع پایه برابر دکمهٔ کنارش (۴۲px). قبلاً padding ۸px داشت و کادر را
-            بلندتر از دکمه می‌کرد — همان «حاشیهٔ اضافه» که شکل را خراب کرده بود.
-          */}
-          <Box
+          <Flex
             flex="1"
             minW="0"
             minH="42px"
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
+            wrap="wrap"
+            align="center"
+            gap="1.5"
             borderWidth="1px"
             borderColor="border"
             rounded="lg"
             bg="bg.panel"
             px="1.5"
             py="1"
+            cursor="text"
+            onClick={(e) => {
+              // کلیک روی هر جای کادر → مکان‌نما داخل ورودی
+              const input = e.currentTarget.querySelector('input')
+              input?.focus()
+            }}
             _focusWithin={{ borderColor: 'brand.solid', boxShadow: '0 0 0 1px var(--chakra-colors-brand-solid)' }}
           >
-            {form.tags.length > 0 && (
-              <Flex gap="1.5" wrap="wrap" mb="1.5">
-                {form.tags.map((t) => (
-                  <Flex
-                    key={t}
-                    align="center"
-                    gap="1"
-                    ps="2.5"
-                    pe="1"
-                    h="7"
-                    rounded="l2"
-                    borderWidth="1px"
-                    borderColor="border"
-                    bg="bg.subtle"
-                  >
-                    {/* FIRST = rightmost: متن برچسب · X سمت چپ */}
-                    <Text fontSize="xs" whiteSpace="nowrap">{t}</Text>
-                    <IconButton
-                      size="2xs"
-                      variant="ghost"
-                      colorPalette="red"
-                      aria-label={`حذف ${t}`}
-                      onClick={() => removeTag(t)}
-                    >
-                      <X size={12} />
-                    </IconButton>
-                  </Flex>
-                ))}
+            {form.tags.map((t) => (
+              <Flex
+                key={t}
+                align="center"
+                gap="1"
+                ps="2.5"
+                pe="1"
+                h="7"
+                flexShrink={0}
+                rounded="l2"
+                borderWidth="1px"
+                borderColor="border"
+                bg="bg.subtle"
+                {...enterItem}
+              >
+                {/* FIRST = rightmost: متن برچسب · X سمت چپ */}
+                <Text fontSize="xs" whiteSpace="nowrap">{t}</Text>
+                <IconButton
+                  size="2xs"
+                  variant="ghost"
+                  colorPalette="red"
+                  aria-label={`حذف ${t}`}
+                  onClick={(e) => { e.stopPropagation(); removeTag(t) }}
+                >
+                  <X size={12} />
+                </IconButton>
               </Flex>
-            )}
+            ))}
             <Input
               variant="outline"
               border="none"
               bg="transparent"
               px="1"
               h="7"
+              flex="1"
+              minW="140px"
               fontSize="13px"
               _focusVisible={{ boxShadow: 'none' }}
-              placeholder="مثلاً گوشی پرچمدار"
+              placeholder={form.tags.length === 0 ? 'مثلاً گوشی پرچمدار' : 'برچسب بعدی…'}
               value={tag}
               onChange={(e) => setTag(e.target.value)}
+              onKeyDown={(e) => {
+                // Backspace روی ورودیِ خالی آخرین برچسب را برمی‌دارد — رفتار
+                // آشنای هر فیلدِ چیپ‌دار
+                if (e.key === 'Backspace' && tag === '' && form.tags.length > 0) {
+                  removeTag(form.tags[form.tags.length - 1])
+                }
+              }}
             />
-          </Box>
+          </Flex>
           <IconButton
             type="submit"
             size="sm"

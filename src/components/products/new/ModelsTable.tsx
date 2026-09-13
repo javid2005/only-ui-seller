@@ -10,6 +10,7 @@ import { toPersianDigits } from '@/utils/numbers'
 import { MediaThumb } from './MediaThumb'
 import { rowTint, type ProductVariant, type VariantCombination } from './data'
 import { pressable } from './motion'
+import { focusInputWithin } from './focusField'
 
 // ─── نماها ───────────────────────────────────────────────────────────────────────
 
@@ -376,7 +377,7 @@ export function ModelsTable({
                     </Text>
                     <Text fontSize="8.5px" color="fg.muted" textAlign="start" dir="ltr">{c.sku}</Text>
                   </Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell onClick={focusInputWithin} cursor="text">
                     <NumberField
                       value={c.price}
                       onChange={(v) => patch(c.id, { price: v })}
@@ -386,7 +387,7 @@ export function ModelsTable({
                     />
                   </Table.Cell>
                   {(
-                    <Table.Cell>
+                    <Table.Cell onClick={focusInputWithin} cursor="text">
                       <NumberField
                         value={c.salePrice}
                         onChange={(v) => patch(c.id, { salePrice: v })}
@@ -396,7 +397,7 @@ export function ModelsTable({
                       />
                     </Table.Cell>
                   )}
-                  <Table.Cell>
+                  <Table.Cell onClick={focusInputWithin} cursor="text">
                     <NumberField
                       value={c.inventory}
                       onChange={(v) => patch(c.id, { inventory: v })}

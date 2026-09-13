@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Box, Text, chakra } from '@chakra-ui/react'
+import { focusInputWithin } from './focusField'
 
 // ─── NotchedField ───────────────────────────────────────────────────────────────
 /**
@@ -49,6 +50,11 @@ export function NotchedField({
       {stacked && (
         <Text
           as="label"
+          onClick={(e) => {
+            const box = (e.currentTarget.parentElement as HTMLElement | null)
+            const input = box?.querySelector<HTMLElement>('input:not([type="hidden"]):not([disabled]), textarea')
+            input?.focus()
+          }}
           display="block"
           fontSize="10px"
           fontWeight="bold"
@@ -63,6 +69,9 @@ export function NotchedField({
         </Text>
       )}
       <chakra.fieldset
+        // کلیک روی هر جای کادر (لیبل، واحد، فضای خالی) → مکان‌نما داخل ورودی
+        onClick={focusInputWithin}
+        cursor="text"
         display="flex"
         alignItems="center"
         gap="2"
