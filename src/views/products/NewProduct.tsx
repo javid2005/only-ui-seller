@@ -16,6 +16,7 @@ import { SeoTab } from '@/components/products/new/SeoTab'
 import { ProductPreviewCard } from '@/components/products/new/ProductPreviewCard'
 import { SaveStatus } from '@/components/products/new/SaveStatus'
 import { ProductCategoryProvider } from '@/components/products/new/ProductContext'
+import { enterPanel } from '@/components/products/new/motion'
 import {
   EMPTY_FORM, STEPS, pricingModeOf, seoScore,
   type ProductForm, type ProductTypeId, type StepId,
@@ -248,9 +249,7 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
             maxW="960px"
             flex="1"
             minW="0"
-            animationName="fade-in, slide-from-bottom"
-            animationDuration="240ms"
-            animationTimingFunction="ease-out"
+            {...enterPanel}
           >
             {activeStep === 'basic' && (
               <InfoTab form={form} onChange={patch} onBack={goBack} onSave={save} />

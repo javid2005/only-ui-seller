@@ -1,4 +1,5 @@
 import { Tabs, Text, Flex, Box, Icon } from '@chakra-ui/react'
+import { pressable } from './motion'
 import { Check, TriangleAlert } from 'lucide-react'
 import { STEPS, type ProductStep, type StepId } from './data'
 import { toPersianDigits } from '@/utils/numbers'
@@ -193,6 +194,7 @@ export function StepNav({
                 justifyContent={isHorizontal ? 'start' : 'end'}
                 alignItems="center"
                 gap={isHorizontal ? '1.5' : '2.5'}
+                {...pressable}
               >
                 <Connector
                   horizontal={isHorizontal}
@@ -213,10 +215,14 @@ export function StepNav({
                   align="center"
                   justify="center"
                   borderWidth="1px"
-                  transition="background 0.15s, border-color 0.15s, color 0.15s"
+                  transition="background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s, box-shadow 0.18s"
                   bg={isActive ? 'brand.solid' : isDone ? 'brand.bg' : 'bg.subtle'}
                   borderColor={isActive ? 'brand.solid' : isDone ? 'brand.muted' : 'border'}
                   color={isActive ? 'brand.contrast' : isDone ? 'brand.fg' : 'fg.muted'}
+                  // مرحلهٔ فعال کمی بزرگ‌تر و دارای هاله — همان «کجا هستم» بدون متن اضافه
+                  transform={isActive ? 'scale(1.06)' : undefined}
+                  boxShadow={isActive ? '0 0 0 3px var(--chakra-colors-brand-subtle)' : 'none'}
+                  _motionReduce={{ transform: 'none', transition: 'none' }}
                 >
                   <StepIcon size={18} strokeWidth={1.7} />
                 </Flex>

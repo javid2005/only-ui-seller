@@ -9,6 +9,7 @@ import { Tooltip } from '@/components/ui/Tooltip'
 import { toPersianDigits } from '@/utils/numbers'
 import { MediaThumb } from './MediaThumb'
 import { rowTint, type ProductVariant, type VariantCombination } from './data'
+import { pressable } from './motion'
 
 // ─── نماها ───────────────────────────────────────────────────────────────────────
 
@@ -41,6 +42,7 @@ export function ModelFilterSegment({
           bg={value === f.id ? 'bg.panel' : 'transparent'}
           color={value === f.id ? 'brand.fg' : 'fg.muted'}
           boxShadow={value === f.id ? 'xs' : 'none'}
+          {...pressable}
         >
           {f.label}
         </chakra.button>

@@ -26,10 +26,12 @@ export interface ToggleCardProps {
   /** ته‌رنگ کهربایی — در طرح فقط «پیشنهاد ویژه» این حالت را دارد */
   accent?: boolean
   disabled?: boolean
+  /** کنش اضافه زیر توضیح — فقط وقتی کلید روشن است دیده می‌شود (مثل «تاریخ پایان») */
+  action?: ReactNode
 }
 
 export function ToggleCard({
-  icon, label, hint, checked, onChange, accent, disabled,
+  icon, label, hint, checked, onChange, accent, disabled, action,
 }: ToggleCardProps) {
   return (
     <Flex
@@ -71,6 +73,9 @@ export function ToggleCard({
       <Text fontSize="xs" color="fg.muted" textAlign="start" lineHeight="1.9">
         {hint}
       </Text>
+
+      {/* کنشِ وابسته به روشن‌بودن — خاموش که باشد جایی اشغال نمی‌کند */}
+      {checked && action && <Box mt="0.5">{action}</Box>}
     </Flex>
   )
 }

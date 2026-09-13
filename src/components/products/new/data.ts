@@ -355,6 +355,13 @@ export interface ProductForm {
   price: string
   /** «قیمت با تخفیف» — در طرح تأییدشده مستقیم وارد می‌شود، نه با درصد/مبلغ تخفیف */
   salePrice: string
+  /**
+   * پایان تخفیف (ISO میلادی «YYYY-MM-DD»، خالی = بدون انقضا).
+   *
+   * عمداً کنار **قیمت** است و نه کنار «پیشنهاد ویژه»: این تاریخ می‌گوید کِی قیمت
+   * تخفیف‌دار برداشته شود و قیمت اصلی برگردد — یعنی یک تصمیم قیمتی.
+   */
+  salePriceUntil: string
   currency: string
   hasDiscount: boolean
   discountType: string
@@ -386,6 +393,14 @@ export interface ProductForm {
   // ── وضعیت نمایش و فروش ──
   showInStorefront: boolean
   specialOffer: boolean
+  /**
+   * پایان «پیشنهاد ویژه» (ISO میلادی، خالی = بدون انقضا).
+   *
+   * جدا از `salePriceUntil` است، چون دو چیز متفاوت‌اند: این یکی فقط می‌گوید محصول
+   * کِی از بخش «پیشنهادهای ویژه» بیرون برود. محصول می‌تواند بدون تخفیف ویژه باشد
+   * (تازه‌رسیده، پرفروش) و می‌تواند تخفیفِ زمان‌دار داشته باشد بدون اینکه ویژه باشد.
+   */
+  specialOfferUntil: string
   tags: string[]
   // ── سئو ──
   seoSlug: string
@@ -407,6 +422,7 @@ export const EMPTY_FORM: ProductForm = {
   weight: '',
   price: '',
   salePrice: '',
+  salePriceUntil: '',
   currency: 'toman',
   hasDiscount: false,
   discountType: 'percent',
@@ -431,6 +447,7 @@ export const EMPTY_FORM: ProductForm = {
   description: '',
   showInStorefront: true,
   specialOffer: false,
+  specialOfferUntil: '',
   tags: [],
   seoSlug: '',
   seoTitle: '',

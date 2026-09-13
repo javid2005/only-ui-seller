@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import {
-  Box, Flex, Grid, Text, Input, NativeSelect, chakra,
+  Box, Flex, Grid, Text, Input, NativeSelect, Button, chakra,
   Select, Alert, createListCollection, Portal,
 } from '@chakra-ui/react'
 import { DollarSign, Eye, CalendarClock, Phone } from 'lucide-react'
@@ -14,6 +15,9 @@ import { SectionCard } from './SectionCard'
 import { MainImageField } from './MainImageField'
 import { NotchedField, bareControl } from './NotchedField'
 import { ToggleCard } from './ToggleCard'
+import { pressable } from './motion'
+import { OfferEndDialog } from './OfferEndDialog'
+import { formatJalaliDate } from '@/utils/dates'
 import { toPersianDigits, toLatinDigits, formatThousands, toPersianWords } from '@/utils/numbers'
 import {
   categoryCollection, CURRENCY_UNITS, currencyLabel,
@@ -100,6 +104,8 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
    * سوییچ «تخفیف دارد» و ماشین‌حساب درصد/مبلغ فقط در نسخهٔ اول (chakra-review)
    * بودند و از نسخهٔ دوم به بعد حذف شدند — پس اینجا هم نیستند.
    */
+  const [offerDialog, setOfferDialog] = useState<'special' | 'sale' | null>(null)
+
   const saleNum = num(form.salePrice)
   const saleInvalid =
     form.salePrice.trim() !== '' && hasPrice && Number.isFinite(saleNum) && saleNum >= effectivePrice
@@ -231,6 +237,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                   bg={form.currency === u.value ? 'bg.panel' : 'transparent'}
                   color={form.currency === u.value ? 'brand.fg' : 'fg.muted'}
                   boxShadow={form.currency === u.value ? 'xs' : 'none'}
+                  {...pressable}
                 >
                   {u.label}
                 </chakra.button>
@@ -265,20 +272,46 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                 />
               </NotchedField>
 
-              <NotchedField
-                label="قیمت با تخفیف"
-                error={saleInvalid ? 'قیمت با تخفیف باید کمتر از قیمت اصلی باشد.' : undefined}
-                disabled={isGold || form.phoneSale || form.hasVariants}
-                endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
-              >
-                <NumberField
-                  placeholder="اختیاری"
-                  value={form.salePrice}
-                  onChange={(v) => onChange({ salePrice: v, hasDiscount: v.trim() !== '' })}
+              <Box>
+                <NotchedField
+                  label="قیمت با تخفیف"
+                  error={saleInvalid ? 'قیمت با تخفیف باید کمتر از قیمت اصلی باشد.' : undefined}
                   disabled={isGold || form.phoneSale || form.hasVariants}
-                  inputProps={bareControl}
-                />
-              </NotchedField>
+                  endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
+                >
+                  <NumberField
+                    placeholder="اختیاری"
+                    value={form.salePrice}
+                    onChange={(v) => onChange({
+                      salePrice: v,
+                      hasDiscount: v.trim() !== '',
+                      ...(v.trim() === '' ? { salePriceUntil: '' } : {}),
+                    })}
+                    disabled={isGold || form.phoneSale || form.hasVariants}
+                    inputProps={bareControl}
+                  />
+                </NotchedField>
+
+                {/* تاریخ پایان تخفیف — کنار خودِ تخفیف، چون تصمیمی قیمتی است.
+                    تا وقتی تخفیفی وارد نشده، وجودش معنا ندارد. */}
+                {form.salePrice.trim() !== '' && (
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    colorPalette="brand"
+                    rounded="l2"
+                    gap="1.5"
+                    mt="1.5"
+                    onClick={() => setOfferDialog('sale')}
+                  >
+                    {/* FIRST = rightmost: آیکن (leading) */}
+                    <CalendarClock size={13} />
+                    {form.salePriceUntil
+                      ? `تخفیف تا ${formatJalaliDate(new Date(form.salePriceUntil))}`
+                      : 'تعیین تاریخ پایان تخفیف'}
+                  </Button>
+                )}
+              </Box>
             </Grid>
           </Box>
 
@@ -321,8 +354,24 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
               label="پیشنهاد ویژه"
               hint="در بخش پیشنهادهای ویژه نمایش داده شود"
               checked={form.specialOffer}
-              onChange={(v) => onChange({ specialOffer: v })}
+              onChange={(v) => onChange({ specialOffer: v, ...(v ? {} : { specialOfferUntil: '' }) })}
               accent
+              action={
+                <Button
+                  size="xs"
+                  variant="outline"
+                  rounded="l2"
+                  gap="1.5"
+                  w="full"
+                  onClick={() => setOfferDialog('special')}
+                >
+                  {/* FIRST = rightmost: آیکن (leading) */}
+                  <CalendarClock size={13} />
+                  {form.specialOfferUntil
+                    ? `تا ${formatJalaliDate(new Date(form.specialOfferUntil))}`
+                    : 'تعیین تاریخ پایان'}
+                </Button>
+              }
             />
             <ToggleCard
               icon={<Phone size={17} />}
@@ -348,6 +397,25 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
       </SectionCard>
 
       {/* ═══ Footer ═════════════════════════════════════════════════════════════ */}
+      {/* ═══ تاریخ‌های پایان ════════════════════════════════════════════════════
+          دو تاریخِ جدا برای دو تصمیمِ جدا — چرایی‌اش در `data.ts` کنار هر فیلد. */}
+      <OfferEndDialog
+        open={offerDialog === 'special'}
+        onClose={() => setOfferDialog(null)}
+        title="پایان پیشنهاد ویژه"
+        effect="در این تاریخ محصول از بخش «پیشنهادهای ویژه» خارج می‌شود. قیمت دست نمی‌خورد."
+        value={form.specialOfferUntil}
+        onConfirm={(v) => onChange({ specialOfferUntil: v })}
+      />
+      <OfferEndDialog
+        open={offerDialog === 'sale'}
+        onClose={() => setOfferDialog(null)}
+        title="پایان تخفیف"
+        effect="در این تاریخ قیمت با تخفیف برداشته می‌شود و قیمت اصلی برمی‌گردد."
+        value={form.salePriceUntil}
+        onConfirm={(v) => onChange({ salePriceUntil: v })}
+      />
+
       <ButtonFooter
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
         back={{ label: 'بازگشت به لیست', onClick: onBack }}

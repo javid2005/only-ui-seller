@@ -12,6 +12,7 @@ import { SectionCard } from './SectionCard'
 import { UploadedImageCard } from './UploadedImageCard'
 import { MediaCard } from './MediaCard'
 import { MediaSeoDialog } from './MediaSeoDialog'
+import { enterPanel } from './motion'
 import { MediaUploadDialog } from './MediaUploadDialog'
 import { VariantSelectDialog } from './VariantSelectDialog'
 import { FolderPanel } from './FolderPanel'
@@ -313,7 +314,12 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
                 </EmptyState.Content>
               </EmptyState.Root>
             ) : view === 'grid' ? (
-              <Grid templateColumns="repeat(auto-fill, minmax(192px, 1fr))" gap="2.5" w="full">
+              <Grid
+                templateColumns="repeat(auto-fill, minmax(192px, 1fr))"
+                gap="2.5"
+                w="full"
+                {...enterPanel}
+              >
                 {visible.map((img, i) => (
                   <MediaCard
                     key={img.id}

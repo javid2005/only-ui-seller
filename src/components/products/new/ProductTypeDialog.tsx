@@ -3,6 +3,7 @@ import { Dialog, Portal, Text, Flex, Grid, Button, Box, Icon, Checkbox, chakra }
 import { Box as BoxIcon, LayoutGrid } from 'lucide-react'
 import { PRODUCT_TYPES, type ProductTypeId } from './data'
 import { ProductTypeArt } from './ProductTypeArt'
+import { pressable } from './motion'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -103,9 +104,9 @@ export function ProductTypeDialog({
                       borderWidth={selected ? '2px' : '1px'}
                       borderColor={selected ? 'brand.solid' : 'border'}
                       boxShadow={selected ? '0 0 0 3px var(--chakra-colors-brand-subtle)' : 'none'}
-                      transition="border-color 0.15s, background 0.15s, box-shadow 0.15s"
                       _hover={{ borderColor: selected ? 'brand.solid' : 'brand.border' }}
                       _focusVisible={{ outline: '2px solid', outlineColor: 'brand.focusRing', outlineOffset: '2px' }}
+                      {...pressable}
                     >
                       <Flex align="center" gap="2.5">
                         {/* FIRST = rightmost: آیکن نوع */}
@@ -218,8 +219,8 @@ export function ProductTypeSwitch({
             bg={active ? 'bg.panel' : 'transparent'}
             color={active ? 'brand.fg' : 'fg.muted'}
             boxShadow={active ? 'xs' : 'none'}
-            transition="background 0.15s, color 0.15s"
             _focusVisible={{ outline: '2px solid', outlineColor: 'brand.focusRing', outlineOffset: '1px' }}
+            {...pressable}
           >
             {/* FIRST = rightmost: آیکن */}
             <Icon size="sm"><TypeIcon /></Icon>
