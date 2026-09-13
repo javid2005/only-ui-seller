@@ -14,6 +14,7 @@ import { SpecsTab } from '@/components/products/new/SpecsTab'
 import { VariantsTab } from '@/components/products/new/VariantsTab'
 import { SeoTab } from '@/components/products/new/SeoTab'
 import { ProductPreviewCard } from '@/components/products/new/ProductPreviewCard'
+import { SaveStatus } from '@/components/products/new/SaveStatus'
 import {
   EMPTY_FORM, STEPS, pricingModeOf, seoScore,
   type ProductForm, type ProductTypeId, type StepId,
@@ -41,7 +42,9 @@ export function NewProduct() {
 
   // محصول ساده مرحلهٔ «تنوع ها» ندارد
   const isVaried = form.productType === 'varied'
-  const steps = isVaried ? STEPS : STEPS.filter((s) => s.id !== 'models')
+  // مرحلهٔ مدل‌ها همیشه در استپر هست؛ در حالت ساده خودش بنر توضیح نشان می‌دهد —
+  // همان رفتار طرح. پنهان‌کردن مرحله باعث می‌شد کاربر نفهمد چه چیزی را از دست می‌دهد.
+  const steps = STEPS
 
   const chooseType = (productType: ProductTypeId) => {
     setForm((prev) => ({
@@ -52,7 +55,6 @@ export function NewProduct() {
         ? { hasVariants: false, variants: [], combinations: [] }
         : {}),
     }))
-    if (productType === 'simple' && activeStep === 'models') setActiveStep('basic')
     setTypeChosen(true)
     setTypeDialogOpen(false)
   }
@@ -85,7 +87,7 @@ export function NewProduct() {
     warehouse: warehouseComplete ? 'complete' : 'pending',
     specs: specsComplete ? 'complete' : 'pending',
     // تنوع اختیاری است: صفر ترکیب یعنی «کامل»، نه یک عددِ خام روی استپر
-    models: form.combinations.length > 0 ? form.combinations.length : 'complete',
+    models: isVaried && form.combinations.length > 0 ? form.combinations.length : 'complete',
     seo: seoScore(form) === 100 ? 'complete' : 'pending',
   }
 
@@ -186,6 +188,8 @@ export function NewProduct() {
                 />
                 {/* پیش‌نمایش زندهٔ محصول — زیر استپر، مثل طرح */}
                 <ProductPreviewCard form={form} />
+                {/* نشانگر ذخیرهٔ خودکار — زیر ریل، مثل طرح */}
+                <SaveStatus watch={form} />
               </Flex>
             </Box>
           )}
@@ -217,8 +221,15 @@ export function NewProduct() {
             {activeStep === 'specs' && (
               <SpecsTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
-            {activeStep === 'models' && isVaried && (
-              <VariantsTab form={form} onChange={patch} onBack={goBack} onSave={save} />
+            {activeStep === 'models' && (
+              <VariantsTab
+                form={form}
+                onChange={patch}
+                onBack={goBack}
+                onSave={save}
+                onMakeVaried={() => chooseType('varied')}
+                onLeave={() => setActiveStep('specs')}
+              />
             )}
             {activeStep === 'seo' && (
               <SeoTab

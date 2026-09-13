@@ -37,7 +37,8 @@ export function SectionCard({
       bg="bg.panel"
       borderWidth="1px"
       borderColor="border"
-      rounded="xl"
+      // شعاع‌های طرح از پیش‌فرض چاکرا گردترند: کارت ۱۶px، پنل ۱۲px، فیلد ۸px
+      rounded="2xl"
       p={{ base: '4', sm: '5' }}
       w="full"
     >
@@ -103,7 +104,7 @@ export function Panel({ title, subtitle, icon, tinted, children }: PanelProps) {
       borderWidth="1px"
       borderColor="border.muted"
       bg={tinted ? 'bg.subtle' : 'transparent'}
-      rounded="lg"
+      rounded="xl"
       p="4"
       w="full"
     >

@@ -46,7 +46,7 @@ export function MediaCard({
     <Box
       borderWidth="1px"
       borderColor={selected ? 'brand.solid' : featured ? 'brand.border' : 'border'}
-      rounded="lg"
+      rounded="xl"
       overflow="hidden"
       bg="bg.panel"
       opacity={isDragging ? 0.5 : 1}

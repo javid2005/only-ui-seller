@@ -108,7 +108,7 @@ export function UploadedImageCard({
         alt={label}
         boxSize="106px"
         flexShrink={0}
-        rounded="lg"
+        rounded="14px"
         borderWidth="1px"
         borderColor="border.muted"
       />

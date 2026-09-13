@@ -193,12 +193,32 @@ export const VARIANT_GROUPS: VariantGroup[] = [
   },
 ]
 
+// ─── پیشنهادهای تنوع بر اساس دسته‌بندی ──────────────────────────────────────────
+// خواستهٔ بند ۱۱ دور «چاکرا طراح»: این فهرست باید از بک‌اند بیاید. فعلاً آرایهٔ
+// داخلی است تا با تعویض منبع (یک fetch) بدون تغییر UI جایگزین شود.
+export const VARIANT_SUGGESTIONS: Record<string, string[]> = {
+  digital:  ['رنگ', 'حافظه', 'گارانتی', 'ظرفیت رم', 'رجیستری'],
+  fashion:  ['رنگ', 'سایز', 'جنس', 'الگو'],
+  home:     ['رنگ', 'سایز', 'جنس', 'ظرفیت'],
+  beauty:   ['حجم', 'رنگ', 'رایحه'],
+  currency: ['رنگ', 'مدل'],
+  gold:     ['عیار', 'وزن', 'رنگ طلا'],
+}
+
+export const DEFAULT_VARIANT_SUGGESTIONS = ['رنگ', 'سایز', 'جنس', 'گارانتی']
+
+export function suggestionsFor(category: string): string[] {
+  return VARIANT_SUGGESTIONS[category] ?? DEFAULT_VARIANT_SUGGESTIONS
+}
+
 // ─── Variants (تب تنوع‌ها) ────────────────────────────────────────────────────────
 export const MAX_VARIANTS = 2
 
 export interface VariantValueItem {
   id: string
   label: string
+  /** رنگ سواچ — فقط برای تنوع‌های رنگی. مبنای ته‌رنگ ردیف‌های جدول مدل‌ها هم هست. */
+  color?: string
 }
 
 export interface ProductVariant {
@@ -218,10 +238,40 @@ export const newVariant = (): ProductVariant => ({
 })
 
 let _valueId = 0
-export const newVariantValue = (label: string): VariantValueItem => ({
+export const newVariantValue = (label: string, color?: string): VariantValueItem => ({
   id: `value_${++_valueId}`,
   label,
+  color,
 })
+
+// ─── رنگ‌های شناخته‌شده ──────────────────────────────────────────────────────────
+// وقتی عنوان تنوع «رنگ» باشد، مقدارِ تازه خودش سواچ می‌گیرد. اسم ناشناخته → خنثی،
+// و کاربر می‌تواند دستی عوضش کند.
+const COLOR_BY_NAME: Record<string, string> = {
+  'مشکی': '#20262b', 'سیاه': '#20262b', 'سفید': '#e6e9eb', 'آبی': '#447bab',
+  'قرمز': '#c0392b', 'سبز': '#2f9e6f', 'زرد': '#e2b93b', 'نارنجی': '#e07b39',
+  'بنفش': '#7d5ba6', 'صورتی': '#d977a5', 'خاکستری': '#8a949b', 'نقره‌ای': '#c7ced3',
+  'طلایی': '#c9a227', 'قهوه‌ای': '#7a5138', 'سرمه‌ای': '#2b3a55',
+}
+
+export const isColorOption = (title: string) => title.includes('رنگ')
+
+export function colorForValue(label: string): string {
+  return COLOR_BY_NAME[label.trim()] ?? '#9aa6ad'
+}
+
+/**
+ * ته‌رنگ ردیف جدول مدل‌ها از رنگِ مقدارِ **تنوع اول** ساخته می‌شود، و داخل هر گروه
+ * بین دو شفافیت متناوب می‌شود. نتیجه: ردیف‌های یک رنگ یک نوار پیوسته می‌سازند و
+ * چشم گروه‌ها را بدون خط‌کشی اضافه تشخیص می‌دهد — همان رفتار نسخهٔ تأییدشده.
+ */
+export function rowTint(hex: string | undefined, indexInGroup: number): string {
+  const h = (hex ?? '#9aa6ad').replace('#', '')
+  const r = parseInt(h.slice(0, 2), 16)
+  const g = parseInt(h.slice(2, 4), 16)
+  const b = parseInt(h.slice(4, 6), 16)
+  return `rgba(${r}, ${g}, ${b}, ${indexInGroup % 2 === 0 ? 0.075 : 0.115})`
+}
 
 // ─── Variant combinations (ماتریس ترکیب‌ها) ──────────────────────────────────────
 export interface VariantCombination {
@@ -239,6 +289,8 @@ export interface VariantCombination {
   discountValue: string
   priceAfterDiscount: string
   price: string
+  /** قیمت پس از تخفیف — در جدول مدل‌ها ستون مستقل «تخفیف» است */
+  salePrice: string
   inventory: string
 }
 
@@ -254,11 +306,14 @@ export function buildCombinations(variants: ProductVariant[], skuBase: string): 
     }
     rows = next
   }
-  return rows.map((row) => ({
+  // SKU باید لاتین بماند (قرارداد پروژه: کد و شناسه هرگز فارسی نمی‌شود). پس به‌جای
+  // چسباندن برچسب‌های فارسی، شمارهٔ ترتیبیِ صفرپرشده می‌گیرد — همان الگوی نسخهٔ
+  // تأییدشده: <base>-001، <base>-002، …
+  return rows.map((row, i) => ({
     id: `combo_${row.map((v) => v.id).join('_')}`,
     values: row.map((v) => v.label),
     image: '',
-    sku: `${skuBase || 'SKU'}-${row.map((v) => v.label.replace(/\s+/g, '')).join('-')}`,
+    sku: `${skuBase || 'SKU'}-${String(i + 1).padStart(3, '0')}`,
     active: true,
     phoneSale: false,
     unlimitedInventory: false,
@@ -267,6 +322,7 @@ export function buildCombinations(variants: ProductVariant[], skuBase: string): 
     discountValue: '',
     priceAfterDiscount: '',
     price: '',
+    salePrice: '',
     inventory: '',
   }))
 }

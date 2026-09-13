@@ -31,7 +31,7 @@ export function ToggleCard({
       direction="column"
       gap="2"
       p="4"
-      rounded="lg"
+      rounded="xl"
       borderWidth="1px"
       borderColor={accent ? 'orange.muted' : 'border'}
       bg={accent ? 'orange.bg' : 'bg.panel'}
