@@ -8,6 +8,7 @@ import { toPersianDigits, formatThousands } from '@/utils/numbers'
 import { MediaThumb } from './MediaThumb'
 import { focusInputWithin } from './focusField'
 import type { VariantCombination } from './data'
+import { dialogEnterSubmit } from './enterSubmit'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -121,7 +122,7 @@ export function ModelSettingsDialog({
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl" py="6">
-          <Dialog.Content maxW="520px" w="full" mx="4">
+          <Dialog.Content maxW="520px" w="full" mx="4" {...dialogEnterSubmit(save)}>
 
             <Dialog.Header pt="5" px="6" pb="2" position="relative">
               <Dialog.Title fontSize="md" fontWeight="semibold" textAlign="start" w="full">

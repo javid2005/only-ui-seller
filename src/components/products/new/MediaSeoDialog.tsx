@@ -4,6 +4,7 @@ import { toPersianDigits } from '@/utils/numbers'
 import { MediaThumb } from './MediaThumb'
 import { NotchedField, bareControl } from './NotchedField'
 import type { GalleryImage } from './data'
+import { dialogEnterSubmit } from './enterSubmit'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -36,7 +37,7 @@ export function MediaSeoDialog({ image, onClose, onConfirm }: MediaSeoDialogProp
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl" py="6">
-          <Dialog.Content maxW="520px" w="full" mx="4">
+          <Dialog.Content maxW="520px" w="full" mx="4" {...dialogEnterSubmit(() => { onConfirm({ alt, caption }); onClose() })}>
 
             <Dialog.Header pb="3" pt="6" px="6" position="relative">
               <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="start" w="full">

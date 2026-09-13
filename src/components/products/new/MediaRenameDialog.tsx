@@ -3,6 +3,7 @@ import { Dialog, Portal, CloseButton, Text, Flex, Button, Box, Input, Code } fro
 import { MediaThumb } from './MediaThumb'
 import { sanitizeFileName, isValidFileName, stripExtension, mediaName, MEDIA_EXTENSION } from './identity'
 import type { GalleryImage } from './data'
+import { dialogEnterSubmit } from './enterSubmit'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -43,7 +44,7 @@ export function MediaRenameDialog({ image, onClose, onConfirm }: MediaRenameDial
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl" py="6">
-          <Dialog.Content maxW="520px" w="full" mx="4">
+          <Dialog.Content maxW="520px" w="full" mx="4" {...dialogEnterSubmit(() => { onConfirm(`${final}.${MEDIA_EXTENSION}`); onClose() })}>
 
             <Dialog.Header pt="5" px="6" pb="2" position="relative">
               <Dialog.Title fontSize="md" fontWeight="semibold" textAlign="start" w="full">

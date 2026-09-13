@@ -63,9 +63,18 @@ export function VariantsTab({
   // ترکیب حفظ می‌شوند تا ویرایش‌های کاربر با افزودن یک مقدار تازه پاک نشوند.
   useEffect(() => {
     const fresh = buildCombinations(options, form.sku, form.price)
+    /**
+     * کلیدِ تطبیق، **شناسهٔ مدل** است نه رشتهٔ مقادیرش.
+     *
+     * شناسهٔ مدل از `id` مقادیر ساخته می‌شود و با تغییر نامِ یک مقدار عوض
+     * نمی‌شود — پس وقتی کاربر از پالت رنگ، مقدار «زرد» را به «قرمز» تبدیل
+     * می‌کند (بازخورد کاربر، مورد ۱۰)، قیمت و موجودیِ همان ردیف سر جایش
+     * می‌ماند و فقط برچسبش در جدول عوض می‌شود. با کلید قبلی (رشتهٔ مقادیر)
+     * ردیف «جدید» شمرده می‌شد و ویرایش‌های کاربر پاک می‌شدند.
+     */
     const merged = fresh.map((nc) => {
-      const prev = combos.find((c) => key(c.values) === key(nc.values))
-      return prev ? { ...nc, ...prev, sku: nc.sku, values: nc.values } : nc
+      const prev = combos.find((c) => c.id === nc.id)
+      return prev ? { ...nc, ...prev, id: nc.id, sku: nc.sku, values: nc.values } : nc
     })
     /**
      * ارث‌بری: مدل‌هایی که هنوز مقدار مستقل نگرفته‌اند، قیمت/موجودی/تصویرِ محصول

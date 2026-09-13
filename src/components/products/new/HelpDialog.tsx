@@ -91,16 +91,15 @@ export function HelpDialog({ topic, onClose, description }: HelpDialogProps) {
                 </Box>
               </Flex>
 
-              {/* گرید کارت‌ها — دو ستون، هر کارت با لحن رنگی خودش */}
-              {/*
-                `alignItems: start` عمدی است: بدون آن، کارتِ یک‌خطی تا ارتفاع
-                کارتِ چهارخطیِ کنارش کش می‌آمد و زیرش خالی می‌ماند. حالا هر کارت
-                به اندازهٔ محتوای خودش است و فضای پرت از بین می‌رود.
-              */}
+              {/* گرید کارت‌ها — دو ستون، هر کارت با لحن رنگی خودش.
+                  `alignItems: start` **برداشته شد** (بازخورد کاربر، مورد ۸):
+                  کارت‌های نابرابرِ چسبیده به بالا ردیف‌ها را به‌هم‌ریخته نشان
+                  می‌داد. راهِ درست، پرکردنِ خودِ محتوا بود نه کوتاه‌کردنِ کادر —
+                  حالا هیچ کارتی کمتر از سه سطر ندارد، پس ارتفاع برابرِ ردیف
+                  فضای پرت نمی‌سازد. (helpContent.ts) */}
               <Grid
                 templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
-                gap="2.5"
-                alignItems="start"
+                gap="2"
               >
                 {data?.cards.map((card) => {
                   const tone = TONE[card.tone]
@@ -108,8 +107,8 @@ export function HelpDialog({ topic, onClose, description }: HelpDialogProps) {
                   return (
                     <Flex
                       key={card.title}
-                      gap="2.5"
-                      p="3"
+                      gap="2"
+                      p="2.5"
                       rounded="lg"
                       borderWidth="1px"
                       borderColor={tone.border}
@@ -120,15 +119,15 @@ export function HelpDialog({ topic, onClose, description }: HelpDialogProps) {
                         <CardIcon />
                       </Icon>
                       <Box minW="0">
-                        <Text fontSize="xs" fontWeight="semibold" color="fg" textAlign="start" mb="1">
+                        <Text fontSize="xs" fontWeight="semibold" color="fg" textAlign="start" mb="1.5">
                           {card.title}
                         </Text>
-                        <Flex direction="column" gap="1">
+                        <Flex direction="column" gap="0.5">
                           {card.items.map((item) => (
                             <Flex key={item} gap="2" align="start">
                               {/* FIRST = rightmost: نقطهٔ فهرست */}
-                              <Box boxSize="1" rounded="full" bg={tone.fg} mt="2" flexShrink={0} />
-                              <Text fontSize="11px" color="fg.muted" textAlign="start" lineHeight="1.75">
+                              <Box boxSize="1" rounded="full" bg={tone.fg} mt="1.5" flexShrink={0} />
+                              <Text fontSize="11px" color="fg.muted" textAlign="start" lineHeight="1.6">
                                 {item}
                               </Text>
                             </Flex>

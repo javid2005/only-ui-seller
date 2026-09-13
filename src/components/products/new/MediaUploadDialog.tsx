@@ -5,6 +5,7 @@ import {
 import { Upload, X, FileImage } from 'lucide-react'
 import { toPersianDigits } from '@/utils/numbers'
 import { GALLERY_MAX_IMAGE_SIZE } from './data'
+import { dialogEnterSubmit } from './enterSubmit'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -55,7 +56,7 @@ export function MediaUploadDialog({
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl" py="6">
-          <Dialog.Content maxW="560px" w="full" mx="4">
+          <Dialog.Content maxW="560px" w="full" mx="4" {...dialogEnterSubmit(confirm, picked.length > 0)}>
 
             <Dialog.Header pb="3" pt="6" px="6" position="relative">
               <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="start" w="full">

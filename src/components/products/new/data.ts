@@ -342,22 +342,13 @@ export const newVariantValue = (label: string, color?: string): VariantValueItem
 })
 
 // ─── رنگ‌های شناخته‌شده ──────────────────────────────────────────────────────────
-// وقتی عنوان تنوع «رنگ» باشد، مقدارِ تازه خودش سواچ می‌گیرد. اسم ناشناخته → خنثی،
-// و کاربر می‌تواند دستی عوضش کند.
-const COLOR_BY_NAME: Record<string, string> = {
-  'مشکی': '#20262b', 'سیاه': '#20262b', 'سفید': '#e6e9eb', 'آبی': '#447bab',
-  'قرمز': '#c0392b', 'سبز': '#2f9e6f', 'زرد': '#e2b93b', 'نارنجی': '#e07b39',
-  'بنفش': '#7d5ba6', 'صورتی': '#d977a5', 'خاکستری': '#8a949b', 'نقره‌ای': '#c7ced3',
-  'طلایی': '#c9a227', 'قهوه‌ای': '#7a5138', 'سرمه‌ای': '#2b3a55',
-  'کرم': '#d9c9a8', 'بژ': '#d9c9a8', 'زرشکی': '#a3203a', 'فیروزه‌ای': '#1f8c73',
-  'آبی روشن': '#5aa9d6', 'سبز روشن': '#7fbf5a', 'دودی': '#3d4852',
-}
+// نام‌ها و کدها یک‌جا در `colors.ts` تعریف شده‌اند (منبع واحد) — همان فهرستی که
+// پالتِ سواچ و فهرستِ پیشنهادِ مقدار هم از آن می‌خورند. اینجا فقط re-export است
+// تا مصرف‌کننده‌های قدیمی (`import { colorForValue } from './data'`) نشکنند.
+import { colorForValue } from './colors'
+export { colorForValue, NAMED_COLORS, COLOR_NAMES, type NamedColor } from './colors'
 
 export const isColorOption = (title: string) => title.includes('رنگ')
-
-export function colorForValue(label: string): string {
-  return COLOR_BY_NAME[label.trim()] ?? '#9aa6ad'
-}
 
 /** رنگ‌های خنثی برای گروه‌بندی وقتی هیچ تنوعِ رنگی وجود ندارد */
 const NEUTRAL_GROUP_COLORS = ['#8a949b', '#7d8b96', '#6f8189', '#93a0a6', '#7c8a8f', '#8d9aa2']

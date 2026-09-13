@@ -5,6 +5,7 @@ import { NumberField } from '@/components/ui/NumberField'
 import { DatePicker } from '@/components/ui/DatePicker'
 import { toPersianDigits, formatThousands } from '@/utils/numbers'
 import { pressable } from './motion'
+import { dialogEnterSubmit } from './enterSubmit'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -70,7 +71,7 @@ export function DiscountDialog({
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl" py="6">
-          <Dialog.Content maxW="520px" w="full" mx="4">
+          <Dialog.Content maxW="520px" w="full" mx="4" {...dialogEnterSubmit(() => { onConfirm({ type, value, until }); onClose() }, !invalid && value.trim() !== '')}>
 
             <Dialog.Header pt="5" px="6" pb="2" position="relative">
               <Dialog.Title fontSize="md" fontWeight="semibold" textAlign="start" w="full">

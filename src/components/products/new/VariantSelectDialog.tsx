@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Dialog, Portal, CloseButton, Text, Flex, Listbox, Button, createListCollection } from '@chakra-ui/react'
 import { VARIANT_GROUPS } from './data'
+import { dialogEnterSubmit } from './enterSubmit'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -59,7 +60,7 @@ export function VariantSelectDialog({ open, onClose, selectedTags, onConfirm }: 
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl" py="6">
-          <Dialog.Content maxW="384px" w="full" mx="4">
+          <Dialog.Content maxW="384px" w="full" mx="4" {...dialogEnterSubmit(confirm)}>
             <Dialog.Header pb="4" pt="6" px="6" position="relative">
               <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="start" w="full">
                 انتخاب تنوع مربوط به تصویر

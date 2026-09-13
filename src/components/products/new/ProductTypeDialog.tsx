@@ -4,6 +4,7 @@ import { Box as BoxIcon, LayoutGrid } from 'lucide-react'
 import { PRODUCT_TYPES, type ProductTypeId } from './data'
 import { ProductTypeArt } from './ProductTypeArt'
 import { pressable } from './motion'
+import { dialogEnterSubmit } from './enterSubmit'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -53,7 +54,7 @@ export function ProductTypeDialog({
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl" py="6">
-          <Dialog.Content maxW="640px" w="full" mx="4">
+          <Dialog.Content maxW="640px" w="full" mx="4" {...dialogEnterSubmit(() => onConfirm(pick))}>
 
             <Dialog.Header pt="6" px="6" pb="2">
               {/* FIRST = rightmost: آیکن سرتیتر */}

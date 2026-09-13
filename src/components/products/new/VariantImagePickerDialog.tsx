@@ -4,6 +4,7 @@ import { ImageOff } from 'lucide-react'
 import { toPersianDigits } from '@/utils/numbers'
 import { MediaThumb } from './MediaThumb'
 import type { GalleryImage } from './data'
+import { dialogEnterSubmit } from './enterSubmit'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -45,7 +46,7 @@ export function VariantImagePickerDialog({
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl" py="6">
-          <Dialog.Content maxW="480px" w="full" mx="4">
+          <Dialog.Content maxW="480px" w="full" mx="4" {...dialogEnterSubmit(confirm)}>
             <Dialog.Header pb="4" pt="6" px="6" position="relative">
               <Dialog.Title fontSize="lg" fontWeight="semibold" textAlign="start" w="full">
                 انتخاب تصویر ترکیب

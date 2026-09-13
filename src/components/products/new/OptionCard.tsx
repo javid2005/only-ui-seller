@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Box, Flex, Text, IconButton, Popover, Portal, chakra } from '@chakra-ui/react'
+import { Box, Flex, Grid, Text, IconButton, Popover, Portal, chakra } from '@chakra-ui/react'
 import { Trash2, Plus, X } from 'lucide-react'
 import { Tooltip } from '@/components/ui/Tooltip'
-import { isColorOption, colorForValue, type ProductVariant, type VariantValueItem } from './data'
+import { isColorOption, colorForValue, NAMED_COLORS, type ProductVariant, type VariantValueItem } from './data'
 import { valuesForOption, optionsForCategory } from './categoryKnowledge'
 import { SuggestInput } from './SuggestInput'
 
@@ -17,16 +17,6 @@ export interface OptionCardProps {
   onChange: (patch: Partial<ProductVariant>) => void
   onRemove: () => void
 }
-
-// hex خام اینجا عمدی است و توکن نمی‌شود: این‌ها **دادهٔ محصول‌اند** (رنگ واقعی کالا
-// که فروشنده انتخاب می‌کند و در ویترین دیده می‌شود)، نه سطحِ theme-able. به همین
-// دلیل در dark mode هم نباید عوض شوند.
-const SWATCHES = [
-  '#20262b', '#3d4852', '#8a949b', '#c7ced3', '#e6e9eb',
-  '#2b3a55', '#447bab', '#5aa9d6', '#1f8c73', '#2f9e6f',
-  '#7fbf5a', '#e2b93b', '#c9a227', '#e07b39', '#c0392b',
-  '#a3203a', '#d977a5', '#7d5ba6', '#7a5138', '#d9c9a8',
-]
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 /**
@@ -178,21 +168,56 @@ export function OptionCard({ option, index, category, onChange, onRemove }: Opti
                     <Portal>
                       <Popover.Positioner dir="rtl">
                         <Popover.Content w="auto" p="2">
-                          <Flex gap="1.5" wrap="wrap" maxW="200px">
-                            {SWATCHES.map((c) => (
-                              <chakra.button
-                                key={c}
-                                type="button"
-                                aria-label={c}
-                                boxSize="6"
-                                rounded="md"
-                                bg={c}
-                                borderWidth="2px"
-                                borderColor={v.color === c ? 'brand.solid' : 'border'}
-                                onClick={() => patchValue(v.id, { color: c })}
-                              />
-                            ))}
-                          </Flex>
+                          {/* کلیک روی سواچ **کل مقدار** را عوض می‌کند — نام و
+                              رنگ با هم (بازخورد کاربر، مورد ۱۰). قبلاً فقط رنگ
+                              عوض می‌شد و مقداری به نام «زرد» می‌توانست قرمز
+                              بماند. چون جدول مدل‌ها هم `label` و هم `color` را
+                              از همین مقدار می‌خواند، تغییر همان لحظه در جدول و
+                              پیش‌نمایش دیده می‌شود.
+                              نام هر سواچ زیرش نوشته شده تا انتخاب کور نباشد. */}
+                          <Text fontSize="2xs" color="fg.muted" textAlign="start" mb="1.5">
+                            رنگ را انتخاب کنید — نام مقدار هم با آن عوض می‌شود
+                          </Text>
+                          <Grid
+                            templateColumns="repeat(5, 1fr)"
+                            gap="1"
+                            w="252px"
+                            maxH="280px"
+                            overflowY="auto"
+                          >
+                            {NAMED_COLORS.map((c) => {
+                              const active = v.color === c.hex && v.label === c.name
+                              return (
+                                <chakra.button
+                                  key={c.name}
+                                  type="button"
+                                  title={c.name}
+                                  aria-label={c.name}
+                                  aria-pressed={active}
+                                  display="flex"
+                                  flexDirection="column"
+                                  alignItems="center"
+                                  gap="0.5"
+                                  p="1"
+                                  rounded="md"
+                                  bg={active ? 'brand.bg' : 'transparent'}
+                                  _hover={{ bg: 'bg.subtle' }}
+                                  onClick={() => patchValue(v.id, { label: c.name, color: c.hex })}
+                                >
+                                  <Box
+                                    boxSize="6"
+                                    rounded="md"
+                                    bg={c.hex}
+                                    borderWidth="2px"
+                                    borderColor={active ? 'brand.solid' : 'border'}
+                                  />
+                                  <Text fontSize="8px" color="fg.muted" truncate w="full" textAlign="center">
+                                    {c.name}
+                                  </Text>
+                                </chakra.button>
+                              )
+                            })}
+                          </Grid>
                         </Popover.Content>
                       </Popover.Positioner>
                     </Portal>

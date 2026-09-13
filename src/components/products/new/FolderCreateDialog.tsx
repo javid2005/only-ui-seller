@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Dialog, Portal, CloseButton, Text, Flex, Button, Box, Input, chakra } from '@chakra-ui/react'
 import { Folder, Images, Video, Boxes, Layers } from 'lucide-react'
 import { FOLDER_SOURCES, type MediaFolderSource } from './data'
+import { dialogEnterSubmit } from './enterSubmit'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -49,7 +50,7 @@ export function FolderCreateDialog({ open, onClose, onCreate }: FolderCreateDial
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner dir="rtl" py="6">
-          <Dialog.Content maxW="560px" w="full" mx="4">
+          <Dialog.Content maxW="560px" w="full" mx="4" {...dialogEnterSubmit(() => { onCreate(finalLabel, source); onClose() })}>
 
             <Dialog.Header pt="5" px="6" pb="2" position="relative">
               <Dialog.Title fontSize="md" fontWeight="semibold" textAlign="start" w="full">
