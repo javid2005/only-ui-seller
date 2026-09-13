@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react'
-import { Box, Flex, Text, Icon } from '@chakra-ui/react'
+import { useState, type ReactNode } from 'react'
+import { Box, Flex, Text, IconButton } from '@chakra-ui/react'
 import { CircleHelp } from 'lucide-react'
 import { Tooltip } from '@/components/ui/Tooltip'
+import { HelpDialog } from './HelpDialog'
 
 // ─── SectionCard ────────────────────────────────────────────────────────────────
 /**
@@ -17,12 +18,20 @@ export interface SectionCardProps {
   subtitle?: string
   /** متن راهنما — با آیکن «؟» کنار عنوان نمایش داده می‌شود */
   help?: string
+  /** کلید موضوع در HELP_TOPICS — آیکن «؟» را به دکمهٔ بازکنندهٔ راهنمای کامل تبدیل می‌کند */
+  helpTopic?: string
+  /** راهنمای این بخش باکس ویدئو هم داشته باشد */
+  helpVideo?: boolean
   /** کنترل‌های سمت چپ سرتیتر (مثل تب تومان/دلار) */
   actions?: ReactNode
   children: ReactNode
 }
 
-export function SectionCard({ title, subtitle, help, actions, children }: SectionCardProps) {
+export function SectionCard({
+  title, subtitle, help, helpTopic, helpVideo, actions, children,
+}: SectionCardProps) {
+  const [helpOpen, setHelpOpen] = useState(false)
+
   return (
     <Box
       bg="bg.panel"
@@ -37,11 +46,19 @@ export function SectionCard({ title, subtitle, help, actions, children }: Sectio
           {/* FIRST = rightmost: عنوان · سپس آیکن راهنما */}
           <Flex align="center" gap="2">
             <Text fontSize="md" fontWeight="semibold" color="fg">{title}</Text>
-            {help && (
-              <Tooltip content={help}>
-                <Icon size="sm" color="fg.muted" cursor="help" tabIndex={0} aria-label="راهنما">
+            {(help || helpTopic) && (
+              <Tooltip content={helpTopic ? `راهنمای «${title}»` : help}>
+                <IconButton
+                  size="2xs"
+                  variant="ghost"
+                  color="fg.muted"
+                  rounded="full"
+                  aria-label={`راهنمای ${title}`}
+                  cursor={helpTopic ? 'pointer' : 'help'}
+                  onClick={helpTopic ? () => setHelpOpen(true) : undefined}
+                >
                   <CircleHelp />
-                </Icon>
+                </IconButton>
               </Tooltip>
             )}
           </Flex>
@@ -53,6 +70,15 @@ export function SectionCard({ title, subtitle, help, actions, children }: Sectio
       </Flex>
 
       {children}
+
+      {helpTopic && (
+        <HelpDialog
+          topic={helpOpen ? helpTopic : null}
+          onClose={() => setHelpOpen(false)}
+          description={subtitle}
+          withVideo={helpVideo}
+        />
+      )}
     </Box>
   )
 }

@@ -63,7 +63,7 @@ export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabPro
       <SectionCard
         title="تنظیمات سئو"
         subtitle="نحوه نمایش محصول در نتایج جستجو"
-        help="این مقادیر فقط در موتورهای جست‌وجو دیده می‌شوند و روی صفحهٔ محصول اثری ندارند."
+        helpTopic="تنظیمات سئو"
         actions={
           <Button size="sm" variant="outline" colorPalette="brand" onClick={generateFromProduct}>
             {/* FIRST = rightmost: آیکن */}

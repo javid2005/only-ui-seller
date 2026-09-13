@@ -47,7 +47,7 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
       <SectionCard
         title="ویژگی های محصول"
         subtitle="ویژگی‌های اختصاصی این محصول را وارد کنید. (حداکثر ۲۰ کاراکتر)"
-        help="این ویژگی‌ها در جدول مشخصات صفحهٔ محصول نمایش داده می‌شوند."
+        helpTopic="مشخصات محصول"
         actions={
           <Button
             size="sm"

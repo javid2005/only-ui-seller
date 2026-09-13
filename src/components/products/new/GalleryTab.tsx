@@ -174,7 +174,8 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
       <SectionCard
         title="گالری و فایل‌منیجر"
         subtitle="تصویر اصلی، ویدئو، ترتیب نمایش و تصویر اختصاصی مدل‌ها را مدیریت کنید"
-        help="پوشه‌ها فقط برای نظم کتابخانه‌اند؛ جابه‌جا کردن رسانه فایل اصلی را حذف نمی‌کند."
+        helpTopic="گالری و کتابخانه رسانه"
+        helpVideo
         actions={
           <Button
             size="sm"

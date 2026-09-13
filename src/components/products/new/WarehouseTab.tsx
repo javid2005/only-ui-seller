@@ -55,7 +55,7 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
       <SectionCard
         title="اطلاعات انبارداری"
         subtitle="اطلاعاتی که برای کنترل موجودی و بسته‌بندی لازم است"
-        help="شناسه برای پیگیری کالا در انبار است؛ موجودی و وزن مبنای فروش و محاسبهٔ هزینهٔ ارسال‌اند."
+        helpTopic="انبارداری و بسته‌بندی"
       >
         {/* هر سه فیلد در یک پنل واحد — FIRST = rightmost: شناسه */}
         <Panel tinted>
@@ -151,7 +151,7 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
       <SectionCard
         title="تنظیمات ارسال"
         subtitle="زمان آماده‌سازی، نحوه محاسبه هزینه و توضیحی که در صورت نیاز به خریدار نمایش داده می‌شود مشخص کنید."
-        help="این تنظیمات فقط برای همین محصول است و تنظیمات کلی فروشگاه را تغییر نمی‌دهد."
+        helpTopic="تنظیمات ارسال"
       >
         {/* FIRST = rightmost: زمان آماده‌سازی ← هزینه ← توضیح.
             در طرح هر کدام یک پنل با عنوان بالای کنترل است، نه فیلدِ لیبل‌روی‌کادر. */}
