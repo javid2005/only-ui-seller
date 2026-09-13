@@ -496,8 +496,8 @@ export function VariantsTab({ form, onChange, onBack, onSave }: VariantsTabProps
       )}
 
       <ButtonFooter
-        primary={{ label: 'ذخیره', onClick: onSave }}
-        back={{ label: 'بازگشت', onClick: onBack }}
+        primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
+        back={{ label: 'بازگشت به لیست', onClick: onBack }}
       />
 
       {/* ═══ انتخابگر تصویر ترکیب — منبع: گالری محصول ═══════════════════════════ */}

@@ -117,7 +117,7 @@ export function NewProduct() {
         ]}
         cta={
           /* FIRST = rightmost: سوییچ نوع محصول · LAST = leftmost: انتشار */
-          <Flex align="center" gap="2" wrap="wrap" justify="end">
+          <Flex align="center" gap="2" wrap="wrap" justify="end" minW="0" maxW="full">
             {/* FIRST = rightmost: کنش‌های آیکنی · سپس سوییچ نوع · LAST: انتشار */}
             <Tooltip content="ذخیره تغییرات">
               <IconButton size="sm" variant="ghost" rounded="l2" aria-label="ذخیره تغییرات" onClick={save}>

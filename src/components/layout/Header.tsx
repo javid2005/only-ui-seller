@@ -28,7 +28,9 @@ export function Header({ title, breadcrumbs, badge, welcome, cta }: HeaderProps)
      *   FIRST child = Content (breadcrumb + title) → rightmost ✓
      *   LAST  child = CTA                          → leftmost  ✓
      */
-    <Flex align="start" gap="4" w="full" flexShrink={0}>
+    /* wrap لازم است: در عرض کم گروهِ CTA جا نمی‌شود و بدون آن از لبهٔ صفحه
+       بیرون می‌زند و کل صفحه اسکرول افقی می‌گیرد. */
+    <Flex align="start" gap="4" w="full" flexShrink={0} wrap="wrap">
 
       {/* ── Content: FIRST → rightmost in RTL ✓ ──────────── */}
       <Flex
