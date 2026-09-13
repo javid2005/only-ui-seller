@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Badge, Button, IconButton, Menu, Portal } from '@chakra-ui/react'
-import { Trash2, X, GripVertical, FolderInput } from 'lucide-react'
+import { Trash2, X, GripVertical, FolderInput, SearchCheck, TriangleAlert } from 'lucide-react'
 import { MediaThumb } from './MediaThumb'
 import type { MediaFolder, MediaFolderId } from './data'
 
@@ -14,10 +14,14 @@ export interface UploadedImageCardProps {
   featured: boolean
   /** تنوع‌های تخصیص‌یافته به این تصویر (label از VARIANT_GROUPS) */
   variantTags: string[]
+  /** متن جایگزین؛ خالی بودنش کنار عنوان هشدار می‌دهد (بررسی «ALT تصاویر» در مرحلهٔ سئو) */
+  alt: string
   onRemove: () => void
   onSetFeatured: () => void
   /** باز کردن دیالوگ «انتخاب تنوع» */
   onSelectVariant: () => void
+  /** باز کردن دیالوگ «سئوی تصویر» (ALT و کپشن) */
+  onEditSeo: () => void
   onRemoveTag?: (tag: string) => void
   /** روی موبایلِ واقعی hover نداریم → دکمه‌ها همیشه نمایش داده شوند */
   alwaysShowActions?: boolean
@@ -50,9 +54,11 @@ export function UploadedImageCard({
   label,
   featured,
   variantTags,
+  alt,
   onRemove,
   onSetFeatured,
   onSelectVariant,
+  onEditSeo,
   onRemoveTag,
   alwaysShowActions = false,
   folder,
@@ -121,11 +127,30 @@ export function UploadedImageCard({
           <Text fontSize="sm" fontWeight="semibold" color="fg" whiteSpace="nowrap">
             {label}
           </Text>
-          {featured && (
-            <Badge colorPalette="purple" variant="subtle" size="sm" rounded="l2" flexShrink={0}>
-              شاخص
-            </Badge>
-          )}
+          <Flex align="center" gap="2" flexShrink={0}>
+            {/* FIRST = rightmost: شاخص ← هشدار ALT (چپ‌تر) */}
+            {featured && (
+              <Badge colorPalette="purple" variant="subtle" size="sm" rounded="l2">
+                شاخص
+              </Badge>
+            )}
+            {alt.trim().length === 0 && (
+              <Badge
+                colorPalette="orange"
+                variant="subtle"
+                size="sm"
+                rounded="l2"
+                gap="1"
+                cursor="pointer"
+                onClick={onEditSeo}
+                title="متن جایگزین (ALT) ثبت نشده"
+              >
+                {/* FIRST = rightmost: آیکن (leading) */}
+                <TriangleAlert size={12} />
+                بدون ALT
+              </Badge>
+            )}
+          </Flex>
         </Flex>
 
         {/* chipهای تنوع — راست‌چین، wrap (این پاس فقط نمایش) */}
@@ -168,7 +193,7 @@ export function UploadedImageCard({
           display={actionsDisplay}
           _groupHover={{ display: 'flex' }}
         >
-          {/* DOM rightmost-first: انتقال به پوشه → انتخاب تنوع → انتخاب شاخص → trash (چپ‌ترین) */}
+          {/* DOM rightmost-first: انتقال → سئو → انتخاب تنوع → انتخاب شاخص → trash (چپ‌ترین) */}
           {onMoveToFolder && (
             <Menu.Root>
               <Menu.Trigger asChild>
@@ -191,6 +216,11 @@ export function UploadedImageCard({
               </Portal>
             </Menu.Root>
           )}
+          <Button size="xs" variant="outline" rounded="l2" gap="1.5" onClick={onEditSeo}>
+            {/* FIRST = rightmost: آیکن (leading) */}
+            <SearchCheck size={14} />
+            سئوی تصویر
+          </Button>
           <Button size="xs" colorPalette="brand" variant="subtle" rounded="l2" onClick={onSelectVariant}>
             انتخاب تنوع
           </Button>

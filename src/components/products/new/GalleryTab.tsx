@@ -10,6 +10,7 @@ import { toPersianDigits } from '@/utils/numbers'
 import { SectionCard } from './SectionCard'
 import { UploadedImageCard } from './UploadedImageCard'
 import { MediaCard } from './MediaCard'
+import { MediaSeoDialog } from './MediaSeoDialog'
 import { MediaUploadDialog } from './MediaUploadDialog'
 import { VariantSelectDialog } from './VariantSelectDialog'
 import { FolderPanel } from './FolderPanel'
@@ -37,6 +38,8 @@ const newImage = (
   featured,
   variantTags: [],
   folder,
+  alt: '',
+  caption: '',
 })
 
 let _fid = 0
@@ -72,6 +75,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
   const [dragId, setDragId] = useState<string | null>(null)
   const [uploadOpen, setUploadOpen] = useState(false)
   const [variantDialogImageId, setVariantDialogImageId] = useState<string | null>(null)
+  const [seoDialogImageId, setSeoDialogImageId] = useState<string | null>(null)
 
   const inFolder = images.filter((img) => img.folder === folder)
   const visible = query.trim()
@@ -84,6 +88,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
   )
   const folderLabel = folders.find((f) => f.id === folder)?.label ?? ''
   const variantDialogImage = images.find((img) => img.id === variantDialogImageId) ?? null
+  const seoDialogImage = images.find((img) => img.id === seoDialogImageId) ?? null
 
   // ─── Handlers ───────────────────────────────────────────────────────────────
   const addFiles = (files: File[]) => {
@@ -303,6 +308,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
                     label={`تصویر ${toPersianDigits(i + 1)}`}
                     featured={img.featured}
                     variantTags={img.variantTags}
+                    alt={img.alt}
                     folder={img.folder}
                     folders={folders}
                     selected={selection.includes(img.id)}
@@ -313,6 +319,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
                     onRemove={() => removeImages([img.id])}
                     onSetFeatured={() => setFeatured(img.id)}
                     onSelectVariant={() => setVariantDialogImageId(img.id)}
+                    onEditSeo={() => setSeoDialogImageId(img.id)}
                     onMoveToFolder={(target) => patchImage(img.id, { folder: target })}
                     {...dragProps(img)}
                   />
@@ -327,6 +334,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
                     label={`تصویر ${toPersianDigits(i + 1)}`}
                     featured={img.featured}
                     variantTags={img.variantTags}
+                    alt={img.alt}
                     alwaysShowActions={isMobile}
                     folder={img.folder}
                     folders={folders}
@@ -334,6 +342,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
                     onRemove={() => removeImages([img.id])}
                     onSetFeatured={() => setFeatured(img.id)}
                     onSelectVariant={() => setVariantDialogImageId(img.id)}
+                    onEditSeo={() => setSeoDialogImageId(img.id)}
                     onRemoveTag={(tag) =>
                       patchImage(img.id, { variantTags: img.variantTags.filter((t) => t !== tag) })
                     }
@@ -367,6 +376,13 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
         onClose={() => setVariantDialogImageId(null)}
         selectedTags={variantDialogImage?.variantTags ?? []}
         onConfirm={(tags) => variantDialogImage && patchImage(variantDialogImage.id, { variantTags: tags })}
+      />
+
+      {/* ═══ دیالوگ «سئوی تصویر» — ALT و کپشن ════════════════════════════════════ */}
+      <MediaSeoDialog
+        image={seoDialogImage}
+        onClose={() => setSeoDialogImageId(null)}
+        onConfirm={(patch) => seoDialogImage && patchImage(seoDialogImage.id, patch)}
       />
 
     </Flex>

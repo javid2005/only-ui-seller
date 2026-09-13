@@ -141,6 +141,10 @@ export interface GalleryImage {
   variantTags: string[]
   /** پوشهٔ کتابخانه که این رسانه در آن دیده می‌شود */
   folder: MediaFolderId
+  /** متن جایگزین تصویر — هم برای دسترس‌پذیری، هم مبنای بررسی سئوی تصاویر */
+  alt: string
+  /** کپشن نمایشی زیر تصویر در صفحهٔ محصول */
+  caption: string
 }
 
 // ─── پوشه‌های کتابخانهٔ رسانه ────────────────────────────────────────────────────
@@ -449,6 +453,12 @@ export const SEO_CHECKS: SeoCheck[] = [
   {
     id: 'images', label: 'تصاویر محصول', hint: 'حداقل یک تصویر در گالری',
     step: 'gallery', ok: (f) => f.gallery.length > 0,
+  },
+  {
+    id: 'alt', label: 'ALT تصاویر', hint: 'متن جایگزین برای همهٔ تصاویر',
+    step: 'gallery',
+    // فقط وقتی معنا دارد که تصویری هست؛ گالریِ خالی را بررسی «تصاویر محصول» می‌گیرد
+    ok: (f) => f.gallery.length > 0 && f.gallery.every((img) => img.alt.trim().length > 0),
   },
   {
     id: 'category', label: 'دسته‌بندی', hint: 'برای دیده‌شدن در جست‌وجوی دسته لازم است',

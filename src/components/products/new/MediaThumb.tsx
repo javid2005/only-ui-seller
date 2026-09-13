@@ -37,6 +37,9 @@ export function MediaThumb({ src, alt = '', padRatio = 0.12, ...rest }: MediaThu
       bg="white"
       display="grid"
       placeItems="center"
+      // لنگرِ تصویرِ absolute — بدون آن، `height:100%` روی گرید‌آیتم از ارتفاع کادر
+      // بیشتر می‌شد و `overflow:hidden` حاشیهٔ سفید را می‌برید (تصویر crop می‌شد).
+      position="relative"
       {...rest}
     >
       {src ? (
@@ -47,6 +50,8 @@ export function MediaThumb({ src, alt = '', padRatio = 0.12, ...rest }: MediaThu
           decoding="async"
           style={{
             display: 'block',
+            position: 'absolute',
+            inset: 0,
             width: '100%',
             height: '100%',
             padding: pad,

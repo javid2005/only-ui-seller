@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Badge, Menu, Portal, IconButton, Checkbox } from '@chakra-ui/react'
-import { EllipsisVertical, Star, Trash2, Tags, FolderInput, GripVertical } from 'lucide-react'
+import { EllipsisVertical, Star, Trash2, Tags, FolderInput, GripVertical, SearchCheck, TriangleAlert } from 'lucide-react'
 import { MediaThumb } from './MediaThumb'
 import type { MediaFolder, MediaFolderId } from './data'
 
@@ -10,6 +10,8 @@ export interface MediaCardProps {
   label: string
   featured: boolean
   variantTags: string[]
+  /** متن جایگزین؛ خالی بودنش روی کارت هشدار می‌دهد (بررسی «ALT تصاویر» در مرحلهٔ سئو) */
+  alt: string
   folder: MediaFolderId
   folders: MediaFolder[]
   selected: boolean
@@ -17,6 +19,7 @@ export interface MediaCardProps {
   onRemove: () => void
   onSetFeatured: () => void
   onSelectVariant: () => void
+  onEditSeo: () => void
   onMoveToFolder: (target: MediaFolderId) => void
   // ── مرتب‌سازی ──
   draggable?: boolean
@@ -38,8 +41,8 @@ export interface MediaCardProps {
  * RTL DOM order نوار بالای تصویر (first = rightmost): چک‌باکس ← دستگیره ← منو.
  */
 export function MediaCard({
-  src, label, featured, variantTags, folder, folders,
-  selected, onSelect, onRemove, onSetFeatured, onSelectVariant, onMoveToFolder,
+  src, label, featured, variantTags, alt, folder, folders,
+  selected, onSelect, onRemove, onSetFeatured, onSelectVariant, onEditSeo, onMoveToFolder,
   draggable, isDragging = false, onDragStart, onDragOver, onDrop, onDragEnd,
 }: MediaCardProps) {
   return (
@@ -107,6 +110,9 @@ export function MediaCard({
                   <Menu.Item value="variant" onSelect={onSelectVariant}>
                     <Tags size={14} />تخصیص تنوع
                   </Menu.Item>
+                  <Menu.Item value="seo" onSelect={onEditSeo}>
+                    <SearchCheck size={14} />سئوی تصویر
+                  </Menu.Item>
                   <Menu.Root positioning={{ placement: 'left-start' }}>
                     <Menu.TriggerItem>
                       <FolderInput size={14} />انتقال به پوشه
@@ -132,6 +138,25 @@ export function MediaCard({
             </Portal>
           </Menu.Root>
         </Flex>
+
+        {/* هشدار ALT خالی — پایین-چپ؛ کلیک روی آن مستقیم به دیالوگ سئو می‌برد */}
+        {alt.trim().length === 0 && (
+          <Badge
+            position="absolute"
+            insetInlineEnd="2"
+            bottom="2"
+            colorPalette="orange"
+            variant="solid"
+            size="xs"
+            rounded="l2"
+            gap="1"
+            cursor="pointer"
+            onClick={onEditSeo}
+            title="متن جایگزین (ALT) ثبت نشده"
+          >
+            <TriangleAlert size={11} />ALT
+          </Badge>
+        )}
 
         {/* نشان تصویر اصلی — پایین-راست روی تصویر */}
         {featured && (
