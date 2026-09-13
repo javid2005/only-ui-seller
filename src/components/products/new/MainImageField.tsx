@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Box, Flex, Text, chakra } from '@chakra-ui/react'
+import { Box, Button, Text, chakra } from '@chakra-ui/react'
 import { ImagePlus } from 'lucide-react'
 import { MediaThumb } from './MediaThumb'
 import { VariantImagePickerDialog } from './VariantImagePickerDialog'
@@ -44,54 +44,64 @@ export function MainImageField({ gallery, onSelect }: MainImageFieldProps) {
         <chakra.span color="red.fg" ms="1" aria-hidden>*</chakra.span>
       </Text>
 
-      <chakra.button
+      {/* کادر تصویر — خودش کلیک‌پذیر است، ولی دکمهٔ اصلی زیرش می‌نشیند (بازخورد
+          کاربر): دکمهٔ وسطِ تصویر هم تصویر را می‌پوشاند و هم لبِ کادر را شلوغ
+          می‌کرد. حالا فقط نام فایل روی تصویر شناور است. */}
+      <Box position="relative" w="full" rounded="14px" overflow="hidden" borderWidth="1px" borderColor="border.muted">
+        <chakra.button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          display="block"
+          w="full"
+          cursor="pointer"
+          aria-label="تغییر تصویر اصلی"
+        >
+          <MediaThumb src={featured?.src} alt="تصویر اصلی محصول" aspectRatio="1" w="full" />
+        </chakra.button>
+
+        {/* نام فایل — شناور روی پایینِ تصویر، سفید با سایهٔ متن تا روی هر تصویری
+            خوانده شود. در RTL «پایین-چپِ» طرح یعنی `insetInlineEnd`. */}
+        {featured && (
+          <Text
+            position="absolute"
+            bottom="1.5"
+            insetInlineEnd="2"
+            insetInlineStart="2"
+            fontSize="10px"
+            fontWeight="medium"
+            color="white"
+            textAlign="end"
+            textShadow="0 1px 3px rgba(0,0,0,0.85), 0 0 2px rgba(0,0,0,0.6)"
+            pointerEvents="none"
+            truncate
+            dir="ltr"
+          >
+            {featured.fileName}
+          </Text>
+        )}
+      </Box>
+
+      {/* دکمهٔ «تغییر تصویر» — زیر کادر، تمام‌عرض و با فاصلهٔ کافی */}
+      <Button
         type="button"
         onClick={() => setPickerOpen(true)}
-        position="relative"
-        display="block"
+        mt="2.5"
         w="full"
-        rounded="14px"
-        overflow="hidden"
-        borderWidth="1px"
-        borderColor="border.muted"
-        cursor="pointer"
-        aria-label="تغییر تصویر اصلی"
+        size="sm"
+        variant="subtle"
+        colorPalette="gray"
+        fontWeight="medium"
       >
-        <MediaThumb src={featured?.src} alt="تصویر اصلی محصول" aspectRatio="1" w="full" />
+        {/* FIRST = rightmost: آیکن (leading) */}
+        <ImagePlus size={14} />
+        تغییر تصویر
+      </Button>
 
-        {/* دکمهٔ شناور روی تصویر — در طرح وسطِ کادر.
-            وسط‌چینی با «دو لبه با مقدار یکسان + justify=center»، نه
-            `insetInlineStart:50%` که در RTL می‌شکند (CLAUDE.md § position fixed). */}
-        <Flex
-          position="absolute"
-          insetInline="0"
-          top="50%"
-          transform="translateY(-50%)"
-          justify="center"
-          pointerEvents="none"
-        >
-          <Flex
-            align="center"
-            gap="1.5"
-            h="8"
-            px="3"
-            rounded="lg"
-            bg="#22343a"
-            color="white"
-            fontSize="xs"
-            fontWeight="medium"
-            whiteSpace="nowrap"
-          >
-            {/* FIRST = rightmost: آیکن (leading) */}
-            <ImagePlus size={14} />
-            تغییر تصویر
-          </Flex>
-        </Flex>
-      </chakra.button>
-
-      <Text fontSize="10px" color="fg.muted" textAlign="start" mt="1" truncate>
-        {featured ? featured.fileName : 'هنوز تصویری انتخاب نشده — از مرحلهٔ گالری اضافه کنید'}
-      </Text>
+      {!featured && (
+        <Text fontSize="10px" color="fg.muted" textAlign="start" mt="1.5">
+          هنوز تصویری انتخاب نشده — از مرحلهٔ گالری اضافه کنید
+        </Text>
+      )}
 
       <VariantImagePickerDialog
         open={pickerOpen}

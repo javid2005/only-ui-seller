@@ -235,7 +235,6 @@ export function GalleryTab({ form, onChange, onSave }: GalleryTabProps) {
         cta={<StepVideoButton step="gallery" title="گالری" />}
         subtitle="تصاویر، کتابخانه و ویرایش رسانه‌ها"
         size="xl"
-        divider
       />
 
       <SectionCard
@@ -495,6 +494,7 @@ export function GalleryTab({ form, onChange, onSave }: GalleryTabProps) {
       </SectionCard>
 
       <ButtonFooter
+        noDivider
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
       />
 

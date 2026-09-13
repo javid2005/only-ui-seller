@@ -3,8 +3,8 @@ import {
   Box, Flex, Grid, Text, Input, NativeSelect, Button, Switch, chakra,
   Select, Alert, createListCollection, Portal,
 } from '@chakra-ui/react'
-import { DollarSign, Eye, Phone, Tag, Sparkles } from 'lucide-react'
-import { useCompactMode } from '@/contexts/CompactModeContext'
+import { DollarSign, Eye, EyeOff, Phone, Tag, Sparkles } from 'lucide-react'
+import { Tooltip } from '@/components/ui/Tooltip'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { StepVideoButton } from './StepVideo'
@@ -51,6 +51,51 @@ export function UnitSelect({
 
 const categorySelectCollection = createListCollection({ items: categoryCollection.items })
 
+// ─── StorefrontToggle ──────────────────────────────────────────────────────────
+/**
+ * «نمایش در ویترین» — دکمهٔ کوچکِ دو-حالته کنار دسته‌بندی.
+ *
+ * قبلاً یک ردیفِ تمام‌عرض با آیکن، عنوان و توضیح بود؛ کاربر گفت برای چیزی که فقط
+ * روشن/خاموش است بیش از حد بزرگ است. حالا هم‌قدِ فیلد (۴۴px) کنارش می‌نشیند و
+ * همان توضیحِ بلند داخل tooltip می‌ماند — اطلاعات حذف نشد، جایش عوض شد.
+ *
+ * FIRST = rightmost: آیکن (چشم) ← سپس برچسب.
+ */
+function StorefrontToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return (
+    <Tooltip
+      content={on
+        ? 'روشن است: محصول در فهرست و جست‌وجوی فروشگاه دیده می‌شود. برای پنهان‌کردن کلیک کنید.'
+        : 'خاموش است: محصول پنهان می‌ماند و اطلاعاتش حفظ می‌شود. برای نمایش در فروشگاه کلیک کنید.'}
+    >
+      <chakra.button
+        type="button"
+        aria-pressed={on}
+        onClick={onToggle}
+        display="flex"
+        alignItems="center"
+        gap="2"
+        h="11"
+        px="3"
+        rounded="lg"
+        borderWidth="1px"
+        borderColor={on ? 'brand.border' : 'border'}
+        bg={on ? 'brand.bg' : 'bg.subtle'}
+        color={on ? 'brand.fg' : 'fg.muted'}
+        fontSize="xs"
+        fontWeight="semibold"
+        whiteSpace="nowrap"
+        {...pressable}
+      >
+        {on ? <Eye size={16} /> : <EyeOff size={16} />}
+        <chakra.span display={{ base: 'none', sm: 'inline' }}>
+          {on ? 'در ویترین' : 'پنهان'}
+        </chakra.span>
+      </chakra.button>
+    </Tooltip>
+  )
+}
+
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
 export interface InfoTabProps {
@@ -62,8 +107,6 @@ export interface InfoTabProps {
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
-  const isCompact = useCompactMode()
-  const twoCol = isCompact ? '1fr' : { base: '1fr', md: '1fr 1fr' }
 
 
   // ─── Pricing (محاسبهٔ کلاینت — این پاس بدون API) ──────────────────────────────
@@ -123,7 +166,6 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
         title="مشخصات اولیه"
         subtitle="اطلاعات اصلی، قیمت و وضعیت فروش"
         size="xl"
-        divider
         cta={<StepVideoButton step="basic" title="مشخصات اولیه" />}
       />
 
@@ -141,17 +183,19 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
           alignItems="start"
         >
         <Flex direction="column" gap="4" minW="0">
-          {/* FIRST = rightmost: نام محصول · سپس دسته‌بندی */}
-          <Grid templateColumns={twoCol} gap="4">
-            <NotchedField label="نام محصول" required dataField="name">
-              <Input
-                {...bareControl}
-                placeholder="نام محصول"
-                value={form.name}
-                onChange={(e) => onChange({ name: e.target.value })}
-              />
-            </NotchedField>
+          {/* نام محصول تمام‌عرض است (بازخورد کاربر): دسته‌بندی از این ردیف جدا شد تا
+              کنارش جا برای تاگلِ «نمایش در ویترین» باز شود. */}
+          <NotchedField label="نام محصول" required dataField="name">
+            <Input
+              {...bareControl}
+              placeholder="نام محصول"
+              value={form.name}
+              onChange={(e) => onChange({ name: e.target.value })}
+            />
+          </NotchedField>
 
+          {/* FIRST = rightmost: دسته‌بندی · LAST = leftmost: تاگل ویترین */}
+          <Grid templateColumns="minmax(0, 1fr) auto" gap="3" alignItems="start">
             <NotchedField label="دسته‌بندی" required dataField="category">
               <Select.Root
                 collection={categorySelectCollection}
@@ -181,6 +225,14 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
                 </Portal>
               </Select.Root>
             </NotchedField>
+
+            {/* تاگلِ ویترین — به‌جای ردیفِ بزرگِ قبلی (بازخورد کاربر): یک دکمهٔ
+                کوچکِ هم‌قدِ فیلد، با tooltip که همان توضیح بلند را نگه می‌دارد.
+                `chakra.button` چون `aria-pressed` لازم است. */}
+            <StorefrontToggle
+              on={form.showInStorefront}
+              onToggle={() => onChange({ showInStorefront: !form.showInStorefront })}
+            />
           </Grid>
 
           <NotchedField label="توضیح کوتاه">
@@ -204,54 +256,6 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
             />
           </Box>
 
-          {/* «نمایش در ویترین» از بخشِ حذف‌شدهٔ «وضعیت نمایش و فروش» اینجا آمد:
-            این یک تصمیمِ اطلاعاتِ پایه است (محصول اصلاً دیده شود یا نه)، نه یک
-            تصمیم قیمتی. زیرِ توضیحات می‌نشیند تا آخرین چیزی باشد که در این کارت
-            تعیین می‌شود. */}
-          <Flex
-            align="center"
-            gap="2.5"
-            p="11px"
-            rounded="xl"
-            borderWidth="1px"
-            borderColor={form.showInStorefront ? 'brand.muted' : 'border.muted'}
-            bg={form.showInStorefront ? 'brand.bg' : 'bg.subtle'}
-            transition="background .18s, border-color .18s"
-          >
-            {/* FIRST = rightmost: آیکن ← عنوان و توضیح … سوییچ (چپ‌ترین) */}
-            <Box color={form.showInStorefront ? 'brand.fg' : 'fg.muted'} flexShrink={0} display="flex">
-              <Eye size={17} />
-            </Box>
-            <Box flex="1" minW="0">
-              <chakra.label
-                htmlFor="show-in-storefront"
-                display="block"
-                fontSize="sm"
-                fontWeight="medium"
-                color="fg"
-                textAlign="start"
-                cursor="pointer"
-              >
-                نمایش در ویترین
-              </chakra.label>
-              <Text fontSize="xs" color="fg.muted" textAlign="start" lineHeight="1.9">
-                {form.showInStorefront
-                  ? 'در فهرست و جست‌وجوی فروشگاه دیده می‌شود.'
-                  : 'فعلاً پنهان است؛ اطلاعاتش حفظ می‌شود و هر وقت خواستید روشنش کنید.'}
-              </Text>
-            </Box>
-            <Switch.Root
-              id="show-in-storefront"
-              size="sm"
-              colorPalette="brand"
-              checked={form.showInStorefront}
-              onCheckedChange={(e) => onChange({ showInStorefront: e.checked })}
-              flexShrink={0}
-            >
-              <Switch.HiddenInput />
-              <Switch.Control><Switch.Thumb /></Switch.Control>
-            </Switch.Root>
-          </Flex>
         </Flex>
 
           {/* LAST = leftmost: تصویر اصلی */}
@@ -510,6 +514,7 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
       />
 
       <ButtonFooter
+        noDivider
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
       />
 

@@ -76,7 +76,6 @@ export function SeoTab({ form, onChange, onSave, onGoToStep }: SeoTabProps) {
         cta={<StepVideoButton step="seo" title="سئو و انتشار" />}
         subtitle="تنظیمات جستجو، پیش‌نمایش و آمادگی انتشار"
         size="xl"
-        divider
       />
 
       {/* ═══ ۱. تنظیمات سئو ═════════════════════════════════════════════════════ */}
@@ -244,6 +243,7 @@ export function SeoTab({ form, onChange, onSave, onGoToStep }: SeoTabProps) {
 
       {/* مرحلهٔ آخر است، پس «ادامه»‌ای در کار نیست — مثل طرح: «ذخیره و بستن» */}
       <ButtonFooter
+        noDivider
         primary={{ label: 'ذخیره و بستن', onClick: onSave }}
       />
 

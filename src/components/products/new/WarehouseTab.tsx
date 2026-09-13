@@ -51,7 +51,6 @@ export function WarehouseTab({ form, onChange, onSave }: WarehouseTabProps) {
         cta={<StepVideoButton step="warehouse" title="انبارداری و ارسال" />}
         subtitle="شناسه، موجودی، وزن و روش‌های ارسال"
         size="xl"
-        divider
       />
 
       {/* ═══ ۱. اطلاعات انبارداری ═══════════════════════════════════════════════ */}
@@ -181,7 +180,9 @@ export function WarehouseTab({ form, onChange, onSave }: WarehouseTabProps) {
                       rounded: 'lg',
                       h: '9',
                       fontSize: '12px',
-                      textAlign: 'end',
+                      // راست‌چین (start): با `end` عدد به لبهٔ چپ می‌چسبید و زیر
+                      // استپرِ ±  می‌رفت — بازخورد کاربر، مورد ۹ فهرست نهایی.
+                      textAlign: 'start',
                     }}
                   />
                 </Flex>
@@ -289,6 +290,7 @@ export function WarehouseTab({ form, onChange, onSave }: WarehouseTabProps) {
       </SectionCard>
 
       <ButtonFooter
+        noDivider
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
       />
 

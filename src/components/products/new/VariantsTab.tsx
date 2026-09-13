@@ -116,7 +116,7 @@ export function VariantsTab({
   if (isSimple) {
     return (
       <Flex direction="column" gap="5" w="full">
-        <TitleBar title="مدل‌ها و تنوع" subtitle="انتخاب‌ها و مدل‌های قابل فروش" size="xl" divider cta={<StepVideoButton step="models" title="مدل‌ها و تنوع" />} />
+        <TitleBar title="مدل‌ها و تنوع" subtitle="انتخاب‌ها و مدل‌های قابل فروش" size="xl" cta={<StepVideoButton step="models" title="مدل‌ها و تنوع" />} />
         <Flex
           gap="3"
           p="5"
@@ -153,6 +153,7 @@ export function VariantsTab({
           </Box>
         </Flex>
         <ButtonFooter
+          noDivider
           primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
         />
       </Flex>
@@ -162,7 +163,7 @@ export function VariantsTab({
   return (
     <Flex direction="column" gap="5" w="full">
 
-      <TitleBar title="مدل‌ها و تنوع" subtitle="انتخاب‌ها و مدل‌های قابل فروش" size="xl" divider cta={<StepVideoButton step="models" title="مدل‌ها و تنوع" />} />
+      <TitleBar title="مدل‌ها و تنوع" subtitle="انتخاب‌ها و مدل‌های قابل فروش" size="xl" cta={<StepVideoButton step="models" title="مدل‌ها و تنوع" />} />
 
       {/* ═══ انتخاب‌های مشتری ═══════════════════════════════════════════════════ */}
       <SectionCard
@@ -288,6 +289,7 @@ export function VariantsTab({
       </SectionCard>
 
       <ButtonFooter
+        noDivider
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
       />
 

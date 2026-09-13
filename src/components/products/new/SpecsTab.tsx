@@ -79,7 +79,7 @@ export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
   return (
     <Flex direction="column" gap="5" w="full">
 
-      <TitleBar title="مشخصات محصول" subtitle="ویژگی‌ها و برچسب‌های محصول" size="xl" divider cta={<StepVideoButton step="specs" title="مشخصات محصول" />} />
+      <TitleBar title="مشخصات محصول" subtitle="ویژگی‌ها و برچسب‌های محصول" size="xl" cta={<StepVideoButton step="specs" title="مشخصات محصول" />} />
 
       {/* ═══ مشخصات ═════════════════════════════════════════════════════════════ */}
       <SectionCard
@@ -330,6 +330,7 @@ export function SpecsTab({ form, onChange, onSave }: SpecsTabProps) {
       </SectionCard>
 
       <ButtonFooter
+        noDivider
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
       />
 

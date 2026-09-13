@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Dialog, Portal, CloseButton, Text, Flex, Box, AspectRatio, IconButton, chakra } from '@chakra-ui/react'
+import { Dialog, Portal, CloseButton, Text, Flex, Box, AspectRatio, Button, chakra } from '@chakra-ui/react'
 import { CirclePlay, Play } from 'lucide-react'
 import { Tooltip } from '@/components/ui/Tooltip'
 import type { StepId } from './data'
@@ -36,17 +36,25 @@ export function StepVideoButton({ step, title }: { step: StepId; title: string }
 
   return (
     <>
+      {/* اندازه عمداً بزرگ‌تر از یک IconButton معمولی است (کاربر، بازخورد نهایی):
+          آیکنِ کوچکِ ghost اصلاً دیده نمی‌شد. حالا یک چیپِ برچسب‌دار است — ته‌رنگ
+          قرمز + متن «آموزش» — تا در یک نگاه از بقیهٔ کنش‌های سرتیتر جدا شود.
+          FIRST = rightmost: آیکن (leading) ← سپس متن. */}
       <Tooltip content={`ویدئوی آموزش «${title}»`}>
-        <IconButton
+        <Button
           size="sm"
-          variant="ghost"
+          h="9"
+          px="3"
+          variant="subtle"
           colorPalette="red"
           rounded="full"
+          fontWeight="semibold"
           aria-label={`ویدئوی آموزش ${title}`}
           onClick={() => setOpen(true)}
         >
           <CirclePlay size={20} />
-        </IconButton>
+          <chakra.span display={{ base: 'none', sm: 'inline' }}>آموزش</chakra.span>
+        </Button>
       </Tooltip>
 
       <Dialog.Root open={open} onOpenChange={(e) => !e.open && setOpen(false)} size="lg">

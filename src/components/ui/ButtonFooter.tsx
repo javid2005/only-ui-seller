@@ -38,6 +38,13 @@ export interface ButtonFooterProps {
    * معمولاً «بازگشت به ...»
    */
   back?: BackBtn
+  /**
+   * خط جداکنندهٔ بالای دکمه‌ها را حذف می‌کند.
+   * پیش‌فرض `false` است تا صفحه‌های موجود دست‌نخورده بمانند؛ فرم محصول جدید
+   * (بازخورد کاربر) این خط را نمی‌خواهد چون هر بخشش کارت مستقل دارد و خط،
+   * روی زمینهٔ خاکستری مثل خط‌کش دیده می‌شود.
+   */
+  noDivider?: boolean
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -50,10 +57,10 @@ export interface ButtonFooterProps {
  *
  * Figma: https://www.figma.com/design/CfbQjlet5WMabrTfZt46iL/Vitrina?node-id=837-21271
  */
-export function ButtonFooter({ primary, secondary, tertiary, back }: ButtonFooterProps) {
+export function ButtonFooter({ primary, secondary, tertiary, back, noDivider = false }: ButtonFooterProps) {
   return (
     <Box pt="4" w="full">
-      <Separator mb="4" />
+      {!noDivider && <Separator mb="4" />}
       <Flex align="center" gap="2" w="full">
 
         {/* RTL: FIRST = rightmost — back/cancel link */}
