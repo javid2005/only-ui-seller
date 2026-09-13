@@ -1,5 +1,5 @@
-import { Box, Flex, Text, Badge, Button, IconButton, Menu, Portal } from '@chakra-ui/react'
-import { Trash2, X, GripVertical, FolderInput, SearchCheck, TriangleAlert, PencilLine } from 'lucide-react'
+import { Box, Flex, Text, Badge, IconButton, Menu, Portal } from '@chakra-ui/react'
+import { Trash2, X, GripVertical, FolderInput, SearchCheck, TriangleAlert, PencilLine, EllipsisVertical, Star, Tags } from 'lucide-react'
 import { MediaThumb } from './MediaThumb'
 import type { MediaFolder, MediaFolderId } from './data'
 
@@ -25,8 +25,6 @@ export interface UploadedImageCardProps {
   /** باز کردن دیالوگ «نام فایل» */
   onRename: () => void
   onRemoveTag?: (tag: string) => void
-  /** روی موبایلِ واقعی hover نداریم → دکمه‌ها همیشه نمایش داده شوند */
-  alwaysShowActions?: boolean
   /** پوشهٔ فعلی این رسانه — برای منوی «انتقال به پوشه» */
   folder?: MediaFolderId
   folders?: MediaFolder[]
@@ -34,6 +32,8 @@ export interface UploadedImageCardProps {
   // ── مرتب‌سازی با drag & drop (در هر پوشه) ──
   draggable?: boolean
   isDragging?: boolean
+  /** کارتی (هر کدام) در حال کشیده‌شدن است — بقیه کم‌رنگ می‌شوند */
+  someoneDragging?: boolean
   onDragStart?: () => void
   onDragOver?: (e: React.DragEvent) => void
   onDrop?: () => void
@@ -63,39 +63,39 @@ export function UploadedImageCard({
   onEditSeo,
   onRename,
   onRemoveTag,
-  alwaysShowActions = false,
   folder,
   folders = [],
   onMoveToFolder,
   draggable,
   isDragging = false,
+  someoneDragging = false,
   onDragStart,
   onDragOver,
   onDrop,
   onDragEnd,
 }: UploadedImageCardProps) {
-  const actionsDisplay = alwaysShowActions ? 'flex' : 'none'
-
   return (
     <Flex
       role="group"
       className="group"
-      gap="4"
-      p="4"
+      gap="3"
+      p="2.5"
       rounded="lg"
       borderWidth="1px"
-      borderColor="border"
+      /* همان قاعدهٔ نمای شبکه‌ای: کارتِ کشیده‌شده قابِ برند = موقعیت درج */
+      borderColor={isDragging ? 'brand.solid' : 'border'}
+      boxShadow={isDragging ? '0 0 0 2px var(--chakra-colors-brand-solid)' : undefined}
       bg="bg.panel"
-      transition="background 0.15s, border-color 0.15s"
+      transition="background 0.15s, border-color 0.15s, opacity 0.15s, box-shadow 0.15s"
       _hover={{ borderColor: 'brand.border', bg: 'brand.bg' }}
-      align="start"
+      align="center"
       w="full"
       draggable={draggable}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      opacity={isDragging ? 0.5 : 1}
+      opacity={someoneDragging && !isDragging ? 0.5 : 1}
       cursor={draggable ? 'grab' : undefined}
     >
 
@@ -107,6 +107,10 @@ export function UploadedImageCard({
           color="fg.muted"
           flexShrink={0}
           aria-hidden
+          opacity={isDragging ? 1 : 0}
+          transition="opacity .15s"
+          _groupHover={{ opacity: 1 }}
+          css={{ '@media (hover: none)': { opacity: 1 } }}
         >
           <GripVertical size={16} />
         </Flex>
@@ -115,25 +119,25 @@ export function UploadedImageCard({
       <MediaThumb
         src={src}
         alt={label}
-        boxSize="106px"
+        boxSize="54px"
         flexShrink={0}
-        rounded="14px"
+        rounded="10px"
         borderWidth="1px"
         borderColor="border"
       />
 
       {/* SECOND = left: Content */}
-      <Flex direction="column" gap="2" flex="1" minW="0" alignSelf="stretch">
+      <Flex direction="column" gap="1" flex="1" minW="0">
 
         {/* عنوان + شاخص badge — title راست، badge چپ */}
         <Flex align="center" justify="space-between" w="full" gap="2">
-          <Text fontSize="sm" fontWeight="semibold" color="fg" whiteSpace="nowrap">
+          <Text fontSize="xs" fontWeight="semibold" color="fg" whiteSpace="nowrap">
             {label}
           </Text>
           <Flex align="center" gap="2" flexShrink={0}>
             {/* FIRST = rightmost: شاخص ← هشدار ALT (چپ‌تر) */}
             {featured && (
-              <Badge colorPalette="purple" variant="subtle" size="sm" rounded="l2">
+              <Badge colorPalette="purple" variant="subtle" size="xs" rounded="l2">
                 شاخص
               </Badge>
             )}
@@ -141,7 +145,7 @@ export function UploadedImageCard({
               <Badge
                 colorPalette="orange"
                 variant="subtle"
-                size="sm"
+                size="xs"
                 rounded="l2"
                 gap="1"
                 cursor="pointer"
@@ -158,13 +162,13 @@ export function UploadedImageCard({
 
         {/* chipهای تنوع — راست‌چین، wrap (این پاس فقط نمایش) */}
         {variantTags.length > 0 && (
-          <Flex wrap="wrap" align="start" gap="2" w="full">
+          <Flex wrap="wrap" align="start" gap="1.5" w="full">
             {variantTags.map((tag) => (
               <Badge
                 key={tag}
                 colorPalette="gray"
                 variant="outline"
-                size="sm"
+                size="xs"
                 rounded="l2"
                 gap="1.5"
                 flexShrink={0}
@@ -179,77 +183,76 @@ export function UploadedImageCard({
                   onClick={() => onRemoveTag?.(tag)}
                   cursor="pointer"
                 >
-                  <X size={14} />
+                  <X size={12} />
                 </Box>
               </Badge>
             ))}
           </Flex>
         )}
 
-        {/* ردیف دکمه‌ها — در hover (یا همیشه روی موبایل)، سمت چپ (end) */}
-        <Flex
-          gap="2"
-          align="center"
-          justify="end"
-          w="full"
-          mt="auto"
-          display={actionsDisplay}
-          _groupHover={{ display: 'flex' }}
-        >
-          {/* DOM rightmost-first: انتقال → سئو → انتخاب تنوع → انتخاب شاخص → trash (چپ‌ترین) */}
-          {onMoveToFolder && (
-            <Menu.Root>
-              <Menu.Trigger asChild>
-                <Button size="xs" variant="outline" rounded="l2" gap="1.5">
-                  {/* FIRST = rightmost: آیکن (leading) */}
-                  <FolderInput size={14} />
-                  انتقال
-                </Button>
-              </Menu.Trigger>
-              <Portal>
-                <Menu.Positioner dir="rtl">
-                  <Menu.Content>
-                    {folders.filter((f) => f.id !== folder).map((f) => (
-                      <Menu.Item key={f.id} value={f.id} onSelect={() => onMoveToFolder(f.id)}>
-                        {f.label}
-                      </Menu.Item>
-                    ))}
-                  </Menu.Content>
-                </Menu.Positioner>
-              </Portal>
-            </Menu.Root>
-          )}
-          <Button size="xs" variant="outline" rounded="l2" gap="1.5" onClick={onRename}>
-            {/* FIRST = rightmost: آیکن (leading) */}
-            <PencilLine size={14} />
-            نام فایل
-          </Button>
-          <Button size="xs" variant="outline" rounded="l2" gap="1.5" onClick={onEditSeo}>
-            {/* FIRST = rightmost: آیکن (leading) */}
-            <SearchCheck size={14} />
-            سئوی تصویر
-          </Button>
-          <Button size="xs" colorPalette="brand" variant="subtle" rounded="l2" onClick={onSelectVariant}>
-            انتخاب تنوع
-          </Button>
-          {!featured && (
-            <Button size="xs" colorPalette="brand" variant="subtle" rounded="l2" onClick={onSetFeatured}>
-              انتخاب شاخص
-            </Button>
-          )}
+      </Flex>
+
+      {/* LAST = leftmost: منوی سه‌نقطه — جایگزین ردیف دکمه‌ها (بازخورد کاربر،
+          مورد ۶). آن ردیف در مانیتور کوچک سرریز می‌کرد؛ همان عملیات حالا داخل
+          یک منو است، دقیقاً مثل نمای شبکه‌ای. همیشه دیده می‌شود (نه فقط hover)
+          تا روی لمسی هم در دسترس باشد. */}
+      <Menu.Root>
+        <Menu.Trigger asChild>
           <IconButton
             size="xs"
-            colorPalette="red"
-            variant="subtle"
-            rounded="l2"
-            aria-label="حذف تصویر"
-            onClick={onRemove}
+            variant="ghost"
+            boxSize="28px"
+            minW="28px"
+            rounded="md"
+            flexShrink={0}
+            aria-label={`عملیات ${label}`}
           >
-            <Trash2 size={14} />
+            <EllipsisVertical size={15} />
           </IconButton>
-        </Flex>
-
-      </Flex>
+        </Menu.Trigger>
+        <Portal>
+          <Menu.Positioner dir="rtl">
+            <Menu.Content>
+              {!featured && (
+                <Menu.Item value="featured" onSelect={onSetFeatured}>
+                  <Star size={14} />انتخاب به‌عنوان تصویر اصلی
+                </Menu.Item>
+              )}
+              <Menu.Item value="variant" onSelect={onSelectVariant}>
+                <Tags size={14} />تخصیص تنوع
+              </Menu.Item>
+              <Menu.Item value="rename" onSelect={onRename}>
+                <PencilLine size={14} />نام فایل
+              </Menu.Item>
+              <Menu.Item value="seo" onSelect={onEditSeo}>
+                <SearchCheck size={14} />سئوی تصویر
+              </Menu.Item>
+              {onMoveToFolder && (
+                <Menu.Root positioning={{ placement: 'left-start' }}>
+                  <Menu.TriggerItem>
+                    <FolderInput size={14} />انتقال به پوشه
+                  </Menu.TriggerItem>
+                  <Portal>
+                    <Menu.Positioner dir="rtl">
+                      <Menu.Content>
+                        {folders.filter((f) => f.id !== folder).map((f) => (
+                          <Menu.Item key={f.id} value={f.id} onSelect={() => onMoveToFolder(f.id)}>
+                            {f.label}
+                          </Menu.Item>
+                        ))}
+                      </Menu.Content>
+                    </Menu.Positioner>
+                  </Portal>
+                </Menu.Root>
+              )}
+              <Menu.Separator />
+              <Menu.Item value="remove" color="red.fg" onSelect={onRemove}>
+                <Trash2 size={14} />حذف رسانه
+              </Menu.Item>
+            </Menu.Content>
+          </Menu.Positioner>
+        </Portal>
+      </Menu.Root>
     </Flex>
   )
 }

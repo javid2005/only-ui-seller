@@ -453,6 +453,7 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
                      دیده می‌شد — حالا ستون `auto` است و رنگ برند دارد. */
                   <Button
                     colorPalette="brand"
+                    variant="solid"
                     h="11"
                     px="4"
                     rounded="lg"

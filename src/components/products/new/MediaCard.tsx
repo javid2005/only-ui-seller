@@ -26,6 +26,8 @@ export interface MediaCardProps {
   // ── مرتب‌سازی ──
   draggable?: boolean
   isDragging?: boolean
+  /** کارتی (هر کدام) در حال کشیده‌شدن است — بقیه کم‌رنگ می‌شوند */
+  someoneDragging?: boolean
   onDragStart?: () => void
   onDragOver?: (e: React.DragEvent) => void
   onDrop?: () => void
@@ -45,17 +47,28 @@ export interface MediaCardProps {
 export function MediaCard({
   src, label, featured, variantTags, alt, folder, folders,
   selected, onSelect, onRemove, onSetFeatured, onSelectVariant, onEditSeo, onRename, onMoveToFolder,
-  draggable, isDragging = false, onDragStart, onDragOver, onDrop, onDragEnd,
+  draggable, isDragging = false, someoneDragging = false, onDragStart, onDragOver, onDrop, onDragEnd,
 }: MediaCardProps) {
   return (
     <Box
+      role="group"
       borderWidth="1px"
-      borderColor={selected ? 'brand.solid' : featured ? 'brand.border' : 'border.muted'}
+      /* در حین کشیدن، خودِ کارتِ کشیده‌شده قابِ برند می‌گیرد = همان «خط موقعیت
+         درج»؛ چون مرتب‌سازی زنده است، جای فعلی‌اش دقیقاً جای افتادنش است. */
+      borderColor={
+        isDragging ? 'brand.solid'
+          : selected ? 'brand.solid'
+            : featured ? 'brand.border'
+              : 'border.muted'
+      }
+      boxShadow={isDragging ? '0 0 0 2px var(--chakra-colors-brand-solid)' : undefined}
       rounded="12px"
       overflow="hidden"
       bg="bg.panel"
-      opacity={isDragging ? 0.5 : 1}
-      transition="border-color 0.15s, opacity 0.15s"
+      /* تصویرِ در حال کشیدن کاملاً واضح می‌ماند؛ بقیه نصفه‌رنگ می‌شوند و با
+         رهاکردن برمی‌گردند (بازخورد کاربر، مورد ۶). */
+      opacity={someoneDragging && !isDragging ? 0.5 : 1}
+      transition="border-color 0.15s, opacity 0.15s, box-shadow 0.15s"
       _hover={{ borderColor: 'brand.border' }}
       draggable={draggable}
       onDragStart={onDragStart}
@@ -72,8 +85,8 @@ export function MediaCard({
         {/* نوار کنترل روی تصویر */}
         <Flex
           position="absolute"
-          top="2"
-          insetInline="2"
+          top="1.5"
+          insetInline="1.5"
           align="center"
           gap="1"
         >
@@ -89,20 +102,26 @@ export function MediaCard({
             <Checkbox.Control />
           </Checkbox.Root>
 
+          {/* دستگیره فقط در hover — روی موبایل (بدون hover) همیشه دیده می‌شود
+              وگرنه راهی برای جابه‌جایی نمی‌ماند (بازخورد کاربر، مورد ۶). */}
           {draggable && (
             <Flex
-              boxSize="32px"
+              boxSize="26px"
               flexShrink={0}
               align="center"
               justify="center"
               bg="bg.panel"
               borderWidth="1px"
               borderColor="border.muted"
-              rounded="lg"
+              rounded="md"
               color="fg.muted"
               aria-hidden
+              opacity={isDragging ? 1 : 0}
+              transition="opacity .15s"
+              _groupHover={{ opacity: 1 }}
+              css={{ '@media (hover: none)': { opacity: 1 } }}
             >
-              <GripVertical size={15} />
+              <GripVertical size={14} />
             </Flex>
           )}
 
@@ -114,15 +133,15 @@ export function MediaCard({
               <IconButton
                 size="xs"
                 variant="subtle"
-                boxSize="32px"
-                minW="32px"
+                boxSize="26px"
+                minW="26px"
                 bg="bg.panel"
                 borderWidth="1px"
                 borderColor="border.muted"
-                rounded="lg"
+                rounded="md"
                 aria-label={`عملیات ${label}`}
               >
-                <EllipsisVertical size={15} />
+                <EllipsisVertical size={14} />
               </IconButton>
             </Menu.Trigger>
             <Portal>
@@ -172,8 +191,8 @@ export function MediaCard({
         {alt.trim().length === 0 && (
           <Badge
             position="absolute"
-            insetInlineEnd="2"
-            bottom="2"
+            insetInlineEnd="1.5"
+            bottom="1.5"
             colorPalette="orange"
             variant="solid"
             size="xs"
@@ -191,8 +210,8 @@ export function MediaCard({
         {featured && (
           <Badge
             position="absolute"
-            insetInlineStart="2"
-            bottom="2"
+            insetInlineStart="1.5"
+            bottom="1.5"
             colorPalette="brand"
             variant="solid"
             size="xs"
@@ -204,8 +223,8 @@ export function MediaCard({
         )}
       </Box>
 
-      <Box p="2" borderTopWidth="1px" borderColor="border.muted">
-        <Text fontSize="xs" fontWeight="medium" color="fg" truncate textAlign="start">{label}</Text>
+      <Box px="2" py="1.5" borderTopWidth="1px" borderColor="border.muted">
+        <Text fontSize="2xs" fontWeight="medium" color="fg" truncate textAlign="start">{label}</Text>
         {variantTags.length > 0 && (
           <Text fontSize="2xs" color="fg.muted" truncate textAlign="start">
             {variantTags.join(' · ')}

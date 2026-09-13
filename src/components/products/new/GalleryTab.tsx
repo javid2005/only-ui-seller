@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   Box, Flex, Grid, Text, Input, InputGroup, Button, IconButton, Checkbox, EmptyState,
 } from '@chakra-ui/react'
@@ -68,14 +68,9 @@ let _fid = 0
  * «چاکرا اصلاح»)؛ عملیات هر کارت پشت منوی سه‌نقطه است، نه ردیف دکمه.
  */
 export function GalleryTab({ form, onChange, onSave }: GalleryTabProps) {
-  // روی موبایلِ واقعی hover نداریم → دکمه‌های کارت همیشه نمایش
-  const [isMobile, setIsMobile] = useState(false)
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 480)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
+  /* تشخیصِ موبایل با `window.innerWidth` دیگر لازم نیست: دکمه‌های hover جایشان
+     را به منوی سه‌نقطهٔ همیشه-قابل-دسترس دادند و دستگیرهٔ کشیدن با
+     `@media (hover: none)` خودش روی لمسی دیده می‌شود — بدون listener. */
 
   const images = form.gallery
   const folders = form.folders
@@ -221,6 +216,10 @@ export function GalleryTab({ form, onChange, onSave }: GalleryTabProps) {
   const dragProps = (img: GalleryImage) => ({
     draggable: !query.trim(), // با فیلتر فعال، ترتیب معنا ندارد
     isDragging: dragId === img.id,
+    /* در حال کشیدنِ *کارتی دیگر* — کارت‌های دیگر کم‌رنگ می‌شوند تا مسیر و
+       موقعیت درج دیده شود (بازخورد کاربر، مورد ۶). چون مرتب‌سازی همان لحظه
+       اتفاق می‌افتد، «خط موقعیت درج» همان قابِ برندِ دور کارتِ کشیده‌شده است. */
+    someoneDragging: dragId !== null,
     onDragStart: () => setDragId(img.id),
     onDragOver: (e: React.DragEvent) => { e.preventDefault(); reorderTo(img.id) },
     onDrop: () => setDragId(null),
@@ -430,9 +429,12 @@ export function GalleryTab({ form, onChange, onSave }: GalleryTabProps) {
                 </EmptyState.Content>
               </EmptyState.Root>
             ) : view === 'grid' ? (
+              /* سه‌ستونه (بازخورد کاربر، مورد ۶): `auto-fill` با کفِ ۱۹۲px در
+                 عرضِ واقعیِ این ستون فقط دو ستون می‌ساخت. حالا شمارش صریح است و
+                 کارت‌ها خودشان کوچک‌تر می‌شوند. */
               <Grid
-                templateColumns="repeat(auto-fill, minmax(192px, 1fr))"
-                gap="2.5"
+                templateColumns={{ base: 'repeat(2, minmax(0, 1fr))', md: 'repeat(3, minmax(0, 1fr))' }}
+                gap="2"
                 w="full"
                 {...enterPanel}
               >
@@ -471,7 +473,6 @@ export function GalleryTab({ form, onChange, onSave }: GalleryTabProps) {
                     featured={img.featured}
                     variantTags={img.variantTags}
                     alt={img.alt}
-                    alwaysShowActions={isMobile}
                     folder={img.folder}
                     folders={folders}
                     onMoveToFolder={(target) => patchImage(img.id, { folder: target })}
