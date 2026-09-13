@@ -4,6 +4,7 @@ import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { toPersianDigits } from '@/utils/numbers'
 import { SectionCard, Panel } from './SectionCard'
+import { ProductSummaryBar } from './ProductSummaryBar'
 import { NotchedField, bareControl } from './NotchedField'
 import { SEO_CHECKS, seoScore, slugify, type ProductForm, type StepId } from './data'
 
@@ -212,11 +213,15 @@ export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabPro
             </Grid>
           )}
 
+          {/* خلاصهٔ محصول — آخرین چیزی که قبل از انتشار دیده می‌شود */}
+          <ProductSummaryBar form={form} />
+
         </Flex>
       </SectionCard>
 
+      {/* مرحلهٔ آخر است، پس «ادامه»‌ای در کار نیست — مثل طرح: «ذخیره و بستن» */}
       <ButtonFooter
-        primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
+        primary={{ label: 'ذخیره و بستن', onClick: onSave }}
         back={{ label: 'بازگشت به لیست', onClick: onBack }}
       />
 
