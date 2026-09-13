@@ -126,12 +126,13 @@ export function productSchemaJson(form: ProductForm): string {
 export function schemaHighlights(form: ProductForm): { label: string; ok: boolean; hint: string }[] {
   const schema = buildProductSchema(form)
   const unit = currencyLabel(form.currency)
+  // `hint` پاسخِ «چه کار کنم؟» است، نه توضیحِ خودِ فیلد
   return [
-    { label: 'قیمت در نتیجهٔ جست‌وجو', ok: Boolean(schema.offers || schema.hasVariant), hint: `با واحد ${unit}` },
-    { label: 'وضعیت موجودی', ok: Boolean(schema.offers || schema.hasVariant), hint: 'موجود / ناموجود' },
-    { label: 'تصویر محصول', ok: Array.isArray(schema.image) && schema.image.length > 0, hint: 'حداقل یک تصویر' },
-    { label: 'برند', ok: Boolean(schema.brand), hint: 'از مشخصهٔ «برند»' },
-    { label: 'مشخصات قابل مقایسه', ok: Array.isArray(schema.additionalProperty), hint: 'از مشخصات محصول' },
-    { label: 'مدل‌های محصول', ok: Boolean(schema.hasVariant), hint: 'برای محصول متنوع' },
+    { label: 'قیمت', ok: Boolean(schema.offers || schema.hasVariant), hint: `قیمت را در مرحلهٔ اول وارد کنید (${unit})` },
+    { label: 'موجودی', ok: Boolean(schema.offers || schema.hasVariant), hint: 'موجودی را در مرحلهٔ انبارداری وارد کنید' },
+    { label: 'تصویر', ok: Array.isArray(schema.image) && schema.image.length > 0, hint: 'حداقل یک تصویر در گالری اضافه کنید' },
+    { label: 'برند', ok: Boolean(schema.brand), hint: 'مشخصه‌ای با عنوان «برند» اضافه کنید' },
+    { label: 'مشخصات', ok: Array.isArray(schema.additionalProperty), hint: 'در مرحلهٔ مشخصات، چند ویژگی وارد کنید' },
+    { label: 'مدل‌ها', ok: Boolean(schema.hasVariant), hint: 'فقط برای محصول متنوع کاربرد دارد' },
   ]
 }

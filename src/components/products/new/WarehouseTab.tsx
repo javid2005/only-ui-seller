@@ -144,6 +144,7 @@ export function WarehouseTab({ form, onChange, onSave }: WarehouseTabProps) {
                    کنار هم، و لیبلِ روی‌خط آن‌ها را بی‌دلیل بلند می‌کرد. */
                 <Flex
                   key={label}
+                  data-numeric-field
                   align="center"
                   gap="1.5"
                   minW="0"

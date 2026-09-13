@@ -60,8 +60,8 @@ export function ProductPreviewCard({ form, variant = 'rail' }: ProductPreviewCar
   }, [signature])
 
   const body = (
-    <Box p="2.5">
-      <Text fontSize="sm" fontWeight="extrabold" color="fg" textAlign="start" px="0.5" mb="2" lineClamp={2}>
+    <Box p="3.5">
+      <Text fontSize="sm" fontWeight="extrabold" color="fg" textAlign="start" px="0.5" mb="2.5" lineClamp={2}>
         {title}
       </Text>
 
@@ -90,7 +90,7 @@ export function ProductPreviewCard({ form, variant = 'rail' }: ProductPreviewCar
         )}
       </Flex>
 
-      <Text fontSize="xs" color="fg.muted" textAlign="start" mt="1.5" px="2" py="1.5" rounded="7px" bg="bg.subtle">
+      <Text fontSize="xs" color="fg.muted" textAlign="start" mt="2" px="2.5" py="2" rounded="8px" bg="bg.subtle">
         {form.unlimitedInventory
           ? 'موجودی: نامحدود'
           : `موجودی: ${toPersianDigits(form.inventory || '0')} عدد`}
@@ -98,16 +98,16 @@ export function ProductPreviewCard({ form, variant = 'rail' }: ProductPreviewCar
 
       {/* انتخابگرهای تنوع */}
       {form.variants.filter((v) => v.values.length > 0).length > 0 && (
-        <Flex direction="column" gap="1.5" mt="2.5">
+        <Flex direction="column" gap="2" mt="3">
           {form.variants.filter((v) => v.values.length > 0).map((variantOpt) => {
             const active = picked[variantOpt.id] ?? variantOpt.values[0]?.id
             return (
-              <Flex key={variantOpt.id} align="center" gap="1.5">
+              <Flex key={variantOpt.id} align="center" gap="2">
                 {/* FIRST = rightmost: عنوان تنوع */}
                 <Text fontSize="2xs" color="fg.muted" w="48px" flexShrink={0} textAlign="start" truncate>
                   {variantOpt.title || 'تنوع'}
                 </Text>
-                <Flex gap="1" wrap="wrap" flex="1" minW="0">
+                <Flex gap="1.5" wrap="wrap" flex="1" minW="0">
                   {variantOpt.values.map((val) => {
                     const on = val.id === active
                     return (
@@ -193,7 +193,9 @@ export function ProductPreviewCard({ form, variant = 'rail' }: ProductPreviewCar
         />
       )}
 
-      <MediaThumb src={featured?.src} alt={title} aspectRatio="1.1" w="full" />
+      {/* سقف ارتفاع: تصویرِ بلند ریل را از پنجره بلندتر می‌کرد و انتهای کارت
+          هیچ‌وقت دیده نمی‌شد */}
+      <MediaThumb src={featured?.src} alt={title} aspectRatio="1.25" w="full" maxH="190px" />
       {body}
     </Box>
   )
@@ -211,8 +213,14 @@ export function ProductPreviewCard({ form, variant = 'rail' }: ProductPreviewCar
       pb="3"
       pointerEvents="none"
     >
-      <Box maxW="480px" mx="auto" pointerEvents="auto">
-        {expanded && <Box mb="2">{card}</Box>}
+      <Box maxW="360px" mx="auto" pointerEvents="auto">
+        {/* حالت باز: عمداً کوچک و جمع — کاربر باید هم‌زمان بخشی از فرم زیرش را
+            هم ببیند، نه اینکه کل صفحه پوشیده شود */}
+        {expanded && (
+          <Box mb="2" maxH="52dvh" overflowY="auto" rounded="15px" boxShadow="0 16px 40px rgba(30, 51, 60, 0.22)">
+            {card}
+          </Box>
+        )}
 
         {/* نوار فشرده — همیشه دیده می‌شود */}
         <Flex

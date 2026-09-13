@@ -20,7 +20,7 @@ import { validateProduct, type FieldIssue } from '@/components/products/new/vali
 import { focusField } from '@/components/products/new/focusField'
 import { enterPanel } from '@/components/products/new/motion'
 import {
-  EMPTY_FORM, STEPS, pricingModeOf, seoScore,
+  EMPTY_FORM, STEPS, pricingModeOf, SEO_CHECKS,
   type ProductForm, type ProductTypeId, type StepId,
 } from '@/components/products/new/data'
 
@@ -89,37 +89,76 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
     setTypeDialogOpen(false)
   }
 
-  // ─── تکمیل هر تب ──────────────────────────────────────────────────────────────
-  // اطلاعات محصول: نام + دسته + قیمت (مگر فروش تلفنی) + موجودی (مگر نامحدود/تنوع)
+  // ─── وضعیت هر مرحله ─────────────────────────────────────────────────────────
+  /**
+   * هر مرحله دو فهرست دارد: چیزهای **لازم** و چیزهای **بهتر است**.
+   *   • چیزی از «لازم» کم باشد → todo (هشدار نارنجی)
+   *   • «لازم» کامل ولی «بهتر است» ناقص → partial (نشانِ سبزِ کم‌رنگ)
+   *   • هر دو کامل → done (تیک سبز)
+   *
+   * قبلاً مرحله‌هایی که فیلد اجباری نداشتند (مشخصات، تنوع) از ابتدا تیک سبز
+   * می‌گرفتند؛ حالا تا وقتی چیزی وارد نشده در حالت «بهتر است» می‌مانند.
+   */
   const isGold = pricingModeOf(form.category) === 'gold'
   const priceFilled = isGold ? form.goldWeight.trim() : form.price.trim()
-  const infoComplete = Boolean(
-    form.name.trim() &&
-    form.category &&
-    (form.phoneSale || priceFilled) &&
-    (form.unlimitedInventory || form.hasVariants || form.inventory.trim()),
-  )
-  // گالری: حداقل یک تصویر لازم است
-  const galleryComplete = form.gallery.length > 0
-  // تنوع اختیاری است؛ نبودِ تنوع هم معتبر است
-  const variantsComplete = true
+  const inventoryFilled = form.unlimitedInventory || form.hasVariants || Boolean(form.inventory.trim())
 
-  // انبارداری: شناسه و — مگر نامحدود/تنوع — موجودی لازم است
-  const warehouseComplete = Boolean(
-    form.sku.trim() && (form.unlimitedInventory || form.hasVariants || form.inventory.trim()),
-  )
-  // مشخصات اختیاری است؛ نبودِ ویژگی هم معتبر است
-  const specsComplete = true
+  const stepStatus = (required: [string, boolean][], optional: [string, boolean][] = []): StepStatus => {
+    const missingRequired = required.filter(([, ok]) => !ok).map(([label]) => label)
+    if (missingRequired.length > 0) return { state: 'todo', missing: missingRequired }
+    const missingOptional = optional.filter(([, ok]) => !ok).map(([label]) => label)
+    return missingOptional.length > 0
+      ? { state: 'partial', missing: missingOptional }
+      : { state: 'done', missing: [] }
+  }
 
   const statuses: Record<StepId, StepStatus> = {
-    basic: infoComplete ? 'complete' : 'pending',
-    gallery: galleryComplete ? 'complete' : 'pending',
-    warehouse: warehouseComplete ? 'complete' : 'pending',
-    specs: specsComplete ? 'complete' : 'pending',
-    // تنوع اختیاری است: صفر ترکیب یعنی «کامل»، نه یک عددِ خام روی استپر
-    models: isVaried && form.combinations.length > 0 ? form.combinations.length : 'complete',
-    seo: seoScore(form) === 100 ? 'complete' : 'pending',
+    basic: stepStatus(
+      [
+        ['نام محصول', Boolean(form.name.trim())],
+        ['دسته‌بندی', Boolean(form.category)],
+        ['قیمت', form.phoneSale || form.hasVariants || Boolean(priceFilled)],
+      ],
+      [
+        ['توضیح کوتاه', Boolean(form.shortDescription.trim())],
+        ['توضیحات', Boolean(form.description.replace(/<[^>]*>/g, '').trim())],
+      ],
+    ),
+    gallery: stepStatus(
+      [['حداقل یک تصویر', form.gallery.length > 0]],
+      [['متن جایگزین تصاویر', form.gallery.length > 0 && form.gallery.every((i) => i.alt.trim())]],
+    ),
+    warehouse: stepStatus(
+      [
+        ['شناسه کالا', Boolean(form.sku.trim())],
+        ['موجودی', inventoryFilled],
+      ],
+      [
+        ['وزن', Boolean(form.weight.trim())],
+        ['ابعاد بسته', Boolean(form.packLength.trim() && form.packWidth.trim() && form.packHeight.trim())],
+      ],
+    ),
+    // این دو مرحله فیلد اجباری ندارند، ولی خالی‌بودنشان «کامل» نیست
+    specs: stepStatus([], [
+      ['مشخصات محصول', form.attributes.length > 0],
+      ['برچسب‌ها', form.tags.length > 0],
+    ]),
+    models: isVaried
+      ? stepStatus(
+          [['حداقل یک مدل', form.combinations.length > 0]],
+          [['قیمت همهٔ مدل‌ها', form.combinations.every((c) => !c.active || c.phoneSale || Boolean(c.price.trim()))]],
+        )
+      : { state: 'done', missing: [] },
+    seo: stepStatus(
+      [['آدرس صفحه', Boolean(form.seoSlug.trim())]],
+      SEO_CHECKS.filter((c) => c.id !== 'slug').map((c) => [c.label, c.ok(form)] as [string, boolean]),
+    ),
   }
+
+  const infoComplete = statuses.basic.state !== 'todo'
+  const galleryComplete = statuses.gallery.state !== 'todo'
+  const warehouseComplete = statuses.warehouse.state !== 'todo'
+  const variantsComplete = statuses.models.state !== 'todo'
 
   // انتشار فقط وقتی اطلاعات اجباری هر سه تب کامل باشد
   const canPublish = infoComplete && galleryComplete && warehouseComplete && variantsComplete
@@ -221,13 +260,16 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
           display={isCompact ? 'block' : { base: 'block', lg: 'none' }}
           mb="4"
           position="sticky"
-          top="2"
+          // نوار بالای صفحه خودش sticky و ۶۴px است؛ بدون این offset، استپر زیر آن
+          // می‌رفت و نیمه‌بریده دیده می‌شد
+          top="calc(4rem + 0.5rem)"
           zIndex="docked"
           bg="bg.panel"
           borderWidth="1px"
           borderColor="border"
           rounded="2xl"
-          p="2"
+          px="1.5"
+          py="1"
           boxShadow="sm"
         >
           <StepNav
@@ -250,6 +292,18 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
               position="sticky"
               top="20"
               alignSelf="start"
+              /*
+                ریل می‌تواند از ارتفاع پنجره بلندتر شود (استپر + پیش‌نمایش). بدون
+                این دو خط، انتهای پیش‌نمایش زیر لبهٔ پایین گیر می‌کرد و هیچ‌وقت
+                کامل دیده نمی‌شد. حالا خودِ ریل اسکرول می‌شود، پس هر دو بخش در
+                هر موقعیتی قابل دیدن‌اند و چیدمان بقیهٔ صفحه هم دست‌نخورده می‌ماند.
+              */
+              maxH="calc(100dvh - 6rem)"
+              overflowY="auto"
+              css={{
+                scrollbarWidth: 'none',
+                '&::-webkit-scrollbar': { display: 'none' },
+              }}
             >
               <Flex direction="column" gap="4">
                 {/* استپر خودش یک کارت سفید شناور است، نه بخشی از یک کادر بزرگ‌تر */}
@@ -318,7 +372,10 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
         </Flex>
       </Box>
 
-      {/* پیش‌نمایش موبایل — نوار فشردهٔ چسبیده به پایین، با ماکسیمایز */}
+      {/* پیش‌نمایش موبایل — نوار فشردهٔ چسبیده به پایین، با ماکسیمایز.
+          فضای خالیِ هم‌ارتفاعِ نوار زیر فرم گذاشته می‌شود تا روی دکمهٔ «ذخیره و
+          ادامه» ننشیند. */}
+      <Box display={isCompact ? 'block' : { base: 'block', lg: 'none' }} h="16" aria-hidden />
       <Box display={isCompact ? 'block' : { base: 'block', lg: 'none' }}>
         <ProductPreviewCard form={form} variant="dock" />
       </Box>

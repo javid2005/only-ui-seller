@@ -160,9 +160,20 @@ export function NumberField({
       overflow="hidden"
       transition="opacity 0.15s"
       css={{
+        // روی دستگاه لمسی همیشه دیده می‌شوند (hover ندارد)؛ روی دسکتاپ فقط با
+        // هاور یا فوکوس. سلکتور عمداً چند لنگر دارد: خودِ گروه، `fieldset` کادرِ
+        // NotchedField، و هر بلوکِ `data-field` — چون در برخی فیلدها نشانگر روی
+        // کادر است نه روی خودِ input-group و با یک لنگر هیچ‌وقت ظاهر نمی‌شد.
         '@media (hover: hover)': {
           opacity: 0,
-          '.chakra-input-group:hover &, .chakra-input-group:focus-within &': { opacity: 1 },
+          [[
+            '.chakra-input-group:hover &',
+            '.chakra-input-group:focus-within &',
+            'fieldset:hover &',
+            'fieldset:focus-within &',
+            '[data-field]:hover &',
+            '[data-numeric-field]:hover &',
+          ].join(', ')]: { opacity: 1 },
         },
       }}
     >

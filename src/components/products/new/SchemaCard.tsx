@@ -1,112 +1,59 @@
-import { useState } from 'react'
-import { Box, Flex, Text, Button, Icon, Code, Collapsible } from '@chakra-ui/react'
-import { Check, Minus, Braces, ChevronDown, Copy } from 'lucide-react'
-import { toaster } from '@/components/ui/toaster'
-import { productSchemaJson, schemaHighlights } from './productSchema'
-import { pressable } from './motion'
+import { Box, Flex, Text, Icon } from '@chakra-ui/react'
+import { Check, Minus, Sparkles } from 'lucide-react'
+import { schemaHighlights } from './productSchema'
 import type { ProductForm } from './data'
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 /**
- * SchemaCard — «دادهٔ ساختاریافته» در مرحلهٔ سئو.
+ * SchemaCard — «در نتیجهٔ گوگل چه چیزی دیده می‌شود».
  *
- * پیش‌نمایش گوگل می‌گوید صفحه **چطور دیده می‌شود**؛ این کارت می‌گوید گوگل **چه
- * چیزی می‌فهمد**. تفاوتش این است که قیمت، موجودی، برند و مشخصات فقط وقتی در
- * نتیجهٔ جست‌وجو ظاهر می‌شوند که اسکیما داشته باشیم.
- *
- * فروشنده کاری برای انجام ندارد — اسکیما از همین فرم ساخته می‌شود. فهرست بالا
- * فقط می‌گوید کدام قابلیت همین حالا فعال است و کدام هنوز داده ندارد.
+ * ⚠️ نسخهٔ قبل نامش «دادهٔ ساختاریافته» بود و دکمه‌های «دیدن کد» و «کپی» داشت.
+ * برای فروشندهٔ آماتور یا متوسط نه معنایی داشت و نه کاری با آن کد می‌کرد — فقط
+ * پیچیده به نظر می‌رسید. اسکیما همچنان ساخته و در صفحهٔ محصول قرار می‌گیرد
+ * (`productSchema.ts`)، ولی اینجا فقط **نتیجه‌اش** به زبان فروشنده گفته می‌شود:
+ * کدام قابلیت در نتیجهٔ جست‌وجو فعال شده و برای فعال‌شدن بقیه چه چیزی کم است.
  *
  * RTL DOM order هر ردیف (first = rightmost): نشانه ← عنوان ← توضیح.
  */
 export function SchemaCard({ form }: { form: ProductForm }) {
-  const [open, setOpen] = useState(false)
   const rows = schemaHighlights(form)
   const active = rows.filter((r) => r.ok).length
 
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(productSchemaJson(form))
-      toaster.create({ id: 'schema-copy', title: 'کد اسکیما کپی شد', type: 'success', duration: 2000 })
-    } catch {
-      toaster.create({ id: 'schema-copy', title: 'کپی نشد — دسترسی کلیپ‌بورد نداریم', type: 'error', duration: 2500 })
-    }
-  }
-
   return (
     <Box borderWidth="1px" borderColor="border" rounded="xl" bg="bg.panel" p="3.5" w="full">
-      {/* FIRST = rightmost: عنوان · LAST = leftmost: شمارش */}
-      <Flex align="center" gap="2" mb="2.5">
-        <Icon size="sm" color="brand.fg" flexShrink={0}><Braces /></Icon>
-        <Box flex="1" minW="0">
-          <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start">
-            دادهٔ ساختاریافته برای گوگل
-          </Text>
-          <Text fontSize="2xs" color="fg.muted" textAlign="start">
-            خودکار از همین فرم ساخته می‌شود؛ کاری لازم نیست انجام دهید.
-          </Text>
-        </Box>
+      {/* FIRST = rightmost: آیکن و عنوان … شمارش (چپ‌ترین) */}
+      <Flex align="center" gap="2" mb="1">
+        <Icon size="sm" color="brand.fg" flexShrink={0}><Sparkles /></Icon>
+        <Text fontSize="sm" fontWeight="semibold" color="fg" flex="1" textAlign="start">
+          نمایش در نتیجهٔ گوگل
+        </Text>
         <Text fontSize="xs" color="fg.muted" flexShrink={0}>
-          {active}/{rows.length}
+          {active} از {rows.length}
         </Text>
       </Flex>
 
-      <Flex direction="column" gap="1">
+      <Text fontSize="xs" color="fg.muted" textAlign="start" lineHeight="1.9" mb="2.5">
+        وقتی این اطلاعات کامل باشد، گوگل می‌تواند قیمت و موجودی محصول را مستقیم در
+        نتیجهٔ جست‌وجو نشان بدهد — نه فقط عنوان و توضیح. کاری لازم نیست انجام دهید؛
+        همین‌که فیلدهای زیر پر شوند خودکار فعال می‌شود.
+      </Text>
+
+      <Flex direction="column" gap="1.5">
         {rows.map((r) => (
           <Flex key={r.label} align="center" gap="2">
             {/* FIRST = rightmost: نشانهٔ فعال/غیرفعال */}
-            <Icon size="xs" flexShrink={0} color={r.ok ? 'green.fg' : 'fg.muted'}>
+            <Icon size="xs" flexShrink={0} color={r.ok ? 'green.fg' : 'fg.subtle'}>
               {r.ok ? <Check /> : <Minus />}
             </Icon>
-            <Text fontSize="xs" color={r.ok ? 'fg' : 'fg.muted'} textAlign="start">{r.label}</Text>
-            <Text fontSize="2xs" color="fg.muted" textAlign="start" flex="1" truncate>{r.hint}</Text>
+            <Text fontSize="xs" color={r.ok ? 'fg' : 'fg.muted'} textAlign="start" flexShrink={0}>
+              {r.label}
+            </Text>
+            <Text fontSize="2xs" color="fg.muted" textAlign="start" flex="1" truncate>
+              {r.ok ? 'فعال' : r.hint}
+            </Text>
           </Flex>
         ))}
       </Flex>
-
-      <Collapsible.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
-        <Flex gap="2" mt="3">
-          {/* FIRST = rightmost: دیدن کد · LAST = leftmost: کپی */}
-          <Collapsible.Trigger asChild>
-            <Button size="xs" variant="outline" rounded="l2" gap="1.5" {...pressable}>
-              <ChevronDown
-                size={13}
-                style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'transform .18s' }}
-              />
-              {open ? 'بستن کد' : 'دیدن کد'}
-            </Button>
-          </Collapsible.Trigger>
-          <Button size="xs" variant="ghost" colorPalette="brand" rounded="l2" gap="1.5" onClick={copy} {...pressable}>
-            <Copy size={13} />
-            کپی
-          </Button>
-        </Flex>
-
-        <Collapsible.Content>
-          <Box
-            mt="2.5"
-            maxH="260px"
-            overflow="auto"
-            rounded="lg"
-            borderWidth="1px"
-            borderColor="border.muted"
-            bg="bg.subtle"
-            p="2.5"
-          >
-            <Code
-              dir="ltr"
-              display="block"
-              whiteSpace="pre"
-              fontSize="2xs"
-              lineHeight="1.8"
-              bg="transparent"
-              px="0"
-            >
-              {productSchemaJson(form)}
-            </Code>
-          </Box>
-        </Collapsible.Content>
-      </Collapsible.Root>
     </Box>
   )
 }

@@ -1,20 +1,42 @@
 import { Tabs, Text, Flex, Box, Icon } from '@chakra-ui/react'
 import { pressable } from './motion'
-import { Check, TriangleAlert } from 'lucide-react'
+import { Check, TriangleAlert, CircleDashed } from 'lucide-react'
 import { STEPS, type ProductStep, type StepId } from './data'
 import { toPersianDigits } from '@/utils/numbers'
 import { Tooltip } from '@/components/ui/Tooltip'
 
 // ─── وضعیت هر مرحله ─────────────────────────────────────────────────────────────
-// pending → موارد ضروری ناقص · complete → کامل · number → شمارش ترکیب‌های تنوع
-export type StepStatus = 'pending' | 'complete' | number
+/**
+ * سه حالت، نه دو تا.
+ *
+ * ⚠️ قبلاً فقط «کامل / ناقص» بود و مرحله‌هایی که هیچ فیلد اجباری‌ای ندارند
+ * (مشخصات، تنوع) از همان ابتدا تیک سبز می‌گرفتند — بدون اینکه کاربر چیزی وارد
+ * کرده باشد. حالا:
+ *
+ *   done    ✓ سبز    — هم اجباری‌ها پر است هم اختیاری‌های مهم
+ *   partial ● سبزِ کم‌رنگ — اجباری‌ها پر است، ولی چیزی باقی مانده که بهتر است پر شود
+ *   todo    ⚠ نارنجی — هنوز چیزی که لازم است وارد نشده
+ *
+ * `missing` فهرستِ تیتروارِ چیزهای باقی‌مانده است و در تولتیپ همان مرحله دیده
+ * می‌شود — «در انتظار تکمیل» به‌تنهایی به کاربر نمی‌گفت چه چیزی کم است.
+ */
+export type StepState = 'done' | 'partial' | 'todo'
 
-/** متن تولتیپ: عنوان کامل + وضعیت — همان اطلاعاتی که قبلاً badge متنی نشان می‌داد */
-function statusHint(status: StepStatus): string {
-  if (typeof status === 'number') {
-    return status > 0 ? `${toPersianDigits(status)} ترکیب ساخته شده` : 'بدون ترکیب — اختیاری'
+export interface StepStatus {
+  state: StepState
+  /** عنوان‌های کوتاهِ چیزهای باقی‌مانده — حداکثر چند کلمه */
+  missing: string[]
+}
+
+/** متن تولتیپ: عنوان مرحله + وضعیت + فهرست تیتروارِ باقی‌مانده‌ها */
+function statusHint(label: string, status: StepStatus): string {
+  if (status.state === 'done') return `${label} — کامل`
+  const list = status.missing.slice(0, 4).join(' · ')
+  const more = status.missing.length > 4 ? ` و ${toPersianDigits(status.missing.length - 4)} مورد دیگر` : ''
+  if (status.state === 'partial') {
+    return list ? `${label} — می‌ماند: ${list}${more}` : `${label} — کامل`
   }
-  return status === 'complete' ? 'کامل شده' : 'در انتظار تکمیل'
+  return list ? `${label} — لازم است: ${list}${more}` : `${label} — در انتظار تکمیل`
 }
 
 // ─── هندسهٔ مشترک rail ───────────────────────────────────────────────────────────
@@ -32,17 +54,18 @@ const COMPACT_PT = '2'     // padding بالای آیتم فشرده (۸px) = ف
  * دلیل: بازخورد «تیک و هشدارها شلوغی ایجاد کرده‌اند»؛ متن وضعیت به تولتیپ منتقل شد.
  */
 function StatusGlyph({ status }: { status: StepStatus }) {
-  if (typeof status === 'number') {
-    return (
-      <Text fontSize="xs" color="fg.muted" flexShrink={0} lineHeight="1">
-        {toPersianDigits(status)}
-      </Text>
-    )
-  }
-  if (status === 'complete') {
+  if (status.state === 'done') {
     return (
       <Icon size="sm" color="green.fg" flexShrink={0}>
         <Check />
+      </Icon>
+    )
+  }
+  if (status.state === 'partial') {
+    // سبزِ کم‌رنگ، نه نارنجی: اجباری‌ها کامل‌اند و چیزی «خراب» نیست
+    return (
+      <Icon size="sm" color="green.fg" opacity={0.55} flexShrink={0}>
+        <CircleDashed />
       </Icon>
     )
   }
@@ -84,9 +107,25 @@ function Connector({
       flex="1"
       w={horizontal ? 'full' : '2px'}
       h={horizontal ? '2px' : 'full'}
-      bg={show ? (isDone ? 'brand.emphasized' : 'border') : 'transparent'}
+      bg={show ? 'border' : 'transparent'}
       rounded="full"
-    />
+      overflow="hidden"
+      position="relative"
+    >
+      {/* لایهٔ سبز روی خط خاکستری می‌نشیند و با کامل‌شدن مرحله «پر» می‌شود */}
+      <Box
+        position="absolute"
+        insetInlineStart="0"
+        top="0"
+        bg="brand.solid"
+        rounded="full"
+        transition="width .45s ease, height .45s ease"
+        {...(horizontal
+          ? { h: 'full', w: show && isDone ? 'full' : '0' }
+          : { w: 'full', h: show && isDone ? 'full' : '0' })}
+        _motionReduce={{ transition: 'none' }}
+      />
+    </Box>
   )
 
   return (
@@ -165,15 +204,16 @@ export function StepNav({
           const status = statuses[step.id]
           const StepIcon = step.icon
           const isActive = step.id === active
-          const isDone = status === 'complete' || (typeof status === 'number' && status > 0)
-          // خط اتصالِ رسیده به این مرحله وقتی «طی‌شده» است که مرحلهٔ قبل کامل باشد
+          // «طی‌شده» یعنی اجباری‌هایش پر است — partial هم حساب می‌شود، چون کاربر
+          // واقعاً از آن مرحله عبور کرده
+          const isDone = status.state !== 'todo'
           const prev = i > 0 ? statuses[steps[i - 1].id] : undefined
-          const prevDone = prev === 'complete' || (typeof prev === 'number' && prev > 0)
+          const prevDone = prev !== undefined && prev.state !== 'todo'
 
           return (
             <Tooltip
               key={step.id}
-              content={`${step.label} — ${statusHint(status)}`}
+              content={statusHint(step.label, status)}
               positioning={{ placement: isHorizontal ? 'bottom' : 'left' }}
             >
               <Tabs.Trigger
@@ -211,13 +251,14 @@ export function StepNav({
                   zIndex="1"
                   boxSize={ICON_SIZE}
                   flexShrink={0}
-                  rounded="l2"
+                  // دایره، نه مربع — مثل پروتوتایپ‌های آخرِ تأییدشده
+                  rounded="full"
                   align="center"
                   justify="center"
                   borderWidth="1px"
                   transition="background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s, box-shadow 0.18s"
                   bg={isActive ? 'brand.solid' : isDone ? 'brand.bg' : 'bg.subtle'}
-                  borderColor={isActive ? 'brand.solid' : isDone ? 'brand.muted' : 'border'}
+                  borderColor={isActive ? 'brand.solid' : isDone ? 'brand.border' : 'border'}
                   color={isActive ? 'brand.contrast' : isDone ? 'brand.fg' : 'fg.muted'}
                   // مرحلهٔ فعال کمی بزرگ‌تر و دارای هاله — همان «کجا هستم» بدون متن اضافه
                   transform={isActive ? 'scale(1.06)' : undefined}
