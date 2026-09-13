@@ -46,7 +46,10 @@ export function ValidationToast({ issues, onClose, onGoTo }: ValidationToastProp
       /* درست زیر نوار بالایی (۶۴px، sticky) — نه رویش: پیام باید کنارِ نگاه
          کاربر باشد، نه اینکه هویتِ صفحه را بپوشاند. */
       top="calc(4rem + 0.75rem)"
-      zIndex="toast"
+      /* `banner` (۱۲۰۰) و نه `toast` (۱۷۰۰): این یک پیامِ سطحِ صفحه است، نه یک
+         toast سیستمی — با لایهٔ toast روی دیالوگ‌های باز (۱۴۰۰) می‌نشست و نیمهٔ
+         بالایی‌شان را می‌پوشاند. بالای نوارِ sticky (۱۱۰۰) می‌ماند. */
+      zIndex="banner"
       px="4"
       pointerEvents="none"
     >
