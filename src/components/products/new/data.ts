@@ -299,7 +299,13 @@ export interface VariantCombination {
 }
 
 /** ماتریس تنوع۱ × تنوع۲ (یا فقط تنوع۱ اگر تنوع دوم مقدار ندارد) */
-export function buildCombinations(variants: ProductVariant[], skuBase: string): VariantCombination[] {
+export function buildCombinations(
+  variants: ProductVariant[],
+  skuBase: string,
+  /** قیمت پایهٔ محصول — مدل تازه آن را به ارث می‌برد (مثل طرح تأییدشده) */
+  basePrice = '',
+  baseSalePrice = '',
+): VariantCombination[] {
   const dims = variants.map((v) => v.values).filter((values) => values.length > 0)
   if (dims.length === 0) return []
   let rows: VariantValueItem[][] = [[]]
@@ -325,8 +331,8 @@ export function buildCombinations(variants: ProductVariant[], skuBase: string): 
     discountType: 'percent',
     discountValue: '',
     priceAfterDiscount: '',
-    price: '',
-    salePrice: '',
+    price: basePrice,
+    salePrice: baseSalePrice,
     inventory: '',
   }))
 }

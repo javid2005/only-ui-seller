@@ -59,14 +59,17 @@ export function OptionCard({ option, index, onChange, onRemove }: OptionCardProp
     onChange({ values: option.values.filter((v) => v.id !== id) })
 
   return (
-    <Box borderWidth="1px" borderColor="border" rounded="xl" bg="bg.panel" overflow="hidden" w="full">
+    /* کارت در طرح ته‌رنگی است روی سطح سفیدِ بخش — همین تمایز است که چشم را به هر
+       «انتخاب مشتری» جدا معطوف می‌کند. اندازه‌ها از طرح: radius ۱۲px، padding ۱۰px. */
+    <Box borderWidth="1px" borderColor="border.muted" rounded="xl" bg="bg.subtle" p="2.5" w="full">
 
-      {/* سرتیتر */}
-      <Flex align="center" gap="2.5" px="4" py="3" borderBottomWidth="1px" borderColor="border.muted">
+      {/* سرتیتر — بدون خط جداکننده؛ در طرح فقط فاصله است */}
+      <Flex align="center" gap="2.5" pb="2">
         {/* FIRST = rightmost: شمارهٔ تنوع */}
         <Flex
           boxSize="7" rounded="lg" flexShrink={0} align="center" justify="center"
-          bg="brand.bg" color="brand.fg" fontSize="xs" fontWeight="bold"
+          bg="bg.panel" borderWidth="1px" borderColor="border"
+          color="fg.muted" fontSize="xs" fontWeight="bold"
         >
           {index}
         </Flex>
@@ -89,7 +92,7 @@ export function OptionCard({ option, index, onChange, onRemove }: OptionCardProp
       </Flex>
 
       {/* مقادیر */}
-      <Box p="4">
+      <Box>
         <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" mb="2">
           مقادیر {option.title || 'تنوع'}
         </Text>
@@ -104,6 +107,7 @@ export function OptionCard({ option, index, onChange, onRemove }: OptionCardProp
             size="sm"
             flex="1"
             minW="0"
+            bg="bg.panel"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder={isColor ? 'مثال: مشکی، سفید یا آبی' : `مثال: مقدار ${option.title || 'تنوع'}`}
@@ -134,7 +138,7 @@ export function OptionCard({ option, index, onChange, onRemove }: OptionCardProp
                 rounded="l2"
                 borderWidth="1px"
                 borderColor="border"
-                bg="bg.subtle"
+                bg="bg.panel"
               >
                 {/* FIRST = rightmost: سواچ رنگ (فقط تنوع رنگی) */}
                 {isColor && (

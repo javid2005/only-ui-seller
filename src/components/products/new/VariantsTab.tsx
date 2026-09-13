@@ -55,7 +55,7 @@ export function VariantsTab({
   // هر تغییر در انتخاب‌ها بلافاصله مدل‌ها را بازمی‌سازد؛ مقادیر واردشده با کلیدِ
   // ترکیب حفظ می‌شوند تا ویرایش‌های کاربر با افزودن یک مقدار تازه پاک نشوند.
   useEffect(() => {
-    const fresh = buildCombinations(options, form.sku)
+    const fresh = buildCombinations(options, form.sku, form.price)
     const merged = fresh.map((nc) => {
       const prev = combos.find((c) => key(c.values) === key(nc.values))
       return prev ? { ...nc, ...prev, sku: nc.sku, values: nc.values } : nc
@@ -65,7 +65,7 @@ export function VariantsTab({
       merged.some((m, i) => key(m.values) !== key(combos[i]?.values ?? []))
     if (changed) onChange({ combinations: merged, hasVariants: merged.length > 0 })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options, form.sku])
+  }, [options, form.sku, form.price])
 
   const addOption = (title = '') => {
     if (options.length >= MAX_VARIANTS) return
@@ -77,8 +77,13 @@ export function VariantsTab({
     onChange({ variants: options.filter((o) => o.id !== id) })
 
   const atMax = options.length >= MAX_VARIANTS
+  /**
+   * پیشنهادهای استفاده‌شده **حذف نمی‌شوند، غیرفعال می‌شوند** — دقیقاً مثل طرح
+   * تأییدشده. با حذف‌شدن، نوار هر بار جابه‌جا می‌شد و کاربر جای چیپ بعدی را گم
+   * می‌کرد؛ غیرفعال‌شدن هم چیدمان را ثابت نگه می‌دارد هم می‌گوید «قبلاً اضافه شده».
+   */
   const suggestions = suggestionsFor(form.category)
-    .filter((s) => !options.some((o) => o.title === s))
+  const usedTitles = new Set(options.map((o) => o.title))
 
   // ─── بنر حالت ساده ───────────────────────────────────────────────────────────
   if (isSimple) {
@@ -141,50 +146,76 @@ export function VariantsTab({
       >
         <Flex direction="column" gap="4">
 
-          {/* نوار پیشنهادها — FIRST = rightmost: چیپ‌ها · LAST = leftmost: سفارشی */}
-          <Flex align="center" gap="2" wrap="wrap" w="full">
+          {/* نوار پیشنهادها — در طرح یک نوارِ کادردارِ ته‌رنگی است، نه چیپ‌های شناور.
+              FIRST = rightmost: چیپ‌ها · LAST = leftmost: سفارشی */}
+          <Flex
+            align="center"
+            gap="2"
+            wrap="wrap"
+            w="full"
+            p="2"
+            rounded="10px"
+            borderWidth="1px"
+            borderColor="border.muted"
+            bg="bg.subtle"
+          >
             <Flex gap="2" wrap="wrap" flex="1" minW="0">
-              {suggestions.map((title) => (
-                <Tooltip
-                  key={title}
-                  content={atMax ? `حداکثر ${toPersianDigits(MAX_VARIANTS)} تنوع قابل تعریف است` : `افزودن ${title}`}
-                >
-                  <chakra.button
-                    type="button"
-                    onClick={() => addOption(title)}
-                    disabled={atMax}
-                    display="flex"
-                    alignItems="center"
-                    gap="1"
-                    px="2.5"
-                    h="8"
-                    rounded="l2"
-                    fontSize="xs"
-                    borderWidth="1px"
-                    borderStyle="dashed"
-                    borderColor="border"
-                    color="fg.muted"
-                    bg="transparent"
-                    transition="border-color 0.15s, color 0.15s, background 0.15s"
-                    _hover={{ borderColor: 'brand.border', color: 'brand.fg', bg: 'brand.bg' }}
-                    _disabled={{ opacity: 0.45, cursor: 'not-allowed', _hover: {} }}
+              {suggestions.map((title) => {
+                const used = usedTitles.has(title)
+                const disabled = used || atMax
+                return (
+                  <Tooltip
+                    key={title}
+                    content={
+                      used
+                        ? `${title} قبلاً اضافه شده است`
+                        : atMax
+                          ? `حداکثر ${toPersianDigits(MAX_VARIANTS)} تنوع قابل تعریف است`
+                          : `افزودن ${title}`
+                    }
                   >
-                    {/* FIRST = rightmost: علامت + */}
-                    <Plus size={13} />{title}
-                  </chakra.button>
-                </Tooltip>
-              ))}
+                    <chakra.button
+                      type="button"
+                      onClick={() => addOption(title)}
+                      disabled={disabled}
+                      display="flex"
+                      alignItems="center"
+                      gap="1"
+                      px="2.5"
+                      h="29px"
+                      rounded="lg"
+                      fontSize="11px"
+                      borderWidth="1px"
+                      borderColor="border"
+                      color="fg.muted"
+                      bg="bg.panel"
+                      transition="border-color 0.15s, color 0.15s, background 0.15s"
+                      _hover={{ borderColor: 'brand.border', color: 'brand.fg', bg: 'brand.bg' }}
+                      _disabled={{ opacity: 0.5, cursor: 'not-allowed', _hover: {} }}
+                    >
+                      {/* FIRST = rightmost: علامت + */}
+                      <Plus size={12} />{title}
+                    </chakra.button>
+                  </Tooltip>
+                )
+              })}
             </Flex>
             <Tooltip content={atMax ? `حداکثر ${toPersianDigits(MAX_VARIANTS)} تنوع قابل تعریف است` : 'افزودن تنوع سفارشی'}>
               <Button
                 size="sm"
-                variant="subtle"
-                colorPalette="brand"
+                variant="outline"
+                bg="bg.panel"
+                h="31px"
+                rounded="lg"
+                fontSize="12px"
+                fontWeight="semibold"
+                gap="1.5"
                 onClick={() => addOption()}
                 disabled={atMax}
                 flexShrink={0}
               >
-                <Plus size={15} />انتخاب سفارشی
+                {/* FIRST = rightmost: آیکن (leading) */}
+                <Plus size={14} />انتخاب سفارشی
               </Button>
             </Tooltip>
           </Flex>

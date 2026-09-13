@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box, Flex, Text, Table, Switch, Checkbox, Button,
   Select, Portal, createListCollection, chakra, EmptyState,
 } from '@chakra-ui/react'
-import { Rows3, Grid3x3, LayoutGrid, AlignJustify, ImagePlus, Package } from 'lucide-react'
+import { ImagePlus, Package } from 'lucide-react'
 import { NumberField } from '@/components/ui/NumberField'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { toPersianDigits } from '@/utils/numbers'
@@ -13,12 +13,6 @@ import { rowTint, type ProductVariant, type VariantCombination } from './data'
 // ─── نماها ───────────────────────────────────────────────────────────────────────
 export type ModelView = 'quick' | 'matrix' | 'cards' | 'compact'
 
-const VIEWS: { id: ModelView; label: string; icon: typeof Rows3 }[] = [
-  { id: 'quick',   label: 'جدول سریع', icon: Rows3 },
-  { id: 'matrix',  label: 'ماتریس',    icon: Grid3x3 },
-  { id: 'cards',   label: 'کارت‌ها',    icon: LayoutGrid },
-  { id: 'compact', label: 'فشرده',     icon: AlignJustify },
-]
 
 export type ModelFilter = 'all' | 'active' | 'inactive'
 
@@ -133,7 +127,19 @@ export interface ModelsTableProps {
 export function ModelsTable({
   options, combos, onChange, onPickImage, filter,
 }: ModelsTableProps) {
+  /**
+   * نما **دکمه ندارد** — در طرح تأییدشده نوار `model-view-tabs` با
+   * `display:none!important` حذف شده و به‌جایش زیر ۷۶۰px جدول جای خود را به
+   * کارت می‌دهد (`.table-scroll{display:none}` + `.quick-mobile{display:flex}`).
+   * پس نما از عرضِ واقعیِ پنجره می‌آید، نه از یک سوییچرِ اضافه.
+   */
   const [view, setView] = useState<ModelView>('quick')
+  useEffect(() => {
+    const apply = () => setView(window.innerWidth < 760 ? 'cards' : 'quick')
+    apply()
+    window.addEventListener('resize', apply)
+    return () => window.removeEventListener('resize', apply)
+  }, [])
   const [selected, setSelected] = useState<string[]>([])
   const [bulkOp, setBulkOp] = useState<BulkOp>('priceSet')
   const [bulkValue, setBulkValue] = useState('')
@@ -183,44 +189,17 @@ export function ModelsTable({
   return (
     <Flex direction="column" gap="3" w="full" minW="0">
 
-      {/* نوار نماها — FIRST = rightmost: جدول سریع */}
-      <Flex gap="1" bg="bg.subtle" rounded="l2" p="1" alignSelf="start" flexShrink={0}>
-        {VIEWS.map((v) => {
-          const ViewIcon = v.icon
-          return (
-            <chakra.button
-              key={v.id}
-              type="button"
-              aria-pressed={view === v.id}
-              onClick={() => setView(v.id)}
-              display="flex"
-              alignItems="center"
-              gap="1.5"
-              px="2.5"
-              h="7"
-              rounded="l1"
-              fontSize="xs"
-              fontWeight={view === v.id ? 'semibold' : 'normal'}
-              bg={view === v.id ? 'bg.panel' : 'transparent'}
-              color={view === v.id ? 'brand.fg' : 'fg.muted'}
-              boxShadow={view === v.id ? 'xs' : 'none'}
-            >
-              <ViewIcon size={13} />{v.label}
-            </chakra.button>
-          )
-        })}
-      </Flex>
-
       {/* نوار عملیات گروهی */}
       <Flex
         align="center"
         gap="2.5"
         wrap="wrap"
-        p="2.5"
-        rounded="lg"
+        px="2"
+        py="1.5"
+        rounded="10px"
         borderWidth="1px"
-        borderColor="brand.muted"
-        bg="brand.bg"
+        borderColor="border.muted"
+        bg="bg.subtle"
       >
         {/* FIRST = rightmost: انتخاب همه */}
         <Checkbox.Root
@@ -288,19 +267,40 @@ export function ModelsTable({
         </Box>
 
         {/* LAST = leftmost: اجرا */}
-        <Button size="sm" colorPalette="brand" onClick={runBulk} disabled={selected.length === 0} flexShrink={0}>
+        <Button
+          size="sm"
+          colorPalette="brand"
+          variant="subtle"
+          onClick={runBulk}
+          disabled={selected.length === 0}
+          flexShrink={0}
+        >
           اعمال روی انتخاب‌ها
         </Button>
       </Flex>
 
       {/* ── نمای جدول (سریع / فشرده) ─────────────────────────────────────────── */}
       {(view === 'quick' || view === 'compact') && (
-        <Box overflowX="auto" w="full" borderWidth="1px" borderColor="border" rounded="lg">
+        /* اندازه‌ها از طرح تأییدشده: قاب ۱۰px، سقف ارتفاع ۵۶۰px با اسکرول عمودی،
+           سرستون ۳۹px، سلول‌ها padding ۵px — جدول طرح متراکم است نه گشاد. */
+        <Box
+          overflowX="auto"
+          overflowY="auto"
+          maxH="560px"
+          w="full"
+          borderWidth="1px"
+          borderColor="border"
+          rounded="10px"
+          css={{
+            '& th': { height: '39px', paddingInline: '5px' },
+            '& td': { paddingBlock: '5px', paddingInline: '5px' },
+          }}
+        >
           <Table.Root size="sm" variant="line" minW="720px">
             <Table.Header>
               {/* FIRST = rightmost: چک‌باکس ← وضعیت ← تصویر ← مدل ← قیمت ← تخفیف ← موجودی */}
               <Table.Row bg="bg.subtle">
-                <Table.ColumnHeader w="10">
+                <Table.ColumnHeader w="36px">
                   <Checkbox.Root
                     size="sm"
                     checked={allSelected}
@@ -311,7 +311,7 @@ export function ModelsTable({
                     <Checkbox.Control />
                   </Checkbox.Root>
                 </Table.ColumnHeader>
-                <Table.ColumnHeader w="16">
+                <Table.ColumnHeader w="64px">
                   <Tooltip content="فعال یا غیرفعال کردن همه">
                     <Switch.Root
                       size="sm"
@@ -325,13 +325,13 @@ export function ModelsTable({
                     </Switch.Root>
                   </Tooltip>
                 </Table.ColumnHeader>
-                {view === 'quick' && <Table.ColumnHeader w="16">تصویر</Table.ColumnHeader>}
+                {view === 'quick' && <Table.ColumnHeader w="52px">تصویر</Table.ColumnHeader>}
                 <Table.ColumnHeader>مدل</Table.ColumnHeader>
-                <Table.ColumnHeader w="160px">
+                <Table.ColumnHeader w="112px">
                   قیمت اصلی<chakra.span color="red.fg" ms="1" aria-hidden>*</chakra.span>
                 </Table.ColumnHeader>
-                {view === 'quick' && <Table.ColumnHeader w="160px">تخفیف</Table.ColumnHeader>}
-                <Table.ColumnHeader w="130px">
+                {view === 'quick' && <Table.ColumnHeader w="112px">تخفیف</Table.ColumnHeader>}
+                <Table.ColumnHeader w="82px">
                   موجودی<chakra.span color="red.fg" ms="1" aria-hidden>*</chakra.span>
                 </Table.ColumnHeader>
               </Table.Row>
@@ -382,10 +382,10 @@ export function ModelsTable({
                     </Table.Cell>
                   )}
                   <Table.Cell>
-                    <Text fontSize="xs" fontWeight="medium" color="fg" textAlign="start" whiteSpace="nowrap">
+                    <Text fontSize="10.5px" fontWeight="medium" color="fg" textAlign="start" whiteSpace="nowrap">
                       {c.values.join(' / ')}
                     </Text>
-                    <Text fontSize="2xs" color="fg.muted" textAlign="start" dir="ltr">{c.sku}</Text>
+                    <Text fontSize="8.5px" color="fg.muted" textAlign="start" dir="ltr">{c.sku}</Text>
                   </Table.Cell>
                   <Table.Cell>
                     <NumberField
@@ -393,7 +393,7 @@ export function ModelsTable({
                       onChange={(v) => patch(c.id, { price: v })}
                       disabled={!c.active}
                       endElement={<Unit>تومان</Unit>}
-                      inputProps={{ size: 'sm', bg: 'bg.panel' }}
+                      inputProps={{ size: 'sm', bg: 'bg.panel', h: '31px', px: '1.5', fontSize: '11px' }}
                     />
                   </Table.Cell>
                   {view === 'quick' && (
@@ -403,7 +403,7 @@ export function ModelsTable({
                         onChange={(v) => patch(c.id, { salePrice: v })}
                         disabled={!c.active}
                         endElement={<Unit>تومان</Unit>}
-                        inputProps={{ size: 'sm', bg: 'bg.panel' }}
+                        inputProps={{ size: 'sm', bg: 'bg.panel', h: '31px', px: '1.5', fontSize: '11px' }}
                       />
                     </Table.Cell>
                   )}
@@ -413,7 +413,7 @@ export function ModelsTable({
                       onChange={(v) => patch(c.id, { inventory: v })}
                       disabled={!c.active}
                       endElement={<Unit>عدد</Unit>}
-                      inputProps={{ size: 'sm', bg: 'bg.panel' }}
+                      inputProps={{ size: 'sm', bg: 'bg.panel', h: '31px', px: '1.5', fontSize: '11px' }}
                     />
                   </Table.Cell>
                 </Table.Row>
@@ -482,21 +482,21 @@ export function ModelsTable({
                   <NumberField
                     value={c.price} onChange={(v) => patch(c.id, { price: v })}
                     disabled={!c.active} endElement={<Unit>تومان</Unit>}
-                    inputProps={{ size: 'sm', bg: 'bg.panel' }}
+                    inputProps={{ size: 'sm', bg: 'bg.panel', h: '31px', px: '1.5', fontSize: '11px' }}
                   />
                 </Box>
                 <Box flex="1" minW="120px">
                   <NumberField
                     value={c.salePrice} onChange={(v) => patch(c.id, { salePrice: v })}
                     disabled={!c.active} endElement={<Unit>تومان</Unit>}
-                    inputProps={{ size: 'sm', bg: 'bg.panel' }}
+                    inputProps={{ size: 'sm', bg: 'bg.panel', h: '31px', px: '1.5', fontSize: '11px' }}
                   />
                 </Box>
                 <Box flex="1" minW="110px">
                   <NumberField
                     value={c.inventory} onChange={(v) => patch(c.id, { inventory: v })}
                     disabled={!c.active} endElement={<Unit>عدد</Unit>}
-                    inputProps={{ size: 'sm', bg: 'bg.panel' }}
+                    inputProps={{ size: 'sm', bg: 'bg.panel', h: '31px', px: '1.5', fontSize: '11px' }}
                   />
                 </Box>
               </Flex>
@@ -558,7 +558,7 @@ function MatrixView({
                         onChange={(v) => onPatch(combo.id, { inventory: v })}
                         disabled={!combo.active}
                         placeholder="موجودی"
-                        inputProps={{ size: 'sm', bg: 'bg.panel' }}
+                        inputProps={{ size: 'sm', bg: 'bg.panel', h: '31px', px: '1.5', fontSize: '11px' }}
                       />
                     ) : (
                       <Text fontSize="2xs" color="fg.muted">—</Text>
