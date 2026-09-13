@@ -53,6 +53,13 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
   const [askOnEnter, setAskOnEnter] = useState(true)
   const [typeChosen, setTypeChosen] = useState(false)
   const [typeDialogOpen, setTypeDialogOpen] = useState(false)
+  /**
+   * نوعی که کاربر روی سوییچ کلیک کرده — دیالوگ با همین از پیش انتخاب‌شده باز
+   * می‌شود، نه با نوع فعلی (بازخورد کاربر، مورد ۵). کلیک روی «ساده» یعنی «می‌خواهم
+   * ساده شود»؛ دیالوگ باید همان را نشان دهد و فقط تأییدش را بگیرد.
+   * `null` = دیالوگِ ورود، که نوع فعلی را نشان می‌دهد.
+   */
+  const [pendingType, setPendingType] = useState<ProductTypeId | null>(null)
 
   useEffect(() => {
     let remembered = true
@@ -87,6 +94,7 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
     }))
     setTypeChosen(true)
     setTypeDialogOpen(false)
+    setPendingType(null)
   }
 
   // ─── وضعیت هر مرحله ─────────────────────────────────────────────────────────
@@ -235,7 +243,7 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
             {/* کلیک روی سوییچ، دیالوگ را باز می‌کند — تغییر نوع بی‌صدا نیست */}
             <ProductTypeSwitch
               value={form.productType}
-              onChange={() => setTypeDialogOpen(true)}
+              onChange={(t) => { setPendingType(t); setTypeDialogOpen(true) }}
             />
             <HeaderCTA label="انتشار" icon={<Upload size={16} />} onClick={save} disabled={!canPublish} />
           </Flex>
@@ -392,9 +400,9 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
       {/* ═══ دروازهٔ ورود: انتخاب نوع محصول ════════════════════════════════════ */}
       <ProductTypeDialog
         open={typeDialogOpen}
-        value={form.productType}
+        value={pendingType ?? form.productType}
         onConfirm={chooseType}
-        onClose={typeChosen ? () => setTypeDialogOpen(false) : undefined}
+        onClose={typeChosen ? () => { setTypeDialogOpen(false); setPendingType(null) } : undefined}
         askOnEnter={askOnEnter}
         onAskOnEnterChange={changeAskOnEnter}
       />

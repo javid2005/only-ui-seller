@@ -3,7 +3,7 @@ import {
   Box, Flex, Grid, Text, Input, NativeSelect, Button, Switch, chakra,
   Select, Alert, createListCollection, Portal,
 } from '@chakra-ui/react'
-import { DollarSign, Eye, EyeOff, Phone, Tag, Sparkles } from 'lucide-react'
+import { DollarSign, Eye, EyeOff, Info, Phone, Tag, Sparkles } from 'lucide-react'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { TitleBar } from '@/components/ui/TitleBar'
@@ -134,11 +134,15 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
   const tomanValue = isUsd ? priceNum * USD_RATE : effectivePrice
   const priceHelp = isGold
     ? 'طلا فقط با واحد تومان — محاسبه بر اساس فرمول طلا'
-    : !hasPrice
-      ? 'قیمت به تومان و به حروف نمایش داده می شود'
-      : isUsd
-        ? `(~ ${toPersianDigits(formatThousands(tomanValue))} تومان) ${toPersianWords(tomanValue)} تومان`
-        : `${toPersianWords(priceNum)} تومان`
+    : form.hasVariants
+      ? 'قیمت هر مدل در مرحلهٔ «مدل‌ها و تنوع» تعیین می‌شود'
+      : form.phoneSale
+        ? 'با فروش تلفنی، قیمت در فروشگاه نمایش داده نمی‌شود'
+        : !hasPrice
+          ? 'قیمت به تومان و به حروف نمایش داده می شود'
+          : isUsd
+            ? `(~ ${toPersianDigits(formatThousands(tomanValue))} تومان) ${toPersianWords(tomanValue)} تومان`
+            : `${toPersianWords(priceNum)} تومان`
 
   /**
    * تخفیف در طرح تأییدشده **مستقیم** وارد می‌شود: «قیمت با تخفیف» کنار «قیمت اصلی».
@@ -319,56 +323,64 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
           */}
           <Box bg="bg.subtle" borderWidth="1px" borderColor="border.muted" rounded="xl" p="11px">
 
-            {/* ۱. فروش تلفنی — بالاترین تصمیم، چون بقیه را غیرفعال می‌کند */}
-            <Flex
-              align="center"
-              gap="2.5"
-              px="2.5"
-              py="2"
-              rounded="lg"
-              borderWidth="1px"
-              borderColor={form.phoneSale ? 'orange.muted' : 'border.muted'}
-              bg={form.phoneSale ? 'orange.bg' : 'bg.panel'}
-              transition="background .18s, border-color .18s"
-              mb="2.5"
-            >
-              {/* FIRST = rightmost: آیکن ← عنوان و توضیح … سوییچ (چپ‌ترین) */}
-              <Box color={form.phoneSale ? 'orange.fg' : 'fg.muted'} flexShrink={0} display="flex">
-                <Phone size={16} />
-              </Box>
-              <Box flex="1" minW="0">
+            {/* ۱. فروش تلفنی — بالاترین تصمیم، چون بقیه را غیرفعال می‌کند.
+                یک‌خطی و فشرده (بازخورد کاربر، مورد ۴): توضیح بلندش به tooltip رفت
+                و فقط وقتی روشن است یک جملهٔ کوتاه زیر کادر می‌آید. */}
+            <Tooltip content={form.phoneSale
+              ? 'خریدار هیچ قیمتی نمی‌بیند؛ به‌جای دکمهٔ خرید، دکمهٔ «تماس» نشان داده می‌شود.'
+              : 'با روشن‌کردن، قیمت از ویترین پنهان و دکمهٔ خرید به «تماس» تبدیل می‌شود.'}>
+              <Flex
+                align="center"
+                gap="2"
+                px="2.5"
+                h="9"
+                rounded="lg"
+                borderWidth="1px"
+                borderColor={form.phoneSale ? 'orange.muted' : 'border.muted'}
+                bg={form.phoneSale ? 'orange.bg' : 'bg.panel'}
+                transition="background .18s, border-color .18s"
+                mb="2.5"
+              >
+                {/* FIRST = rightmost: آیکن ← عنوان … سوییچ (چپ‌ترین) */}
+                <Box color={form.phoneSale ? 'orange.fg' : 'fg.muted'} flexShrink={0} display="flex">
+                  <Phone size={15} />
+                </Box>
                 <chakra.label
                   htmlFor="phone-sale"
-                  display="block"
-                  fontSize="sm"
+                  flex="1"
+                  minW="0"
+                  fontSize="xs"
                   fontWeight="medium"
                   color="fg"
                   textAlign="start"
                   cursor="pointer"
+                  truncate
                 >
-                  فروش تلفنی
+                  فروش تلفنی — قیمت به خریدار نشان داده نشود
                 </chakra.label>
-                <Text fontSize="xs" color="fg.muted" textAlign="start" lineHeight="1.9">
-                  {form.phoneSale
-                    ? 'خریدار هیچ قیمتی نمی‌بیند؛ به‌جای دکمهٔ خرید، دکمهٔ «تماس» نشان داده می‌شود.'
-                    : 'با روشن‌کردن، قیمت از ویترین پنهان و دکمهٔ خرید به «تماس» تبدیل می‌شود.'}
-                </Text>
-              </Box>
-              <Switch.Root
-                id="phone-sale"
-                size="sm"
-                colorPalette="orange"
-                checked={form.phoneSale}
-                onCheckedChange={(e) => onChange({ phoneSale: e.checked })}
-                flexShrink={0}
-              >
-                <Switch.HiddenInput />
-                <Switch.Control><Switch.Thumb /></Switch.Control>
-              </Switch.Root>
-            </Flex>
+                <Switch.Root
+                  id="phone-sale"
+                  size="sm"
+                  colorPalette="orange"
+                  checked={form.phoneSale}
+                  onCheckedChange={(e) => onChange({ phoneSale: e.checked })}
+                  flexShrink={0}
+                >
+                  <Switch.HiddenInput />
+                  <Switch.Control><Switch.Thumb /></Switch.Control>
+                </Switch.Root>
+              </Flex>
+            </Tooltip>
 
             {/* ۲ و ۳. قیمت اصلی + تخفیف */}
-            <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)' }} gap="2.5" alignItems="start">
+            {/* بدون تخفیف: ستون دوم فقط به اندازهٔ دکمه (`auto`) — دکمه باید
+                «کنارِ» فیلد قیمت دیده شود نه نصفِ ردیف. با ثبت تخفیف، خلاصه‌اش
+                محتوای بیشتری دارد و ستون به نصف برمی‌گردد. */}
+            <Grid
+              templateColumns={{ base: '1fr', sm: hasDiscount ? 'repeat(2, 1fr)' : 'minmax(0, 1fr) auto' }}
+              gap="2.5"
+              alignItems="start"
+            >
               <NotchedField
                 label={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
                 required
@@ -436,14 +448,18 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
                     </Flex>
                   </Flex>
                 ) : (
+                  /* رنگی و هم‌قدِ فیلد قیمت (بازخورد کاربر، مورد ۴): نسخهٔ
+                     outlineِ تمام‌عرضِ قبلی نه به چشم می‌آمد و نه «کنارِ» فیلد
+                     دیده می‌شد — حالا ستون `auto` است و رنگ برند دارد. */
                   <Button
-                    variant="outline"
-                    w="full"
+                    colorPalette="brand"
                     h="11"
+                    px="4"
                     rounded="lg"
-                    bg="bg.panel"
                     gap="1.5"
                     fontSize="13px"
+                    fontWeight="semibold"
+                    w={{ base: 'full', sm: 'auto' }}
                     disabled={priceLocked || !form.price.trim()}
                     onClick={() => setDiscountOpen(true)}
                     {...pressable}
@@ -456,7 +472,25 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
               </Box>
             </Grid>
 
-            {form.phoneSale && (
+            {/* چرا قیمت قفل است — با زبان یک فروشندهٔ تازه‌کار (بازخورد کاربر،
+                مورد ۴). «غیرفعال بودن فیلد» به‌تنهایی برای کسی که اولین محصولش
+                را می‌سازد یعنی «خراب است»، نه «جای دیگری پر می‌شود». */}
+            {form.hasVariants && (
+              <Alert.Root status="info" variant="subtle" mt="2.5" rounded="lg" py="2" px="2.5">
+                <Alert.Indicator><Info size={15} /></Alert.Indicator>
+                <Alert.Content gap="0.5">
+                  <Alert.Title fontSize="xs">قیمت اینجا قفل است چون محصول شما مدل‌های مختلف دارد</Alert.Title>
+                  <Alert.Description fontSize="2xs" lineHeight="1.9">
+                    هر مدل (مثلاً هر رنگ یا هر سایز) می‌تواند قیمت خودش را داشته باشد، پس یک
+                    قیمتِ واحد برای کل محصول معنا ندارد. قیمت‌ها را در مرحلهٔ «مدل‌ها و تنوع»
+                    در جدول مدل‌ها وارد کنید. اگر همهٔ مدل‌ها یک قیمت دارند، در همان جدول
+                    «انتخاب همه» را بزنید و با «جایگزینی قیمت اصلی» یک‌جا برای همه ثبت کنید.
+                  </Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
+            )}
+
+            {form.phoneSale && !form.hasVariants && (
               <Text fontSize="2xs" color="orange.fg" textAlign="start" mt="2" lineHeight="1.9">
                 با فعال‌بودن فروش تلفنی، قیمت و تخفیف ثبت می‌مانند ولی در فروشگاه نمایش داده نمی‌شوند.
               </Text>

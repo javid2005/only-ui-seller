@@ -43,6 +43,15 @@ function Unit({ children }: { children: string }) {
  * RTL DOM order هر ردیف (first = rightmost): شناسه ← موجودی ← وزن.
  */
 export function WarehouseTab({ form, onChange, onSave }: WarehouseTabProps) {
+  /**
+   * با وجود تنوع، موجودیِ پایه فقط **آینهٔ** جمعِ مدل‌هاست و ویرایش نمی‌شود.
+   * (همان قاعدهٔ قیمت — یک عددِ مستقل اینجا با جدول مدل‌ها در تناقض می‌افتاد.)
+   */
+  const variantStockTotal = String(
+    form.combinations.filter((c) => c.active).reduce((sum, c) => sum + (Number(c.inventory) || 0), 0),
+  )
+  const inventoryLocked = form.hasVariants || form.unlimitedInventory
+
   return (
     <Flex direction="column" gap="5" w="full">
 
@@ -82,17 +91,23 @@ export function WarehouseTab({ form, onChange, onSave }: WarehouseTabProps) {
             <Flex align="end" gap="2.5" minW="0">
               <NotchedField
                 label="موجودی اولیه"
-                required
+                required={!form.hasVariants}
                 stacked
                 dataField="inventory"
-                disabled={form.unlimitedInventory}
+                disabled={inventoryLocked}
                 endElement={<Unit>عدد</Unit>}
+                /* پاسخ به پرسش کاربر (مورد ۴): بله — با وجود تنوع، موجودیِ پایه هم
+                   مثل قیمت قفل می‌شود. دلیلش یکی است: موجودیِ واقعی جمعِ موجودیِ
+                   مدل‌هاست و یک عددِ جدا اینجا یعنی دو حقیقتِ متناقض. */
+                hint={form.hasVariants
+                  ? 'موجودی هر مدل در مرحلهٔ «مدل‌ها و تنوع» ثبت می‌شود؛ موجودی کل، جمع همان‌هاست.'
+                  : undefined}
               >
                 <NumberField
-                  value={form.inventory}
+                  value={form.hasVariants ? variantStockTotal : form.inventory}
                   onChange={(v) => onChange({ inventory: v })}
-                  disabled={form.unlimitedInventory}
-                  showSteppers
+                  disabled={inventoryLocked}
+                  showSteppers={!inventoryLocked}
                   inputProps={bareControlSm}
                 />
               </NotchedField>
@@ -103,6 +118,7 @@ export function WarehouseTab({ form, onChange, onSave }: WarehouseTabProps) {
                   colorPalette="brand"
                   checked={form.unlimitedInventory}
                   onCheckedChange={(e) => onChange({ unlimitedInventory: e.checked })}
+                  disabled={form.hasVariants}
                 >
                   <Switch.HiddenInput />
                   <Switch.Control><Switch.Thumb /></Switch.Control>
