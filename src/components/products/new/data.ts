@@ -456,7 +456,7 @@ export const SEO_CHECKS: SeoCheck[] = [
   },
   {
     id: 'tags', label: 'برچسب‌ها', hint: 'حداقل یک برچسب مرتبط',
-    step: 'basic', ok: (f) => f.tags.length > 0,
+    step: 'specs', ok: (f) => f.tags.length > 0,
   },
 ]
 

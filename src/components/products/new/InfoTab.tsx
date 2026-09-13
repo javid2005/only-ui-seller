@@ -1,6 +1,6 @@
 import {
   Box, Flex, Grid, Text, Input, NativeSelect, chakra,
-  Select, Switch, Alert, TagsInput,
+  Select, Switch, Alert,
   Collapsible, createListCollection, Portal,
 } from '@chakra-ui/react'
 import { DollarSign, Eye, CalendarClock, Phone } from 'lucide-react'
@@ -361,42 +361,6 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
             </Alert.Root>
           )}
         </Flex>
-      </SectionCard>
-
-      {/* ═══ برچسب ها ═══════════════════════════════════════════════════════════ */}
-      <SectionCard
-        title="برچسب‌های محصول"
-        subtitle="کلمات یا عبارات کوتاهی که به معرفی بهتر کالا کمک می‌کنند"
-        helpTopic="برچسب‌های محصول"
-      >
-        <Box>
-          {/* عرض ۱۰۰٪: نه فقط روی Root — خودِ Control هم باید کشیده شود، وگرنه
-              والد عرض را محدود می‌کند و فیلد باریک می‌ماند (ریشهٔ بازخورد تکرارشده). */}
-          <TagsInput.Root
-            value={form.tags}
-            onValueChange={(e) => onChange({ tags: e.value })}
-            w="full"
-            maxW="none"
-          >
-            <TagsInput.Control w="full" minW="0">
-              <TagsInput.Context>
-                {(api) =>
-                  api.value.map((value, index) => (
-                    <TagsInput.Item key={`${value}-${index}`} index={index} value={value}>
-                      <TagsInput.ItemPreview>
-                        <TagsInput.ItemText>{value}</TagsInput.ItemText>
-                        <TagsInput.ItemDeleteTrigger />
-                      </TagsInput.ItemPreview>
-                      <TagsInput.ItemInput />
-                    </TagsInput.Item>
-                  ))
-                }
-              </TagsInput.Context>
-              <TagsInput.Input placeholder="افزودن ..." />
-            </TagsInput.Control>
-            <TagsInput.HiddenInput />
-          </TagsInput.Root>
-        </Box>
       </SectionCard>
 
       {/* ═══ Footer ═════════════════════════════════════════════════════════════ */}
