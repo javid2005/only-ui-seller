@@ -39,6 +39,9 @@ export function SectionCard({
       borderColor="border"
       // شعاع‌های طرح از پیش‌فرض چاکرا گردترند: کارت ۱۶px، پنل ۱۲px، فیلد ۸px
       rounded="2xl"
+      // سایهٔ ملایم — در طرح هر کارت کمی از سطح صفحه بلند می‌شود. بدون آن همهٔ
+      // بخش‌ها یک تخته می‌شوند و چشم مرز بخش‌ها را پیدا نمی‌کند.
+      boxShadow="xs"
       p={{ base: '4', sm: '5' }}
       w="full"
     >
@@ -46,7 +49,11 @@ export function SectionCard({
         <Box minW="0">
           {/* FIRST = rightmost: عنوان · سپس آیکن راهنما */}
           <Flex align="center" gap="2">
-            <Text fontSize="md" fontWeight="semibold" color="fg">{title}</Text>
+            {/* رنگ برند برای عنوان بخش، نه fg: در طرح همین رنگ است که چشم را روی
+                سرتیتر بخش‌ها می‌نشاند و آن‌ها را از متن معمولی جدا می‌کند. */}
+            <Text fontSize="sm" fontWeight="bold" color="brand.fg" letterSpacing="-0.01em">
+              {title}
+            </Text>
             {(help || helpTopic) && (
               <Tooltip content={helpTopic ? `راهنمای «${title}»` : help}>
                 <IconButton
@@ -113,7 +120,7 @@ export function Panel({ title, subtitle, icon, tinted, children }: PanelProps) {
           {/* FIRST = rightmost: آیکن (در طرح راست‌ترین است) · سپس عنوان و زیرعنوان */}
           {icon && <Box color="fg.muted" flexShrink={0}>{icon}</Box>}
           <Box minW="0" textAlign="start" flex="1">
-            <Text fontSize="sm" fontWeight="medium" color="fg">{title}</Text>
+            <Text fontSize="xs" fontWeight="semibold" color="fg">{title}</Text>
             {subtitle && <Text fontSize="xs" color="fg.muted">{subtitle}</Text>}
           </Box>
         </Flex>

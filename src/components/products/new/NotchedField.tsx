@@ -58,10 +58,10 @@ export function NotchedField({
         <chakra.legend
           px="1"
           mx="1"
-          fontSize="xs"
-          fontWeight="medium"
+          fontSize="11px"
+          fontWeight="semibold"
           color={error ? 'red.fg' : 'fg.muted'}
-          lineHeight="1.4"
+          lineHeight="16px"
         >
           {label}
           {required && <chakra.span color="red.fg" ms="1" aria-hidden>*</chakra.span>}
@@ -90,12 +90,19 @@ export function NotchedField({
 }
 
 // ─── سبکِ «بدون کادر» برای کنترل داخل NotchedField ───────────────────────────────
-/** روی Input/NumberField داخل NotchedField بگذار تا کادر دوم نسازد. */
+/**
+ * روی Input/NumberField داخل NotchedField بگذار تا کادر دوم نسازد.
+ *
+ * `fontSize` عمداً از پیش‌فرض چاکرا کوچک‌تر است: طرح تأییدشده فیلدها را متراکم‌تر
+ * می‌چیند (۱۲px) و با اندازهٔ پیش‌فرض، فرمِ شش‌مرحله‌ای بی‌دلیل بلند و پراکنده
+ * می‌شود. ۱۳px نقطهٔ تعادلِ تراکمِ طرح و خوانایی فارسی است.
+ */
 export const bareControl = {
   border: 'none',
   outline: 'none',
   bg: 'transparent',
   px: '0',
   h: '10',
+  fontSize: '13px',
   _focusVisible: { boxShadow: 'none', outline: 'none' },
 } as const

@@ -1,5 +1,5 @@
 import {
-  Box, Flex, Grid, Text, Input, NativeSelect,
+  Box, Flex, Grid, Text, Input, NativeSelect, chakra,
   Select, Switch, Alert, TagsInput,
   Collapsible, createListCollection, Portal,
 } from '@chakra-ui/react'
@@ -183,6 +183,32 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
         title="قیمت‌گذاری"
         subtitle="قیمت را با تومان یا دلار تعیین کنید؛ در حالت دلار، مبلغ تومانی به‌صورت زنده محاسبه می‌شود"
         helpTopic="قیمت‌گذاری"
+        actions={
+          /* سگمنت واحد در سرتیتر — در طرح انتخاب واحد اینجاست، نه داخل خود فیلد.
+             این‌طور واحد یک تصمیمِ سطحِ بخش دیده می‌شود، نه یک addon گمِ کنار عدد. */
+          !isGold ? (
+            <Flex gap="1" bg="bg.subtle" rounded="l2" p="1" flexShrink={0}>
+              {CURRENCY_UNITS.map((u) => (
+                <chakra.button
+                  key={u.value}
+                  type="button"
+                  aria-pressed={form.currency === u.value}
+                  onClick={() => onChange({ currency: u.value })}
+                  px="3"
+                  h="7"
+                  rounded="l1"
+                  fontSize="xs"
+                  fontWeight={form.currency === u.value ? 'semibold' : 'normal'}
+                  bg={form.currency === u.value ? 'bg.panel' : 'transparent'}
+                  color={form.currency === u.value ? 'brand.fg' : 'fg.muted'}
+                  boxShadow={form.currency === u.value ? 'xs' : 'none'}
+                >
+                  {u.label}
+                </chakra.button>
+              ))}
+            </Flex>
+          ) : undefined
+        }
       >
         <Flex direction="column" gap="4">
 
@@ -197,17 +223,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                 required
                 hint={priceHelp}
                 disabled={isGold || form.phoneSale || form.hasVariants}
-                endElement={
-                  isGold ? (
-                    <Text fontSize="xs" color="fg.muted">تومان</Text>
-                  ) : (
-                    <UnitSelect
-                      value={form.currency}
-                      onChange={(v) => onChange({ currency: v })}
-                      options={CURRENCY_UNITS}
-                    />
-                  )
-                }
+                endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
               >
                 <NumberField
                   placeholder={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
