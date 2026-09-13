@@ -170,18 +170,28 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
           w="full"
           onSubmit={(e) => { e.preventDefault(); addTag() }}
         >
+          {/*
+            کادر برچسب‌ها **یک فیلد** است، نه یک جعبهٔ دور فیلد: padding داخلی کم و
+            ارتفاع پایه برابر دکمهٔ کنارش (۴۲px). قبلاً padding ۸px داشت و کادر را
+            بلندتر از دکمه می‌کرد — همان «حاشیهٔ اضافه» که شکل را خراب کرده بود.
+          */}
           <Box
             flex="1"
             minW="0"
+            minH="42px"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
             borderWidth="1px"
             borderColor="border"
             rounded="lg"
             bg="bg.panel"
-            p="2"
+            px="1.5"
+            py="1"
             _focusWithin={{ borderColor: 'brand.solid', boxShadow: '0 0 0 1px var(--chakra-colors-brand-solid)' }}
           >
             {form.tags.length > 0 && (
-              <Flex gap="2" wrap="wrap" mb="2">
+              <Flex gap="1.5" wrap="wrap" mb="1.5">
                 {form.tags.map((t) => (
                   <Flex
                     key={t}
@@ -213,8 +223,9 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
             <Input
               variant="outline"
               border="none"
+              bg="transparent"
               px="1"
-              h="8"
+              h="7"
               fontSize="13px"
               _focusVisible={{ boxShadow: 'none' }}
               placeholder="مثلاً گوشی پرچمدار"
@@ -225,6 +236,9 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
           <IconButton
             type="submit"
             size="sm"
+            h="42px"
+            w="38px"
+            minW="38px"
             colorPalette="brand"
             aria-label="افزودن برچسب"
             disabled={!tag.trim()}

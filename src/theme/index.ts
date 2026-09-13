@@ -30,6 +30,27 @@ const layoutConfig = defineConfig({
     },
   },
   globalCss: {
+    // ─── نشانگر ماوس روی هر چیزِ کلیک‌شدنی ───────────────────────────────────
+    // بازخورد مالک محصول (۱۴۰۵/۰۶): در بسیاری از جاها نشانگر به دست تغییر نمی‌کرد.
+    // ریشه‌اش تک‌تک کامپوننت‌ها نبود: توکن `cursor.button` چاکرا pointer است ولی
+    // فقط روی recipe دکمه اعمال می‌شود — `chakra.button` خام، تریگر Select، ریشهٔ
+    // Switch/Checkbox و تب‌ها هیچ‌کدام cursor نمی‌گیرند و به `default` مرورگر
+    // می‌افتند. پس قاعده را همین‌جا سراسری می‌گذاریم، نه در هر فایل.
+    [[
+      'button:not(:disabled)',
+      '[role="button"]:not([aria-disabled="true"])',
+      '[role="tab"]', '[role="switch"]', '[role="option"]', '[role="menuitem"]',
+      '[role="radio"]', '[role="checkbox"]',
+      'label[data-scope="switch"]', 'label[data-scope="checkbox"]', 'label[data-scope="radio"]',
+      '[data-scope="select"][data-part="trigger"]',
+      '[data-scope="combobox"][data-part="trigger"]',
+      'a[href]', 'summary', 'select',
+    ].join(', ')]: {
+      cursor: 'pointer',
+    },
+    'button:disabled, [aria-disabled="true"], [data-disabled]': {
+      cursor: 'not-allowed',
+    },
     'html, body': {
       direction: 'rtl',
       fontFamily: 'body',

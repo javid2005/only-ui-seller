@@ -367,6 +367,8 @@ export interface ProductForm {
   // ── تنظیمات ارسال ──
   prepDays: string
   shippingProfile: string
+  /** هزینهٔ ثابت ارسال (تومان) — فقط وقتی shippingProfile === 'fixed' */
+  shippingFixedCost: string
   shippingNote: string
   /** آیا محصول تنوع دارد؟ (از تب «تنوع‌ها» — با وجود تنوع، موجودی/قیمت سطح محصول read-only می‌شود) */
   hasVariants: boolean
@@ -414,6 +416,7 @@ export const EMPTY_FORM: ProductForm = {
   packHeight: '',
   prepDays: '1',
   shippingProfile: 'store',
+  shippingFixedCost: '',
   shippingNote: '',
   hasVariants: false,
   attributes: [],

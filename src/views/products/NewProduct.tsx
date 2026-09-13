@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Box, Flex, IconButton } from '@chakra-ui/react'
 import { Upload, Save, Eye } from 'lucide-react'
@@ -20,6 +20,9 @@ import {
   type ProductForm, type ProductTypeId, type StepId,
 } from '@/components/products/new/data'
 
+/** ترجیح «دیالوگ نوع محصول در ورود پرسیده شود یا نه» */
+const ASK_TYPE_KEY = 'vitrina-product-type-ask'
+
 /**
  * NewProduct — صفحه «محصول جدید»
  * Template: Two Columns Right Center (نویگیشن مرحله‌ای راست + فرم مرکز max 960)
@@ -27,16 +30,40 @@ import {
  *
  * سه تب: اطلاعات محصول / گالری / تنوع‌ها (Accordion + ماتریس ترکیب‌ها) — UI + state محلی.
  */
-export function NewProduct() {
+export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
   const router = useRouter()
   const isCompact = useCompactMode()
 
   const [activeStep, setActiveStep] = useState<StepId>('basic')
   const [form, setForm] = useState<ProductForm>(EMPTY_FORM)
 
-  // دیالوگ نوع محصول: در ورود اول باز است و تا انتخاب نشدن بسته نمی‌شود
+  /**
+   * دیالوگ نوع محصول.
+   *
+   * قاعده‌ای که مالک محصول خواست:
+   *  • «محصول جدید» + کاربر قبلاً تیک «دیگر نپرس» را نزده → در ورود باز می‌شود.
+   *  • «محصول جدید» + تیک زده → باز نمی‌شود؛ نوع پیش‌فرض می‌ماند و کاربر هر وقت
+   *    خواست از سوییچ بالای فرم بازش می‌کند (همان‌جا هم می‌تواند تیک را بردارد).
+   *  • «ویرایش محصول» → هرگز در ورود باز نمی‌شود، چون نوع قبلاً تعیین شده است.
+   * ترجیح در `localStorage` می‌ماند تا بین نشست‌ها پایدار باشد.
+   */
+  const [askOnEnter, setAskOnEnter] = useState(true)
   const [typeChosen, setTypeChosen] = useState(false)
-  const [typeDialogOpen, setTypeDialogOpen] = useState(true)
+  const [typeDialogOpen, setTypeDialogOpen] = useState(false)
+
+  useEffect(() => {
+    let remembered = true
+    try { remembered = localStorage.getItem(ASK_TYPE_KEY) !== 'never' } catch { /* حالت خصوصی */ }
+    setAskOnEnter(remembered)
+    if (isEdit) return
+    if (remembered) setTypeDialogOpen(true)
+    else setTypeChosen(true)
+  }, [isEdit])
+
+  const changeAskOnEnter = (v: boolean) => {
+    setAskOnEnter(v)
+    try { localStorage.setItem(ASK_TYPE_KEY, v ? 'always' : 'never') } catch { /* حالت خصوصی */ }
+  }
 
   const patch = (p: Partial<ProductForm>) => setForm((prev) => ({ ...prev, ...p }))
 
@@ -131,9 +158,10 @@ export function NewProduct() {
                 <Eye size={17} />
               </IconButton>
             </Tooltip>
+            {/* کلیک روی سوییچ، دیالوگ را باز می‌کند — تغییر نوع بی‌صدا نیست */}
             <ProductTypeSwitch
               value={form.productType}
-              onChange={(t) => t !== form.productType && chooseType(t)}
+              onChange={() => setTypeDialogOpen(true)}
             />
             <HeaderCTA label="انتشار" icon={<Upload size={16} />} onClick={save} disabled={!canPublish} />
           </Flex>
@@ -141,19 +169,32 @@ export function NewProduct() {
       />
       </Box>
 
-      {/* ─── Panel (Two Columns Right Center) ─────────────────────────────────── */}
-      <Box
-        bg="bg.panel"
-        borderWidth="1px"
-        borderColor="border"
-        rounded="2xl"
-        pt={isCompact ? '4' : { base: '4', sm: '6' }}
-        pb="6"
-        px={isCompact ? '4' : { base: '4', sm: '6' }}
-        w="full"
-      >
-        {/* StepNav افقی — موبایل/compact (بالای فرم) */}
-        <Box display={isCompact ? 'block' : { base: 'block', lg: 'none' }} mb="6">
+      {/*
+        ─── ناحیهٔ فرم ────────────────────────────────────────────────────────────
+        اینجا عمداً **کادر و پس‌زمینه ندارد**. در پوستهٔ ادمین ویترینا یک بدنهٔ
+        خاکستری داریم و کارت‌های سفید روی آن شناورند؛ یک کارت سفیدِ بزرگ که
+        کارت‌های سفید دیگر را در خود بگیرد، همان تفکیک را از بین می‌برد (کارت روی
+        کارت = بدون تضاد). پس استپر، پیش‌نمایش و کارت‌های فرم هر کدام مستقیم روی
+        خاکستری می‌نشینند — مثل پروتوتایپ.
+      */}
+      <Box w="full">
+        {/* StepNav افقی — موبایل/compact.
+            **چسبان** است: در موبایل تنها راه پرش بین مراحل همین نوار است، و اگر
+            با اسکرول از دید خارج شود کاربر باید تا بالای صفحه برگردد. کارت سفید
+            + سایه تا وقتی روی محتوا می‌لغزد مرزش پیدا باشد. */}
+        <Box
+          display={isCompact ? 'block' : { base: 'block', lg: 'none' }}
+          mb="4"
+          position="sticky"
+          top="2"
+          zIndex="docked"
+          bg="bg.panel"
+          borderWidth="1px"
+          borderColor="border"
+          rounded="2xl"
+          p="2"
+          boxShadow="sm"
+        >
           <StepNav
             orientation="horizontal"
             active={activeStep}
@@ -161,12 +202,9 @@ export function NewProduct() {
             statuses={statuses}
             steps={steps}
           />
-          <Box mt="4">
-            <ProductPreviewCard form={form} collapsible />
-          </Box>
         </Box>
 
-        <Flex gap="10" align="start">
+        <Flex gap="4" align="start">
 
           {/* FIRST = rightmost در RTL: ستون Start — Vertical StepNav (lg+، non-compact) */}
           {!isCompact && (
@@ -179,15 +217,18 @@ export function NewProduct() {
               alignSelf="start"
             >
               <Flex direction="column" gap="4">
-                <StepNav
-                  orientation="vertical"
-                  active={activeStep}
-                  onSelect={setActiveStep}
-                  statuses={statuses}
-                  steps={steps}
-                />
+                {/* استپر خودش یک کارت سفید شناور است، نه بخشی از یک کادر بزرگ‌تر */}
+                <Box bg="bg.panel" borderWidth="1px" borderColor="border" rounded="2xl" p="3" boxShadow="xs">
+                  <StepNav
+                    orientation="vertical"
+                    active={activeStep}
+                    onSelect={setActiveStep}
+                    statuses={statuses}
+                    steps={steps}
+                  />
+                </Box>
                 {/* پیش‌نمایش زندهٔ محصول — زیر استپر، مثل طرح */}
-                <ProductPreviewCard form={form} />
+                <ProductPreviewCard form={form} variant="rail" />
                 {/* نشانگر ذخیرهٔ خودکار — زیر ریل، مثل طرح */}
                 <SaveStatus watch={form} />
               </Flex>
@@ -245,12 +286,19 @@ export function NewProduct() {
         </Flex>
       </Box>
 
+      {/* پیش‌نمایش موبایل — نوار فشردهٔ چسبیده به پایین، با ماکسیمایز */}
+      <Box display={isCompact ? 'block' : { base: 'block', lg: 'none' }}>
+        <ProductPreviewCard form={form} variant="dock" />
+      </Box>
+
       {/* ═══ دروازهٔ ورود: انتخاب نوع محصول ════════════════════════════════════ */}
       <ProductTypeDialog
         open={typeDialogOpen}
         value={form.productType}
         onConfirm={chooseType}
         onClose={typeChosen ? () => setTypeDialogOpen(false) : undefined}
+        askOnEnter={askOnEnter}
+        onAskOnEnterChange={changeAskOnEnter}
       />
 
     </Flex>

@@ -39,6 +39,9 @@ export interface NotchedFieldProps {
 export function NotchedField({
   label, required, hint, error, endElement, disabled, tinted, stacked, children,
 }: NotchedFieldProps) {
+  // همان پس‌زمینه‌ای که خودِ کادر دارد — legend باید رویش بنشیند، نه کنارش (پایین‌تر)
+  const surface = disabled ? 'bg.subtle' : stacked || !tinted ? 'bg.panel' : 'bg.subtle'
+
   return (
     <Box w="full" minW="0">
       {stacked && (
@@ -71,7 +74,7 @@ export function NotchedField({
         borderWidth="1px"
         borderColor={error ? 'red.solid' : 'border'}
         rounded="lg"
-        bg={disabled ? 'bg.subtle' : stacked || !tinted ? 'bg.panel' : 'bg.subtle'}
+        bg={surface}
         transition="border-color 0.15s, box-shadow 0.15s"
         _focusWithin={
           error
@@ -81,9 +84,16 @@ export function NotchedField({
       >
         {/* در حالت stacked لیبل بالای کادر است، پس legend خالی می‌ماند و بریدگی نمی‌خورد */}
         {!stacked && (
+          /*
+            پس‌زمینهٔ legend عمدی است: مرورگر بریدگی را از **حاشیه** می‌زند ولی
+            حلقهٔ focus (box-shadow) دور کل کادر کشیده می‌شود و از پشت متنِ لیبل
+            رد می‌شد — همان «خط نازک اضافه زیر عنوان فیلد». با هم‌رنگ‌کردن legend
+            با سطحِ کادر، آن خط پوشانده می‌شود بدون هیچ offset دستی.
+          */
           <chakra.legend
             px="1"
             mx="1"
+            bg={surface}
             fontSize="11px"
             fontWeight="semibold"
             color={error ? 'red.fg' : 'fg.muted'}

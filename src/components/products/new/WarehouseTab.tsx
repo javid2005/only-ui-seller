@@ -1,5 +1,5 @@
-import { Flex, Grid, Input, Text, Switch, Select, Portal, createListCollection } from '@chakra-ui/react'
-import { Package, Settings } from 'lucide-react'
+import { Flex, Grid, Input, Text, Switch, Select, Portal, Button, chakra, createListCollection } from '@chakra-ui/react'
+import { Package, Settings, ExternalLink } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { NumberField } from '@/components/ui/NumberField'
@@ -182,6 +182,24 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
         title="تنظیمات ارسال"
         subtitle="زمان آماده‌سازی، نحوه محاسبه هزینه و توضیحی که در صورت نیاز به خریدار نمایش داده می‌شود مشخص کنید."
         helpTopic="تنظیمات ارسال"
+        actions={
+          /* میان‌بر به تنظیمات ارسالِ فروشگاه — در **تب تازه** باز می‌شود تا فرمِ
+             نیمه‌پرِ محصول از دست نرود (طرح تأییدشده هم همین را داشت). */
+          <Button
+            asChild
+            size="xs"
+            variant="outline"
+            rounded="l2"
+            gap="1.5"
+            flexShrink={0}
+          >
+            <chakra.a href="/settings/shipping" target="_blank" rel="noopener noreferrer">
+              {/* FIRST = rightmost: آیکن (leading) */}
+              <ExternalLink size={13} />
+              تنظیمات ارسال فروشگاه
+            </chakra.a>
+          </Button>
+        }
       >
         {/* FIRST = rightmost: زمان آماده‌سازی ← هزینه ← توضیح.
             در طرح هر کدام یک پنل با عنوان بالای کنترل است، نه فیلدِ لیبل‌روی‌کادر. */}
@@ -223,6 +241,25 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
                 </Select.Positioner>
               </Portal>
             </Select.Root>
+
+            {/* «هزینهٔ ثابت» یک مبلغ می‌خواهد — فیلدش فقط با همان انتخاب ظاهر می‌شود */}
+            {form.shippingProfile === 'fixed' && (
+              <Flex
+                mt="2.5"
+                animationName="fade-in, slide-from-top"
+                animationDuration="180ms"
+                animationTimingFunction="ease-out"
+              >
+                <NotchedField label="هزینهٔ ثابت ارسال" required endElement={<Unit>تومان</Unit>}>
+                  <NumberField
+                    value={form.shippingFixedCost}
+                    onChange={(v) => onChange({ shippingFixedCost: v })}
+                    placeholder="مثال: ۴۵٬۰۰۰"
+                    inputProps={bareControlSm}
+                  />
+                </NotchedField>
+              </Flex>
+            )}
           </Panel>
 
           <Panel title="توضیح ارسال">

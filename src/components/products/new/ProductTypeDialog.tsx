@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Dialog, Portal, Text, Flex, Grid, Button, Box, Icon, chakra } from '@chakra-ui/react'
+import { Dialog, Portal, Text, Flex, Grid, Button, Box, Icon, Checkbox, chakra } from '@chakra-ui/react'
 import { Box as BoxIcon, LayoutGrid } from 'lucide-react'
 import { PRODUCT_TYPES, type ProductTypeId } from './data'
+import { ProductTypeArt } from './ProductTypeArt'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -12,6 +13,9 @@ export interface ProductTypeDialogProps {
   onConfirm: (type: ProductTypeId) => void
   /** بستن بدون تغییر — فقط وقتی قبلاً نوعی انتخاب شده باشد */
   onClose?: () => void
+  /** «دیگر در ورود نشان نده» — تیکِ داخل دیالوگ */
+  askOnEnter: boolean
+  onAskOnEnterChange: (v: boolean) => void
 }
 
 const TYPE_ICON: Record<ProductTypeId, typeof BoxIcon> = {
@@ -29,7 +33,9 @@ const TYPE_ICON: Record<ProductTypeId, typeof BoxIcon> = {
  *
  * RTL DOM order هر کارت: [آیکن — راست] [عنوان + زیرعنوان]، و توضیح زیرشان.
  */
-export function ProductTypeDialog({ open, value, onConfirm, onClose }: ProductTypeDialogProps) {
+export function ProductTypeDialog({
+  open, value, onConfirm, onClose, askOnEnter, onAskOnEnterChange,
+}: ProductTypeDialogProps) {
   const [pick, setPick] = useState<ProductTypeId>(value)
 
   useEffect(() => {
@@ -119,6 +125,14 @@ export function ProductTypeDialog({ open, value, onConfirm, onClose }: ProductTy
                           <Text fontSize="xs" color="fg.muted">{t.tagline}</Text>
                         </Box>
                       </Flex>
+                      {/* تصویر انتزاعیِ نوع — طرح تأییدشده این را داشت و بدون آن
+                          دو گزینه فقط دو بلوک متن‌اند */}
+                      <ProductTypeArt
+                        type={t.id}
+                        rounded="14px"
+                        borderWidth="1px"
+                        borderColor={selected ? 'brand.muted' : 'border.muted'}
+                      />
                       <Text fontSize="xs" color="fg.muted" lineHeight="1.9">
                         {t.description}
                       </Text>
@@ -129,14 +143,28 @@ export function ProductTypeDialog({ open, value, onConfirm, onClose }: ProductTy
             </Dialog.Body>
 
             <Dialog.Footer px="6" pt="0" pb="5">
-              <Flex justify="end" w="full" gap="3">
-                {onClose && (
-                  <Button variant="outline" onClick={onClose}>انصراف</Button>
-                )}
-                {/* LAST = leftmost: اقدام اصلی */}
-                <Button colorPalette="brand" onClick={() => onConfirm(pick)}>
-                  تأیید و شروع
-                </Button>
+              {/* FIRST = rightmost: تیکِ «دیگر نپرس» · LAST = leftmost: اقدام اصلی */}
+              <Flex align="center" justify="space-between" w="full" gap="3" wrap="wrap">
+                <Checkbox.Root
+                  size="sm"
+                  checked={!askOnEnter}
+                  onCheckedChange={(e) => onAskOnEnterChange(e.checked !== true)}
+                >
+                  <Checkbox.HiddenInput />
+                  <Checkbox.Control />
+                  <Checkbox.Label fontSize="xs" color="fg.muted">
+                    دیگر در ورود این پرسش را نشان نده
+                  </Checkbox.Label>
+                </Checkbox.Root>
+
+                <Flex gap="3" flexShrink={0}>
+                  {onClose && (
+                    <Button variant="outline" onClick={onClose}>انصراف</Button>
+                  )}
+                  <Button colorPalette="brand" onClick={() => onConfirm(pick)}>
+                    تأیید و شروع
+                  </Button>
+                </Flex>
               </Flex>
             </Dialog.Footer>
 
@@ -155,6 +183,9 @@ export function ProductTypeDialog({ open, value, onConfirm, onClose }: ProductTy
 export function ProductTypeSwitch({
   value, onChange,
 }: { value: ProductTypeId; onChange: (t: ProductTypeId) => void }) {
+  // کلیک روی هر گزینه **دیالوگ را باز می‌کند**، نه اینکه بی‌صدا نوع را عوض کند:
+  // تغییر نوع محصول ساختار قیمت و تنوع را عوض می‌کند و کاربر باید همان تصویر و
+  // توضیحِ ورود را دوباره ببیند (خواستهٔ صریح مالک محصول).
   return (
     <Flex
       role="group"
