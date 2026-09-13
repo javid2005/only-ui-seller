@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Box, Flex } from '@chakra-ui/react'
-import { Upload } from 'lucide-react'
+import { Box, Flex, IconButton } from '@chakra-ui/react'
+import { Upload, Save, Eye } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { Header, HeaderCTA } from '@/components/layout/Header'
+import { Tooltip } from '@/components/ui/Tooltip'
 import { StepNav, type StepStatus } from '@/components/products/new/StepNav'
 import { ProductTypeDialog, ProductTypeSwitch } from '@/components/products/new/ProductTypeDialog'
 import { InfoTab } from '@/components/products/new/InfoTab'
@@ -97,7 +98,16 @@ export function NewProduct() {
   return (
     <Flex direction="column" gap="4" w="full">
 
-      {/* ─── Page header ─────────────────────────────────────────────────────── */}
+      {/* ─── نوار ابزار — در طرح یک کارت مستقل است، نه سرتیتر لخت ─────────────── */}
+      <Box
+        bg="bg.panel"
+        borderWidth="1px"
+        borderColor="border"
+        rounded="2xl"
+        px={isCompact ? '4' : { base: '4', sm: '6' }}
+        py={isCompact ? '3' : '4'}
+        w="full"
+      >
       <Header
         title="محصول جدید"
         breadcrumbs={[
@@ -107,7 +117,18 @@ export function NewProduct() {
         ]}
         cta={
           /* FIRST = rightmost: سوییچ نوع محصول · LAST = leftmost: انتشار */
-          <Flex align="center" gap="3" wrap="wrap" justify="end">
+          <Flex align="center" gap="2" wrap="wrap" justify="end">
+            {/* FIRST = rightmost: کنش‌های آیکنی · سپس سوییچ نوع · LAST: انتشار */}
+            <Tooltip content="ذخیره تغییرات">
+              <IconButton size="sm" variant="ghost" rounded="l2" aria-label="ذخیره تغییرات" onClick={save}>
+                <Save size={17} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="نمایش صفحه محصول">
+              <IconButton size="sm" variant="ghost" rounded="l2" aria-label="نمایش صفحه محصول">
+                <Eye size={17} />
+              </IconButton>
+            </Tooltip>
             <ProductTypeSwitch
               value={form.productType}
               onChange={(t) => t !== form.productType && chooseType(t)}
@@ -116,6 +137,7 @@ export function NewProduct() {
           </Flex>
         }
       />
+      </Box>
 
       {/* ─── Panel (Two Columns Right Center) ─────────────────────────────────── */}
       <Box
@@ -169,7 +191,20 @@ export function NewProduct() {
           )}
 
           {/* SECOND: ستون Middle (مرکز) — max 960 */}
-          <Flex direction="column" gap="4" maxW="960px" flex="1" minW="0">
+          {/* کلیدِ activeStep باعث می‌شود انیمیشن با هر تعویض مرحله دوباره اجرا شود.
+              مدت کوتاه و فقط fade+slide کوچک — جابه‌جایی را روشن می‌کند بدون کند کردن کار.
+              `prefers-reduced-motion` را خودِ Chakra در این توکن‌ها رعایت می‌کند. */}
+          <Flex
+            key={activeStep}
+            direction="column"
+            gap="4"
+            maxW="960px"
+            flex="1"
+            minW="0"
+            animationName="fade-in, slide-from-bottom"
+            animationDuration="240ms"
+            animationTimingFunction="ease-out"
+          >
             {activeStep === 'basic' && (
               <InfoTab form={form} onChange={patch} onBack={goBack} onSave={save} />
             )}
