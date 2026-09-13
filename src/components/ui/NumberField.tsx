@@ -143,13 +143,21 @@ export function NumberField({
   // در طرح تأییدشده این کلیدها تا وقتی ماوس روی فیلد نیست دیده نمی‌شوند و فیلد را
   // شلوغ نمی‌کنند. روی دستگاه لمسی (بدون hover) همیشه دیده می‌شوند، وگرنه
   // دسترس‌ناپذیر می‌شدند.
-  const steppers = showSteppers ? (
+  const steppers = showSteppers && !disabled ? (
     <Box
       display="flex"
       flexDirection="column"
-      h="full"
+      alignItems="center"
       justifyContent="center"
-      opacity={{ base: 1, _hover: 1 }}
+      w="24px"
+      h="32px"
+      flexShrink={0}
+      rounded="5px"
+      borderWidth="1px"
+      borderColor="brand.muted"
+      bg="brand.bg"
+      color="brand.fg"
+      overflow="hidden"
       transition="opacity 0.15s"
       css={{
         '@media (hover: hover)': {
@@ -162,28 +170,48 @@ export function NumberField({
         aria-label="افزایش"
         variant="ghost"
         size="2xs"
-        h="50%"
+        h="15px"
+        w="22px"
+        minW="0"
         minH="0"
-        disabled={disabled}
+        rounded="0"
+        color="inherit"
+        _hover={{ bg: 'brand.subtle' }}
         onClick={() => bump(1)}
       >
-        <ChevronUp size={12} />
+        <ChevronUp size={13} />
       </IconButton>
       <IconButton
         aria-label="کاهش"
         variant="ghost"
         size="2xs"
-        h="50%"
+        h="15px"
+        w="22px"
+        minW="0"
         minH="0"
-        disabled={disabled}
+        rounded="0"
+        color="inherit"
+        _hover={{ bg: 'brand.subtle' }}
         onClick={() => bump(-1)}
       >
-        <ChevronDown size={12} />
+        <ChevronDown size={13} />
       </IconButton>
     </Box>
   ) : null
 
-  const resolvedEnd = endElement ?? steppers
+  /**
+   * واحد و کلیدهای +/− با هم — نه یکی به‌جای دیگری.
+   *
+   * قبلاً `endElement ?? steppers` بود و هر فیلدی که واحد داشت (مثل «روز» در زمان
+   * آماده‌سازی) کلیدهایش بی‌صدا حذف می‌شد. در طرح تأییدشده هر دو هستند و کلیدها
+   * سمت **راستِ** واحد می‌نشینند → پس در DOM اول کلیدها، بعد واحد.
+   */
+  const resolvedEnd = steppers && endElement ? (
+    <Box display="flex" alignItems="center" gap="1.5">
+      {steppers}
+      {endElement}
+    </Box>
+  ) : (endElement ?? steppers)
 
   const input = (
     <Input
@@ -205,7 +233,7 @@ export function NumberField({
       startElement={startElement}
       endElement={resolvedEnd}
       startElementProps={startElementProps}
-      endElementProps={showSteppers && !endElement ? { px: '0', pe: '1' } : endElementProps}
+      endElementProps={steppers ? { px: '0', pe: '1', ...endElementProps } : endElementProps}
     >
       {input}
     </InputGroup>

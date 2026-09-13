@@ -4,7 +4,8 @@ import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { NumberField } from '@/components/ui/NumberField'
 import { SectionCard, Panel } from './SectionCard'
-import { NotchedField, bareControl } from './NotchedField'
+import { PrepDaysStepper } from './PrepDaysStepper'
+import { NotchedField, bareControlSm } from './NotchedField'
 import { SHIPPING_PROFILES, type ProductForm } from './data'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
@@ -64,20 +65,23 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
             <NotchedField
               label="شناسه / SKU"
               required
+              stacked
               hint="یک شناسه پیشنهادی ساخته می‌شود و هر زمان خواستید قابل ویرایش است."
             >
               <Input
-                {...bareControl}
+                {...bareControlSm}
                 placeholder="VT-NOVA-X"
                 value={form.sku}
                 onChange={(e) => onChange({ sku: e.target.value })}
               />
             </NotchedField>
 
-            <Flex align="center" gap="2.5" minW="0">
+            {/* لیبل حالا بالای کادر است، پس سوییچ باید با خودِ کادر هم‌تراز شود نه با کل بلوک */}
+            <Flex align="end" gap="2.5" minW="0">
               <NotchedField
                 label="موجودی اولیه"
                 required
+                stacked
                 disabled={form.unlimitedInventory}
                 endElement={<Unit>عدد</Unit>}
               >
@@ -86,11 +90,11 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
                   onChange={(v) => onChange({ inventory: v })}
                   disabled={form.unlimitedInventory}
                   showSteppers
-                  inputProps={bareControl}
+                  inputProps={bareControlSm}
                 />
               </NotchedField>
               {/* LAST = leftmost: نامحدود — بیرون از خود فیلد، طبق بازخورد */}
-              <Flex direction="column" align="center" gap="1" flexShrink={0}>
+              <Flex direction="column" align="center" gap="1" flexShrink={0} pb="0.5">
                 <Switch.Root
                   size="sm"
                   colorPalette="brand"
@@ -104,13 +108,13 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
               </Flex>
             </Flex>
 
-            <NotchedField label="وزن محصول" endElement={<Unit>گرم</Unit>}>
+            <NotchedField label="وزن محصول" stacked endElement={<Unit>گرم</Unit>}>
               <NumberField
                 value={form.weight}
                 onChange={(v) => onChange({ weight: v })}
                 allowDecimals
                 showSteppers
-                inputProps={bareControl}
+                inputProps={bareControlSm}
               />
             </NotchedField>
 
@@ -132,15 +136,41 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
                 ['عرض', form.packWidth, (v: string) => onChange({ packWidth: v })],
                 ['ارتفاع', form.packHeight, (v: string) => onChange({ packHeight: v })],
               ] as const).map(([label, value, set]) => (
-                <NotchedField key={label} label={label} endElement={<Unit>cm</Unit>} tinted>
+                /* در طرح، لیبلِ ابعاد **کنارِ** کادر است نه رویش — سه فیلد کوتاه
+                   کنار هم، و لیبلِ روی‌خط آن‌ها را بی‌دلیل بلند می‌کرد. */
+                <Flex key={label} align="center" gap="1.5" minW="0">
+                  {/* FIRST = rightmost: لیبل */}
+                  <Text
+                    as="label"
+                    fontSize="9px"
+                    color="fg.muted"
+                    flexShrink={0}
+                    textAlign="center"
+                    minW="34px"
+                  >
+                    {label}
+                  </Text>
                   <NumberField
                     value={value}
                     onChange={set}
                     allowDecimals
                     showSteppers
-                    inputProps={bareControl}
+                    aria-label={label}
+                    endElement={
+                      <Text fontSize="8px" color="fg.muted" bg="bg.subtle" rounded="4px" px="1" py="0.5">
+                        cm
+                      </Text>
+                    }
+                    inputProps={{
+                      bg: 'bg.subtle',
+                      borderColor: 'border.muted',
+                      rounded: 'lg',
+                      h: '9',
+                      fontSize: '12px',
+                      textAlign: 'end',
+                    }}
                   />
-                </NotchedField>
+                </Flex>
               ))}
             </Grid>
           </Panel>
@@ -159,12 +189,9 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
 
           <Panel title="زمان آماده‌سازی">
             {/* عدد هم قابل تایپ است، نه فقط +/− — بازخورد بند ۷ دور «چاکرا اصلاح» */}
-            <NumberField
+            <PrepDaysStepper
               value={form.prepDays}
               onChange={(v) => onChange({ prepDays: v })}
-              showSteppers
-              min={0}
-              endElement={<Unit>روز</Unit>}
             />
           </Panel>
 

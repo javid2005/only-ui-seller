@@ -25,14 +25,38 @@ export interface NotchedFieldProps {
   disabled?: boolean
   /** ته‌رنگ ملایم روی خود کادر — در طرح برای فیلدهای ابعاد استفاده شده تا مرزشان دیده شود */
   tinted?: boolean
+  /**
+   * لیبل **بالای** کادر، نه روی خط آن.
+   *
+   * طرح تأییدشده این حالت را فقط داخل گروه‌های تودرتو به کار می‌برد (گروه
+   * انبارداری): وقتی چند فیلد داخل یک پنلِ کادردار می‌نشینند، لیبلِ روی‌خط با مرز
+   * پنل تداخل بصری پیدا می‌کند. اندازه‌ها از خود طرح: ۱۰px/۷۰۰، فاصلهٔ ۸px تا کادر.
+   */
+  stacked?: boolean
   children: ReactNode
 }
 
 export function NotchedField({
-  label, required, hint, error, endElement, disabled, tinted, children,
+  label, required, hint, error, endElement, disabled, tinted, stacked, children,
 }: NotchedFieldProps) {
   return (
     <Box w="full" minW="0">
+      {stacked && (
+        <Text
+          as="label"
+          display="block"
+          fontSize="10px"
+          fontWeight="bold"
+          lineHeight="16px"
+          color={error ? 'red.fg' : 'fg.muted'}
+          mb="2"
+          px="0.5"
+          textAlign="start"
+        >
+          {label}
+          {required && <chakra.span color="red.fg" ms="1" aria-hidden>*</chakra.span>}
+        </Text>
+      )}
       <chakra.fieldset
         display="flex"
         alignItems="center"
@@ -41,13 +65,13 @@ export function NotchedField({
         px="3"
         pb="0"
         pt="0"
-        minH="11"
+        minH={stacked ? '9' : '11'}
         w="full"
         minW="0"
         borderWidth="1px"
         borderColor={error ? 'red.solid' : 'border'}
         rounded="lg"
-        bg={disabled || tinted ? 'bg.subtle' : 'bg.panel'}
+        bg={disabled ? 'bg.subtle' : stacked || !tinted ? 'bg.panel' : 'bg.subtle'}
         transition="border-color 0.15s, box-shadow 0.15s"
         _focusWithin={
           error
@@ -55,17 +79,20 @@ export function NotchedField({
             : { borderColor: 'brand.solid', boxShadow: '0 0 0 1px var(--chakra-colors-brand-solid)' }
         }
       >
-        <chakra.legend
-          px="1"
-          mx="1"
-          fontSize="11px"
-          fontWeight="semibold"
-          color={error ? 'red.fg' : 'fg.muted'}
-          lineHeight="16px"
-        >
-          {label}
-          {required && <chakra.span color="red.fg" ms="1" aria-hidden>*</chakra.span>}
-        </chakra.legend>
+        {/* در حالت stacked لیبل بالای کادر است، پس legend خالی می‌ماند و بریدگی نمی‌خورد */}
+        {!stacked && (
+          <chakra.legend
+            px="1"
+            mx="1"
+            fontSize="11px"
+            fontWeight="semibold"
+            color={error ? 'red.fg' : 'fg.muted'}
+            lineHeight="16px"
+          >
+            {label}
+            {required && <chakra.span color="red.fg" ms="1" aria-hidden>*</chakra.span>}
+          </chakra.legend>
+        )}
 
         {/* کنترل — کشیده تا کل عرض کادر */}
         <Box flex="1" minW="0">{children}</Box>
@@ -76,10 +103,10 @@ export function NotchedField({
 
       {(error || hint) && (
         <Text
-          fontSize="xs"
+          fontSize={stacked ? '10px' : 'xs'}
           color={error ? 'red.fg' : 'fg.muted'}
           textAlign="start"
-          mt="1.5"
+          mt={stacked ? '1' : '1.5'}
           lineHeight="1.8"
         >
           {error ?? hint}
@@ -106,3 +133,11 @@ export const bareControl = {
   fontSize: '13px',
   _focusVisible: { boxShadow: 'none', outline: 'none' },
 } as const
+
+/**
+ * همان `bareControl` با ارتفاع کمتر — برای حالت `stacked`.
+ *
+ * طرح تأییدشده داخل گروه‌های تودرتو کادر کوتاه‌تری می‌گذارد (۳۶px به‌جای ۴۴px)،
+ * چون لیبل دیگر روی خط کادر نیست و ارتفاع را اشغال نمی‌کند.
+ */
+export const bareControlSm = { ...bareControl, h: '9' } as const
