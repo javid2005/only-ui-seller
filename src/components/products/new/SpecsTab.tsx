@@ -5,6 +5,8 @@ import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { SectionCard } from './SectionCard'
 import type { Attribute, ProductForm } from './data'
+import { attributesForCategory } from './categoryKnowledge'
+import { SuggestInput } from './SuggestInput'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -56,6 +58,9 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
 
   const removeTag = (t: string) => onChange({ tags: form.tags.filter((x) => x !== t) })
 
+  const attrSuggestions = attributesForCategory(form.category)
+    .filter((a) => !form.attributes.some((x) => x.name === a.title))
+
   return (
     <Flex direction="column" gap="5" w="full">
 
@@ -76,19 +81,33 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
             gap="2"
             onSubmit={(e) => { e.preventDefault(); addAttr() }}
           >
-            <Input
+            {/* عنوان و مقدار هر دو از درخت دانشِ دسته‌بندی پیشنهاد می‌گیرند؛
+                انتخاب یک عنوان، نمونه‌مقدارش را هم در فیلد کناری می‌گذارد تا
+                کاربر ببیند چه شکلی از مقدار انتظار می‌رود. */}
+            <SuggestInput
               size="sm"
-              placeholder="عنوان مشخصه، مثلاً برند"
+              placeholder={`عنوان مشخصه، مثلاً ${attrSuggestions[0]?.title ?? 'برند'}`}
               value={name}
               maxLength={20}
-              onChange={(e) => setName(e.target.value)}
+              onChange={setName}
+              suggestions={attrSuggestions.map((a) => a.title)}
+              onPick={(title) => {
+                setName(title)
+                const hit = attrSuggestions.find((a) => a.title === title)
+                if (hit && !value.trim()) setValue(hit.example)
+              }}
             />
-            <Input
+            <SuggestInput
               size="sm"
-              placeholder="مقدار، مثلاً سامسونگ"
+              placeholder={`مقدار، مثلاً ${attrSuggestions[0]?.example ?? 'سامسونگ'}`}
               value={value}
               maxLength={20}
-              onChange={(e) => setValue(e.target.value)}
+              onChange={setValue}
+              suggestions={
+                name.trim()
+                  ? attrSuggestions.filter((a) => a.title === name.trim()).map((a) => a.example)
+                  : []
+              }
             />
             <IconButton
               type="submit"

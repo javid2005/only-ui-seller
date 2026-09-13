@@ -1,4 +1,5 @@
 import { createListCollection } from '@chakra-ui/react'
+import { optionsForCategory } from './categoryKnowledge'
 import { Images, LayoutGrid, ListChecks, Package, Pencil, Sparkles, type LucideIcon } from 'lucide-react'
 
 // ─── Pricing mode — backend-driven trigger (per category config) ───────────────
@@ -19,6 +20,12 @@ export const CATEGORIES: ProductCategory[] = [
   { value: 'beauty',   label: 'آرایشی و بهداشتی',                  pricingMode: 'standard' },
   { value: 'currency', label: 'کالای ارزی',                        pricingMode: 'currency' },
   { value: 'gold',     label: 'طلا و جواهرات',                     pricingMode: 'gold' },
+  { value: 'sports',   label: 'ورزش و سفر',                        pricingMode: 'standard' },
+  { value: 'toys',     label: 'اسباب‌بازی و کودک',                  pricingMode: 'standard' },
+  { value: 'books',    label: 'کتاب و لوازم‌التحریر',               pricingMode: 'standard' },
+  { value: 'food',     label: 'خوراک و نوشیدنی',                    pricingMode: 'standard' },
+  { value: 'auto',     label: 'خودرو و ابزار',                      pricingMode: 'standard' },
+  { value: 'pets',     label: 'حیوانات خانگی',                      pricingMode: 'standard' },
 ]
 
 export const categoryCollection = createListCollection({
@@ -200,19 +207,19 @@ export const VARIANT_GROUPS: VariantGroup[] = [
 // ─── پیشنهادهای تنوع بر اساس دسته‌بندی ──────────────────────────────────────────
 // خواستهٔ بند ۱۱ دور «چاکرا طراح»: این فهرست باید از بک‌اند بیاید. فعلاً آرایهٔ
 // داخلی است تا با تعویض منبع (یک fetch) بدون تغییر UI جایگزین شود.
-export const VARIANT_SUGGESTIONS: Record<string, string[]> = {
-  digital:  ['رنگ', 'حافظه', 'گارانتی', 'ظرفیت رم', 'رجیستری'],
-  fashion:  ['رنگ', 'سایز', 'جنس', 'الگو'],
-  home:     ['رنگ', 'سایز', 'جنس', 'ظرفیت'],
-  beauty:   ['حجم', 'رنگ', 'رایحه'],
-  currency: ['رنگ', 'مدل'],
-  gold:     ['عیار', 'وزن', 'رنگ طلا'],
+/**
+ * پیشنهاد تنوع — حالا از درخت دانشِ دسته‌بندی می‌آید، نه از یک لیست جدا.
+ *
+ * `suggestionsFor` فقط عنوان‌های **پرکاربرد** (`primary`) را می‌دهد چون نوار
+ * پیشنهاد جا ندارد؛ لیست کامل پشت «انتخاب سفارشی» باز می‌شود.
+ */
+export function suggestionsFor(category: string): string[] {
+  return optionsForCategory(category).filter((o) => o.primary).map((o) => o.title)
 }
 
-export const DEFAULT_VARIANT_SUGGESTIONS = ['رنگ', 'سایز', 'جنس', 'گارانتی']
-
-export function suggestionsFor(category: string): string[] {
-  return VARIANT_SUGGESTIONS[category] ?? DEFAULT_VARIANT_SUGGESTIONS
+/** همهٔ عنوان‌های تنوعِ همین دسته — برای دیالوگ «انتخاب سفارشی» */
+export function allSuggestionsFor(category: string): string[] {
+  return optionsForCategory(category).map((o) => o.title)
 }
 
 // ─── Variants (تب تنوع‌ها) ────────────────────────────────────────────────────────

@@ -7,6 +7,7 @@ import { Tooltip } from '@/components/ui/Tooltip'
 import { toPersianDigits } from '@/utils/numbers'
 import { SectionCard } from './SectionCard'
 import { OptionCard } from './OptionCard'
+import { OptionPickerDialog } from './OptionPickerDialog'
 import { ModelsTable, ModelFilterSegment, type ModelFilter } from './ModelsTable'
 import { VariantImagePickerDialog } from './VariantImagePickerDialog'
 import {
@@ -82,6 +83,7 @@ export function VariantsTab({
    * تأییدشده. با حذف‌شدن، نوار هر بار جابه‌جا می‌شد و کاربر جای چیپ بعدی را گم
    * می‌کرد؛ غیرفعال‌شدن هم چیدمان را ثابت نگه می‌دارد هم می‌گوید «قبلاً اضافه شده».
    */
+  const [pickerOpen, setPickerOpen] = useState(false)
   const suggestions = suggestionsFor(form.category)
   const usedTitles = new Set(options.map((o) => o.title))
 
@@ -210,7 +212,7 @@ export function VariantsTab({
                 fontSize="12px"
                 fontWeight="semibold"
                 gap="1.5"
-                onClick={() => addOption()}
+                onClick={() => setPickerOpen(true)}
                 disabled={atMax}
                 flexShrink={0}
               >
@@ -228,6 +230,7 @@ export function VariantsTab({
                   key={option.id}
                   option={option}
                   index={i + 1}
+                  category={form.category}
                   onChange={(patch) => patchOption(option.id, patch)}
                   onRemove={() => removeOption(option.id)}
                 />
@@ -262,6 +265,15 @@ export function VariantsTab({
       <ButtonFooter
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
         back={{ label: 'بازگشت به لیست', onClick: onBack }}
+      />
+
+      {/* فهرست کامل انتخاب‌ها — پشت «انتخاب سفارشی» */}
+      <OptionPickerDialog
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        category={form.category}
+        used={options.map((o) => o.title)}
+        onPick={(title) => addOption(title)}
       />
 
       <VariantImagePickerDialog

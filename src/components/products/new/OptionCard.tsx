@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { Box, Flex, Text, Input, IconButton, Popover, Portal, chakra } from '@chakra-ui/react'
+import { Box, Flex, Text, IconButton, Popover, Portal, chakra } from '@chakra-ui/react'
 import { Trash2, Plus, X } from 'lucide-react'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { isColorOption, colorForValue, type ProductVariant, type VariantValueItem } from './data'
+import { valuesForOption, optionsForCategory } from './categoryKnowledge'
+import { SuggestInput } from './SuggestInput'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -10,6 +12,8 @@ export interface OptionCardProps {
   option: ProductVariant
   /** شمارهٔ تنوع — در طرح روی کارت دیده می‌شود چون ترتیب تنوع‌ها ترتیب ستون‌های مدل است */
   index: number
+  /** دسته‌بندی محصول — مبنای پیشنهادِ عنوان و مقادیر */
+  category: string
   onChange: (patch: Partial<ProductVariant>) => void
   onRemove: () => void
 }
@@ -35,7 +39,11 @@ const SWATCHES = [
  *
  * RTL DOM order سرتیتر (first = rightmost): شمارهٔ تنوع ← عنوان ← حذف (چپ‌ترین).
  */
-export function OptionCard({ option, index, onChange, onRemove }: OptionCardProps) {
+export function OptionCard({ option, index, category, onChange, onRemove }: OptionCardProps) {
+  // پیشنهادها از درخت دانشِ دسته‌بندی می‌آیند؛ مقادیری که کاربر افزوده حذف می‌شوند
+  const titleSuggestions = optionsForCategory(category).map((o) => o.title)
+  const valueSuggestions = valuesForOption(category, option.title)
+    .filter((v) => !option.values.some((x) => x.label === v))
   const [draft, setDraft] = useState('')
   const isColor = isColorOption(option.title)
 
@@ -73,15 +81,14 @@ export function OptionCard({ option, index, onChange, onRemove }: OptionCardProp
         >
           {index}
         </Flex>
-        <Input
+        <SuggestInput
           value={option.title}
-          onChange={(e) => onChange({ title: e.target.value })}
+          onChange={(title) => onChange({ title })}
+          suggestions={titleSuggestions}
           placeholder="مثلاً رنگ"
           variant="flushed"
           size="sm"
           fontWeight="semibold"
-          flex="1"
-          minW="0"
         />
         {/* LAST = leftmost: حذف تنوع */}
         <Tooltip content="حذف تنوع">
@@ -103,13 +110,24 @@ export function OptionCard({ option, index, onChange, onRemove }: OptionCardProp
           gap="2"
           onSubmit={(e) => { e.preventDefault(); addValue() }}
         >
-          <Input
+          <SuggestInput
             size="sm"
-            flex="1"
-            minW="0"
             bg="bg.panel"
             value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            onChange={setDraft}
+            suggestions={valueSuggestions}
+            onPick={(label) => {
+              // انتخاب از فهرست یعنی «همین را اضافه کن» — یک کلیک، نه دو تا
+              if (option.values.some((v) => v.label === label)) return
+              onChange({
+                values: [...option.values, {
+                  id: `value_${option.id}_${Date.now()}`,
+                  label,
+                  ...(isColor ? { color: colorForValue(label) } : {}),
+                }],
+              })
+              setDraft('')
+            }}
             placeholder={isColor ? 'مثال: مشکی، سفید یا آبی' : `مثال: مقدار ${option.title || 'تنوع'}`}
           />
           <IconButton
