@@ -9,7 +9,12 @@ import { Flex, Box, Text, Switch } from '@chakra-ui/react'
  * متفاوت روی فروشگاه است، و متن توضیح زیرش همان اثر را می‌گوید. کارت مرز هر تصمیم
  * را روشن می‌کند.
  *
- * RTL DOM order (first = rightmost): سوییچ ← عنوان + آیکن ← توضیح زیرشان.
+ * RTL DOM order (first = rightmost): **آیکن ← عنوان … سوییچ (چپ‌ترین)**.
+ *
+ * ⚠️ این یک **استثنا**ی عمدی بر الگوی «Switch اول» در CLAUDE.md است و از
+ * اندازه‌گیری خود طرح تأییدشده آمده: در `.status-top` طرح، بلوک آیکن+عنوان
+ * (`.status-action`) در لبهٔ راست کارت است و سوییچ در لبهٔ چپ. بدون این کامنت،
+ * بازبینِ بعدی آن را «باگ جهت» می‌بیند و برعکسش می‌کند.
  */
 export interface ToggleCardProps {
   icon: ReactNode
@@ -29,9 +34,9 @@ export function ToggleCard({
   return (
     <Flex
       direction="column"
-      gap="2"
-      p="4"
-      rounded="xl"
+      gap="1.5"
+      p="11px"
+      rounded="9px"
       borderWidth="1px"
       borderColor={accent ? 'orange.muted' : 'border'}
       bg={accent ? 'orange.bg' : 'bg.panel'}
@@ -39,8 +44,17 @@ export function ToggleCard({
       w="full"
       minW="0"
     >
-      <Flex align="center" gap="2.5" w="full">
-        {/* FIRST = rightmost: سوییچ */}
+      <Flex align="center" gap="2" w="full">
+        {/* FIRST = rightmost: آیکن (← طرح: آیکن و عنوان با هم در لبهٔ راست) */}
+        <Box color={accent ? 'orange.fg' : 'fg.muted'} flexShrink={0} display="flex">{icon}</Box>
+
+        <Text fontSize="sm" fontWeight="medium" color="fg" textAlign="start" truncate minW="0">
+          {label}
+        </Text>
+
+        <Box flex="1" minW="2" />
+
+        {/* LAST = leftmost: سوییچ */}
         <Switch.Root
           size="sm"
           colorPalette={accent ? 'orange' : 'brand'}
@@ -52,13 +66,6 @@ export function ToggleCard({
           <Switch.HiddenInput />
           <Switch.Control><Switch.Thumb /></Switch.Control>
         </Switch.Root>
-
-        <Text fontSize="sm" fontWeight="medium" color="fg" flex="1" textAlign="start" truncate>
-          {label}
-        </Text>
-
-        {/* LAST = leftmost: آیکن */}
-        <Box color={accent ? 'orange.fg' : 'fg.muted'} flexShrink={0}>{icon}</Box>
       </Flex>
 
       <Text fontSize="xs" color="fg.muted" textAlign="start" lineHeight="1.9">

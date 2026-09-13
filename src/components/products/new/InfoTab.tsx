@@ -1,7 +1,6 @@
 import {
   Box, Flex, Grid, Text, Input, NativeSelect, chakra,
-  Select, Switch, Alert,
-  Collapsible, createListCollection, Portal,
+  Select, Alert, createListCollection, Portal,
 } from '@chakra-ui/react'
 import { DollarSign, Eye, CalendarClock, Phone } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
@@ -10,11 +9,12 @@ import { RichTextEditor } from '@/components/ui/RichTextEditor'
 import { NumberField } from '@/components/ui/NumberField'
 import { GoldInfoCard } from './GoldInfoCard'
 import { SectionCard } from './SectionCard'
+import { MainImageField } from './MainImageField'
 import { NotchedField, bareControl } from './NotchedField'
 import { ToggleCard } from './ToggleCard'
 import { toPersianDigits, toLatinDigits, formatThousands, toPersianWords } from '@/utils/numbers'
 import {
-  categoryCollection, CURRENCY_UNITS, DISCOUNT_TYPES, currencyLabel,
+  categoryCollection, CURRENCY_UNITS, currencyLabel,
   USD_RATE, USD_RATE_UPDATED, GOLD_GRAM_PRICE, pricingModeOf,
   type ProductForm,
 } from './data'
@@ -93,13 +93,14 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
         ? `(~ ${toPersianDigits(formatThousands(tomanValue))} تومان) ${toPersianWords(tomanValue)} تومان`
         : `${toPersianWords(priceNum)} تومان`
 
-  // «قیمت بعد از تخفیف» = derived از قیمتِ مؤثر + مقدار/نوع تخفیف (در واحد قیمت)
-  const discountNum = num(form.discountValue)
-  const hasDiscountVal = form.discountValue.trim() !== '' && Number.isFinite(discountNum)
-  const finalPrice = hasPrice && hasDiscountVal
-    ? Math.max(0, Math.round(form.discountType === 'percent' ? effectivePrice - (effectivePrice * discountNum) / 100 : effectivePrice - discountNum))
-    : null
-  const finalPriceDisplay = finalPrice !== null ? toPersianDigits(formatThousands(finalPrice)) : ''
+  /**
+   * تخفیف در طرح تأییدشده **مستقیم** وارد می‌شود: «قیمت با تخفیف» کنار «قیمت اصلی».
+   * سوییچ «تخفیف دارد» و ماشین‌حساب درصد/مبلغ فقط در نسخهٔ اول (chakra-review)
+   * بودند و از نسخهٔ دوم به بعد حذف شدند — پس اینجا هم نیستند.
+   */
+  const saleNum = num(form.salePrice)
+  const saleInvalid =
+    form.salePrice.trim() !== '' && hasPrice && Number.isFinite(saleNum) && saleNum >= effectivePrice
 
   // ─── Inventory ────────────────────────────────────────────────────────────────
   // با وجود تنوع: موجودی و تاگل نامحدود read-only (مدیریت از تب تنوع‌ها)
@@ -112,7 +113,14 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
         subtitle="این اطلاعات در صفحه محصول نمایش داده می‌شود"
         helpTopic="اطلاعات اصلی محصول"
       >
-        <Flex direction="column" gap="4">
+        {/* در طرح، کارت دو ستون دارد: فیلدها (راست) و «تصویر اصلی» (چپ، ۳۰۰px).
+            FIRST = rightmost: ستون فیلدها · LAST = leftmost: تصویر اصلی */}
+        <Grid
+          templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 300px' }}
+          gap="4"
+          alignItems="start"
+        >
+        <Flex direction="column" gap="4" minW="0">
           {/* FIRST = rightmost: نام محصول · سپس دسته‌بندی */}
           <Grid templateColumns={twoCol} gap="4">
             <NotchedField label="نام محصول" required>
@@ -176,6 +184,16 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
             />
           </Box>
         </Flex>
+
+          {/* LAST = leftmost: تصویر اصلی */}
+          <MainImageField
+            gallery={form.gallery}
+            onSelect={(src) =>
+              onChange({
+                gallery: form.gallery.map((img) => ({ ...img, featured: img.src === src })),
+              })}
+          />
+        </Grid>
       </SectionCard>
 
       {/* ═══ قیمت گذاری ═════════════════════════════════════════════════════════ */}
@@ -215,9 +233,10 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
           {/* کارت اطلاعات اختصاصی طلا — فقط دستهٔ طلا */}
           {isGold && <GoldInfoCard form={form} onChange={onChange} />}
 
-          {/* قیمت اصلی/نهایی + واحد + تخفیف دارد */}
-          <Flex gap="4" align={isCompact ? 'stretch' : { base: 'stretch', sm: 'end' }} direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}>
-            <Box flex={isCompact ? '1' : { base: 'none', sm: '1' }} w={isCompact ? undefined : { base: 'full', sm: 'auto' }} minW="0">
+          {/* کادر قیمت — در طرح یک جعبهٔ ته‌رنگیِ مستقل است با دو فیلد کنار هم.
+              FIRST = rightmost: قیمت اصلی · SECOND = چپ: قیمت با تخفیف */}
+          <Box bg="bg.subtle" borderWidth="1px" borderColor="border.muted" rounded="xl" p="11px">
+            <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)' }} gap="2.5">
               <NotchedField
                 label={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
                 required
@@ -225,6 +244,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                 disabled={isGold || form.phoneSale || form.hasVariants}
                 endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
               >
+                {/* بدون کلید +/− — بند ۳ بازخورد: قیمت هرگز کلید بالا/پایین ندارد */}
                 <NumberField
                   placeholder={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
                   value={isGold ? (goldHasValue ? String(goldFinal) : '') : form.price}
@@ -233,70 +253,23 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                   inputProps={bareControl}
                 />
               </NotchedField>
-            </Box>
 
-            {/* تخفیف دارد — RTL: Switch FIRST=راست، Text LAST=چپ */}
-            <Flex align="center" gap="2.5" pb={isCompact ? '0' : { base: '0', sm: '7' }} flexShrink={0}>
-              <Switch.Root
-                colorPalette="brand"
-                checked={form.hasDiscount}
-                onCheckedChange={(e) => onChange({ hasDiscount: e.checked })}
+              <NotchedField
+                label="قیمت با تخفیف"
+                error={saleInvalid ? 'قیمت با تخفیف باید کمتر از قیمت اصلی باشد.' : undefined}
+                disabled={isGold || form.phoneSale || form.hasVariants}
+                endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
               >
-                <Switch.HiddenInput />
-                <Switch.Control><Switch.Thumb /></Switch.Control>
-              </Switch.Root>
-              <Text fontSize="sm" color="fg" whiteSpace="nowrap">تخفیف دارد</Text>
-            </Flex>
-          </Flex>
-
-          {/* Discount Box — با انیمیشن باز/بسته (Collapsible) */}
-          <Collapsible.Root open={form.hasDiscount} unmountOnExit>
-            <Collapsible.Content>
-              <Box bg="bg.muted" borderWidth="1px" borderColor="border" rounded="lg" p="4">
-                <Flex gap="4" align="start" direction={isCompact ? 'row' : { base: 'column', sm: 'row' }}>
-
-                  {/* تخفیف * — FIRST = راست · مقدار + نوع (درصد/مبلغ) */}
-                  <Box flex="1" w={isCompact ? undefined : { base: 'full', sm: 'auto' }} minW="0">
-                    <NotchedField
-                      label="تخفیف"
-                      required
-                      endElement={
-                        <UnitSelect
-                          value={form.discountType}
-                          onChange={(v) => onChange({ discountType: v })}
-                          options={DISCOUNT_TYPES}
-                        />
-                      }
-                    >
-                      <NumberField
-                        placeholder="مقدار تخفیف را وارد کنید"
-                        value={form.discountValue}
-                        onChange={(v) => onChange({ discountValue: v })}
-                        inputProps={bareControl}
-                      />
-                    </NotchedField>
-                  </Box>
-
-                  {/* قیمت بعد از تخفیف — SECOND = چپ · محاسبه‌شده (read-only) */}
-                  <Box flex="1" w={isCompact ? undefined : { base: 'full', sm: 'auto' }} minW="0">
-                    <NotchedField
-                      label="قیمت بعد از تخفیف"
-                      disabled
-                      endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
-                    >
-                      <Input
-                        {...bareControl}
-                        placeholder="قیمت بعد از تخفیف"
-                        value={finalPriceDisplay}
-                        disabled
-                      />
-                    </NotchedField>
-                  </Box>
-
-                </Flex>
-              </Box>
-            </Collapsible.Content>
-          </Collapsible.Root>
+                <NumberField
+                  placeholder="اختیاری"
+                  value={form.salePrice}
+                  onChange={(v) => onChange({ salePrice: v, hasDiscount: v.trim() !== '' })}
+                  disabled={isGold || form.phoneSale || form.hasVariants}
+                  inputProps={bareControl}
+                />
+              </NotchedField>
+            </Grid>
+          </Box>
 
           {/* نرخ زندهٔ دلار — فقط در حالت ارزی */}
           {isUsd && (

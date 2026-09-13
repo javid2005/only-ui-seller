@@ -346,6 +346,8 @@ export interface ProductForm {
   sku: string
   weight: string
   price: string
+  /** «قیمت با تخفیف» — در طرح تأییدشده مستقیم وارد می‌شود، نه با درصد/مبلغ تخفیف */
+  salePrice: string
   currency: string
   hasDiscount: boolean
   discountType: string
@@ -395,6 +397,7 @@ export const EMPTY_FORM: ProductForm = {
   sku: '',
   weight: '',
   price: '',
+  salePrice: '',
   currency: 'toman',
   hasDiscount: false,
   discountType: 'percent',

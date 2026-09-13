@@ -34,16 +34,11 @@ export function ProductPreviewCard({ form, collapsible = false }: ProductPreview
   const title = form.name.trim() || 'نام محصول'
   const unit = currencyLabel(form.currency)
 
+  // «قیمت با تخفیف» مستقیم وارد می‌شود (مثل طرح تأییدشده)، پس محاسبه‌ای لازم نیست
   const priceNum = Number(form.price) || 0
-  const discountNum = Number(form.discountValue) || 0
-  const finalPrice =
-    form.hasDiscount && priceNum && discountNum
-      ? Math.max(0, Math.round(
-          form.discountType === 'percent' ? priceNum - (priceNum * discountNum) / 100 : priceNum - discountNum,
-        ))
-      : priceNum
-
-  const hasDiscount = form.hasDiscount && finalPrice !== priceNum && priceNum > 0
+  const saleNum = Number(form.salePrice) || 0
+  const hasDiscount = saleNum > 0 && priceNum > 0 && saleNum < priceNum
+  const finalPrice = hasDiscount ? saleNum : priceNum
 
   const body = (
     <Flex direction="column" gap="3" w="full">
