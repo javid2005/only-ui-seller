@@ -140,8 +140,24 @@ export function NumberField({
     onChange(String(next))
   }
 
+  // در طرح تأییدشده این کلیدها تا وقتی ماوس روی فیلد نیست دیده نمی‌شوند و فیلد را
+  // شلوغ نمی‌کنند. روی دستگاه لمسی (بدون hover) همیشه دیده می‌شوند، وگرنه
+  // دسترس‌ناپذیر می‌شدند.
   const steppers = showSteppers ? (
-    <Box display="flex" flexDirection="column" h="full" justifyContent="center">
+    <Box
+      display="flex"
+      flexDirection="column"
+      h="full"
+      justifyContent="center"
+      opacity={{ base: 1, _hover: 1 }}
+      transition="opacity 0.15s"
+      css={{
+        '@media (hover: hover)': {
+          opacity: 0,
+          '.chakra-input-group:hover &, .chakra-input-group:focus-within &': { opacity: 1 },
+        },
+      }}
+    >
       <IconButton
         aria-label="افزایش"
         variant="ghost"

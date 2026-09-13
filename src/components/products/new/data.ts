@@ -303,7 +303,12 @@ export interface ProductForm {
   /** آیا محصول تنوع دارد؟ (از تب «تنوع‌ها» — با وجود تنوع، موجودی/قیمت سطح محصول read-only می‌شود) */
   hasVariants: boolean
   attributes: Attribute[]
+  /** توضیح کوتاه — زیر نام محصول در صفحهٔ محصول و مبنای اولیهٔ توضیح متا */
+  shortDescription: string
   description: string
+  // ── وضعیت نمایش و فروش ──
+  showInStorefront: boolean
+  specialOffer: boolean
   tags: string[]
   // ── سئو ──
   seoSlug: string
@@ -343,7 +348,10 @@ export const EMPTY_FORM: ProductForm = {
   shippingNote: '',
   hasVariants: false,
   attributes: [],
+  shortDescription: '',
   description: '',
+  showInStorefront: true,
+  specialOffer: false,
   tags: [],
   seoSlug: '',
   seoTitle: '',

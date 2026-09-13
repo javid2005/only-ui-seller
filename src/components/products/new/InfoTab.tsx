@@ -1,15 +1,17 @@
 import {
-  Box, Flex, Grid, Text, Input, InputGroup, NativeSelect,
-  Select, Switch, Alert, Field, TagsInput,
+  Box, Flex, Grid, Text, Input, NativeSelect,
+  Select, Switch, Alert, TagsInput,
   Collapsible, createListCollection, Portal,
 } from '@chakra-ui/react'
-import { DollarSign } from 'lucide-react'
+import { DollarSign, Eye, CalendarClock, Phone } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
-import { TitleBar } from '@/components/ui/TitleBar'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { RichTextEditor } from '@/components/ui/RichTextEditor'
 import { NumberField } from '@/components/ui/NumberField'
 import { GoldInfoCard } from './GoldInfoCard'
+import { SectionCard } from './SectionCard'
+import { NotchedField, bareControl } from './NotchedField'
+import { ToggleCard } from './ToggleCard'
 import { toPersianDigits, toLatinDigits, formatThousands, toPersianWords } from '@/utils/numbers'
 import {
   categoryCollection, CURRENCY_UNITS, DISCOUNT_TYPES, currencyLabel,
@@ -102,84 +104,102 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
   // ─── Inventory ────────────────────────────────────────────────────────────────
   // با وجود تنوع: موجودی و تاگل نامحدود read-only (مدیریت از تب تنوع‌ها)
   return (
-    <Flex direction="column" gap="10" w="full">
+    <Flex direction="column" gap="5" w="full">
 
-      {/* ═══ اطلاعات پایه ═══════════════════════════════════════════════════════ */}
-      <Box>
-        <TitleBar title="اطلاعات اصلی" subtitle="این اطلاعات در صفحه محصول نمایش داده می‌شود" size="xl" divider />
-        <Grid templateColumns={twoCol} gap="4" pt="4">
+      {/* ═══ اطلاعات اصلی ══════════════════════════════════════════════════════ */}
+      <SectionCard
+        title="اطلاعات اصلی"
+        subtitle="این اطلاعات در صفحه محصول نمایش داده می‌شود"
+        helpTopic="اطلاعات اصلی محصول"
+      >
+        <Flex direction="column" gap="4">
+          {/* FIRST = rightmost: نام محصول · سپس دسته‌بندی */}
+          <Grid templateColumns={twoCol} gap="4">
+            <NotchedField label="نام محصول" required>
+              <Input
+                {...bareControl}
+                placeholder="نام محصول"
+                value={form.name}
+                onChange={(e) => onChange({ name: e.target.value })}
+              />
+            </NotchedField>
 
-          {/* نام محصول * — FIRST = راست */}
-          <Field.Root required>
-            <Field.Label fontSize="sm" fontWeight="semibold">
-              نام محصول<Field.RequiredIndicator />
-            </Field.Label>
+            <NotchedField label="دسته‌بندی" required>
+              <Select.Root
+                collection={categorySelectCollection}
+                value={form.category ? [form.category] : []}
+                onValueChange={(e) => onChange({ category: e.value[0] ?? '' })}
+              >
+                <Select.HiddenSelect />
+                <Select.Control>
+                  <Select.Trigger border="none" px="0" bg="transparent">
+                    <Select.ValueText placeholder="دسته‌بندی" />
+                  </Select.Trigger>
+                  <Select.IndicatorGroup>
+                    <Select.Indicator />
+                  </Select.IndicatorGroup>
+                </Select.Control>
+                <Portal>
+                  <Select.Positioner>
+                    <Select.Content dir="rtl">
+                      {categorySelectCollection.items.map((item) => (
+                        <Select.Item key={item.value} item={item}>
+                          <Select.ItemText>{item.label}</Select.ItemText>
+                          <Select.ItemIndicator />
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select.Positioner>
+                </Portal>
+              </Select.Root>
+            </NotchedField>
+          </Grid>
+
+          <NotchedField label="توضیح کوتاه">
             <Input
-              placeholder="نام محصول"
-              value={form.name}
-              onChange={(e) => onChange({ name: e.target.value })}
+              {...bareControl}
+              placeholder="یک جملهٔ کوتاه که زیر نام محصول دیده می‌شود"
+              value={form.shortDescription}
+              onChange={(e) => onChange({ shortDescription: e.target.value })}
             />
-          </Field.Root>
+          </NotchedField>
 
-          {/* دسته بندی * */}
-          <Field.Root required>
-            <Field.Label fontSize="sm" fontWeight="semibold">
-              دسته بندی<Field.RequiredIndicator />
-            </Field.Label>
-            <Select.Root
-              collection={categorySelectCollection}
-              value={form.category ? [form.category] : []}
-              onValueChange={(e) => onChange({ category: e.value[0] ?? '' })}
-            >
-              <Select.HiddenSelect />
-              <Select.Control>
-                <Select.Trigger>
-                  <Select.ValueText placeholder="دسته بندی" />
-                </Select.Trigger>
-                <Select.IndicatorGroup>
-                  <Select.Indicator />
-                </Select.IndicatorGroup>
-              </Select.Control>
-              <Portal>
-                <Select.Positioner>
-                  <Select.Content dir="rtl">
-                    {categorySelectCollection.items.map((item) => (
-                      <Select.Item key={item.value} item={item}>
-                        <Select.ItemText>{item.label}</Select.ItemText>
-                        <Select.ItemIndicator />
-                      </Select.Item>
-                    ))}
-                  </Select.Content>
-                </Select.Positioner>
-              </Portal>
-            </Select.Root>
-          </Field.Root>
-
-        </Grid>
-      </Box>
+          {/* توضیحات محصول — ویرایشگر داخل کادر، مثل بقیهٔ فیلدها (بند ۴ دور «چاکرا اصلاح») */}
+          <Box>
+            <Text fontSize="xs" fontWeight="medium" color="fg.muted" textAlign="start" mb="1.5">
+              توضیحات محصول
+            </Text>
+            <RichTextEditor
+              value={form.description}
+              onChange={(html) => onChange({ description: html })}
+              placeholder="توضیحات محصول را وارد کنید..."
+            />
+          </Box>
+        </Flex>
+      </SectionCard>
 
       {/* ═══ قیمت گذاری ═════════════════════════════════════════════════════════ */}
-      <Box>
-        <TitleBar title="قیمت گذاری" subtitle="قیمت اصلی و تخفیف محصول را تنظیم کنید." size="xl" divider />
-        <Flex direction="column" gap="4" pt="4">
+      <SectionCard
+        title="قیمت‌گذاری"
+        subtitle="قیمت را با تومان یا دلار تعیین کنید؛ در حالت دلار، مبلغ تومانی به‌صورت زنده محاسبه می‌شود"
+        helpTopic="قیمت‌گذاری"
+      >
+        <Flex direction="column" gap="4">
 
           {/* کارت اطلاعات اختصاصی طلا — فقط دستهٔ طلا */}
           {isGold && <GoldInfoCard form={form} onChange={onChange} />}
 
           {/* قیمت اصلی/نهایی + واحد + تخفیف دارد */}
           <Flex gap="4" align={isCompact ? 'stretch' : { base: 'stretch', sm: 'end' }} direction={isCompact ? 'column' : { base: 'column', sm: 'row' }}>
-            <Field.Root required flex={isCompact ? '1' : { base: 'none', sm: '1' }} w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
-              <Field.Label fontSize="sm" fontWeight="semibold">
-                {isGold ? 'قیمت نهایی' : 'قیمت اصلی'}<Field.RequiredIndicator />
-              </Field.Label>
-              <NumberField
-                placeholder={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
-                value={isGold ? (goldHasValue ? String(goldFinal) : '') : form.price}
-                onChange={isGold ? () => {} : (v) => onChange({ price: v })}
+            <Box flex={isCompact ? '1' : { base: 'none', sm: '1' }} w={isCompact ? undefined : { base: 'full', sm: 'auto' }} minW="0">
+              <NotchedField
+                label={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
+                required
+                hint={priceHelp}
                 disabled={isGold || form.phoneSale || form.hasVariants}
                 endElement={
                   isGold ? (
-                    <Text fontSize="sm" color="fg.muted" px="2">تومان</Text>
+                    <Text fontSize="xs" color="fg.muted">تومان</Text>
                   ) : (
                     <UnitSelect
                       value={form.currency}
@@ -188,10 +208,16 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                     />
                   )
                 }
-                endElementProps={{ px: '1' }}
-              />
-              <Field.HelperText>{priceHelp}</Field.HelperText>
-            </Field.Root>
+              >
+                <NumberField
+                  placeholder={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
+                  value={isGold ? (goldHasValue ? String(goldFinal) : '') : form.price}
+                  onChange={isGold ? () => {} : (v) => onChange({ price: v })}
+                  disabled={isGold || form.phoneSale || form.hasVariants}
+                  inputProps={bareControl}
+                />
+              </NotchedField>
+            </Box>
 
             {/* تخفیف دارد — RTL: Switch FIRST=راست، Text LAST=چپ */}
             <Flex align="center" gap="2.5" pb={isCompact ? '0' : { base: '0', sm: '7' }} flexShrink={0}>
@@ -214,15 +240,10 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                 <Flex gap="4" align="start" direction={isCompact ? 'row' : { base: 'column', sm: 'row' }}>
 
                   {/* تخفیف * — FIRST = راست · مقدار + نوع (درصد/مبلغ) */}
-                  <Field.Root required flex="1" w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
-                    <Field.Label fontSize="sm" fontWeight="semibold">
-                      تخفیف<Field.RequiredIndicator />
-                    </Field.Label>
-                    <NumberField
-                      placeholder="مقدار تخفیف را وارد کنید"
-                      value={form.discountValue}
-                      onChange={(v) => onChange({ discountValue: v })}
-                      inputProps={{ bg: 'bg.panel' }}
+                  <Box flex="1" w={isCompact ? undefined : { base: 'full', sm: 'auto' }} minW="0">
+                    <NotchedField
+                      label="تخفیف"
+                      required
                       endElement={
                         <UnitSelect
                           value={form.discountType}
@@ -230,24 +251,31 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
                           options={DISCOUNT_TYPES}
                         />
                       }
-                      endElementProps={{ px: '1' }}
-                    />
-                  </Field.Root>
+                    >
+                      <NumberField
+                        placeholder="مقدار تخفیف را وارد کنید"
+                        value={form.discountValue}
+                        onChange={(v) => onChange({ discountValue: v })}
+                        inputProps={bareControl}
+                      />
+                    </NotchedField>
+                  </Box>
 
                   {/* قیمت بعد از تخفیف — SECOND = چپ · محاسبه‌شده (read-only) */}
-                  <Field.Root flex="1" w={isCompact ? undefined : { base: 'full', sm: 'auto' }}>
-                    <Field.Label fontSize="sm" fontWeight="semibold">قیمت بعد از تخفیف</Field.Label>
-                    <InputGroup
-                      endElement={<Text fontSize="sm" color="fg.muted" px="2">{priceUnit}</Text>}
+                  <Box flex="1" w={isCompact ? undefined : { base: 'full', sm: 'auto' }} minW="0">
+                    <NotchedField
+                      label="قیمت بعد از تخفیف"
+                      disabled
+                      endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
                     >
                       <Input
-                        bg="bg.panel"
+                        {...bareControl}
                         placeholder="قیمت بعد از تخفیف"
                         value={finalPriceDisplay}
                         disabled
                       />
-                    </InputGroup>
-                  </Field.Root>
+                    </NotchedField>
+                  </Box>
 
                 </Flex>
               </Box>
@@ -269,53 +297,63 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
             </Alert.Root>
           )}
 
-          {/* فروش تلفنی — Switch FIRST=راست، Text چپ */}
-          <Flex align="center" gap="2.5">
-            <Switch.Root
-              colorPalette="brand"
-              checked={form.phoneSale}
-              onCheckedChange={(e) => onChange({ phoneSale: e.checked })}
-            >
-              <Switch.HiddenInput />
-              <Switch.Control><Switch.Thumb /></Switch.Control>
-            </Switch.Root>
-            <Text fontSize="sm" color="fg" whiteSpace="nowrap">فروش تلفنی</Text>
-          </Flex>
-
-          {/* Alert اطلاع‌رسانی فروش تلفنی */}
-          <Alert.Root status="info" variant="subtle">
-            <Alert.Indicator />
-            <Alert.Content gap="1">
-              <Text fontSize="xs">• با فعال کردن این گزینه قیمت اصلی غیرفعال می‌شود.</Text>
-              <Text fontSize="xs">• این آیتم برای هر تنوع میتواند بصورت جداگانه فعال شود.</Text>
-              <Text fontSize="xs">• در صورت فعال شدن برای هر تنوع، گزینه فروش تلفنی در این صفحه باید غیرفعال شود.</Text>
-            </Alert.Content>
-          </Alert.Root>
-
         </Flex>
-      </Box>
+      </SectionCard>
 
-      {/* ═══ توضیحات اجمالی ═════════════════════════════════════════════════════ */}
-      <Box>
-        <TitleBar title="توضیحات اجمالی درباره محصول" subtitle="توضیحات کامل محصول را وارد کنید." size="xl" divider />
-        <Box pt="4">
-          <RichTextEditor
-            value={form.description}
-            onChange={(html) => onChange({ description: html })}
-            placeholder="توضیحات محصول را وارد کنید..."
-          />
-        </Box>
-      </Box>
+      {/* ═══ وضعیت نمایش و فروش ═════════════════════════════════════════════════ */}
+      <SectionCard
+        title="وضعیت نمایش و فروش"
+        subtitle="تنظیمات رایج محصول در فروشگاه"
+        helpTopic="وضعیت نمایش و فروش"
+      >
+        <Flex direction="column" gap="4">
+          {/* FIRST = rightmost: نمایش در ویترین ← پیشنهاد ویژه ← فروش تلفنی */}
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap="3">
+            <ToggleCard
+              icon={<Eye size={17} />}
+              label="نمایش در ویترین"
+              hint="در فهرست و جستجوی فروشگاه دیده شود"
+              checked={form.showInStorefront}
+              onChange={(v) => onChange({ showInStorefront: v })}
+            />
+            <ToggleCard
+              icon={<CalendarClock size={17} />}
+              label="پیشنهاد ویژه"
+              hint="در بخش پیشنهادهای ویژه نمایش داده شود"
+              checked={form.specialOffer}
+              onChange={(v) => onChange({ specialOffer: v })}
+              accent
+            />
+            <ToggleCard
+              icon={<Phone size={17} />}
+              label="فروش تلفنی"
+              hint="با فعال‌سازی، قیمت از ویترین پنهان و دکمهٔ خرید به «تماس» تبدیل می‌شود"
+              checked={form.phoneSale}
+              onChange={(v) => onChange({ phoneSale: v })}
+            />
+          </Grid>
+
+          {/* Alert اطلاع‌رسانی فروش تلفنی — فقط وقتی روشن است */}
+          {form.phoneSale && (
+            <Alert.Root status="info" variant="subtle">
+              <Alert.Indicator />
+              <Alert.Content gap="1">
+                <Text fontSize="xs">• با فعال کردن این گزینه قیمت اصلی غیرفعال می‌شود.</Text>
+                <Text fontSize="xs">• این آیتم برای هر تنوع میتواند بصورت جداگانه فعال شود.</Text>
+                <Text fontSize="xs">• در صورت فعال شدن برای هر تنوع، گزینه فروش تلفنی در این صفحه باید غیرفعال شود.</Text>
+              </Alert.Content>
+            </Alert.Root>
+          )}
+        </Flex>
+      </SectionCard>
 
       {/* ═══ برچسب ها ═══════════════════════════════════════════════════════════ */}
-      <Box>
-        <TitleBar
-          title="برچسب ها"
-          subtitle="کلمات یا عبارات کوتاهی که به معرفی بهتر کالا کمک می کنند."
-          size="xl"
-          divider
-        />
-        <Box pt="4">
+      <SectionCard
+        title="برچسب‌های محصول"
+        subtitle="کلمات یا عبارات کوتاهی که به معرفی بهتر کالا کمک می‌کنند"
+        helpTopic="برچسب‌های محصول"
+      >
+        <Box>
           {/* عرض ۱۰۰٪: نه فقط روی Root — خودِ Control هم باید کشیده شود، وگرنه
               والد عرض را محدود می‌کند و فیلد باریک می‌ماند (ریشهٔ بازخورد تکرارشده). */}
           <TagsInput.Root
@@ -343,7 +381,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
             <TagsInput.HiddenInput />
           </TagsInput.Root>
         </Box>
-      </Box>
+      </SectionCard>
 
       {/* ═══ Footer ═════════════════════════════════════════════════════════════ */}
       <ButtonFooter
