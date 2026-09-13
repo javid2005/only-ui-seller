@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Badge, Menu, Portal, IconButton, Checkbox } from '@chakra-ui/react'
-import { EllipsisVertical, Star, Trash2, Tags, FolderInput, GripVertical, SearchCheck, TriangleAlert } from 'lucide-react'
+import { EllipsisVertical, Star, Trash2, Tags, FolderInput, GripVertical, SearchCheck, TriangleAlert, PencilLine } from 'lucide-react'
 import { MediaThumb } from './MediaThumb'
 import type { MediaFolder, MediaFolderId } from './data'
 
@@ -20,6 +20,8 @@ export interface MediaCardProps {
   onSetFeatured: () => void
   onSelectVariant: () => void
   onEditSeo: () => void
+  /** باز کردن دیالوگ «نام فایل» */
+  onRename: () => void
   onMoveToFolder: (target: MediaFolderId) => void
   // ── مرتب‌سازی ──
   draggable?: boolean
@@ -42,7 +44,7 @@ export interface MediaCardProps {
  */
 export function MediaCard({
   src, label, featured, variantTags, alt, folder, folders,
-  selected, onSelect, onRemove, onSetFeatured, onSelectVariant, onEditSeo, onMoveToFolder,
+  selected, onSelect, onRemove, onSetFeatured, onSelectVariant, onEditSeo, onRename, onMoveToFolder,
   draggable, isDragging = false, onDragStart, onDragOver, onDrop, onDragEnd,
 }: MediaCardProps) {
   return (
@@ -133,6 +135,9 @@ export function MediaCard({
                   )}
                   <Menu.Item value="variant" onSelect={onSelectVariant}>
                     <Tags size={14} />تخصیص تنوع
+                  </Menu.Item>
+                  <Menu.Item value="rename" onSelect={onRename}>
+                    <PencilLine size={14} />نام فایل
                   </Menu.Item>
                   <Menu.Item value="seo" onSelect={onEditSeo}>
                     <SearchCheck size={14} />سئوی تصویر

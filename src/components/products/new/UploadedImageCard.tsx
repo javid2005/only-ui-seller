@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Badge, Button, IconButton, Menu, Portal } from '@chakra-ui/react'
-import { Trash2, X, GripVertical, FolderInput, SearchCheck, TriangleAlert } from 'lucide-react'
+import { Trash2, X, GripVertical, FolderInput, SearchCheck, TriangleAlert, PencilLine } from 'lucide-react'
 import { MediaThumb } from './MediaThumb'
 import type { MediaFolder, MediaFolderId } from './data'
 
@@ -22,6 +22,8 @@ export interface UploadedImageCardProps {
   onSelectVariant: () => void
   /** باز کردن دیالوگ «سئوی تصویر» (ALT و کپشن) */
   onEditSeo: () => void
+  /** باز کردن دیالوگ «نام فایل» */
+  onRename: () => void
   onRemoveTag?: (tag: string) => void
   /** روی موبایلِ واقعی hover نداریم → دکمه‌ها همیشه نمایش داده شوند */
   alwaysShowActions?: boolean
@@ -59,6 +61,7 @@ export function UploadedImageCard({
   onSetFeatured,
   onSelectVariant,
   onEditSeo,
+  onRename,
   onRemoveTag,
   alwaysShowActions = false,
   folder,
@@ -216,6 +219,11 @@ export function UploadedImageCard({
               </Portal>
             </Menu.Root>
           )}
+          <Button size="xs" variant="outline" rounded="l2" gap="1.5" onClick={onRename}>
+            {/* FIRST = rightmost: آیکن (leading) */}
+            <PencilLine size={14} />
+            نام فایل
+          </Button>
           <Button size="xs" variant="outline" rounded="l2" gap="1.5" onClick={onEditSeo}>
             {/* FIRST = rightmost: آیکن (leading) */}
             <SearchCheck size={14} />

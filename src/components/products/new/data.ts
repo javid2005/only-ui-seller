@@ -1,5 +1,6 @@
 import { createListCollection } from '@chakra-ui/react'
 import { optionsForCategory } from './categoryKnowledge'
+import { productSku, productSlug, variantSku } from './identity'
 import { Images, LayoutGrid, ListChecks, Package, Pencil, Sparkles, type LucideIcon } from 'lucide-react'
 
 // ─── Pricing mode — backend-driven trigger (per category config) ───────────────
@@ -138,6 +139,12 @@ export const GALLERY_MAX_IMAGE_SIZE = 2 * 1024 * 1024 // ۲ مگابایت
 
 export interface GalleryImage {
   id: string
+  /**
+   * شمارهٔ ترتیبیِ **پایدار** — موقع افزودن داده می‌شود و دیگر عوض نمی‌شود.
+   * نام فایل از همین ساخته می‌شود، پس جابه‌جایی یا حذفِ رسانه‌های دیگر نامش را
+   * تغییر نمی‌دهد (ایندکس آرایه این تضمین را نمی‌داد).
+   */
+  seq: number
   /** dataURL پیش‌نمایش (این پاس UI-only؛ بعداً URL بعد از آپلود به سرور) */
   src: string
   /** نام فایل اصلی (برای API/alt) — لیبل نمایشی «تصویر N» از ایندکس ساخته می‌شود */
@@ -160,16 +167,95 @@ export interface GalleryImage {
 // شناسهٔ پوشه رشته است چون کاربر می‌تواند پوشهٔ تازه بسازد؛ سه‌تای اول پیش‌فرض‌اند.
 export type MediaFolderId = string
 
+/**
+ * منبع محتوای یک پوشه.
+ *
+ * `product` و `manual` پوشه‌های **واقعی**‌اند: رسانه داخلشان می‌نشیند و ترتیبش
+ * دست کاربر است. بقیه پوشهٔ **هوشمند**اند — یک نمای ذخیره‌شده روی کتابخانه:
+ * محتوایشان محاسبه می‌شود، پس نه ترتیب دستی می‌گیرند و نه چیزی داخلشان «هست».
+ *
+ * چرا این‌طور و نه یک فیلترِ جدا: کاربر همین حالا ذهنیت پوشه دارد. «ساختن پوشه‌ای
+ * که خودش پر می‌شود» همان فیلتر است، ولی با نامی که کاربر انتخاب کرده و دفعهٔ
+ * بعد سر جایش است — فیلتر هر بار باید از نو ساخته شود.
+ */
+export type MediaFolderSource =
+  | 'product'        // رسانه‌های همین محصول (ثابت، حذف‌نشدنی)
+  | 'manual'         // پوشهٔ خالیِ ساختهٔ کاربر
+  | 'my-images'      // همهٔ تصویرهای این فروشنده
+  | 'my-videos'      // همهٔ ویدئوهای این فروشنده
+  | 'other-products' // رسانهٔ سایر محصولات
+  | 'same-category'  // رسانهٔ محصولات همین دسته‌بندی
+
 export interface MediaFolder {
   id: MediaFolderId
   label: string
+  source: MediaFolderSource
+  /** پوشهٔ ثابت — نه تغییر نام می‌گیرد، نه جابه‌جا می‌شود، نه حذف */
+  locked?: boolean
 }
 
+/** پوشه‌های «بدون پوشه» و «کتابخانه فروشگاه» حذف شدند: خالی بودند و معنایی نداشتند. */
 export const DEFAULT_MEDIA_FOLDERS: MediaFolder[] = [
-  { id: 'products',      label: 'رسانه‌های این محصول' },
-  { id: 'uncategorized', label: 'بدون پوشه'           },
-  { id: 'library',       label: 'کتابخانه فروشگاه'    },
+  { id: 'products', label: 'رسانه‌های این محصول', source: 'product', locked: true },
 ]
+
+/** پوشهٔ هوشمند محتوایش را محاسبه می‌کند، پس رفتارش با پوشهٔ واقعی فرق دارد */
+export function isSmartFolder(folder: MediaFolder | undefined): boolean {
+  return Boolean(folder && folder.source !== 'product' && folder.source !== 'manual')
+}
+
+/** گزینه‌های «این پوشه چه چیزی نشان بدهد؟» در دیالوگ ساخت پوشه */
+export const FOLDER_SOURCES: {
+  value: MediaFolderSource
+  label: string
+  hint: string
+}[] = [
+  { value: 'manual',         label: 'پوشهٔ خالی',                hint: 'خودتان رسانه‌ها را داخلش می‌گذارید' },
+  { value: 'my-images',      label: 'همهٔ تصویرهای من',          hint: 'هر تصویری که تا امروز آپلود کرده‌اید' },
+  { value: 'my-videos',      label: 'همهٔ ویدئوهای من',          hint: 'هر ویدئویی که تا امروز آپلود کرده‌اید' },
+  { value: 'other-products', label: 'رسانهٔ سایر محصولات',       hint: 'تصویرهای محصولات دیگر شما' },
+  { value: 'same-category',  label: 'رسانهٔ محصولات همین دسته',  hint: 'فقط محصولات هم‌دستهٔ این محصول' },
+]
+
+// ─── کتابخانهٔ رسانهٔ فروشنده (mock) ────────────────────────────────────────────
+/**
+ * محتوای پوشه‌های **هوشمند** از اینجا می‌آید.
+ *
+ * این پاس mock است — در نسخهٔ واقعی همین شکل را یک endpoint برمی‌گرداند و فقط
+ * منبع عوض می‌شود، نه مصرف‌کننده. هر رکورد می‌گوید مال کدام محصول و کدام دسته
+ * است تا فیلترهای «سایر محصولات» و «همین دسته‌بندی» قابل محاسبه باشند.
+ */
+export interface LibraryMedia {
+  id: string
+  name: string
+  kind: 'image' | 'video'
+  /** محصولی که این رسانه برایش آپلود شده ('' = آزاد) */
+  productId: string
+  productLabel: string
+  category: string
+}
+
+export const MEDIA_LIBRARY: LibraryMedia[] = [
+  { id: 'lib_1', name: 'p2301-img-001', kind: 'image', productId: '2301', productLabel: 'هدفون بی‌سیم مدل Air', category: 'digital' },
+  { id: 'lib_2', name: 'p2301-img-002', kind: 'image', productId: '2301', productLabel: 'هدفون بی‌سیم مدل Air', category: 'digital' },
+  { id: 'lib_3', name: 'p2288-img-001', kind: 'image', productId: '2288', productLabel: 'ساعت هوشمند سری ۵', category: 'digital' },
+  { id: 'lib_4', name: 'p2288-video-001', kind: 'video', productId: '2288', productLabel: 'ساعت هوشمند سری ۵', category: 'digital' },
+  { id: 'lib_5', name: 'p1904-img-001', kind: 'image', productId: '1904', productLabel: 'پیراهن مردانه نخی', category: 'fashion' },
+  { id: 'lib_6', name: 'p1904-img-002', kind: 'image', productId: '1904', productLabel: 'پیراهن مردانه نخی', category: 'fashion' },
+  { id: 'lib_7', name: 'banner-nowruz', kind: 'image', productId: '', productLabel: 'بنرهای کمپین', category: '' },
+  { id: 'lib_8', name: 'unboxing-clip', kind: 'video', productId: '', productLabel: 'ویدئوهای عمومی', category: '' },
+]
+
+/** رسانه‌های یک پوشهٔ هوشمند — با دستهٔ جاری برای فیلتر «همین دسته‌بندی» */
+export function libraryFor(source: MediaFolderSource, category: string): LibraryMedia[] {
+  switch (source) {
+    case 'my-images':      return MEDIA_LIBRARY.filter((m) => m.kind === 'image')
+    case 'my-videos':      return MEDIA_LIBRARY.filter((m) => m.kind === 'video')
+    case 'other-products': return MEDIA_LIBRARY.filter((m) => m.productId !== '')
+    case 'same-category':  return MEDIA_LIBRARY.filter((m) => m.category !== '' && m.category === category)
+    default:               return []
+  }
+}
 
 // ─── Variant groups (دیالوگ «انتخاب تنوع» در گالری) ──────────────────────────────
 // mock — به تب «تنوع‌ها» وابسته است؛ وقتی آن تب ساخته شد این گروه‌ها از آنجا می‌آیند.
@@ -287,6 +373,8 @@ export function rowTint(hex: string | undefined, indexInGroup: number): string {
 // ─── Variant combinations (ماتریس ترکیب‌ها) ──────────────────────────────────────
 export interface VariantCombination {
   id: string
+  /** شمارهٔ ترتیبیِ مدل — مبنای شناسه؛ از ایندکس آرایه ساخته نمی‌شود */
+  seq: number
   /** مقدار هر تنوع، به ترتیب form.variants — برای نمایش badge و فیلتر */
   values: string[]
   /** تصویر این ترکیب — از گالری محصول انتخاب می‌شود ('' = انتخاب‌نشده) */
@@ -308,7 +396,7 @@ export interface VariantCombination {
 /** ماتریس تنوع۱ × تنوع۲ (یا فقط تنوع۱ اگر تنوع دوم مقدار ندارد) */
 export function buildCombinations(
   variants: ProductVariant[],
-  skuBase: string,
+  _skuBase: string,
   /** قیمت پایهٔ محصول — مدل تازه آن را به ارث می‌برد (مثل طرح تأییدشده) */
   basePrice = '',
   baseSalePrice = '',
@@ -323,14 +411,15 @@ export function buildCombinations(
     }
     rows = next
   }
-  // SKU باید لاتین بماند (قرارداد پروژه: کد و شناسه هرگز فارسی نمی‌شود). پس به‌جای
-  // چسباندن برچسب‌های فارسی، شمارهٔ ترتیبیِ صفرپرشده می‌گیرد — همان الگوی نسخهٔ
-  // تأییدشده: <base>-001، <base>-002، …
+  // شناسهٔ هر مدل از شناسهٔ مرجعِ محصول ساخته می‌شود (`identity.ts`) و شمارهٔ
+  // ترتیبی‌اش با ترکیب گره می‌خورد، نه با جایگاهش در آرایه — پس افزودن یا حذف یک
+  // مقدار، شناسهٔ مدل‌های دیگر را عوض نمی‌کند.
   return rows.map((row, i) => ({
     id: `combo_${row.map((v) => v.id).join('_')}`,
     values: row.map((v) => v.label),
     image: '',
-    sku: `${skuBase || 'SKU'}-${String(i + 1).padStart(3, '0')}`,
+    seq: i + 1,
+    sku: variantSku(i + 1),
     active: true,
     phoneSale: false,
     unlimitedInventory: false,
@@ -418,7 +507,9 @@ export const EMPTY_FORM: ProductForm = {
   productType: 'simple',
   name: '',
   category: '',
-  sku: '',
+  // شناسه و آدرس صفحه از همان لحظه پیشنهاد می‌شوند، نه خالی — کاربر می‌تواند
+  // عوضشان کند ولی هیچ‌وقت با فیلد خالی روبه‌رو نمی‌شود.
+  sku: productSku(),
   weight: '',
   price: '',
   salePrice: '',
@@ -449,7 +540,7 @@ export const EMPTY_FORM: ProductForm = {
   specialOffer: false,
   specialOfferUntil: '',
   tags: [],
-  seoSlug: '',
+  seoSlug: productSlug(),
   seoTitle: '',
   seoDescription: '',
   folders: DEFAULT_MEDIA_FOLDERS,

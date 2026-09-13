@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import {
   Box, Flex, Grid, Text, Input, InputGroup, Button, IconButton, Checkbox, EmptyState,
 } from '@chakra-ui/react'
-import { Upload, Search, LayoutGrid, List, ImageOff, Trash2 } from 'lucide-react'
+import { Upload, Search, LayoutGrid, List, ImageOff, Trash2, Plus } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
 import { StepVideoButton } from './StepVideo'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
@@ -11,14 +11,18 @@ import { toPersianDigits } from '@/utils/numbers'
 import { SectionCard } from './SectionCard'
 import { UploadedImageCard } from './UploadedImageCard'
 import { MediaCard } from './MediaCard'
+import { MediaThumb } from './MediaThumb'
 import { MediaSeoDialog } from './MediaSeoDialog'
 import { enterPanel } from './motion'
 import { MediaUploadDialog } from './MediaUploadDialog'
 import { VariantSelectDialog } from './VariantSelectDialog'
 import { FolderPanel } from './FolderPanel'
+import { FolderCreateDialog } from './FolderCreateDialog'
+import { mediaName, MEDIA_EXTENSION } from './identity'
+import { MediaRenameDialog } from './MediaRenameDialog'
 import {
-  GALLERY_MAX_IMAGES,
-  type ProductForm, type GalleryImage, type MediaFolderId,
+  GALLERY_MAX_IMAGES, isSmartFolder, libraryFor,
+  type ProductForm, type GalleryImage, type MediaFolderId, type MediaFolderSource,
 } from './data'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
@@ -31,10 +35,15 @@ export interface GalleryTabProps {
 }
 
 let _gid = 0
+/**
+ * `seq` از شمارندهٔ موجودِ رسانه‌ها گرفته می‌شود، نه از طول آرایه: با حذف یک رسانه
+ * طول کم می‌شود ولی شمارهٔ بعدی نباید تکراری شود، وگرنه دو فایل هم‌نام می‌شوند.
+ */
 const newImage = (
-  src: string, fileName: string, featured: boolean, folder: MediaFolderId,
+  src: string, fileName: string, featured: boolean, folder: MediaFolderId, seq: number,
 ): GalleryImage => ({
   id: `img_${++_gid}`,
+  seq,
   src,
   fileName,
   featured,
@@ -43,6 +52,9 @@ const newImage = (
   alt: '',
   caption: '',
 })
+
+const nextSeq = (images: GalleryImage[]) =>
+  images.reduce((max, img) => Math.max(max, img.seq), 0) + 1
 
 let _fid = 0
 
@@ -78,6 +90,8 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
   const [uploadOpen, setUploadOpen] = useState(false)
   const [variantDialogImageId, setVariantDialogImageId] = useState<string | null>(null)
   const [seoDialogImageId, setSeoDialogImageId] = useState<string | null>(null)
+  const [renameImageId, setRenameImageId] = useState<string | null>(null)
+  const [folderDialogOpen, setFolderDialogOpen] = useState(false)
 
   const inFolder = images.filter((img) => img.folder === folder)
   const visible = query.trim()
@@ -91,6 +105,25 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
   const folderLabel = folders.find((f) => f.id === folder)?.label ?? ''
   const variantDialogImage = images.find((img) => img.id === variantDialogImageId) ?? null
   const seoDialogImage = images.find((img) => img.id === seoDialogImageId) ?? null
+  const renameImage = images.find((img) => img.id === renameImageId) ?? null
+
+  // پوشهٔ هوشمند محتوایش را از کتابخانه می‌گیرد، نه از رسانه‌های همین محصول
+  const activeFolder = folders.find((f) => f.id === folder)
+  const smartFolder = isSmartFolder(activeFolder)
+  const libraryMedia = smartFolder
+    ? libraryFor(activeFolder!.source, form.category)
+        .filter((m) => query.trim() === '' || m.name.includes(query.trim()))
+    : []
+
+  /** «افزودن به این محصول» — رسانهٔ کتابخانه در پوشهٔ محصول کپی می‌شود */
+  const addFromLibrary = (name: string) => {
+    const seq = nextSeq(images)
+    const hasFeatured = images.some((img) => img.featured)
+    onChange({
+      gallery: [...images, newImage('', `${name}.webp`, !hasFeatured, 'products', seq)],
+    })
+    setFolder('products')
+  }
 
   // ─── Handlers ───────────────────────────────────────────────────────────────
   const addFiles = (files: File[]) => {
@@ -106,7 +139,12 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
       ),
     ).then((loaded) => {
       const hasFeatured = images.some((img) => img.featured)
-      const added = loaded.map((l, i) => newImage(l.src, l.name, !hasFeatured && i === 0, folder))
+      const base = nextSeq(images)
+      // نام فایل از همان ابتدا به فرمت مرجع درمی‌آید؛ نام اصلیِ فایلِ کاربر
+      // (اغلب «IMG_2043» یا فارسی) در آدرس تصویر بی‌معنی است. کاربر بعداً از
+      // «نام فایل» عوضش می‌کند و همان‌جا هم قواعد اعمال می‌شوند.
+      const added = loaded.map((l, i) =>
+        newImage(l.src, `${mediaName(base + i)}.${MEDIA_EXTENSION}`, !hasFeatured && i === 0, folder, base + i))
       onChange({ gallery: [...images, ...added] })
     })
   }
@@ -127,11 +165,33 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
   const patchImage = (id: string, patch: Partial<GalleryImage>) =>
     onChange({ gallery: images.map((img) => (img.id === id ? { ...img, ...patch } : img)) })
 
-  const createFolder = () => {
-    const label = `پوشهٔ ${toPersianDigits(folders.length + 1)}`
+  const createFolder = (label: string, source: MediaFolderSource) => {
     const id = `folder_${++_fid}`
-    onChange({ folders: [...folders, { id, label }] })
+    onChange({ folders: [...folders, { id, label, source }] })
     setFolder(id)
+  }
+
+  const renameFolder = (id: MediaFolderId, label: string) =>
+    onChange({ folders: folders.map((f) => (f.id === id ? { ...f, label } : f)) })
+
+  const removeFolder = (id: MediaFolderId) => {
+    // رسانه‌های داخل پوشهٔ حذف‌شده به پوشهٔ محصول برمی‌گردند، نه اینکه ناپدید شوند
+    onChange({
+      folders: folders.filter((f) => f.id !== id),
+      gallery: images.map((img) => (img.folder === id ? { ...img, folder: 'products' } : img)),
+    })
+    if (folder === id) setFolder('products')
+  }
+
+  /** جابه‌جایی پوشه در فهرست — پوشه‌های قفل‌شده سر جایشان می‌مانند */
+  const moveFolder = (id: MediaFolderId, dir: -1 | 1) => {
+    const i = folders.findIndex((f) => f.id === id)
+    const j = i + dir
+    if (i < 0 || j < 0 || j >= folders.length) return
+    if (folders[i].locked || folders[j].locked) return
+    const next = [...folders]
+    ;[next[i], next[j]] = [next[j], next[i]]
+    onChange({ folders: next })
   }
 
   /**
@@ -208,7 +268,10 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
             active={folder}
             onSelect={(id) => { setFolder(id); setSelection([]); setQuery('') }}
             counts={counts}
-            onCreate={createFolder}
+            onCreate={() => setFolderDialogOpen(true)}
+            onRename={renameFolder}
+            onRemove={removeFolder}
+            onMove={moveFolder}
           />
 
           {/* پنل رسانه — در طرح مثل ستون پوشه‌ها یک کادر مستقل است، نه ناحیهٔ باز */}
@@ -303,8 +366,63 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
               </Flex>
             )}
 
-            {/* رسانه‌ها */}
-            {visible.length === 0 ? (
+            {/* پوشهٔ هوشمند: محتوایش محاسبه می‌شود، پس نه انتخاب گروهی دارد نه
+                مرتب‌سازی — فقط «به این محصول اضافه کن». */}
+            {smartFolder ? (
+              libraryMedia.length === 0 ? (
+                <EmptyState.Root size="sm">
+                  <EmptyState.Content>
+                    <EmptyState.Indicator><ImageOff /></EmptyState.Indicator>
+                    <EmptyState.Title>رسانه‌ای با این شرط پیدا نشد</EmptyState.Title>
+                    <EmptyState.Description>
+                      این پوشه خودکار پر می‌شود؛ با آپلود رسانه‌های تازه اینجا دیده می‌شوند.
+                    </EmptyState.Description>
+                  </EmptyState.Content>
+                </EmptyState.Root>
+              ) : (
+                <Grid
+                  templateColumns="repeat(auto-fill, minmax(192px, 1fr))"
+                  gap="2.5"
+                  w="full"
+                  {...enterPanel}
+                >
+                  {libraryMedia.map((m) => (
+                    <Flex
+                      key={m.id}
+                      direction="column"
+                      gap="2"
+                      p="2"
+                      rounded="12px"
+                      borderWidth="1px"
+                      borderColor="border.muted"
+                      bg="bg.panel"
+                    >
+                      <MediaThumb aspectRatio="1.24" w="full" rounded="10px" />
+                      <Box minW="0">
+                        <Text fontSize="xs" color="fg" textAlign="start" truncate dir="ltr">
+                          {m.name}
+                        </Text>
+                        <Text fontSize="2xs" color="fg.muted" textAlign="start" truncate>
+                          {m.productLabel}
+                        </Text>
+                      </Box>
+                      <Button
+                        size="xs"
+                        variant="subtle"
+                        colorPalette="brand"
+                        rounded="l2"
+                        gap="1.5"
+                        onClick={() => addFromLibrary(m.name)}
+                      >
+                        {/* FIRST = rightmost: آیکن (leading) */}
+                        <Plus size={13} />
+                        افزودن به این محصول
+                      </Button>
+                    </Flex>
+                  ))}
+                </Grid>
+              )
+            ) : visible.length === 0 ? (
               <EmptyState.Root size="sm">
                 <EmptyState.Content>
                   <EmptyState.Indicator><ImageOff /></EmptyState.Indicator>
@@ -339,6 +457,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
                     onSetFeatured={() => setFeatured(img.id)}
                     onSelectVariant={() => setVariantDialogImageId(img.id)}
                     onEditSeo={() => setSeoDialogImageId(img.id)}
+                    onRename={() => setRenameImageId(img.id)}
                     onMoveToFolder={(target) => patchImage(img.id, { folder: target })}
                     {...dragProps(img)}
                   />
@@ -362,6 +481,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
                     onSetFeatured={() => setFeatured(img.id)}
                     onSelectVariant={() => setVariantDialogImageId(img.id)}
                     onEditSeo={() => setSeoDialogImageId(img.id)}
+                    onRename={() => setRenameImageId(img.id)}
                     onRemoveTag={(tag) =>
                       patchImage(img.id, { variantTags: img.variantTags.filter((t) => t !== tag) })
                     }
@@ -395,6 +515,20 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
         onClose={() => setVariantDialogImageId(null)}
         selectedTags={variantDialogImage?.variantTags ?? []}
         onConfirm={(tags) => variantDialogImage && patchImage(variantDialogImage.id, { variantTags: tags })}
+      />
+
+      {/* ═══ پوشهٔ تازه ═════════════════════════════════════════════════════════ */}
+      <FolderCreateDialog
+        open={folderDialogOpen}
+        onClose={() => setFolderDialogOpen(false)}
+        onCreate={createFolder}
+      />
+
+      {/* ═══ تغییر نام فایل ═════════════════════════════════════════════════════ */}
+      <MediaRenameDialog
+        image={renameImage}
+        onClose={() => setRenameImageId(null)}
+        onConfirm={(fileName) => renameImage && patchImage(renameImage.id, { fileName })}
       />
 
       {/* ═══ دیالوگ «سئوی تصویر» — ALT و کپشن ════════════════════════════════════ */}
