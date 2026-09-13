@@ -22,8 +22,10 @@ export interface OptionCardProps {
 // که فروشنده انتخاب می‌کند و در ویترین دیده می‌شود)، نه سطحِ theme-able. به همین
 // دلیل در dark mode هم نباید عوض شوند.
 const SWATCHES = [
-  '#20262b', '#e6e9eb', '#447bab', '#c0392b', '#2f9e6f',
-  '#e2b93b', '#e07b39', '#7d5ba6', '#d977a5', '#8a949b',
+  '#20262b', '#3d4852', '#8a949b', '#c7ced3', '#e6e9eb',
+  '#2b3a55', '#447bab', '#5aa9d6', '#1f8c73', '#2f9e6f',
+  '#7fbf5a', '#e2b93b', '#c9a227', '#e07b39', '#c0392b',
+  '#a3203a', '#d977a5', '#7d5ba6', '#7a5138', '#d9c9a8',
 ]
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -176,7 +178,7 @@ export function OptionCard({ option, index, category, onChange, onRemove }: Opti
                     <Portal>
                       <Popover.Positioner dir="rtl">
                         <Popover.Content w="auto" p="2">
-                          <Flex gap="1.5" wrap="wrap" maxW="180px">
+                          <Flex gap="1.5" wrap="wrap" maxW="200px">
                             {SWATCHES.map((c) => (
                               <chakra.button
                                 key={c}

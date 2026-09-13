@@ -74,13 +74,23 @@ export function validateProduct(form: ProductForm): FieldIssue[] {
     issues.push({ id: 'seoSlug', label: 'آدرس صفحه محصول', message: 'آدرس صفحه نمی‌تواند خالی باشد.', step: 'seo', field: 'seoSlug' })
   }
 
-  // مدل‌های فعالِ بی‌قیمت — با تنوع، قیمت سطح محصول کافی نیست
-  const pricelessModels = form.combinations.filter((c) => c.active && !c.price.trim())
-  if (form.hasVariants && pricelessModels.length > 0) {
+  /**
+   * مدل‌های فعالِ بی‌قیمت.
+   *
+   * سه استثنا، چون در هیچ‌کدام قیمتِ مدل معنا ندارد:
+   *   • فروش تلفنیِ کلِ محصول روشن است → هیچ قیمتی نمایش داده نمی‌شود.
+   *   • همان مدل فروش تلفنی دارد → استثنای تک‌مدلی، از تنظیمات همان ردیف.
+   *   • خودِ محصول هم قیمت ندارد → ایرادِ اصلی «قیمت اصلی» است، نه مدل‌ها؛
+   *     دوبار گفتنش فقط فهرست خطا را شلوغ می‌کند.
+   */
+  const pricelessModels = form.combinations.filter(
+    (c) => c.active && !c.phoneSale && !c.price.trim(),
+  )
+  if (form.hasVariants && !form.phoneSale && form.price.trim() && pricelessModels.length > 0) {
     issues.push({
       id: 'modelPrices',
       label: 'قیمت مدل‌ها',
-      message: `${pricelessModels.length} مدل فعال بدون قیمت است.`,
+      message: `${pricelessModels.length} مدل فعال بدون قیمت است. برای هر کدام قیمت بگذارید یا از ⋮ همان ردیف «فروش تلفنی» را روشن کنید.`,
       step: 'models',
       field: 'modelsTable',
     })

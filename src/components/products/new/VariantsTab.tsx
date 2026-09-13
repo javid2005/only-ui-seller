@@ -9,10 +9,11 @@ import { toPersianDigits } from '@/utils/numbers'
 import { SectionCard } from './SectionCard'
 import { OptionCard } from './OptionCard'
 import { OptionPickerDialog } from './OptionPickerDialog'
+import { ModelSettingsDialog } from './ModelSettingsDialog'
 import { ModelsTable, ModelFilterSegment, type ModelFilter } from './ModelsTable'
 import { VariantImagePickerDialog } from './VariantImagePickerDialog'
 import {
-  MAX_VARIANTS, newVariant, buildCombinations, suggestionsFor,
+  MAX_VARIANTS, newVariant, buildCombinations, suggestionsFor, applyInheritance, currencyLabel,
   type ProductForm, type ProductVariant, type VariantCombination,
 } from './data'
 
@@ -50,6 +51,11 @@ export function VariantsTab({
 
   const [modelFilter, setModelFilter] = useState<ModelFilter>('all')
   const [imagePickerComboId, setImagePickerComboId] = useState<string | null>(null)
+  const [settingsId, setSettingsId] = useState<string | null>(null)
+
+  // تصویر شاخصِ محصول — مبنای ارث‌بریِ تصویر مدل‌ها
+  const featuredImage =
+    (form.gallery.find((img) => img.featured) ?? form.gallery[0])?.src ?? ''
   const imagePickerCombo = combos.find((c) => c.id === imagePickerComboId) ?? null
 
   // ─── ساخت زندهٔ مدل‌ها ────────────────────────────────────────────────────────
@@ -61,12 +67,31 @@ export function VariantsTab({
       const prev = combos.find((c) => key(c.values) === key(nc.values))
       return prev ? { ...nc, ...prev, sku: nc.sku, values: nc.values } : nc
     })
+    /**
+     * ارث‌بری: مدل‌هایی که هنوز مقدار مستقل نگرفته‌اند، قیمت/موجودی/تصویرِ محصول
+     * را می‌گیرند. این هر بار اجرا می‌شود، نه فقط موقع ساخت — پس اگر کاربر اول
+     * تنوع بسازد و بعد تصویر اضافه کند، همان لحظه تصویر مدل‌ها هم پر می‌شود.
+     */
+    const withInheritance = applyInheritance(merged, {
+      price: form.price,
+      inventory: form.inventory,
+      image: featuredImage,
+      phoneSale: form.phoneSale,
+    })
+
     const changed =
-      merged.length !== combos.length ||
-      merged.some((m, i) => key(m.values) !== key(combos[i]?.values ?? []))
-    if (changed) onChange({ combinations: merged, hasVariants: merged.length > 0 })
+      withInheritance.length !== combos.length ||
+      withInheritance.some((m, i) => {
+        const prev = combos[i]
+        return !prev
+          || key(m.values) !== key(prev.values)
+          || m.price !== prev.price
+          || m.inventory !== prev.inventory
+          || m.image !== prev.image
+      })
+    if (changed) onChange({ combinations: withInheritance, hasVariants: withInheritance.length > 0 })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options, form.sku, form.price])
+  }, [options, form.sku, form.price, form.inventory, featuredImage])
 
   const addOption = (title = '') => {
     if (options.length >= MAX_VARIANTS) return
@@ -256,6 +281,7 @@ export function VariantsTab({
           combos={combos}
           onChange={(next: VariantCombination[]) => onChange({ combinations: next })}
           onPickImage={setImagePickerComboId}
+          onOpenSettings={setSettingsId}
           filter={modelFilter}
           onFilterChange={setModelFilter}
         />
@@ -263,6 +289,19 @@ export function VariantsTab({
 
       <ButtonFooter
         primary={{ label: 'ذخیره و ادامه', onClick: onSave }}
+      />
+
+      {/* تنظیمات یک مدل — پشت ⋮ همان ردیف */}
+      <ModelSettingsDialog
+        combo={combos.find((c) => c.id === settingsId) ?? null}
+        onClose={() => setSettingsId(null)}
+        unit={currencyLabel(form.currency)}
+        source={{ price: form.price, inventory: form.inventory, image: featuredImage }}
+        onChange={(patch) =>
+          onChange({
+            combinations: combos.map((c) => (c.id === settingsId ? { ...c, ...patch } : c)),
+          })}
+        onPickImage={() => { setImagePickerComboId(settingsId); setSettingsId(null) }}
       />
 
       {/* فهرست کامل انتخاب‌ها — پشت «انتخاب سفارشی» */}

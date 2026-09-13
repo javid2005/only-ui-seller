@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import {
-  Box, Flex, Text, Table, Switch, Checkbox, Button,
+  Box, Flex, Text, Table, Switch, Checkbox, Button, IconButton,
   Select, Portal, createListCollection, chakra, EmptyState,
 } from '@chakra-ui/react'
-import { ImagePlus, Package } from 'lucide-react'
+import { ImagePlus, Package, EllipsisVertical } from 'lucide-react'
 import { NumberField } from '@/components/ui/NumberField'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { toPersianDigits } from '@/utils/numbers'
 import { MediaThumb } from './MediaThumb'
-import { rowTint, type ProductVariant, type VariantCombination } from './data'
+import { rowTint, groupColorOf, type ProductVariant, type VariantCombination } from './data'
 import { pressable } from './motion'
 import { focusInputWithin } from './focusField'
 
@@ -111,6 +111,8 @@ export interface ModelsTableProps {
   combos: VariantCombination[]
   onChange: (next: VariantCombination[]) => void
   onPickImage: (comboId: string) => void
+  /** باز کردن تنظیمات یک مدل (⋮ انتهای ردیف) */
+  onOpenSettings: (comboId: string) => void
   /** فیلتر وضعیت — در طرح داخل سرتیتر بخش است، نه بالای جدول */
   filter: ModelFilter
   onFilterChange: (f: ModelFilter) => void
@@ -127,13 +129,11 @@ export interface ModelsTableProps {
  * گروه‌بندی بدون هیچ خط‌کشی اضافه خوانده می‌شود — همان رفتار نسخهٔ تأییدشده.
  */
 export function ModelsTable({
-  options, combos, onChange, onPickImage, filter,
+  options, combos, onChange, onPickImage, onOpenSettings, filter,
 }: ModelsTableProps) {
   const [selected, setSelected] = useState<string[]>([])
   const [bulkOp, setBulkOp] = useState<BulkOp>('priceSet')
   const [bulkValue, setBulkValue] = useState('')
-
-  const firstOption = options[0]
   const visible = combos.filter((c) =>
     filter === 'all' ? true : filter === 'active' ? c.active : !c.active)
 
@@ -150,12 +150,24 @@ export function ModelsTable({
   }
 
   /** ته‌رنگ ردیف: گروه از مقدار تنوع اول، تناوب از جایگاه داخل گروه */
+  /**
+   * گروه‌بندی بصری ردیف‌ها.
+   *
+   * گروه = مقدارِ تنوع اول. رنگش از تنوعِ رنگی می‌آید — **هر جای فهرست که باشد** —
+   * و اگر تنوعی رنگی نبود، یک رنگ خنثی به هر گروه می‌رسد. علاوه بر ته‌رنگ، یک
+   * نوارِ باریک در لبهٔ راستِ ردیف می‌آید: ته‌رنگ در رنگ‌های روشن (سفید، کرم) کم‌رنگ
+   * است و به‌تنهایی گروه را نشان نمی‌دهد، ولی نوارِ توپر همیشه دیده می‌شود.
+   */
+  const optionTitles = options.map((o) => o.title)
+  const groupLabels = [...new Set(combos.map((c) => c.values[0]))]
+
+  const groupColorFor = (combo: VariantCombination) =>
+    groupColorOf(combo.values, optionTitles, groupLabels.indexOf(combo.values[0]))
+
   const tintOf = (combo: VariantCombination) => {
-    if (!firstOption) return undefined
-    const groupLabel = combo.values[0]
-    const value = firstOption.values.find((v) => v.label === groupLabel)
-    const group = combos.filter((c) => c.values[0] === groupLabel)
-    return rowTint(value?.color, group.indexOf(combo))
+    if (combos.length === 0) return undefined
+    const group = combos.filter((c) => c.values[0] === combo.values[0])
+    return rowTint(groupColorFor(combo), group.indexOf(combo))
   }
 
   const toggleSelect = (id: string, checked: boolean) =>
@@ -324,12 +336,23 @@ export function ModelsTable({
                 <Table.ColumnHeader w="82px">
                   موجودی<chakra.span color="red.fg" ms="1" aria-hidden>*</chakra.span>
                 </Table.ColumnHeader>
+                <Table.ColumnHeader w="40px" />
               </Table.Row>
             </Table.Header>
 
             <Table.Body>
               {visible.map((c) => (
-                <Table.Row key={c.id} bg={tintOf(c)} opacity={c.active ? 1 : 0.55}>
+                <Table.Row
+                  key={c.id}
+                  bg={tintOf(c)}
+                  opacity={c.active ? 1 : 0.55}
+                  css={{
+                    // نوارِ گروه در لبهٔ راست (شروع) ردیف — همیشه دیده می‌شود
+                    '& > td:first-of-type': {
+                      boxShadow: `inset -3px 0 0 0 ${groupColorFor(c)}`,
+                    },
+                  }}
+                >
                   <Table.Cell>
                     <Checkbox.Root
                       size="sm"
@@ -380,7 +403,8 @@ export function ModelsTable({
                   <Table.Cell onClick={focusInputWithin} cursor="text">
                     <NumberField
                       value={c.price}
-                      onChange={(v) => patch(c.id, { price: v })}
+                      // ویرایش دستی، ارث‌بریِ همین مقدار را قطع می‌کند
+                      onChange={(v) => patch(c.id, { price: v, inherits: { ...c.inherits, price: v.trim() === '' } })}
                       disabled={!c.active}
                       endElement={<Unit>تومان</Unit>}
                       inputProps={{ size: 'sm', bg: 'bg.panel', h: '31px', px: '1.5', fontSize: '11px' }}
@@ -400,11 +424,26 @@ export function ModelsTable({
                   <Table.Cell onClick={focusInputWithin} cursor="text">
                     <NumberField
                       value={c.inventory}
-                      onChange={(v) => patch(c.id, { inventory: v })}
+                      onChange={(v) => patch(c.id, { inventory: v, inherits: { ...c.inherits, inventory: v.trim() === '' } })}
                       disabled={!c.active}
                       endElement={<Unit>عدد</Unit>}
                       inputProps={{ size: 'sm', bg: 'bg.panel', h: '31px', px: '1.5', fontSize: '11px' }}
                     />
+                  </Table.Cell>
+                  {/* LAST = leftmost: تنظیمات این مدل — جدول را شلوغ نمی‌کند */}
+                  <Table.Cell>
+                    <Tooltip content="تنظیمات این مدل">
+                      <IconButton
+                        size="2xs"
+                        variant="ghost"
+                        color="fg.muted"
+                        rounded="md"
+                        aria-label={`تنظیمات ${c.values.join(' / ')}`}
+                        onClick={() => onOpenSettings(c.id)}
+                      >
+                        <EllipsisVertical size={14} />
+                      </IconButton>
+                    </Tooltip>
                   </Table.Cell>
                 </Table.Row>
               ))}

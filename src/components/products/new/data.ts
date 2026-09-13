@@ -349,6 +349,8 @@ const COLOR_BY_NAME: Record<string, string> = {
   'قرمز': '#c0392b', 'سبز': '#2f9e6f', 'زرد': '#e2b93b', 'نارنجی': '#e07b39',
   'بنفش': '#7d5ba6', 'صورتی': '#d977a5', 'خاکستری': '#8a949b', 'نقره‌ای': '#c7ced3',
   'طلایی': '#c9a227', 'قهوه‌ای': '#7a5138', 'سرمه‌ای': '#2b3a55',
+  'کرم': '#d9c9a8', 'بژ': '#d9c9a8', 'زرشکی': '#a3203a', 'فیروزه‌ای': '#1f8c73',
+  'آبی روشن': '#5aa9d6', 'سبز روشن': '#7fbf5a', 'دودی': '#3d4852',
 }
 
 export const isColorOption = (title: string) => title.includes('رنگ')
@@ -357,10 +359,32 @@ export function colorForValue(label: string): string {
   return COLOR_BY_NAME[label.trim()] ?? '#9aa6ad'
 }
 
+/** رنگ‌های خنثی برای گروه‌بندی وقتی هیچ تنوعِ رنگی وجود ندارد */
+const NEUTRAL_GROUP_COLORS = ['#8a949b', '#7d8b96', '#6f8189', '#93a0a6', '#7c8a8f', '#8d9aa2']
+
 /**
- * ته‌رنگ ردیف جدول مدل‌ها از رنگِ مقدارِ **تنوع اول** ساخته می‌شود، و داخل هر گروه
- * بین دو شفافیت متناوب می‌شود. نتیجه: ردیف‌های یک رنگ یک نوار پیوسته می‌سازند و
- * چشم گروه‌ها را بدون خط‌کشی اضافه تشخیص می‌دهد — همان رفتار نسخهٔ تأییدشده.
+ * رنگِ گروهِ یک مدل.
+ *
+ * ⚠️ قبلاً فقط وقتی کار می‌کرد که تنوع **اول** رنگ باشد. حالا:
+ *   • هر جا تنوعی رنگی هست — چندم که باشد — رنگ همان مقدار استفاده می‌شود.
+ *   • اگر هیچ تنوعی رنگی نیست، یک رنگ خنثی به هر گروه می‌رسد تا باز هم گروه‌ها
+ *     از هم جدا دیده شوند (گروه = مقدارِ تنوع اول).
+ * پس گروه‌بندی بصری همیشه هست، چه رنگ در کار باشد چه نباشد.
+ */
+export function groupColorOf(
+  values: string[],
+  optionTitles: string[],
+  groupIndex: number,
+): string {
+  const colorAxis = optionTitles.findIndex((t) => isColorOption(t))
+  if (colorAxis >= 0 && values[colorAxis]) return colorForValue(values[colorAxis])
+  return NEUTRAL_GROUP_COLORS[groupIndex % NEUTRAL_GROUP_COLORS.length]
+}
+
+/**
+ * ته‌رنگ ردیف جدول مدل‌ها از رنگِ گروهش ساخته می‌شود و داخل هر گروه بین دو
+ * شفافیت متناوب می‌شود. نتیجه: ردیف‌های یک گروه یک نوار پیوسته می‌سازند و چشم
+ * گروه‌ها را بدون خط‌کشی اضافه تشخیص می‌دهد — همان رفتار نسخهٔ تأییدشده.
  */
 export function rowTint(hex: string | undefined, indexInGroup: number): string {
   const h = (hex ?? '#9aa6ad').replace('#', '')
@@ -391,6 +415,39 @@ export interface VariantCombination {
   /** قیمت پس از تخفیف — در جدول مدل‌ها ستون مستقل «تخفیف» است */
   salePrice: string
   inventory: string
+  /**
+   * کدام مقادیر هنوز از محصول اصلی **ارث می‌برند**.
+   *
+   * قاعده: مدل تازه همه‌چیز را از محصول می‌گیرد (قیمت، موجودی، تصویر شاخص) تا
+   * فروشنده مجبور نباشد ده ردیف را دستی پر کند. اولین ویرایشِ دستیِ هر مقدار،
+   * ارث‌بریِ **همان مقدار** را قطع می‌کند — از آن به بعد تغییر محصول اصلی رویش
+   * اثر ندارد، وگرنه کارِ کاربر بی‌صدا بازنویسی می‌شد.
+   *
+   * خالی‌کردنِ دستیِ یک مقدار، ارث‌بری‌اش را دوباره روشن می‌کند (همان «اگر پاکش
+   * کردی، دوباره از محصول بگیر»).
+   */
+  inherits: { price: boolean; inventory: boolean; image: boolean }
+}
+
+/** مقدار پیش‌فرض ارث‌بری برای یک مدل تازه */
+export const FULL_INHERIT = { price: true, inventory: true, image: true }
+
+/**
+ * ارث‌بری را روی مدل‌ها اعمال می‌کند.
+ *
+ * هر بار که قیمت/موجودی/تصویر شاخصِ محصول عوض می‌شود صدا زده می‌شود؛ فقط مدل‌هایی
+ * را که هنوز ارث می‌برند به‌روز می‌کند و به بقیه دست نمی‌زند.
+ */
+export function applyInheritance(
+  combos: VariantCombination[],
+  source: { price: string; inventory: string; image: string; phoneSale: boolean },
+): VariantCombination[] {
+  return combos.map((c) => ({
+    ...c,
+    ...(c.inherits.price ? { price: source.price } : {}),
+    ...(c.inherits.inventory ? { inventory: source.inventory } : {}),
+    ...(c.inherits.image ? { image: source.image } : {}),
+  }))
 }
 
 /** ماتریس تنوع۱ × تنوع۲ (یا فقط تنوع۱ اگر تنوع دوم مقدار ندارد) */
@@ -430,6 +487,7 @@ export function buildCombinations(
     price: basePrice,
     salePrice: baseSalePrice,
     inventory: '',
+    inherits: { ...FULL_INHERIT },
   }))
 }
 
