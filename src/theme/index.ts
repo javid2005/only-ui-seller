@@ -19,6 +19,13 @@ const layoutConfig = defineConfig({
     // پس صرف‌نظر از specificity سلکتور همیشه recipe می‌بره. راه درست: خودِ recipe رو
     // اینجا override کن — mergeConfigs (`createSystem`) این آبجکت رو deep-merge
     // می‌کنه با recipe پیش‌فرض، پس فقط همین یه property عوض می‌شه، بقیهٔ recipe دست‌نخورده.
+    keyframes: {
+      vitrinaFieldFlash: {
+        '0%':   { backgroundColor: 'var(--chakra-colors-red-subtle)', boxShadow: '0 0 0 4px var(--chakra-colors-red-muted)' },
+        '70%':  { backgroundColor: 'var(--chakra-colors-red-subtle)', boxShadow: '0 0 0 4px var(--chakra-colors-red-muted)' },
+        '100%': { backgroundColor: 'transparent', boxShadow: '0 0 0 0 transparent' },
+      },
+    },
     slotRecipes: {
       // slots: [] — فقط برای رضایت تایپ؛ در merge واقعی (runtime، createSystem) چون
       // آرایهٔ خالیه هیچ عنصری از slots اصلی table رو بازنویسی نمی‌کنه (فقط تا طول
@@ -51,6 +58,15 @@ const layoutConfig = defineConfig({
     'button:disabled, [aria-disabled="true"], [data-disabled]': {
       cursor: 'not-allowed',
     },
+    // ─── چشمکِ دو ثانیه‌ایِ فیلدِ ناقص ─────────────────────────────────────────
+    // وقتی کاربر از فهرست خطاها روی یک مورد می‌زند، صفحه به آن فیلد می‌لغزد و همان
+    // فیلد دو ثانیه قرمزِ کمرنگ می‌شود. فقط رنگ و سایه — هیچ جابه‌جایی چیدمان.
+    '.vitrina-field-flash': {
+      animation: 'vitrinaFieldFlash 2s ease-out',
+      borderRadius: 'l2',
+      _motionReduce: { animation: 'none', boxShadow: '0 0 0 3px var(--chakra-colors-red-muted)' },
+    },
+
     'html, body': {
       direction: 'rtl',
       fontFamily: 'body',

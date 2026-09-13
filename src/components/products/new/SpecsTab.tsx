@@ -184,6 +184,7 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
       >
         {/* FIRST = rightmost: کادر برچسب‌ها · LAST = leftmost: دکمهٔ + */}
         <chakra.form
+          data-field="tags"
           display="flex"
           gap="2"
           alignItems="start"

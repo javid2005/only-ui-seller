@@ -68,6 +68,7 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
               label="شناسه / SKU"
               required
               stacked
+              dataField="sku"
               hint="یک شناسه پیشنهادی ساخته می‌شود و هر زمان خواستید قابل ویرایش است."
             >
               <Input
@@ -84,6 +85,7 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
                 label="موجودی اولیه"
                 required
                 stacked
+                dataField="inventory"
                 disabled={form.unlimitedInventory}
                 endElement={<Unit>عدد</Unit>}
               >
@@ -252,7 +254,7 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
                 animationDuration="180ms"
                 animationTimingFunction="ease-out"
               >
-                <NotchedField label="هزینهٔ ثابت ارسال" required endElement={<Unit>تومان</Unit>}>
+                <NotchedField label="هزینهٔ ثابت ارسال" required dataField="shippingFixedCost" endElement={<Unit>تومان</Unit>}>
                   <NumberField
                     value={form.shippingFixedCost}
                     onChange={(v) => onChange({ shippingFixedCost: v })}

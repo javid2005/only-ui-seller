@@ -16,6 +16,9 @@ import { SeoTab } from '@/components/products/new/SeoTab'
 import { ProductPreviewCard } from '@/components/products/new/ProductPreviewCard'
 import { SaveStatus } from '@/components/products/new/SaveStatus'
 import { ProductCategoryProvider } from '@/components/products/new/ProductContext'
+import { ValidationToast } from '@/components/products/new/ValidationToast'
+import { validateProduct, type FieldIssue } from '@/components/products/new/validation'
+import { focusField } from '@/components/products/new/focusField'
 import { enterPanel } from '@/components/products/new/motion'
 import {
   EMPTY_FORM, STEPS, pricingModeOf, seoScore,
@@ -124,7 +127,37 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
   const canPublish = infoComplete && galleryComplete && warehouseComplete && variantsComplete
 
   const goBack = () => router.push('/products/list')
-  const save = () => { /* TODO: persist (UI-only این پاس) */ }
+
+  /**
+   * ذخیره/انتشار — اول اعتبارسنجی.
+   *
+   * خطاها به‌جای یک پیامِ کلی، فهرستی از کنش‌ها می‌شوند: هر مورد کاربر را به همان
+   * مرحله و همان فیلد می‌برد و دو ثانیه رویش تأکید می‌کند. بدون این، کاربر باید
+   * شش مرحله را دستی بگردد تا بفهمد کدام فیلد مقصر است.
+   */
+  const [issues, setIssues] = useState<FieldIssue[]>([])
+  const [showIssues, setShowIssues] = useState(false)
+
+  const goToIssue = (issue: FieldIssue) => {
+    setActiveStep(issue.step)
+    focusField(issue.field)
+  }
+
+  const save = () => {
+    const found = validateProduct(form)
+    setIssues(found)
+    setShowIssues(found.length > 0)
+    if (found.length > 0) return
+    // TODO: persist (این پاس UI-only)
+  }
+
+  // فهرست باز، با رفعِ خطاها خودش کوچک و در پایان بسته می‌شود — نه اینکه کهنه بماند
+  useEffect(() => {
+    if (!showIssues) return
+    const fresh = validateProduct(form)
+    setIssues(fresh)
+    if (fresh.length === 0) setShowIssues(false)
+  }, [form, showIssues])
 
   return (
     <ProductCategoryProvider category={form.category}>
@@ -291,6 +324,15 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
       <Box display={isCompact ? 'block' : { base: 'block', lg: 'none' }}>
         <ProductPreviewCard form={form} variant="dock" />
       </Box>
+
+      {/* ═══ فهرست موارد ناقص ═══════════════════════════════════════════════════ */}
+      {showIssues && (
+        <ValidationToast
+          issues={issues}
+          onClose={() => setShowIssues(false)}
+          onGoTo={goToIssue}
+        />
+      )}
 
       {/* ═══ دروازهٔ ورود: انتخاب نوع محصول ════════════════════════════════════ */}
       <ProductTypeDialog

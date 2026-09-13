@@ -276,6 +276,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
 
           {/* پنل رسانه — در طرح مثل ستون پوشه‌ها یک کادر مستقل است، نه ناحیهٔ باز */}
           <Flex
+            data-field="gallery"
             direction="column"
             gap="4"
             minW="0"

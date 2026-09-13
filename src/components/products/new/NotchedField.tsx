@@ -33,17 +33,19 @@ export interface NotchedFieldProps {
    * پنل تداخل بصری پیدا می‌کند. اندازه‌ها از خود طرح: ۱۰px/۷۰۰، فاصلهٔ ۸px تا کادر.
    */
   stacked?: boolean
+  /** کلید پرش و چشمک از فهرست خطاها (`focusField`) */
+  dataField?: string
   children: ReactNode
 }
 
 export function NotchedField({
-  label, required, hint, error, endElement, disabled, tinted, stacked, children,
+  label, required, hint, error, endElement, disabled, tinted, stacked, dataField, children,
 }: NotchedFieldProps) {
   // همان پس‌زمینه‌ای که خودِ کادر دارد — legend باید رویش بنشیند، نه کنارش (پایین‌تر)
   const surface = disabled ? 'bg.subtle' : stacked || !tinted ? 'bg.panel' : 'bg.subtle'
 
   return (
-    <Box w="full" minW="0">
+    <Box w="full" minW="0" data-field={dataField}>
       {stacked && (
         <Text
           as="label"

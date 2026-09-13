@@ -272,6 +272,7 @@ export function ModelsTable({
         /* اندازه‌ها از طرح تأییدشده: قاب ۱۰px، سقف ارتفاع ۵۶۰px با اسکرول عمودی،
            سرستون ۳۹px، سلول‌ها padding ۵px — جدول طرح متراکم است نه گشاد. */
         <Box
+          data-field="modelsTable"
           overflowX="auto"
           overflowY="auto"
           maxH="560px"

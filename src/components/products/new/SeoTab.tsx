@@ -5,7 +5,25 @@ import { StepVideoButton } from './StepVideo'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { toPersianDigits } from '@/utils/numbers'
 import { SectionCard, Panel } from './SectionCard'
+import { focusField } from './focusField'
+
+/**
+ * هر بررسی سئو به کدام فیلد مربوط است.
+ *
+ * بدون این نگاشت، کلیک روی «توضیح متا» فقط مرحله را عوض می‌کرد و کاربر باز هم
+ * باید دنبال فیلد می‌گشت — همان کاری که قرار بود نکند.
+ */
+const SEO_CHECK_FIELD: Record<string, string> = {
+  slug: 'seoSlug',
+  title: 'seoTitle',
+  meta: 'seoDescription',
+  images: 'gallery',
+  alt: 'gallery',
+  category: 'category',
+  tags: 'tags',
+}
 import { ProductSummaryBar } from './ProductSummaryBar'
+import { SchemaCard } from './SchemaCard'
 import { NotchedField, bareControl } from './NotchedField'
 import { SEO_CHECKS, seoScore, slugify, type ProductForm, type StepId } from './data'
 
@@ -78,6 +96,7 @@ export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabPro
           <NotchedField
             label="آدرس صفحه محصول"
             required
+            dataField="seoSlug"
             hint="برای لینک خواناتر، آدرس لاتین کوتاه پیشنهاد می‌شود؛ همیشه قابل ویرایش است."
           >
             <Input
@@ -90,7 +109,7 @@ export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabPro
             />
           </NotchedField>
 
-          <NotchedField label="عنوان سئو" hint={`${toPersianDigits(form.seoTitle.trim().length)} کاراکتر — پیشنهاد: ۱۰ تا ۶۰`}>
+          <NotchedField label="عنوان سئو" dataField="seoTitle" hint={`${toPersianDigits(form.seoTitle.trim().length)} کاراکتر — پیشنهاد: ۱۰ تا ۶۰`}>
             <Input
               {...bareControl}
               placeholder="گوشی هوشمند مدل Nova X"
@@ -99,7 +118,7 @@ export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabPro
             />
           </NotchedField>
 
-          <NotchedField label="توضیح متا" hint={`${toPersianDigits(form.seoDescription.trim().length)} کاراکتر — پیشنهاد: ۵۰ تا ۱۶۵`}>
+          <NotchedField label="توضیح متا" dataField="seoDescription" hint={`${toPersianDigits(form.seoDescription.trim().length)} کاراکتر — پیشنهاد: ۵۰ تا ۱۶۵`}>
             <Textarea
               {...bareControl}
               h="auto"
@@ -187,7 +206,7 @@ export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabPro
                 <chakra.button
                   key={check.id}
                   type="button"
-                  onClick={() => onGoToStep(check.step)}
+                  onClick={() => { onGoToStep(check.step); focusField(SEO_CHECK_FIELD[check.id] ?? check.step) }}
                   display="flex"
                   alignItems="center"
                   gap="3"
@@ -214,6 +233,9 @@ export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabPro
               ))}
             </Grid>
           )}
+
+          {/* دادهٔ ساختاریافته — چیزی که گوگل می‌فهمد، نه فقط آنچه می‌بیند */}
+          <SchemaCard form={form} />
 
           {/* خلاصهٔ محصول — آخرین چیزی که قبل از انتشار دیده می‌شود */}
           <ProductSummaryBar form={form} />

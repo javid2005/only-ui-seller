@@ -140,7 +140,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
         <Flex direction="column" gap="4" minW="0">
           {/* FIRST = rightmost: نام محصول · سپس دسته‌بندی */}
           <Grid templateColumns={twoCol} gap="4">
-            <NotchedField label="نام محصول" required>
+            <NotchedField label="نام محصول" required dataField="name">
               <Input
                 {...bareControl}
                 placeholder="نام محصول"
@@ -149,7 +149,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
               />
             </NotchedField>
 
-            <NotchedField label="دسته‌بندی" required>
+            <NotchedField label="دسته‌بندی" required dataField="category">
               <Select.Root
                 collection={categorySelectCollection}
                 value={form.category ? [form.category] : []}
@@ -258,6 +258,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
               <NotchedField
                 label={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
                 required
+                dataField="price"
                 hint={priceHelp}
                 disabled={isGold || form.phoneSale || form.hasVariants}
                 endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
@@ -275,6 +276,7 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
               <Box>
                 <NotchedField
                   label="قیمت با تخفیف"
+                  dataField="salePrice"
                   error={saleInvalid ? 'قیمت با تخفیف باید کمتر از قیمت اصلی باشد.' : undefined}
                   disabled={isGold || form.phoneSale || form.hasVariants}
                   endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
