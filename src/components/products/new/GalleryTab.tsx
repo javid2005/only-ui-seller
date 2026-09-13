@@ -196,7 +196,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
         {/* FIRST = rightmost در RTL: ستون پوشه‌ها (۲۶۴px طبق طرح) */}
         <Grid
           templateColumns={{ base: '1fr', lg: '228px minmax(0, 1fr)', xl: '264px minmax(0, 1fr)' }}
-          gap={{ base: '6', lg: '8' }}
+          gap="3.5"
           w="full"
           alignItems="start"
         >
@@ -208,7 +208,18 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
             onCreate={createFolder}
           />
 
-          <Flex direction="column" gap="4" minW="0" w="full">
+          {/* پنل رسانه — در طرح مثل ستون پوشه‌ها یک کادر مستقل است، نه ناحیهٔ باز */}
+          <Flex
+            direction="column"
+            gap="4"
+            minW="0"
+            w="full"
+            borderWidth="1px"
+            borderColor="border.muted"
+            rounded="xl"
+            bg="bg.panel"
+            p="2.5"
+          >
 
             {/* نوار ابزار: عنوان و شمارش راست · تغییر نما چپ */}
             <Flex align="center" justify="space-between" gap="3" w="full" wrap="wrap">
@@ -300,7 +311,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
                 </EmptyState.Content>
               </EmptyState.Root>
             ) : view === 'grid' ? (
-              <Grid templateColumns="repeat(auto-fill, minmax(150px, 1fr))" gap="3" w="full">
+              <Grid templateColumns="repeat(auto-fill, minmax(192px, 1fr))" gap="2.5" w="full">
                 {visible.map((img, i) => (
                   <MediaCard
                     key={img.id}

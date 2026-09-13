@@ -111,14 +111,23 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
               </Alert.Content>
             </Alert.Root>
           ) : (
-            <Box borderWidth="1px" borderColor="border.muted" rounded="xl" overflow="hidden">
+            <Box
+              borderWidth="1px"
+              borderColor="border"
+              rounded="10px"
+              overflow="hidden"
+              css={{
+                '& th': { height: '38px', paddingInline: '11px', fontSize: '11px', fontWeight: 700 },
+                '& td': { paddingBlock: '5px', paddingInline: '8px' },
+              }}
+            >
               <Table.Root size="sm" variant="line">
                 <Table.Header>
                   {/* FIRST = rightmost: عنوان مشخصه · مقدار · حذف (چپ‌ترین) */}
                   <Table.Row bg="bg.subtle">
                     <Table.ColumnHeader>عنوان مشخصه</Table.ColumnHeader>
                     <Table.ColumnHeader>مقدار</Table.ColumnHeader>
-                    <Table.ColumnHeader w="12" />
+                    <Table.ColumnHeader w="44px" />
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>

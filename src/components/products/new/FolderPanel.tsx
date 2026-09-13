@@ -27,7 +27,19 @@ export interface FolderPanelProps {
  */
 export function FolderPanel({ folders, active, onSelect, counts, onCreate }: FolderPanelProps) {
   return (
-    <Flex direction="column" gap="3" w="full">
+    /* در طرح، ستون پوشه‌ها یک پنلِ کادردارِ ته‌رنگی است (۲۶۴px، radius ۱۲px،
+       padding ۱۰px) — نه یک ستون شناور. همین کادر مرز «کتابخانه» را از «رسانه‌های
+       این محصول» جدا می‌کند. */
+    <Flex
+      direction="column"
+      gap="3"
+      w="full"
+      borderWidth="1px"
+      borderColor="border.muted"
+      bg="bg.subtle"
+      rounded="xl"
+      p="2.5"
+    >
       {/* FIRST = rightmost: عنوان · LAST = leftmost: ساخت پوشه */}
       <Flex align="center" gap="2" w="full">
         <Text fontSize="sm" fontWeight="semibold" color="fg" textAlign="start" flex="1">
@@ -59,15 +71,18 @@ export function FolderPanel({ folders, active, onSelect, counts, onCreate }: Fol
               onClick={() => onSelect(folder.id)}
               display="flex"
               alignItems="center"
-              gap="2.5"
+              gap="2"
               w="full"
-              px="3"
-              h="10"
-              rounded="l2"
-              transition="background 0.15s, color 0.15s"
+              px="2"
+              h="11"
+              rounded="9px"
+              borderWidth="1px"
+              transition="background 0.15s, color 0.15s, border-color 0.15s"
               bg={isActive ? 'brand.bg' : 'transparent'}
+              borderColor={isActive ? 'brand.muted' : 'transparent'}
               color={isActive ? 'brand.fg' : 'fg.muted'}
-              _hover={{ bg: isActive ? 'brand.bg' : 'bg.subtle' }}
+              fontWeight={isActive ? 'bold' : 'normal'}
+              _hover={{ bg: isActive ? 'brand.bg' : 'bg.panel' }}
             >
               {/* FIRST = rightmost: آیکن پوشه */}
               <Icon size="sm" flexShrink={0}><FolderIcon /></Icon>
@@ -86,9 +101,9 @@ export function FolderPanel({ folders, active, onSelect, counts, onCreate }: Fol
       <Box
         borderWidth="1px"
         borderColor="border.muted"
-        bg="bg.subtle"
-        rounded="l2"
-        p="3"
+        bg="bg.panel"
+        rounded="lg"
+        p="2.5"
       >
         <Text fontSize="xs" color="fg.muted" textAlign="start" lineHeight="1.9">
           پوشه‌ها برای نظم کتابخانه‌اند. جابه‌جا کردن رسانه بین پوشه‌ها فایل اصلی را

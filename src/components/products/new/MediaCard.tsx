@@ -48,8 +48,8 @@ export function MediaCard({
   return (
     <Box
       borderWidth="1px"
-      borderColor={selected ? 'brand.solid' : featured ? 'brand.border' : 'border'}
-      rounded="xl"
+      borderColor={selected ? 'brand.solid' : featured ? 'brand.border' : 'border.muted'}
+      rounded="12px"
       overflow="hidden"
       bg="bg.panel"
       opacity={isDragging ? 0.5 : 1}
@@ -64,7 +64,8 @@ export function MediaCard({
       w="full"
     >
       <Box position="relative">
-        <MediaThumb src={src} alt={label} aspectRatio="1" w="full" />
+        {/* نسبت کادر تصویر از طرح: ۱۹۲×۱۵۵ ≈ ۱.۲۴ (نه مربع) */}
+        <MediaThumb src={src} alt={label} aspectRatio="1.24" w="full" roundedTop="12px" />
 
         {/* نوار کنترل روی تصویر */}
         <Flex
@@ -87,7 +88,20 @@ export function MediaCard({
           </Checkbox.Root>
 
           {draggable && (
-            <Box color="fg.muted" aria-hidden><GripVertical size={15} /></Box>
+            <Flex
+              boxSize="32px"
+              flexShrink={0}
+              align="center"
+              justify="center"
+              bg="bg.panel"
+              borderWidth="1px"
+              borderColor="border.muted"
+              rounded="lg"
+              color="fg.muted"
+              aria-hidden
+            >
+              <GripVertical size={15} />
+            </Flex>
           )}
 
           <Box flex="1" />
@@ -95,7 +109,17 @@ export function MediaCard({
           {/* LAST = leftmost: منوی سه‌نقطه */}
           <Menu.Root>
             <Menu.Trigger asChild>
-              <IconButton size="xs" variant="subtle" bg="bg.panel" rounded="md" aria-label={`عملیات ${label}`}>
+              <IconButton
+                size="xs"
+                variant="subtle"
+                boxSize="32px"
+                minW="32px"
+                bg="bg.panel"
+                borderWidth="1px"
+                borderColor="border.muted"
+                rounded="lg"
+                aria-label={`عملیات ${label}`}
+              >
                 <EllipsisVertical size={15} />
               </IconButton>
             </Menu.Trigger>
@@ -175,7 +199,7 @@ export function MediaCard({
         )}
       </Box>
 
-      <Box p="2.5" borderTopWidth="1px" borderColor="border.muted">
+      <Box p="2" borderTopWidth="1px" borderColor="border.muted">
         <Text fontSize="xs" fontWeight="medium" color="fg" truncate textAlign="start">{label}</Text>
         {variantTags.length > 0 && (
           <Text fontSize="2xs" color="fg.muted" truncate textAlign="start">
