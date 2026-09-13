@@ -15,6 +15,7 @@ import { VariantsTab } from '@/components/products/new/VariantsTab'
 import { SeoTab } from '@/components/products/new/SeoTab'
 import { ProductPreviewCard } from '@/components/products/new/ProductPreviewCard'
 import { SaveStatus } from '@/components/products/new/SaveStatus'
+import { ProductCategoryProvider } from '@/components/products/new/ProductContext'
 import {
   EMPTY_FORM, STEPS, pricingModeOf, seoScore,
   type ProductForm, type ProductTypeId, type StepId,
@@ -125,6 +126,7 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
   const save = () => { /* TODO: persist (UI-only این پاس) */ }
 
   return (
+    <ProductCategoryProvider category={form.category}>
     <Flex direction="column" gap="4" w="full">
 
       {/* ─── نوار ابزار — در طرح یک کارت مستقل است، نه سرتیتر لخت ─────────────── */}
@@ -302,5 +304,6 @@ export function NewProduct({ isEdit = false }: { isEdit?: boolean } = {}) {
       />
 
     </Flex>
+    </ProductCategoryProvider>
   )
 }

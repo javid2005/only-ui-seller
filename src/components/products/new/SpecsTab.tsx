@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Flex, Box, Input, Text, Table, IconButton, Alert, chakra } from '@chakra-ui/react'
 import { Plus, X } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
+import { StepVideoButton } from './StepVideo'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { SectionCard } from './SectionCard'
 import type { Attribute, ProductForm } from './data'
@@ -64,7 +65,7 @@ export function SpecsTab({ form, onChange, onBack, onSave }: SpecsTabProps) {
   return (
     <Flex direction="column" gap="5" w="full">
 
-      <TitleBar title="مشخصات محصول" subtitle="ویژگی‌ها و برچسب‌های محصول" size="xl" divider />
+      <TitleBar title="مشخصات محصول" subtitle="ویژگی‌ها و برچسب‌های محصول" size="xl" divider cta={<StepVideoButton step="specs" title="مشخصات محصول" />} />
 
       {/* ═══ مشخصات ═════════════════════════════════════════════════════════════ */}
       <SectionCard

@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react'
 import { Upload, Search, LayoutGrid, List, ImageOff, Trash2 } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
+import { StepVideoButton } from './StepVideo'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { toPersianDigits } from '@/utils/numbers'
@@ -171,6 +172,7 @@ export function GalleryTab({ form, onChange, onBack, onSave }: GalleryTabProps) 
 
       <TitleBar
         title="گالری"
+        cta={<StepVideoButton step="gallery" title="گالری" />}
         subtitle="تصاویر، کتابخانه و ویرایش رسانه‌ها"
         size="xl"
         divider

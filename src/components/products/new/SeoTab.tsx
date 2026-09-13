@@ -1,6 +1,7 @@
 import { Flex, Grid, Box, Text, Input, Textarea, Button, Badge, Progress, chakra } from '@chakra-ui/react'
 import { RefreshCw, ArrowLeft, Globe } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
+import { StepVideoButton } from './StepVideo'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { toPersianDigits } from '@/utils/numbers'
 import { SectionCard, Panel } from './SectionCard'
@@ -55,6 +56,7 @@ export function SeoTab({ form, onChange, onBack, onSave, onGoToStep }: SeoTabPro
 
       <TitleBar
         title="سئو و انتشار"
+        cta={<StepVideoButton step="seo" title="سئو و انتشار" />}
         subtitle="تنظیمات جستجو، پیش‌نمایش و آمادگی انتشار"
         size="xl"
         divider

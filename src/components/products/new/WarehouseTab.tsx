@@ -1,6 +1,7 @@
 import { Flex, Grid, Input, Text, Switch, Select, Portal, Button, chakra, createListCollection } from '@chakra-ui/react'
 import { Package, Settings, ExternalLink } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
+import { StepVideoButton } from './StepVideo'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { NumberField } from '@/components/ui/NumberField'
 import { SectionCard, Panel } from './SectionCard'
@@ -47,6 +48,7 @@ export function WarehouseTab({ form, onChange, onBack, onSave }: WarehouseTabPro
 
       <TitleBar
         title="انبارداری و ارسال"
+        cta={<StepVideoButton step="warehouse" title="انبارداری و ارسال" />}
         subtitle="شناسه، موجودی، وزن و روش‌های ارسال"
         size="xl"
         divider

@@ -5,6 +5,8 @@ import {
 import { DollarSign, Eye, CalendarClock, Phone } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
+import { TitleBar } from '@/components/ui/TitleBar'
+import { StepVideoButton } from './StepVideo'
 import { RichTextEditor } from '@/components/ui/RichTextEditor'
 import { NumberField } from '@/components/ui/NumberField'
 import { GoldInfoCard } from './GoldInfoCard'
@@ -106,6 +108,15 @@ export function InfoTab({ form, onChange, onBack, onSave }: InfoTabProps) {
   // با وجود تنوع: موجودی و تاگل نامحدود read-only (مدیریت از تب تنوع‌ها)
   return (
     <Flex direction="column" gap="5" w="full">
+
+      {/* سرتیتر مرحله — مثل بقیهٔ مراحل، با آیکن ویدئوی آموزش در سمت چپ */}
+      <TitleBar
+        title="مشخصات اولیه"
+        subtitle="اطلاعات اصلی، قیمت و وضعیت فروش"
+        size="xl"
+        divider
+        cta={<StepVideoButton step="basic" title="مشخصات اولیه" />}
+      />
 
       {/* ═══ اطلاعات اصلی ══════════════════════════════════════════════════════ */}
       <SectionCard

@@ -1,6 +1,9 @@
 import { Dialog, Portal, CloseButton, Text, Flex, Grid, Box, Icon, AspectRatio } from '@chakra-ui/react'
-import { Play, Sparkles } from 'lucide-react'
+import { Play, Sparkles, Lightbulb } from 'lucide-react'
 import { HELP_TOPICS, type HelpTone } from './helpContent'
+import { sampleForCategory } from './categoryKnowledge'
+import { useProductCategory } from './ProductContext'
+import { CATEGORIES } from './data'
 
 // ─── Props ───────────────────────────────────────────────────────────────────────
 
@@ -34,6 +37,9 @@ const TONE: Record<HelpTone, { bg: string; border: string; fg: string }> = {
  */
 export function HelpDialog({ topic, onClose, description, withVideo }: HelpDialogProps) {
   const data = topic ? HELP_TOPICS[topic] : undefined
+  const category = useProductCategory()
+  const sample = sampleForCategory(category)
+  const categoryLabel = CATEGORIES.find((c) => c.value === category)?.label
 
   return (
     <Dialog.Root open={Boolean(data)} onOpenChange={(e) => !e.open && onClose()} size="lg">
@@ -150,11 +156,63 @@ export function HelpDialog({ topic, onClose, description, withVideo }: HelpDialo
                   )
                 })}
               </Grid>
+
+              {/* ─── مثال، بر اساس دستهٔ انتخاب‌شده ────────────────────────────
+                  راهنمای عمومی می‌گوید «نام واضح بنویسید»؛ این بخش می‌گوید برای
+                  همین دسته‌بندی، «واضح» یعنی چه. متن‌ها از درخت دانش می‌آیند. */}
+              <Flex
+                direction="column"
+                gap="2"
+                mt="3"
+                p="4"
+                rounded="lg"
+                borderWidth="1px"
+                borderColor="border"
+                bg="bg.subtle"
+              >
+                <Flex align="center" gap="2">
+                  {/* FIRST = rightmost: آیکن */}
+                  <Icon size="sm" color="fg.muted" flexShrink={0}><Lightbulb /></Icon>
+                  <Text fontSize="xs" fontWeight="semibold" color="fg" textAlign="start">
+                    مثال{categoryLabel ? ` — ${categoryLabel}` : ''}
+                  </Text>
+                </Flex>
+                <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap="2">
+                  <ExampleRow label="نام محصول" value={sample.name} />
+                  <ExampleRow label="توضیح کوتاه" value={sample.shortDescription} />
+                  <ExampleRow label="برچسب‌ها" value={sample.tags.join(' · ')} />
+                </Grid>
+                {!categoryLabel && (
+                  <Text fontSize="2xs" color="fg.muted" textAlign="start">
+                    با انتخاب دسته‌بندی، مثال‌ها مخصوص همان دسته می‌شوند.
+                  </Text>
+                )}
+              </Flex>
             </Dialog.Body>
 
           </Dialog.Content>
         </Dialog.Positioner>
       </Portal>
     </Dialog.Root>
+  )
+}
+
+// ─── ExampleRow ─────────────────────────────────────────────────────────────────
+/** یک ردیف از بخش مثال — برچسب بالا، متنِ نمونه داخل یک کادر سفید */
+function ExampleRow({ label, value }: { label: string; value: string }) {
+  return (
+    <Box>
+      <Text fontSize="2xs" color="fg.muted" textAlign="start" mb="1">{label}</Text>
+      <Box
+        px="2.5"
+        py="1.5"
+        rounded="md"
+        bg="bg.panel"
+        borderWidth="1px"
+        borderColor="border.muted"
+      >
+        <Text fontSize="xs" color="fg" textAlign="start" lineHeight="1.9">{value}</Text>
+      </Box>
+    </Box>
   )
 }

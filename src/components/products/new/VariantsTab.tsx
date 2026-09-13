@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Box, Flex, Grid, Text, Button, chakra } from '@chakra-ui/react'
 import { Plus, LayoutGrid } from 'lucide-react'
 import { TitleBar } from '@/components/ui/TitleBar'
+import { StepVideoButton } from './StepVideo'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { toPersianDigits } from '@/utils/numbers'
@@ -91,7 +92,7 @@ export function VariantsTab({
   if (isSimple) {
     return (
       <Flex direction="column" gap="5" w="full">
-        <TitleBar title="مدل‌ها و تنوع" subtitle="انتخاب‌ها و مدل‌های قابل فروش" size="xl" divider />
+        <TitleBar title="مدل‌ها و تنوع" subtitle="انتخاب‌ها و مدل‌های قابل فروش" size="xl" divider cta={<StepVideoButton step="models" title="مدل‌ها و تنوع" />} />
         <Flex
           gap="3"
           p="5"
@@ -138,7 +139,7 @@ export function VariantsTab({
   return (
     <Flex direction="column" gap="5" w="full">
 
-      <TitleBar title="مدل‌ها و تنوع" subtitle="انتخاب‌ها و مدل‌های قابل فروش" size="xl" divider />
+      <TitleBar title="مدل‌ها و تنوع" subtitle="انتخاب‌ها و مدل‌های قابل فروش" size="xl" divider cta={<StepVideoButton step="models" title="مدل‌ها و تنوع" />} />
 
       {/* ═══ انتخاب‌های مشتری ═══════════════════════════════════════════════════ */}
       <SectionCard
