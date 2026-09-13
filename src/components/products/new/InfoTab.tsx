@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import {
-  Box, Flex, Grid, Text, Input, NativeSelect, Button, chakra,
+  Box, Flex, Grid, Text, Input, NativeSelect, Button, Switch, chakra,
   Select, Alert, createListCollection, Portal,
 } from '@chakra-ui/react'
-import { DollarSign, Eye, CalendarClock, Phone } from 'lucide-react'
+import { DollarSign, Eye, Phone, Tag, Sparkles } from 'lucide-react'
 import { useCompactMode } from '@/contexts/CompactModeContext'
 import { ButtonFooter } from '@/components/ui/ButtonFooter'
 import { TitleBar } from '@/components/ui/TitleBar'
@@ -14,9 +14,8 @@ import { GoldInfoCard } from './GoldInfoCard'
 import { SectionCard } from './SectionCard'
 import { MainImageField } from './MainImageField'
 import { NotchedField, bareControl } from './NotchedField'
-import { ToggleCard } from './ToggleCard'
-import { pressable } from './motion'
-import { OfferEndDialog } from './OfferEndDialog'
+import { pressable, enterItem } from './motion'
+import { DiscountDialog, finalPriceOf } from './DiscountDialog'
 import { formatJalaliDate } from '@/utils/dates'
 import { toPersianDigits, toLatinDigits, formatThousands, toPersianWords } from '@/utils/numbers'
 import {
@@ -103,11 +102,16 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
    * سوییچ «تخفیف دارد» و ماشین‌حساب درصد/مبلغ فقط در نسخهٔ اول (chakra-review)
    * بودند و از نسخهٔ دوم به بعد حذف شدند — پس اینجا هم نیستند.
    */
-  const [offerDialog, setOfferDialog] = useState<'special' | 'sale' | null>(null)
+  const [discountOpen, setDiscountOpen] = useState(false)
 
-  const saleNum = num(form.salePrice)
-  const saleInvalid =
-    form.salePrice.trim() !== '' && hasPrice && Number.isFinite(saleNum) && saleNum >= effectivePrice
+  /**
+   * قیمت وقتی «قفل» است که ویرایشش معنا ندارد: طلا (محاسبه‌شده)، فروش تلفنی
+   * (نمایش داده نمی‌شود) یا محصول متنوع (قیمت هر مدل در جدول مدل‌هاست).
+   */
+  const priceLocked = isGold || form.phoneSale || form.hasVariants
+
+  const hasDiscount = form.discountValue.trim() !== '' && form.salePrice.trim() !== ''
+  const saleDisplay = toPersianDigits(formatThousands(Number(form.salePrice) || 0))
 
   // ─── Inventory ────────────────────────────────────────────────────────────────
   // با وجود تنوع: موجودی و تاگل نامحدود read-only (مدیریت از تب تنوع‌ها)
@@ -126,7 +130,7 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
       {/* ═══ اطلاعات اصلی ══════════════════════════════════════════════════════ */}
       <SectionCard
         title="اطلاعات اصلی"
-        subtitle="این اطلاعات در صفحه محصول نمایش داده می‌شود"
+        subtitle="این اطلاعات و وضعیت نمایش محصول در صفحهٔ فروشگاه دیده می‌شوند"
         helpTopic="اطلاعات اصلی محصول"
       >
         {/* در طرح، کارت دو ستون دارد: فیلدها (راست) و «تصویر اصلی» (چپ، ۳۰۰px).
@@ -199,6 +203,55 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
               placeholder="توضیحات محصول را وارد کنید..."
             />
           </Box>
+
+          {/* «نمایش در ویترین» از بخشِ حذف‌شدهٔ «وضعیت نمایش و فروش» اینجا آمد:
+            این یک تصمیمِ اطلاعاتِ پایه است (محصول اصلاً دیده شود یا نه)، نه یک
+            تصمیم قیمتی. زیرِ توضیحات می‌نشیند تا آخرین چیزی باشد که در این کارت
+            تعیین می‌شود. */}
+          <Flex
+            align="center"
+            gap="2.5"
+            p="11px"
+            rounded="xl"
+            borderWidth="1px"
+            borderColor={form.showInStorefront ? 'brand.muted' : 'border.muted'}
+            bg={form.showInStorefront ? 'brand.bg' : 'bg.subtle'}
+            transition="background .18s, border-color .18s"
+          >
+            {/* FIRST = rightmost: آیکن ← عنوان و توضیح … سوییچ (چپ‌ترین) */}
+            <Box color={form.showInStorefront ? 'brand.fg' : 'fg.muted'} flexShrink={0} display="flex">
+              <Eye size={17} />
+            </Box>
+            <Box flex="1" minW="0">
+              <chakra.label
+                htmlFor="show-in-storefront"
+                display="block"
+                fontSize="sm"
+                fontWeight="medium"
+                color="fg"
+                textAlign="start"
+                cursor="pointer"
+              >
+                نمایش در ویترین
+              </chakra.label>
+              <Text fontSize="xs" color="fg.muted" textAlign="start" lineHeight="1.9">
+                {form.showInStorefront
+                  ? 'در فهرست و جست‌وجوی فروشگاه دیده می‌شود.'
+                  : 'فعلاً پنهان است؛ اطلاعاتش حفظ می‌شود و هر وقت خواستید روشنش کنید.'}
+              </Text>
+            </Box>
+            <Switch.Root
+              id="show-in-storefront"
+              size="sm"
+              colorPalette="brand"
+              checked={form.showInStorefront}
+              onCheckedChange={(e) => onChange({ showInStorefront: e.checked })}
+              flexShrink={0}
+            >
+              <Switch.HiddenInput />
+              <Switch.Control><Switch.Thumb /></Switch.Control>
+            </Switch.Root>
+          </Flex>
         </Flex>
 
           {/* LAST = leftmost: تصویر اصلی */}
@@ -215,7 +268,7 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
       {/* ═══ قیمت گذاری ═════════════════════════════════════════════════════════ */}
       <SectionCard
         title="قیمت‌گذاری"
-        subtitle="قیمت را با تومان یا دلار تعیین کنید؛ در حالت دلار، مبلغ تومانی به‌صورت زنده محاسبه می‌شود"
+        subtitle="قیمت، تخفیف و اینکه اصلاً قیمت به خریدار نشان داده شود یا نه"
         helpTopic="قیمت‌گذاری"
         actions={
           /* سگمنت واحد در سرتیتر — در طرح انتخاب واحد اینجاست، نه داخل خود فیلد.
@@ -250,16 +303,74 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
           {/* کارت اطلاعات اختصاصی طلا — فقط دستهٔ طلا */}
           {isGold && <GoldInfoCard form={form} onChange={onChange} />}
 
-          {/* کادر قیمت — در طرح یک جعبهٔ ته‌رنگیِ مستقل است با دو فیلد کنار هم.
-              FIRST = rightmost: قیمت اصلی · SECOND = چپ: قیمت با تخفیف */}
+          {/*
+            کادر قیمت — سه تصمیم، به ترتیبی که واقعاً گرفته می‌شوند:
+              ۱. اصلاً قیمت نشان داده شود؟  → «فروش تلفنی» بالای کادر
+              ۲. قیمت چند است؟               → «قیمت اصلی»
+              ۳. تخفیف دارد؟                 → دکمهٔ تخفیف و خلاصه‌اش
+
+            سه باکسِ جداگانهٔ «وضعیت نمایش و فروش» حذف شد: «نمایش در ویترین» به
+            کارت اطلاعات اصلی رفت، «فروش تلفنی» به همین‌جا، و «پیشنهاد ویژه» در
+            تاریخِ پایانِ تخفیف حل شد — چون در عمل همان بود و سه‌جا تکرار می‌شد.
+          */}
           <Box bg="bg.subtle" borderWidth="1px" borderColor="border.muted" rounded="xl" p="11px">
-            <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)' }} gap="2.5">
+
+            {/* ۱. فروش تلفنی — بالاترین تصمیم، چون بقیه را غیرفعال می‌کند */}
+            <Flex
+              align="center"
+              gap="2.5"
+              px="2.5"
+              py="2"
+              rounded="lg"
+              borderWidth="1px"
+              borderColor={form.phoneSale ? 'orange.muted' : 'border.muted'}
+              bg={form.phoneSale ? 'orange.bg' : 'bg.panel'}
+              transition="background .18s, border-color .18s"
+              mb="2.5"
+            >
+              {/* FIRST = rightmost: آیکن ← عنوان و توضیح … سوییچ (چپ‌ترین) */}
+              <Box color={form.phoneSale ? 'orange.fg' : 'fg.muted'} flexShrink={0} display="flex">
+                <Phone size={16} />
+              </Box>
+              <Box flex="1" minW="0">
+                <chakra.label
+                  htmlFor="phone-sale"
+                  display="block"
+                  fontSize="sm"
+                  fontWeight="medium"
+                  color="fg"
+                  textAlign="start"
+                  cursor="pointer"
+                >
+                  فروش تلفنی
+                </chakra.label>
+                <Text fontSize="xs" color="fg.muted" textAlign="start" lineHeight="1.9">
+                  {form.phoneSale
+                    ? 'خریدار هیچ قیمتی نمی‌بیند؛ به‌جای دکمهٔ خرید، دکمهٔ «تماس» نشان داده می‌شود.'
+                    : 'با روشن‌کردن، قیمت از ویترین پنهان و دکمهٔ خرید به «تماس» تبدیل می‌شود.'}
+                </Text>
+              </Box>
+              <Switch.Root
+                id="phone-sale"
+                size="sm"
+                colorPalette="orange"
+                checked={form.phoneSale}
+                onCheckedChange={(e) => onChange({ phoneSale: e.checked })}
+                flexShrink={0}
+              >
+                <Switch.HiddenInput />
+                <Switch.Control><Switch.Thumb /></Switch.Control>
+              </Switch.Root>
+            </Flex>
+
+            {/* ۲ و ۳. قیمت اصلی + تخفیف */}
+            <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)' }} gap="2.5" alignItems="start">
               <NotchedField
                 label={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
                 required
                 dataField="price"
                 hint={priceHelp}
-                disabled={isGold || form.phoneSale || form.hasVariants}
+                disabled={priceLocked}
                 endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
               >
                 {/* بدون کلید +/− — بند ۳ بازخورد: قیمت هرگز کلید بالا/پایین ندارد */}
@@ -267,53 +378,85 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
                   placeholder={isGold ? 'قیمت نهایی' : 'قیمت اصلی'}
                   value={isGold ? (goldHasValue ? String(goldFinal) : '') : form.price}
                   onChange={isGold ? () => {} : (v) => onChange({ price: v })}
-                  disabled={isGold || form.phoneSale || form.hasVariants}
+                  disabled={priceLocked}
                   inputProps={bareControl}
                 />
               </NotchedField>
 
-              <Box>
-                <NotchedField
-                  label="قیمت با تخفیف"
-                  dataField="salePrice"
-                  error={saleInvalid ? 'قیمت با تخفیف باید کمتر از قیمت اصلی باشد.' : undefined}
-                  disabled={isGold || form.phoneSale || form.hasVariants}
-                  endElement={<Text fontSize="xs" color="fg.muted">{priceUnit}</Text>}
-                >
-                  <NumberField
-                    placeholder="اختیاری"
-                    value={form.salePrice}
-                    onChange={(v) => onChange({
-                      salePrice: v,
-                      hasDiscount: v.trim() !== '',
-                      ...(v.trim() === '' ? { salePriceUntil: '' } : {}),
-                    })}
-                    disabled={isGold || form.phoneSale || form.hasVariants}
-                    inputProps={bareControl}
-                  />
-                </NotchedField>
-
-                {/* تاریخ پایان تخفیف — کنار خودِ تخفیف، چون تصمیمی قیمتی است.
-                    تا وقتی تخفیفی وارد نشده، وجودش معنا ندارد. */}
-                {form.salePrice.trim() !== '' && (
-                  <Button
-                    size="xs"
-                    variant="ghost"
-                    colorPalette="brand"
-                    rounded="l2"
+              {/* تخفیف: تا وقتی نیست فقط یک دکمه است؛ با ثبت، خلاصه‌اش می‌آید */}
+              <Box data-field="salePrice">
+                {hasDiscount ? (
+                  <Flex
+                    direction="column"
                     gap="1.5"
-                    mt="1.5"
-                    onClick={() => setOfferDialog('sale')}
+                    px="2.5"
+                    py="2"
+                    rounded="lg"
+                    borderWidth="1px"
+                    borderColor={form.salePriceUntil ? 'orange.muted' : 'brand.muted'}
+                    bg={form.salePriceUntil ? 'orange.bg' : 'brand.bg'}
+                    {...enterItem}
+                  >
+                    <Flex align="center" gap="2">
+                      {/* FIRST = rightmost: مقدار تخفیف … ویرایش (چپ‌ترین) */}
+                      <Text fontSize="xs" fontWeight="bold" color="fg" flex="1" textAlign="start">
+                        {form.discountType === 'percent'
+                          ? `${toPersianDigits(form.discountValue)}٪ تخفیف`
+                          : `${toPersianDigits(formatThousands(Number(form.discountValue) || 0))} ${priceUnit} تخفیف`}
+                      </Text>
+                      <Button
+                        size="2xs"
+                        variant="ghost"
+                        colorPalette="brand"
+                        rounded="l2"
+                        onClick={() => setDiscountOpen(true)}
+                        disabled={priceLocked}
+                        {...pressable}
+                      >
+                        ویرایش
+                      </Button>
+                    </Flex>
+                    <Text fontSize="sm" fontWeight="bold" color="brand.fg" textAlign="start">
+                      {saleDisplay} {priceUnit}
+                    </Text>
+                    <Flex align="center" gap="1.5">
+                      {/* FIRST = rightmost: آیکن */}
+                      <Box color={form.salePriceUntil ? 'orange.fg' : 'fg.muted'} flexShrink={0} display="flex">
+                        <Sparkles size={12} />
+                      </Box>
+                      <Text fontSize="2xs" color="fg.muted" textAlign="start" lineHeight="1.8">
+                        {form.salePriceUntil
+                          ? `در «پیشنهادهای شگفت‌انگیز» تا ${formatJalaliDate(new Date(form.salePriceUntil))}`
+                          : 'بدون تاریخ پایان — در پیشنهادهای شگفت‌انگیز دیده نمی‌شود'}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                ) : (
+                  <Button
+                    variant="outline"
+                    w="full"
+                    h="11"
+                    rounded="lg"
+                    bg="bg.panel"
+                    gap="1.5"
+                    fontSize="13px"
+                    disabled={priceLocked || !form.price.trim()}
+                    onClick={() => setDiscountOpen(true)}
+                    {...pressable}
                   >
                     {/* FIRST = rightmost: آیکن (leading) */}
-                    <CalendarClock size={13} />
-                    {form.salePriceUntil
-                      ? `تخفیف تا ${formatJalaliDate(new Date(form.salePriceUntil))}`
-                      : 'تعیین تاریخ پایان تخفیف'}
+                    <Tag size={14} />
+                    افزودن تخفیف
                   </Button>
                 )}
               </Box>
             </Grid>
+
+            {form.phoneSale && (
+              <Text fontSize="2xs" color="orange.fg" textAlign="start" mt="2" lineHeight="1.9">
+                با فعال‌بودن فروش تلفنی، قیمت و تخفیف ثبت می‌مانند ولی در فروشگاه نمایش داده نمی‌شوند.
+              </Text>
+            )}
           </Box>
 
           {/* نرخ زندهٔ دلار — فقط در حالت ارزی */}
@@ -334,87 +477,36 @@ export function InfoTab({ form, onChange, onSave }: InfoTabProps) {
         </Flex>
       </SectionCard>
 
-      {/* ═══ وضعیت نمایش و فروش ═════════════════════════════════════════════════ */}
-      <SectionCard
-        title="وضعیت نمایش و فروش"
-        subtitle="تنظیمات رایج محصول در فروشگاه"
-        helpTopic="وضعیت نمایش و فروش"
-      >
-        <Flex direction="column" gap="4">
-          {/* FIRST = rightmost: نمایش در ویترین ← پیشنهاد ویژه ← فروش تلفنی */}
-          <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap="3">
-            <ToggleCard
-              icon={<Eye size={17} />}
-              label="نمایش در ویترین"
-              hint="در فهرست و جستجوی فروشگاه دیده شود"
-              checked={form.showInStorefront}
-              onChange={(v) => onChange({ showInStorefront: v })}
-            />
-            <ToggleCard
-              icon={<CalendarClock size={17} />}
-              label="پیشنهاد ویژه"
-              hint="در بخش پیشنهادهای ویژه نمایش داده شود"
-              checked={form.specialOffer}
-              onChange={(v) => onChange({ specialOffer: v, ...(v ? {} : { specialOfferUntil: '' }) })}
-              accent
-              action={
-                <Button
-                  size="xs"
-                  variant="outline"
-                  rounded="l2"
-                  gap="1.5"
-                  w="full"
-                  onClick={() => setOfferDialog('special')}
-                >
-                  {/* FIRST = rightmost: آیکن (leading) */}
-                  <CalendarClock size={13} />
-                  {form.specialOfferUntil
-                    ? `تا ${formatJalaliDate(new Date(form.specialOfferUntil))}`
-                    : 'تعیین تاریخ پایان'}
-                </Button>
-              }
-            />
-            <ToggleCard
-              icon={<Phone size={17} />}
-              label="فروش تلفنی"
-              hint="با فعال‌سازی، قیمت از ویترین پنهان و دکمهٔ خرید به «تماس» تبدیل می‌شود"
-              checked={form.phoneSale}
-              onChange={(v) => onChange({ phoneSale: v })}
-            />
-          </Grid>
-
-          {/* Alert اطلاع‌رسانی فروش تلفنی — فقط وقتی روشن است */}
-          {form.phoneSale && (
-            <Alert.Root status="info" variant="subtle">
-              <Alert.Indicator />
-              <Alert.Content gap="1">
-                <Text fontSize="xs">• با فعال کردن این گزینه قیمت اصلی غیرفعال می‌شود.</Text>
-                <Text fontSize="xs">• این آیتم برای هر تنوع میتواند بصورت جداگانه فعال شود.</Text>
-                <Text fontSize="xs">• در صورت فعال شدن برای هر تنوع، گزینه فروش تلفنی در این صفحه باید غیرفعال شود.</Text>
-              </Alert.Content>
-            </Alert.Root>
-          )}
-        </Flex>
-      </SectionCard>
-
-      {/* ═══ Footer ═════════════════════════════════════════════════════════════ */}
-      {/* ═══ تاریخ‌های پایان ════════════════════════════════════════════════════
-          دو تاریخِ جدا برای دو تصمیمِ جدا — چرایی‌اش در `data.ts` کنار هر فیلد. */}
-      <OfferEndDialog
-        open={offerDialog === 'special'}
-        onClose={() => setOfferDialog(null)}
-        title="پایان پیشنهاد ویژه"
-        effect="در این تاریخ محصول از بخش «پیشنهادهای ویژه» خارج می‌شود. قیمت دست نمی‌خورد."
-        value={form.specialOfferUntil}
-        onConfirm={(v) => onChange({ specialOfferUntil: v })}
-      />
-      <OfferEndDialog
-        open={offerDialog === 'sale'}
-        onClose={() => setOfferDialog(null)}
-        title="پایان تخفیف"
-        effect="در این تاریخ قیمت با تخفیف برداشته می‌شود و قیمت اصلی برمی‌گردد."
-        value={form.salePriceUntil}
-        onConfirm={(v) => onChange({ salePriceUntil: v })}
+      {/* ═══ دیالوگ تخفیف ═══════════════════════════════════════════════════════
+          درصد/مبلغ + قیمت محاسبه‌شده + تاریخ پایان، همه در یک جا. */}
+      <DiscountDialog
+        open={discountOpen}
+        onClose={() => setDiscountOpen(false)}
+        basePrice={form.price}
+        unit={priceUnit}
+        current={{ type: form.discountType, value: form.discountValue, until: form.salePriceUntil }}
+        onConfirm={({ type, value, until }) => {
+          const final = finalPriceOf(form.price, type, value)
+          onChange({
+            discountType: type,
+            discountValue: value,
+            salePrice: final === null ? '' : String(final),
+            salePriceUntil: until,
+            hasDiscount: final !== null,
+            // «پیشنهاد شگفت‌انگیز» دیگر یک کلید جدا نیست: داشتن تاریخ پایان
+            // همان چیزی است که محصول را در آن بخش می‌نشاند.
+            specialOffer: Boolean(until),
+            specialOfferUntil: until,
+          })
+        }}
+        onRemove={() => onChange({
+          discountValue: '',
+          salePrice: '',
+          salePriceUntil: '',
+          hasDiscount: false,
+          specialOffer: false,
+          specialOfferUntil: '',
+        })}
       />
 
       <ButtonFooter

@@ -1,5 +1,5 @@
-import { Dialog, Portal, CloseButton, Text, Flex, Grid, Box, Icon, AspectRatio } from '@chakra-ui/react'
-import { Play, Sparkles, Lightbulb } from 'lucide-react'
+import { Dialog, Portal, CloseButton, Text, Flex, Grid, Box, Icon } from '@chakra-ui/react'
+import { Sparkles, Lightbulb } from 'lucide-react'
 import { HELP_TOPICS, type HelpTone } from './helpContent'
 import { sampleForCategory } from './categoryKnowledge'
 import { useProductCategory } from './ProductContext'
@@ -13,8 +13,6 @@ export interface HelpDialogProps {
   onClose: () => void
   /** توضیح یک‌خطی زیر عنوان (از زیرعنوان همان بخش می‌آید) */
   description?: string
-  /** نمایش باکس ویدئوی آموزشی */
-  withVideo?: boolean
 }
 
 // رنگ هر لحن — سه لحن طرح: برند، آبی، کهربایی
@@ -33,9 +31,12 @@ const TONE: Record<HelpTone, { bg: string; border: string; fg: string }> = {
  *   ۱۱/۲ — مدال‌ها عرض موبایلی داشتند و فونت‌ها بزرگ بود؛ مینیمال و عریض‌تر شود.
  * پس: عرض ۸۲۰px، فونت کوچک، گرید دوستونی، و لحن رنگی متفاوت برای هر کارت.
  *
+ * ویدئو اینجا **نیست**: آموزش تصویریِ هر مرحله پشت آیکن ▶ قرمزِ کنار عنوانِ همان
+ * مرحله است. دو جای متفاوت برای یک چیز، کاربر را گیج می‌کرد (بازخورد ۱۴۰۵/۰۶).
+ *
  * متن‌ها از نسخهٔ تأییدشده می‌آیند (helpContent) و اینجا بازنویسی نمی‌شوند.
  */
-export function HelpDialog({ topic, onClose, description, withVideo }: HelpDialogProps) {
+export function HelpDialog({ topic, onClose, description }: HelpDialogProps) {
   const data = topic ? HELP_TOPICS[topic] : undefined
   const category = useProductCategory()
   const sample = sampleForCategory(category)
@@ -90,62 +91,44 @@ export function HelpDialog({ topic, onClose, description, withVideo }: HelpDialo
                 </Box>
               </Flex>
 
-              {/* باکس ویدئو — فقط نمای پلیر، بدون پخش واقعی (بند ۳ دور «چاکرا طراح») */}
-              {withVideo && (
-                <Box rounded="xl" overflow="hidden" borderWidth="1px" borderColor="border" mb="4">
-                  <AspectRatio ratio={16 / 9}>
-                    <Flex
-                      direction="column"
-                      align="center"
-                      justify="center"
-                      gap="3"
-                      bgGradient="to-b"
-                      gradientFrom="gray.700"
-                      gradientTo="gray.900"
-                    >
-                      <Flex
-                        boxSize="14" rounded="full" align="center" justify="center"
-                        borderWidth="1px" borderColor="whiteAlpha.400" bg="whiteAlpha.200" color="white"
-                      >
-                        <Play size={22} />
-                      </Flex>
-                      <Text fontSize="xs" color="whiteAlpha.800">ویدئوی آموزشی این بخش</Text>
-                    </Flex>
-                  </AspectRatio>
-                </Box>
-              )}
-
               {/* گرید کارت‌ها — دو ستون، هر کارت با لحن رنگی خودش */}
-              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap="3">
-                {data?.cards.map((card, i) => {
+              {/*
+                `alignItems: start` عمدی است: بدون آن، کارتِ یک‌خطی تا ارتفاع
+                کارتِ چهارخطیِ کنارش کش می‌آمد و زیرش خالی می‌ماند. حالا هر کارت
+                به اندازهٔ محتوای خودش است و فضای پرت از بین می‌رود.
+              */}
+              <Grid
+                templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
+                gap="2.5"
+                alignItems="start"
+              >
+                {data?.cards.map((card) => {
                   const tone = TONE[card.tone]
                   const CardIcon = card.icon
-                  const isLastOdd = i === data.cards.length - 1 && data.cards.length % 2 === 1
                   return (
                     <Flex
                       key={card.title}
-                      gap="3"
-                      p="4"
+                      gap="2.5"
+                      p="3"
                       rounded="lg"
                       borderWidth="1px"
                       borderColor={tone.border}
                       bg={tone.bg}
-                      gridColumn={{ base: 'auto', md: isLastOdd ? '1 / -1' : 'auto' }}
                     >
                       {/* FIRST = rightmost: آیکن کارت */}
                       <Icon size="md" color={tone.fg} flexShrink={0} mt="0.5">
                         <CardIcon />
                       </Icon>
                       <Box minW="0">
-                        <Text fontSize="xs" fontWeight="semibold" color="fg" textAlign="start" mb="1.5">
+                        <Text fontSize="xs" fontWeight="semibold" color="fg" textAlign="start" mb="1">
                           {card.title}
                         </Text>
                         <Flex direction="column" gap="1">
                           {card.items.map((item) => (
                             <Flex key={item} gap="2" align="start">
                               {/* FIRST = rightmost: نقطهٔ فهرست */}
-                              <Box boxSize="1" rounded="full" bg={tone.fg} mt="2.5" flexShrink={0} />
-                              <Text fontSize="xs" color="fg.muted" textAlign="start" lineHeight="1.9">
+                              <Box boxSize="1" rounded="full" bg={tone.fg} mt="2" flexShrink={0} />
+                              <Text fontSize="11px" color="fg.muted" textAlign="start" lineHeight="1.75">
                                 {item}
                               </Text>
                             </Flex>

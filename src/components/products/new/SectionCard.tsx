@@ -20,15 +20,13 @@ export interface SectionCardProps {
   help?: string
   /** کلید موضوع در HELP_TOPICS — آیکن «؟» را به دکمهٔ بازکنندهٔ راهنمای کامل تبدیل می‌کند */
   helpTopic?: string
-  /** راهنمای این بخش باکس ویدئو هم داشته باشد */
-  helpVideo?: boolean
   /** کنترل‌های سمت چپ سرتیتر (مثل تب تومان/دلار) */
   actions?: ReactNode
   children: ReactNode
 }
 
 export function SectionCard({
-  title, subtitle, help, helpTopic, helpVideo, actions, children,
+  title, subtitle, help, helpTopic, actions, children,
 }: SectionCardProps) {
   const [helpOpen, setHelpOpen] = useState(false)
 
@@ -84,7 +82,6 @@ export function SectionCard({
           topic={helpOpen ? helpTopic : null}
           onClose={() => setHelpOpen(false)}
           description={subtitle}
-          withVideo={helpVideo}
         />
       )}
     </Box>

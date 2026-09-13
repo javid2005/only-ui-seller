@@ -242,7 +242,6 @@ export function GalleryTab({ form, onChange, onSave }: GalleryTabProps) {
         title="گالری و فایل‌منیجر"
         subtitle="تصویر اصلی، ویدئو، ترتیب نمایش و تصویر اختصاصی مدل‌ها را مدیریت کنید"
         helpTopic="گالری و کتابخانه رسانه"
-        helpVideo
         actions={
           <Button
             size="sm"
